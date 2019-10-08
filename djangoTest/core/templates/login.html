@@ -1,0 +1,81 @@
+{% load staticfiles %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>GIMME</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/assets/owl.carousel.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.1.20/jquery.fancybox.min.css" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+	</head>
+	<body class="layout-default">
+		
+		
+		<section class="section columns">
+			<div class="column"></div>
+			<section class="column hero main_hero">
+				<div class="hero-body">
+					<div class="has-text-centered; slider-content animated zoomIn">
+						<div>
+							<p class="title is-1 main-text">Welcome to GIMME-Hero</p>
+							<p class="subtitle is-4 main-text">A sophisticated Group Interactions Management Tool</p>
+						</div>
+					</div>
+				</div>
+			</section>
+			<div class="column"></div>
+		</section>
+
+		<section class="section columns">
+			<div class="column"></div>
+			<div class="column">
+				First time here? Lets Register you...
+				<form action="{% url 'registration' %}">
+				    <input class="button is-link" type="submit" value="Register">
+				</form>
+			</div>
+			<div class="column">
+				Already Have an account? Just Log in.
+				<div class="field is-grouped">
+					<form action="{% url 'home' %}" method="POST">
+						{% csrf_token %}
+    					{{ form }}
+    					<div class="field">
+						  <label class="label">Username or E-Mail</label>
+						  <div class="control">
+						    <input class="input" type="text" placeholder="Username" name="username">
+						  </div>
+						</div>
+
+						<div class="field">
+							<label class="label">Password</label>
+							<p class="control has-icons-left">
+								<input class="input" type="password" placeholder="Password" name="password">
+								<span class="icon is-small is-left">
+									<i class="fas fa-lock"></i>
+								</span>
+							</p>
+						</div>
+
+						<div class="control">
+    						<input class="button is-link" type="submit" value="Enter">
+							<button class="button is-text" onclick="formCancelValues(['username','password'])">Cancel</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="column"></div>
+		</section>
+
+
+	</body>	
+	<script
+		src="https://code.jquery.com/jquery-3.2.1.min.js"
+		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+		crossorigin="anonymous"></script>
+	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+	<script src="{% static "js/site.js" %}"></script>
+</html>
+{% endblock content %}

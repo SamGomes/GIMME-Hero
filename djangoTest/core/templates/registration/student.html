@@ -1,0 +1,124 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>GIMME</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/assets/owl.carousel.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.1.20/jquery.fancybox.min.css" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+	</head>
+	<body class="layout-default">
+		
+		<div id="welcomeBanner">
+			<section class="hero main_hero is-fullheight">
+				<div class="hero-body">
+					<div class="has-text-centered; slider-content animated zoomIn">
+						<div>
+							<p class="title is-1 main-text">Registration to GIMME-Hero</p>
+							<p class="subtitle is-4 main-text">A sophisticated Group Interactions Management Tool</p>
+						</div>
+					</div>
+				</div>
+
+			</section>
+		</div>
+
+		<form action="{% url 'saveRegistration' %}" method="POST">
+			{% csrf_token %}
+			{{ form }}
+
+			<div class="field">
+				<label class="label">Registering as...*</label>
+				<p class="control has-icons-left">
+					Student
+				</p>
+			</div>
+
+			<div class="field">
+				<label class="label">E-Mail*</label>
+				<p class="control has-icons-left">
+					<input class="input" type="email" placeholder="E-Mail" name="email">
+					<span class="icon is-small is-left">
+						<i class="fas fa-lock"></i>
+					</span>
+				</p>
+			</div>
+
+			<div class="field">
+				<label class="label">Password*</label>
+				<p class="control has-icons-left">
+					<input class="input" type="password" placeholder="Password" name="password">
+					<span class="icon is-small is-left">
+						<i class="fas fa-lock"></i>
+					</span>
+				</p>
+			</div>
+
+			<div class="field">
+				<label class="label">Repeat Password*</label>
+				<p class="control has-icons-left">
+					<input class="input" type="password" placeholder="Password" name="repPassword">
+					<span class="icon is-small is-left">
+						<i class="fas fa-lock"></i>
+					</span>
+				</p>
+			</div>
+
+			<div class="field">
+			  <label class="label">Nickname*</label>
+			  <div class="control">
+			    <input class="input" type="text" placeholder="Username" name="username">
+			  </div>
+			</div>
+
+			<div class="field">
+			  <label class="label">Name*</label>
+			  <div class="control">
+			    <input class="input" type="text" placeholder="Name" name="name">
+			  </div>
+			</div>
+
+
+			<div class="field">
+			  <label class="label">Age*</label>
+			  <div class="control">
+			    <input class="input" type="number" placeholder="Age" name="age">
+			  </div>
+			</div>
+
+
+
+			<div class="field">
+			  <label class="label">Gender*</label>
+			  <div class="control" name="gender">
+			    <input type="radio" name="gender" value="male"> Male<br>
+				<input type="radio" name="gender" value="female"> Female<br>
+				<input type="radio" name="gender" value="other"> Other 
+			  </div>
+			</div>
+
+
+
+			<div class="field">
+			  <label class="label">Preferences</label>
+			  <div class="control">
+			    <input class="input" type="text" placeholder="Tell us a little about yourself..." name="preferences">
+			  </div>
+			</div>
+
+
+			<div class="control">
+				<input class="button is-link" type="submit" value="Enter">
+			</div>
+		</form>
+
+	</body>
+	<script
+		src="https://code.jquery.com/jquery-3.2.1.min.js"
+		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+		crossorigin="anonymous"></script>
+	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+	<script src="{% static "js/site.js" %}"></script>
+</html>

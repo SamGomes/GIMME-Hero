@@ -1,0 +1,103 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>GIMME</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/assets/owl.carousel.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.1.20/jquery.fancybox.min.css" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+	</head>
+	<body class="layout-default">
+		
+		<div id="welcomeBanner">
+			<section class="hero main_hero is-fullheight">
+				<div class="hero-body">
+					<div class="has-text-centered; slider-content animated zoomIn">
+						<div>
+							<p class="title is-1 main-text">Welcome to GIMME-Hero, {{username}}</p>
+							<p class="subtitle is-4 main-text">A sophisticated Group Interactions Management Tool</p>
+						</div>
+					</div>
+				</div>
+
+			</section>
+		</div>
+		
+		<div class="dashboard">
+			<section class="section">
+				<div class="panel; has-text-centered;  row-full; slider-content animated zoomIn">
+					<p class="panel-heading">Logged in as...</p>
+					<div class="panel-block">
+			                
+						<section class="section  row-full ">
+							<div class="media">
+								<div class="media-left">
+									<figure class="image is-48x48">
+										<img src="{% static "Images/avatar.png" %}" alt="Placeholder image">
+									</figure>
+								</div>
+								<div class="media-content">
+									<p class="title is-4">{{username}}</p>
+									<p class="subtitle is-6">John Bob Harlem Smith</p>
+									<p class="subtitle is-6">Student</p>
+								</div>
+							</div>
+						</section>
+			                
+					</div>
+				</div>
+			</section>
+				
+			<section class="section">
+				<div class="panel; row-full slider-content animated zoomIn">
+					<div class="panel-heading">
+						<div class="columns is-vcentered">
+							<div class="column is-8">
+								<p>Ability State</p>
+							</div>
+							<div class="column is-2">
+								<i class="fa fa-window-minimize" aria-hidden="true"></i>
+								<i class="fa fa-window-maximize" aria-hidden="true"></i>
+							</div>
+						</div>
+					</div>
+					<div class="panel-block">
+						<img src="{% static "Images/mockedHabilityChart.png" %}"/>
+					</div>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="panel; row-full slider-content animated zoomIn">
+					<div class="panel-heading">
+						<div class="columns is-vcentered">
+							<div class="column is-8">
+								<p>Interactions Profile</p>
+							</div>
+							<div class="column is-2">
+								<i class="fa fa-window-minimize" aria-hidden="true"></i>
+								<i class="fa fa-window-maximize" aria-hidden="true"></i>
+							</div>
+						</div>
+					</div>
+					<div class="panel-block">
+						<img src="{% static "Images/mockedInteractionsChart.png" %}"/>
+					</div>
+				</div>
+			</section>
+
+			<section class="section">
+				<input class="button is-large" type="submit" value="New Activity">
+				<input class="button is-large" type="reset" value="Journey">
+			</section>
+		</div>
+	</body>
+	<script
+		src="https://code.jquery.com/jquery-3.2.1.min.js"
+		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+		crossorigin="anonymous"></script>
+	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+	<script src="{% static "js/site.js" %}"></script>
+</html>
