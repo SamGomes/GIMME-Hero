@@ -1,7 +1,8 @@
 # coding: utf-8
-from django.shortcuts import render,render_to_response
+from django.shortcuts import render,render_to_response, redirect
 from django.views.generic import View
 from djangoTest.core.models import User
+from djangoTest.core.forms import RegistryForm
 
 class Views(): #acts as a namespace
 
@@ -20,18 +21,7 @@ class Views(): #acts as a namespace
   #               'preferences': preferences,
   #           })
 
-	def saveRegistration(request):
-		if request.POST:
-			form = RegistryForm(request.POST)
-			if form.is_valid():
-				form.save()
-				return redirect('/home/')
-			return redirect('/login/')
-
-
-
 	def home(request):
-		# logout(request)
 		username = password = ''
 		if request.POST:
 			print(str(request))
@@ -42,8 +32,8 @@ class Views(): #acts as a namespace
 
 			homeSwitch = {
 		        'student': 'home/student.html',
-		        'professor': 'homes/professor.html',
-		        'designer': 'homes/designer.html',
+		        'professor': 'home/professor.html',
+		        'designer': 'home/designer.html',
 		    };
 
 			#case role is student then...
@@ -51,3 +41,15 @@ class Views(): #acts as a namespace
                 'username': username, 
                 'password': password
             })
+
+	def saveRegistration(request):
+		if request.POST:
+			form = RegistryForm(request.POST)
+			print(request.POST)
+			if form.is_valid():
+				# form.save()
+				return Views.home(request)
+			return redirect('/login')
+
+
+

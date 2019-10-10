@@ -25,94 +25,118 @@
 			</section>
 		</div>
 
-		<form action="{% url 'saveRegistration' %}" method="POST">
-			{% csrf_token %}
-			{{ form }}
+		{% if form.errors %}
+			{% for field in form %}
+				{% for error in field.errors %}
+					<div class="alert alert-danger">
+					<strong>{{ error|escape }}</strong>
+					</div>
+				{% endfor %}
+			{% endfor %}
+			{% for error in form.non_field_errors %}
+				<div class="alert alert-danger">
+				<strong>{{ error|escape }}</strong>
+				</div>
+			{% endfor %}
+		{% endif %}
 
-			<div class="field">
-				<label class="label">Registering as...*</label>
-				<p class="control has-icons-left">
-					Student
-				</p>
+		<section class="section columns">
+			<div class="column"></div>
+			<div class="column">
+				<form action="{% url 'saveRegistration' %}" method="POST">
+					{% csrf_token %}
+					{{ form }}
+
+					<div class="field">
+					  <label class="label">Role*</label>
+					  <div class="control" name="role">
+						<input type="radio" name="role" value="designer"> Designer<br>
+						<input type="radio" name="role" value="professor"> Professor<br>
+					    <input type="radio" name="role" value="student"> Student
+					  </div>
+					</div>
+
+					<div class="field">
+						<label class="label">E-Mail*</label>
+						<p class="control has-icons-left">
+							<input class="input" type="text" placeholder="E-Mail" name="email">
+							<!-- <input class="input" type="email" placeholder="E-Mail" name="email"> -->
+							<span class="icon is-small is-left">
+								<i class="fas fa-lock"></i>
+							</span>
+						</p>
+					</div>
+
+					<div class="field">
+						<label class="label">Password*</label>
+						<p class="control has-icons-left">
+							<input class="input" type="password" placeholder="Password" name="password" id="password">
+							<span class="icon is-small is-left">
+								<i class="fas fa-lock"></i>
+							</span>
+						</p>
+					</div>
+
+					<div class="field">
+						<label class="label">Repeat Password*</label>
+						<p class="control has-icons-left">
+							<input class="input" type="password" placeholder="Password" id="repPassword">
+							<span class="icon is-small is-left">
+								<i class="fas fa-lock"></i>
+							</span>
+						</p>
+					</div>
+
+					<div class="field">
+					  <label class="label">Nickname*</label>
+					  <div class="control">
+					    <input class="input" type="text" placeholder="Username" name="username">
+					  </div>
+					</div>
+
+					<div class="field">
+					  <label class="label">Name*</label>
+					  <div class="control">
+					    <input class="input" type="text" placeholder="Name" name="name">
+					  </div>
+					</div>
+
+
+					<div class="field">
+					  <label class="label">Age*</label>
+					  <div class="control">
+					    <input class="input" type="number" placeholder="Age" name="age">
+					  </div>
+					</div>
+
+
+
+					<div class="field">
+					  <label class="label">Gender*</label>
+					  <div class="control" name="gender">
+					    <input type="radio" name="gender" value="male"> Male<br>
+						<input type="radio" name="gender" value="female"> Female<br>
+						<input type="radio" name="gender" value="other"> Other 
+					  </div>
+					</div>
+
+
+
+					<div class="field">
+					  <label class="label">Preferences</label>
+					  <div class="control">
+					    <input class="input" type="text" placeholder="Tell us a little about yourself..." name="preferences">
+					  </div>
+					</div>
+
+
+					<div class="control">
+						<input class="button is-link" type="submit" value="Enter" id="submitButton">
+					</div>
+				</form>
 			</div>
-
-			<div class="field">
-				<label class="label">E-Mail*</label>
-				<p class="control has-icons-left">
-					<input class="input" type="email" placeholder="E-Mail" name="email">
-					<span class="icon is-small is-left">
-						<i class="fas fa-lock"></i>
-					</span>
-				</p>
-			</div>
-
-			<div class="field">
-				<label class="label">Password*</label>
-				<p class="control has-icons-left">
-					<input class="input" type="password" placeholder="Password" name="password">
-					<span class="icon is-small is-left">
-						<i class="fas fa-lock"></i>
-					</span>
-				</p>
-			</div>
-
-			<div class="field">
-				<label class="label">Repeat Password*</label>
-				<p class="control has-icons-left">
-					<input class="input" type="password" placeholder="Password" name="repPassword">
-					<span class="icon is-small is-left">
-						<i class="fas fa-lock"></i>
-					</span>
-				</p>
-			</div>
-
-			<div class="field">
-			  <label class="label">Nickname*</label>
-			  <div class="control">
-			    <input class="input" type="text" placeholder="Username" name="username">
-			  </div>
-			</div>
-
-			<div class="field">
-			  <label class="label">Name*</label>
-			  <div class="control">
-			    <input class="input" type="text" placeholder="Name" name="name">
-			  </div>
-			</div>
-
-
-			<div class="field">
-			  <label class="label">Age*</label>
-			  <div class="control">
-			    <input class="input" type="number" placeholder="Age" name="age">
-			  </div>
-			</div>
-
-
-
-			<div class="field">
-			  <label class="label">Gender*</label>
-			  <div class="control" name="gender">
-			    <input type="radio" name="gender" value="male"> Male<br>
-				<input type="radio" name="gender" value="female"> Female<br>
-				<input type="radio" name="gender" value="other"> Other 
-			  </div>
-			</div>
-
-
-
-			<div class="field">
-			  <label class="label">Preferences</label>
-			  <div class="control">
-			    <input class="input" type="text" placeholder="Tell us a little about yourself..." name="preferences">
-			  </div>
-			</div>
-
-
-			<div class="control">
-				<input class="button is-link" type="submit" value="Enter">
-			</div>
-		</form>
+			<div class="column"></div>		
+		</section>
 
 	</body>
 	<script
@@ -120,5 +144,5 @@
 		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
 		crossorigin="anonymous"></script>
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
-	<script src="{% static "js/site.js" %}"></script>
+	<script src="{% static "js/registration.js" %}"></script>
 </html>
