@@ -60,7 +60,7 @@ class Views(): #acts as a namespace
 		    }
 
 			#case role is student then...
-			return render(request, homeSwitch[storedUser.role], storedUser)
+			return render(request, homeSwitch[storedUser.role], storedUser.__dict__)
             
 
 	def saveRegistration(request):
