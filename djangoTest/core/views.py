@@ -4,6 +4,8 @@ from django.views.generic import View
 from djangoTest.core.models import User
 from djangoTest.core.forms import RegistryForm
 
+from django.core.exceptions import ObjectDoesNotExist
+
 class Views(): #acts as a namespace
 
 	def login(request):
@@ -21,33 +23,54 @@ class Views(): #acts as a namespace
   #               'preferences': preferences,
   #           })
 
-	def home(request):
-		username = password = ''
-		if request.POST:
-			print(str(request))
-			username = request.POST.get('username')
-			password = request.POST.get('password')
+	def isRegistered(userLogin):
+		username = userLogin.POST.get('username')
+		if(not username == None):
+			try:
+				storedUser = User.objects.get(username = username)
+			except ObjectDoesNotExist as e:
+				print("one")
+				return False
+		email = userLogin.POST.get('email')
+		if(not email == None):
+			try:
+				storedUser = User.objects.get(email = email)
+			except ObjectDoesNotExist as e:
+				print("two")
+				return False
+		return True
 
-			role = "student";
+	def home(request):
+		username = request.POST.get('username')
+		password = request.POST.get('password')
+		if request.POST:
+			if(not Views.isRegistered(request)):
+				return redirect('/login')
+
+			storedUser = User.objects.get(username = username)
+			
+			# check if pass is right
+			if not storedUser.password == password:
+				return redirect('/login')
 
 			homeSwitch = {
 		        'student': 'home/student.html',
 		        'professor': 'home/professor.html',
 		        'designer': 'home/designer.html',
-		    };
+		    }
 
 			#case role is student then...
-			return render(request, homeSwitch[role], { 
-                'username': username, 
-                'password': password
-            })
+			return render(request, homeSwitch[storedUser.role], storedUser)
+            
 
 	def saveRegistration(request):
 		if request.POST:
+			if(Views.isRegistered(request)):
+				return redirect('/login')
 			form = RegistryForm(request.POST)
 			print(request.POST)
 			if form.is_valid():
-				# form.save()
+				form.save()
 				return Views.home(request)
 			return redirect('/login')
 

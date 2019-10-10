@@ -5,6 +5,7 @@ class User(models.Model):
     IMAGE = u'image'
 
     username = models.CharField(primary_key=True, max_length=255)
+    email = models.CharField(unique=True, max_length=255)
     password = models.CharField(max_length=255)
     role = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
@@ -12,8 +13,6 @@ class User(models.Model):
     gender = models.CharField(max_length=255)
     preferences = models.CharField(max_length=255)
     # email = models.URLField(max_length=500, null=True, blank=True)
-    email = models.CharField(max_length=255)
-
     class Meta:
         verbose_name = u'User'
         verbose_name_plural = u'User'
