@@ -35,13 +35,13 @@
 							<div class="media">
 								<div class="media-left">
 									<figure class="image is-48x48">
-										<img src="{% static "Images/avatar.png" %}" alt="Placeholder image">
+										<img src="{% static "images/avatar.png" %}" alt="Placeholder image">
 									</figure>
 								</div>
 								<div class="media-content">
 									<p class="title is-4">{{username}}</p>
-									<p class="subtitle is-6">John Bob Harlem Smith</p>
-									<p class="subtitle is-6">Student</p>
+									<p class="subtitle is-6">{{name}}</p>
+									<p class="subtitle is-6">{{role}}</p>
 								</div>
 							</div>
 						</section>
@@ -64,7 +64,7 @@
 						</div>
 					</div>
 					<div class="panel-block">
-						<img src="{% static "Images/mockedHabilityChart.png" %}"/>
+						<img src="{% static "images/mockedHabilityChart.png" %}"/>
 					</div>
 				</div>
 			</section>
@@ -76,14 +76,14 @@
 							<div class="column is-8">
 								<p>Interactions Profile</p>
 							</div>
-							<div class="column is-2">
-								<i class="fa fa-window-minimize" aria-hidden="true"></i>
+							<div class="column is-2 draggable">
+								<i class="fa fa-window-minimize " aria-hidden="true"></i>
 								<i class="fa fa-window-maximize" aria-hidden="true"></i>
 							</div>
 						</div>
 					</div>
 					<div class="panel-block">
-						<img src="{% static "Images/mockedInteractionsChart.png" %}"/>
+						<img src="{% static "images/mockedInteractionsChart.png" %}"/>
 					</div>
 				</div>
 			</section>
