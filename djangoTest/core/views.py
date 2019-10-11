@@ -8,8 +8,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 class Views(): #acts as a namespace
 
-	def login(request):
-		return render(request, 'login.html')
+	def home(request):
+		return render(request, 'home.html')
 
 	def registration(request):
 		return render(request, 'registration/student.html')
@@ -40,23 +40,23 @@ class Views(): #acts as a namespace
 				return False
 		return True
 
-	def home(request):
+	def dash(request):
 		username = request.POST.get('username')
 		password = request.POST.get('password')
 		if request.POST:
 			if(not Views.isRegistered(request)):
-				return redirect('/login')
+				return redirect('/home')
 
 			storedUser = User.objects.get(username = username)
-			
+
 			# check if pass is right
 			if not storedUser.password == password:
-				return redirect('/login')
+				return redirect('/home')
 
 			homeSwitch = {
-		        'student': 'home/student.html',
-		        'professor': 'home/professor.html',
-		        'designer': 'home/designer.html',
+		        'student': 'dash/student.html',
+		        'professor': 'dash/professor.html',
+		        'designer': 'dash/designer.html',
 		    }
 
 			#case role is student then...
@@ -66,13 +66,13 @@ class Views(): #acts as a namespace
 	def saveRegistration(request):
 		if request.POST:
 			if(Views.isRegistered(request)):
-				return redirect('/login')
+				return redirect('/home')
 			form = RegistryForm(request.POST)
 			print(request.POST)
 			if form.is_valid():
 				form.save()
-				return Views.home(request)
-			return redirect('/login')
+				return Views.dash(request)
+			return redirect('/home')
 
 
 

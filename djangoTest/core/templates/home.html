@@ -1,5 +1,5 @@
 {% load staticfiles %}
-{% block content %}
+{% include "common/header.html" %}  
 <!DOCTYPE html>
 <html>
 	<head>
@@ -38,7 +38,7 @@
 			<div class="column">
 				Already Have an account? Just Log in.
 				<div class="field is-grouped">
-					<form action="{% url 'home' %}" method="POST">
+					<form action="{% url 'dash' %}" method="POST">
 						{% csrf_token %}
     					{{ form }}
     					<div class="field">
@@ -77,4 +77,3 @@
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 	<script src="{% static "js/site.js" %}"></script>
 </html>
-{% endblock content %}

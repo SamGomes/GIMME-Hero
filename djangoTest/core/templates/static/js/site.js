@@ -11,4 +11,8 @@ $(document).ready(function(){
         $("#welcomeBanner").hide();
         $("#dashboard").show();
     }, 2000);
+
+    $(".minimizerButton").click(function(){
+    	
+    });
 });

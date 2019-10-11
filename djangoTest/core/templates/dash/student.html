@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% include "common/header.html" %}
 <!DOCTYPE html>
 <html>
 	<head>
@@ -16,7 +17,7 @@
 				<div class="hero-body">
 					<div class="has-text-centered; slider-content animated zoomIn">
 						<div>
-							<p class="title is-1 main-text">Welcome to GIMME-Hero, {{username}}</p>
+							<p class="title is-1 main-text">Welcome to GIMME, {{username}}</p>
 							<p class="subtitle is-4 main-text">A sophisticated Group Interactions Management Tool</p>
 						</div>
 					</div>
@@ -26,7 +27,7 @@
 		</div>
 		
 		<div class="dashboard">
-			<section class="section">
+			<!-- <section class="section">
 				<div class="panel; has-text-centered;  row-full; slider-content animated zoomIn">
 					<p class="panel-heading">Logged in as...</p>
 					<div class="panel-block">
@@ -48,18 +49,18 @@
 			                
 					</div>
 				</div>
-			</section>
+			</section> -->
 				
 			<section class="section">
 				<div class="panel; row-full slider-content animated zoomIn">
 					<div class="panel-heading">
 						<div class="columns is-vcentered">
 							<div class="column is-8">
-								<p>Ability State</p>
+								<p>Your Learning State</p>
 							</div>
-							<div class="column is-2">
-								<i class="fa fa-window-minimize" aria-hidden="true"></i>
-								<i class="fa fa-window-maximize" aria-hidden="true"></i>
+							<div class="is-pulled-left">
+								<i class="fa fa-window-minimize minimizerButton" aria-hidden="true"></i>
+								<i class="fa fa-window-maximize maximizerButton" aria-hidden="true"></i>
 							</div>
 						</div>
 					</div>
@@ -74,11 +75,11 @@
 					<div class="panel-heading">
 						<div class="columns is-vcentered">
 							<div class="column is-8">
-								<p>Interactions Profile</p>
+								<p>Your Interactions Profile</p>
 							</div>
-							<div class="column is-2 draggable">
-								<i class="fa fa-window-minimize " aria-hidden="true"></i>
-								<i class="fa fa-window-maximize" aria-hidden="true"></i>
+							<div class="is-pulled-left">
+								<i class="fa fa-window-minimize minimizerButton" aria-hidden="true"></i>
+								<i class="fa fa-window-maximize maximizerButton" aria-hidden="true"></i>
 							</div>
 						</div>
 					</div>
