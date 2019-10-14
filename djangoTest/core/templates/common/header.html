@@ -15,10 +15,16 @@
 
     <div id="navbarBasicExample" class="navbar-menu">
       <div class="navbar-start">
-        <a class="navbar-item" href="{% url 'home' %}">
-          Home
-        </a>
-
+        
+        {% if not username %}
+          <a class="navbar-item"  href="{% url 'home' %}">
+            Home
+          </a>
+        {% else %}
+          <a class="navbar-item"  href="{% url 'dash' %}">
+            Home
+          </a>
+        {% endif %}
         <a class="navbar-item">
           Documentation
         </a>
@@ -53,7 +59,7 @@
               <a class="button is-link" href="{% url 'registration' %}">
                 <strong>Register</strong>
               </a>
-              <a class="button is-light" href="{% url 'dash' %}">
+              <a class="button is-light" href="{% url 'login' %}">
                 Log In
               </a>
             </div>

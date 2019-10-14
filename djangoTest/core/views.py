@@ -5,23 +5,20 @@ from djangoTest.core.models import User
 from djangoTest.core.forms import RegistryForm
 
 from django.core.exceptions import ObjectDoesNotExist
+from ctypes import cdll
+
+import inspect
 
 class Views(): #acts as a namespace
 
 	def home(request):
 		return render(request, 'home.html')
 
+	def login(request):
+		return render(request, 'login.html')
+
 	def registration(request):
 		return render(request, 'registration/student.html')
-		# return render(request, 'registration/student.html', { 
-  #               'email': username, 
-  #               'password': username, 
-  #               'username': username, 
-  #               'name': name, 
-  #               'age': age,
-  #               'gender': gender,
-  #               'preferences': preferences,
-  #           })
 
 	def isRegistered(userLogin):
 		username = userLogin.POST.get('username')
@@ -53,14 +50,14 @@ class Views(): #acts as a namespace
 			if not storedUser.password == password:
 				return redirect('/home')
 
-			homeSwitch = {
+			dashSwitch = {
 		        'student': 'dash/student.html',
 		        'professor': 'dash/professor.html',
 		        'designer': 'dash/designer.html',
 		    }
 
 			#case role is student then...
-			return render(request, homeSwitch[storedUser.role], storedUser.__dict__)
+			return render(request, dashSwitch[storedUser.role], storedUser.__dict__)
             
 
 	def saveRegistration(request):
