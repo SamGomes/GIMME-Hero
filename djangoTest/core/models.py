@@ -13,10 +13,30 @@ class User(models.Model):
     age = models.CharField(max_length=255)
     gender = models.CharField(max_length=255)
     preferences = models.CharField(max_length=255)
+
+
+    currState = models.CharField(max_length=255)
+    pastModelIncreasesGrid = models.CharField(max_length=255)
+    personality = models.CharField(max_length=255)
+    currIncreases = models.CharField(max_length=255)
+
     # email = models.URLField(max_length=500, null=True, blank=True)
     class Meta:
         verbose_name = u'User'
         verbose_name_plural = u'User'
-        ordering = ('name',)
 
-   
+class Task(models.Model):
+    IMAGE = u'image'
+
+    id = models.CharField(primary_key=True, max_length=255)
+    
+    description = models.CharField(max_length=255)
+    minReqAbility = models.CharField(max_length=255)
+    profile = models.CharField(max_length=255)
+    profileImportance = models.CharField(max_length=255)
+    difficultyImportance = models.CharField(max_length=255)
+
+    # email = models.URLField(max_length=500, null=True, blank=True)
+    class Meta:
+        verbose_name = u'Task'
+        verbose_name_plural = u'Task'

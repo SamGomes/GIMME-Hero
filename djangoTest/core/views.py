@@ -1,13 +1,21 @@
+import sys
+print(sys.path)
+sys.path.append('/home/samgomes/Documents/doutoramento/reps/GIMME-rep/GIMME/GIMMECore/')
+
 # coding: utf-8
 from django.shortcuts import render,render_to_response, redirect
 from django.views.generic import View
-from djangoTest.core.models import User
-from djangoTest.core.forms import RegistryForm
 
 from django.core.exceptions import ObjectDoesNotExist
-from ctypes import cdll
 
-import inspect
+from GIMMECore import *
+from djangoTest.core.GIMMEModelBridges import *
+
+playerBridge = CustomPlayerModelBridge()
+taskBridge = CustomTaskModelBridge()
+
+adaptation = Adaptation()
+adaptation.init(KNNRegression(5), RandomConfigsGen(), WeightedFitness(PlayerCharacteristics(ability=0.5, engagement=0.5)), playerBridge, taskBridge, name="", numberOfConfigChoices=50, maxNumberOfPlayersPerGroup = 5, difficultyWeight = 0.5, profileWeight=0.5)
 
 class Views(): #acts as a namespace
 
@@ -64,12 +72,37 @@ class Views(): #acts as a namespace
 		if request.POST:
 			if(Views.isRegistered(request)):
 				return redirect('/home')
-			form = RegistryForm(request.POST)
 			print(request.POST)
-			if form.is_valid():
-				form.save()
-				return Views.dash(request)
-			return redirect('/home')
+			
+			entry = User() 
+
+			requestInfo = request.POST
+
+			entry.username = requestInfo["username"]
+			# entry.isAuthenticated = requestInfo["isAuthenticated"]
+			entry.email = requestInfo["email"]
+			entry.password = requestInfo["password"]
+			entry.role = requestInfo["role"]
+			entry.age = requestInfo["age"]
+			entry.gender = requestInfo["gender"]
+			entry.preferences = requestInfo["preferences"]
+
+			# Adaptation stuff
+			entry.currState = json.dumps(PlayerState())
+			entry.pastModelIncreasesGrid = json.dumps(PlayerStateGrid())
+			entry.personality = json.dumps(InteractionProfile())
+			entry.currIncreases = json.dumps(InteractionProfile())
+			print(requestInfo)
+			entry.save()
+			
+			# playerBridge.registerNewPlayer(playerId, name, currState, pastModelIncreasesGrid, currModelIncreases, personality)
+			return Views.dash(request)
+
+	def newTask(request):
+		iteration = adaptation.iterate()
+		for i in range(len(iteration.groups)):
+			currGroup = iteration.groups[i]
+			print(currGroup.__dict__)
 
 
 
