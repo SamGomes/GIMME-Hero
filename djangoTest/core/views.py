@@ -1,5 +1,4 @@
 import sys
-print(sys.path)
 sys.path.append('/home/samgomes/Documents/doutoramento/reps/GIMME-rep/GIMME/GIMMECore/')
 
 # coding: utf-8
@@ -16,7 +15,7 @@ taskBridge = CustomTaskModelBridge()
 
 adaptation = Adaptation()
 adaptation.init(KNNRegression(5), RandomConfigsGen(), WeightedFitness(PlayerCharacteristics(ability=0.5, engagement=0.5)), playerBridge, taskBridge, name="", numberOfConfigChoices=50, maxNumberOfPlayersPerGroup = 5, difficultyWeight = 0.5, profileWeight=0.5)
-
+adaptation.iterate()
 class Views(): #acts as a namespace
 
 	def home(request):
@@ -34,14 +33,14 @@ class Views(): #acts as a namespace
 			try:
 				storedUser = User.objects.get(username = username)
 			except ObjectDoesNotExist as e:
-				print("one")
+				print("user does not exist!")
 				return False
 		email = userLogin.POST.get('email')
 		if(not email == None):
 			try:
 				storedUser = User.objects.get(email = email)
 			except ObjectDoesNotExist as e:
-				print("two")
+				print("user exists!")
 				return False
 		return True
 
@@ -72,7 +71,6 @@ class Views(): #acts as a namespace
 		if request.POST:
 			if(Views.isRegistered(request)):
 				return redirect('/home')
-			print(request.POST)
 			
 			entry = User() 
 
@@ -86,13 +84,12 @@ class Views(): #acts as a namespace
 			entry.age = requestInfo["age"]
 			entry.gender = requestInfo["gender"]
 			entry.preferences = requestInfo["preferences"]
+			entry.fullName = requestInfo["fullName"]
 
 			# Adaptation stuff
-			entry.currState = json.dumps(PlayerState())
-			entry.pastModelIncreasesGrid = json.dumps(PlayerStateGrid())
-			entry.personality = json.dumps(InteractionProfile())
-			entry.currIncreases = json.dumps(InteractionProfile())
-			print(requestInfo)
+			entry.currState = json.dumps(PlayerState(), default=lambda o: o.__dict__, sort_keys=True)
+			entry.pastModelIncreasesGrid = json.dumps(PlayerStateGrid(), default=lambda o: o.__dict__, sort_keys=True)
+			entry.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
 			entry.save()
 			
 			# playerBridge.registerNewPlayer(playerId, name, currState, pastModelIncreasesGrid, currModelIncreases, personality)
@@ -102,7 +99,6 @@ class Views(): #acts as a namespace
 		iteration = adaptation.iterate()
 		for i in range(len(iteration.groups)):
 			currGroup = iteration.groups[i]
-			print(currGroup.__dict__)
 
 
 

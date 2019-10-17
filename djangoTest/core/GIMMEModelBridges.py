@@ -29,43 +29,54 @@ class CustomTaskModelBridge(TaskModelBridge):
 
 class CustomPlayerModelBridge(PlayerModelBridge):
 	
-	def saveplayerIncreases(self, playerId, stateIncreases):
-		players[int(playerId)].pastModelIncreasesGrid.pushToGrid(stateIncreases)
+	def savePlayerState(self, playerId, newState):
+		player = User(playerId=playerId).objects[0]
+		player.currState = newState
+		player.save(update_fields=["active"])
 
 	def resetPlayer(self, playerId):
 		return 0
 
 
 	def getSelectedPlayerIds(self):
-		return [int(i) for i in range(100)]
+		return [player.playerId for player in User.objects.all()]
 
 
 	def getPlayerName(self, playerId):
-		return players[int(playerId)].name
+		player = User(playerId=playerId).objects[0]
+		return player.fullName
 
 	def getPlayerCurrState(self,  playerId):
-		return players[int(playerId)].currState
+		player = User(playerId=playerId).objects[0]
+		return player.currState
 
 	def getPlayerCurrProfile(self,  playerId):
-		return players[int(playerId)].currState.profile
+		player = User(playerId=playerId).objects[0]
+		return player.currState.profile
 
 	def getPlayerPastModelIncreases(self, playerId):
-		return players[int(playerId)].pastModelIncreasesGrid.cells
+		player = User(playerId=playerId).objects[0]
+		return player.pastModelIncreasesGrid.cells
 
 	def getPlayerCurrCharacteristics(self, playerId):
-		return players[int(playerId)].currState.characteristics
+		player = User(playerId=playerId).objects[0]
+		return player.currState.characteristics
 	
 	def getPlayerPersonality(self, playerId):
-		return players[int(playerId)].personality
+		player = User(playerId=playerId).objects[0]
+		return player.personality
 
 	def setPlayerPersonality(self, playerId, personality):
-		players[int(playerId)].personality = personality
+		player = User(playerId=playerId).objects[0]
+		player.personality = personality
 
 
 	def setPlayerCharacteristics(self, playerId, characteristics):
-		players[int(playerId)].currState.characteristics = characteristics
+		player = User(playerId=playerId).objects[0]
+		player.currState.characteristics = characteristics
 
 	def setPlayerCurrProfile(self, playerId, profile):
-		players[int(playerId)].currState.profile = profile
+		player = User(playerId=playerId).objects[0]
+		player.currState.profile = profile
 
 

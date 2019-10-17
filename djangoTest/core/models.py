@@ -9,7 +9,8 @@ class User(models.Model):
     email = models.CharField(unique=True, max_length=255)
     password = models.CharField(max_length=255)
     role = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)
+    
+    fullName = models.CharField(max_length=255)
     age = models.CharField(max_length=255)
     gender = models.CharField(max_length=255)
     preferences = models.CharField(max_length=255)
@@ -18,12 +19,11 @@ class User(models.Model):
     currState = models.CharField(max_length=255)
     pastModelIncreasesGrid = models.CharField(max_length=255)
     personality = models.CharField(max_length=255)
-    currIncreases = models.CharField(max_length=255)
 
     # email = models.URLField(max_length=500, null=True, blank=True)
-    class Meta:
-        verbose_name = u'User'
-        verbose_name_plural = u'User'
+    # class Meta:
+    #     verbose_name = u'User'
+    #     verbose_name_plural = u'User'
 
 class Task(models.Model):
     IMAGE = u'image'
@@ -37,6 +37,6 @@ class Task(models.Model):
     difficultyImportance = models.CharField(max_length=255)
 
     # email = models.URLField(max_length=500, null=True, blank=True)
-    class Meta:
-        verbose_name = u'Task'
-        verbose_name_plural = u'Task'
+    # class Meta:
+    #     verbose_name = u'Task'
+    #     verbose_name_plural = u'Task'
