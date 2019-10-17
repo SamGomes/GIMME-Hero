@@ -15,7 +15,7 @@ taskBridge = CustomTaskModelBridge()
 
 adaptation = Adaptation()
 adaptation.init(KNNRegression(5), RandomConfigsGen(), WeightedFitness(PlayerCharacteristics(ability=0.5, engagement=0.5)), playerBridge, taskBridge, name="", numberOfConfigChoices=50, maxNumberOfPlayersPerGroup = 5, difficultyWeight = 0.5, profileWeight=0.5)
-adaptation.iterate()
+# adaptation.iterate()
 class Views(): #acts as a namespace
 
 	def home(request):
@@ -90,15 +90,18 @@ class Views(): #acts as a namespace
 			entry.currState = json.dumps(PlayerState(), default=lambda o: o.__dict__, sort_keys=True)
 			entry.pastModelIncreasesGrid = json.dumps(PlayerStateGrid(), default=lambda o: o.__dict__, sort_keys=True)
 			entry.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
+			print(entry.__dict__)
 			entry.save()
 			
 			# playerBridge.registerNewPlayer(playerId, name, currState, pastModelIncreasesGrid, currModelIncreases, personality)
 			return Views.dash(request)
 
 	def newTask(request):
+		print(adaptation.__dict__)
 		iteration = adaptation.iterate()
 		for i in range(len(iteration.groups)):
 			currGroup = iteration.groups[i]
+			print(currGroup.__dict__)
 
 
 

@@ -30,7 +30,7 @@ class CustomTaskModelBridge(TaskModelBridge):
 class CustomPlayerModelBridge(PlayerModelBridge):
 	
 	def savePlayerState(self, playerId, newState):
-		player = User(playerId=playerId).objects[0]
+		player = User(username=playerId).objects[0]
 		player.currState = newState
 		player.save(update_fields=["active"])
 
@@ -39,44 +39,47 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 
 	def getSelectedPlayerIds(self):
-		return [player.playerId for player in User.objects.all()]
+		return [player.username for player in User.objects.all()]
 
 
 	def getPlayerName(self, playerId):
-		player = User(playerId=playerId).objects[0]
+		player = User(username=playerId).objects[0]
 		return player.fullName
 
 	def getPlayerCurrState(self,  playerId):
-		player = User(playerId=playerId).objects[0]
+		player = User(username=playerId).objects[0]
 		return player.currState
 
 	def getPlayerCurrProfile(self,  playerId):
-		player = User(playerId=playerId).objects[0]
+		player = User(username=playerId).objects[0]
 		return player.currState.profile
 
 	def getPlayerPastModelIncreases(self, playerId):
-		player = User(playerId=playerId).objects[0]
-		return player.pastModelIncreasesGrid.cells
+		player = User(username=playerId).objects[0]
+		return json.loads(player.pastModelIncreasesGrid.cells)
 
 	def getPlayerCurrCharacteristics(self, playerId):
-		player = User(playerId=playerId).objects[0]
-		return player.currState.characteristics
+		player = User(username=playerId).objects[0]
+		return json.loads(player.currState.characteristics)
 	
 	def getPlayerPersonality(self, playerId):
-		player = User(playerId=playerId).objects[0]
-		return player.personality
+		player = User(username=playerId).objects[0]
+		return json.loads(layer.personality)
 
 	def setPlayerPersonality(self, playerId, personality):
-		player = User(playerId=playerId).objects[0]
-		player.personality = personality
+		player = User(username=playerId).objects[0]
+		player.personality = json.dumps(personality, default=lambda o: o.__dict__, sort_keys=True)
+		player.save(update_fields=["active"])
 
 
 	def setPlayerCharacteristics(self, playerId, characteristics):
-		player = User(playerId=playerId).objects[0]
-		player.currState.characteristics = characteristics
+		player = User(username=playerId).objects[0]
+		player.currState.characteristics = json.dumps(characteristics, default=lambda o: o.__dict__, sort_keys=True)
+		player.save(update_fields=["active"])
 
 	def setPlayerCurrProfile(self, playerId, profile):
-		player = User(playerId=playerId).objects[0]
-		player.currState.profile = profile
+		player = User(username=playerId).objects[0]
+		player.currState.profile = json.dumps(profile, default=lambda o: o.__dict__, sort_keys=True)
+		player.save(update_fields=["active"])
 
 
