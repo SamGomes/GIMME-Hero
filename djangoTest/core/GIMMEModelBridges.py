@@ -7,6 +7,8 @@ from GIMMECore import *
 
 from djangoTest.core.models import User
 
+def _json_object_hook(d): return object('X', d.keys())(*d.values())
+def json2obj(data): return json.loads(data)
 
 
 class CustomTaskModelBridge(TaskModelBridge):
@@ -30,7 +32,7 @@ class CustomTaskModelBridge(TaskModelBridge):
 class CustomPlayerModelBridge(PlayerModelBridge):
 	
 	def savePlayerState(self, playerId, newState):
-		player = User(username=playerId).objects[0]
+		player = User.objects.get(username = playerId)
 		player.currState = newState
 		player.save(update_fields=["active"])
 
@@ -41,45 +43,48 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 	def getSelectedPlayerIds(self):
 		return [player.username for player in User.objects.all()]
 
-
 	def getPlayerName(self, playerId):
-		player = User(username=playerId).objects[0]
+		player = User.objects.get(username=playerId)
 		return player.fullName
 
 	def getPlayerCurrState(self,  playerId):
-		player = User(username=playerId).objects[0]
-		return player.currState
+		player = User.objects.get(username=playerId)
+		return json2obj(player.currState)
 
 	def getPlayerCurrProfile(self,  playerId):
-		player = User(username=playerId).objects[0]
-		return player.currState.profile
+		player = User.objects.get(username=playerId)
+		return json2obj(player.currState.profile)
 
 	def getPlayerPastModelIncreases(self, playerId):
-		player = User(username=playerId).objects[0]
-		return json.loads(player.pastModelIncreasesGrid.cells)
+		player = User.objects.get(username=playerId)
+		return json2obj(player.pastModelIncreasesGrid).cells
 
 	def getPlayerCurrCharacteristics(self, playerId):
-		player = User(username=playerId).objects[0]
-		return json.loads(player.currState.characteristics)
+		player = User.objects.get(username=playerId)
+		return json2obj(player.currState).characteristics
 	
 	def getPlayerPersonality(self, playerId):
-		player = User(username=playerId).objects[0]
-		return json.loads(layer.personality)
+		player = User.objects.get(username=playerId)
+		return json2obj(player.personality)
 
 	def setPlayerPersonality(self, playerId, personality):
-		player = User(username=playerId).objects[0]
-		player.personality = json.dumps(personality, default=lambda o: o.__dict__, sort_keys=True)
+		player = User.objects.get(username=playerId)
+		player.personality = json.dumps(personality, default=lambda o: o.__dict__)
 		player.save(update_fields=["active"])
 
 
 	def setPlayerCharacteristics(self, playerId, characteristics):
-		player = User(username=playerId).objects[0]
-		player.currState.characteristics = json.dumps(characteristics, default=lambda o: o.__dict__, sort_keys=True)
+		player = User.objects.get(username=playerId)
+		currState = self.getPlayerCurrState(playerId)
+		currState.characteristics = characteristics
+		player.currState = json.dumps(currState, default=lambda o: o.__dict__)
 		player.save(update_fields=["active"])
 
 	def setPlayerCurrProfile(self, playerId, profile):
-		player = User(username=playerId).objects[0]
-		player.currState.profile = json.dumps(profile, default=lambda o: o.__dict__, sort_keys=True)
+		player = User.objects.get(username=playerId)
+		currState = self.getPlayerCurrState(playerId)
+		currState.profile = profile
+		player.currState = json.dumps(currState, default=lambda o: o.__dict__)
 		player.save(update_fields=["active"])
 
 

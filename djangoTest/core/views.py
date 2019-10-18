@@ -90,18 +90,16 @@ class Views(): #acts as a namespace
 			entry.currState = json.dumps(PlayerState(), default=lambda o: o.__dict__, sort_keys=True)
 			entry.pastModelIncreasesGrid = json.dumps(PlayerStateGrid(), default=lambda o: o.__dict__, sort_keys=True)
 			entry.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
-			print(entry.__dict__)
 			entry.save()
 			
 			# playerBridge.registerNewPlayer(playerId, name, currState, pastModelIncreasesGrid, currModelIncreases, personality)
 			return Views.dash(request)
 
 	def newTask(request):
-		print(adaptation.__dict__)
 		iteration = adaptation.iterate()
 		for i in range(len(iteration.groups)):
 			currGroup = iteration.groups[i]
-			print(currGroup.__dict__)
+			# print(currGroup.__dict__)
 
 
 
