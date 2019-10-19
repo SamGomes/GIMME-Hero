@@ -1,0 +1,37 @@
+{% load staticfiles %}
+{% include "common/header.html" %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>GIMME</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/assets/owl.carousel.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.1.20/jquery.fancybox.min.css" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+	</head>
+	<body class="layout-default">
+		
+		<div id="welcomeBanner">
+			<section class="hero main_hero is-fullheight">
+				<div class="hero-body">
+					<div class="has-text-centered; slider-content animated zoomIn">
+						<div>
+							<p class="title is-1 main-text">Lets do a new activity, {{username}}</p>
+						</div>
+					</div>
+				</div>
+
+			</section>
+		</div>
+		
+		<div class="dashboard">
+		</div>
+	</body>
+	<script
+		src="https://code.jquery.com/jquery-3.2.1.min.js"
+		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+		crossorigin="anonymous"></script>
+	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+	<script src="{% static "js/general.js" %}"></script>
+</html>

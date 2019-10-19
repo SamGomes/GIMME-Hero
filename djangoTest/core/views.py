@@ -16,6 +16,9 @@ taskBridge = CustomTaskModelBridge()
 adaptation = Adaptation()
 adaptation.init(KNNRegression(5), RandomConfigsGen(), WeightedFitness(PlayerCharacteristics(ability=0.5, engagement=0.5)), playerBridge, taskBridge, name="", numberOfConfigChoices=50, maxNumberOfPlayersPerGroup = 5, difficultyWeight = 0.5, profileWeight=0.5)
 # adaptation.iterate()
+
+currSelectedPlayers = []
+
 class Views(): #acts as a namespace
 
 	def home(request):
@@ -66,7 +69,6 @@ class Views(): #acts as a namespace
 			#case role is student then...
 			return render(request, dashSwitch[storedUser.role], storedUser.__dict__)
             
-
 	def saveRegistration(request):
 		if request.POST:
 			if(Views.isRegistered(request)):
@@ -95,11 +97,11 @@ class Views(): #acts as a namespace
 			# playerBridge.registerNewPlayer(playerId, name, currState, pastModelIncreasesGrid, currModelIncreases, personality)
 			return Views.dash(request)
 
-	def newTask(request):
-		iteration = adaptation.iterate()
-		for i in range(len(iteration.groups)):
-			currGroup = iteration.groups[i]
-			# print(currGroup.__dict__)
+	# functioning methods
+	def newAvailablePlayer(request):
+		if request.POST:
+			currSelectedPlayers.append(request.POST.get('username'))
+		return Views.dash(request)
 
 
 
