@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/home/samgomes/Documents/doutoramento/reps/GIMME-rep/GIMME/GIMMECore/')
+sys.path.append('../GIMME/GIMMECore/')
 
 # coding: utf-8
 from django.shortcuts import render,render_to_response, redirect
@@ -22,56 +22,84 @@ currSelectedPlayers = []
 class Views(): #acts as a namespace
 
 	def home(request):
+		if(isLoggedIn(request)):
+			return Views.dash(request)
 		return render(request, 'home.html')
 
 	def login(request):
+		if(isLoggedIn(request)):
+			return Views.dash(request)
 		return render(request, 'login.html')
+	def loginCheck(request):
+		username = request.POST.get('username')
+		email = request.POST.get('email')
+		password = request.POST.get('password')
+
+		if(not Views.isRegistered(username, email)):
+			return redirect('/home')
+
+		storedUser = User.objects.get(username = username)
+
+		# check if pass is right
+		if not storedUser.password == password:
+			return redirect('/home')
+
+		request.session = storedUser.__dict__
+		return redirect('/dash')
+
+	def logout(request):
+	    try:
+	        request.flush()
+	    except KeyError:
+	        pass
+	    return HttpResponse("You're already logged out.")
 
 	def registration(request):
-		return render(request, 'registration/student.html')
+		return render(request, 'student/registration.html')
 
-	def isRegistered(userLogin):
-		username = userLogin.POST.get('username')
+	def isRegistered(username, email):
 		if(not username == None):
 			try:
 				storedUser = User.objects.get(username = username)
 			except ObjectDoesNotExist as e:
 				print("user does not exist!")
 				return False
-		email = userLogin.POST.get('email')
+		else:
+			return False
 		if(not email == None):
 			try:
 				storedUser = User.objects.get(email = email)
 			except ObjectDoesNotExist as e:
-				print("user exists!")
+				print("user  does not exist!")
 				return False
+		else:
+			return False
 		return True
 
+	def isLoggedIn(request):
+		return ((request.session.get('username')!=None) and (request.session.get('email')!=None))
+
 	def dash(request):
-		username = request.POST.get('username')
-		password = request.POST.get('password')
-		if request.POST:
-			if(not Views.isRegistered(request)):
-				return redirect('/home')
+		print(len(request.session.keys()))
 
-			storedUser = User.objects.get(username = username)
+		
+		print(request.session)
 
-			# check if pass is right
-			if not storedUser.password == password:
-				return redirect('/home')
+		dashSwitch = {
+	        'student': 'student/dash.html',
+	        'professor': 'professor/dash.html',
+	        'designer': 'designer/dash.html',
+	    }
 
-			dashSwitch = {
-		        'student': 'dash/student.html',
-		        'professor': 'dash/professor.html',
-		        'designer': 'dash/designer.html',
-		    }
-
-			#case role is student then...
-			return render(request, dashSwitch[storedUser.role], storedUser.__dict__)
+		#case role is student then...
+		return render(request, dashSwitch[storedUser.role], storedUser.__dict__)
             
 	def saveRegistration(request):
 		if request.POST:
-			if(Views.isRegistered(request)):
+			username = request.POST.get('username')
+			email = request.POST.get('email')
+			password = request.POST.get('password')
+			if(Views.isRegistered(username, email)):
 				return redirect('/home')
 			
 			entry = User() 
@@ -99,9 +127,8 @@ class Views(): #acts as a namespace
 
 	# functioning methods
 	def newAvailablePlayer(request):
-		if request.POST:
-			currSelectedPlayers.append(request.POST.get('username'))
-		return Views.dash(request)
+		currSelectedPlayers.append(request.session.get('username'))
+		return render(request, 'student/waiting.html')
 
 
 

@@ -38,7 +38,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 
 	def getSelectedPlayerIds(self):
-		return [player.username for player in User.objects.all()]
+		return Views.currSelectedPlayers
 
 	def getPlayerName(self, playerId):
 		player = User.objects.get(username=playerId)

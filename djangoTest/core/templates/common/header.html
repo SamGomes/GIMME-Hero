@@ -16,15 +16,9 @@
     <div id="navbarBasicExample" class="navbar-menu">
       <div class="navbar-start">
         
-        {% if not username %}
-          <a class="navbar-item"  href="{% url 'home' %}">
-            Home
-          </a>
-        {% else %}
-          <a class="navbar-item"  href="{% url 'dash' %}">
-            Home
-          </a>
-        {% endif %}
+        <a class="navbar-item"  href="{% url 'home' %}">
+          Home
+        </a>
         <a class="navbar-item">
           Documentation
         </a>
@@ -52,7 +46,10 @@
         </div>
       </div>
 
-      {% if not username %}
+
+      print {{request.session.keys }}
+
+      {% if not request.session.username %}
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
@@ -66,14 +63,43 @@
           </div>
         </div>
       {% else %}
-        <div class="navbar-item has-dropdown is-hoverable">
+        <div id="accountInfoModel" class="modal">
+          <div class="modal-background"></div>
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Modal title</p>
+              <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+              Account settings:
+
+            </section>
+            <footer class="modal-card-foot">
+              <button class="button is-success">Save changes</button>
+              <button class="button">Cancel</button>
+            </footer>
+          </div>
+        </div>
+        <div class="navbar-item center-left is-hoverable">
           <figure class="image is-48x48">
             <img src="{% static "images/avatar.png" %}" alt="Placeholder image">
           </figure>
-          <div class="navbar-dropdown is-pulled-left">
-            <a class="navbar-item">
-              Account settings
-            </a>
+          <div class="navbar-dropdown is-right">
+
+            <p class="navbar-item columns" >
+              <div class="column">
+                <strong>Logged in as a {{request.session.role}} called {{request.session.fullName}}</strong> 
+              </div>
+              <div class="column">
+                <strong>username:</strong> {{request.session.username}}
+              </div>
+              <div class="column">
+                <strong>email:</strong> {{request.session.email}}
+              </div>
+              <div class="column">
+                <button class="button is-success modal-button" data-target="accountInfoModel">Account settings</button>
+              </div>
+            </p>
           </div>
         </div>
       {% endif %}

@@ -12,7 +12,7 @@
 	</head>
 	<body class="layout-default">
 		
-		<div id="welcomeBanner">
+		<!-- <div id="welcomeBanner">
 			<section class="hero main_hero is-fullheight">
 				<div class="hero-body">
 					<div class="has-text-centered; slider-content animated zoomIn">
@@ -25,8 +25,8 @@
 
 			</section>
 		</div>
-		
-		<div class="dashboard">
+		 -->
+		<div id="dashboard">
 			<!-- <section class="section">
 				<div class="panel; has-text-centered;  row-full; slider-content animated zoomIn">
 					<p class="panel-heading">Logged in as...</p>
@@ -83,8 +83,8 @@
 							</div>
 						</div>
 					</div>
-					<div class="panel-block">
-						<img src="{% static "images/mockedInteractionsChart.png" %}"/>
+					<div class="panel-block" id="interactionsProfilePlot">
+						<!-- <img src="{% static "images/mockedInteractionsChart.png" %}"/> -->
 					</div>
 				</div>
 			</section>
@@ -101,4 +101,8 @@
 		crossorigin="anonymous"></script>
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 	<script src="{% static "js/general.js" %}"></script>
+	<script src="{% static "js/plots.js" %}"></script>
+	<script>
+		buildInteractionsProfilePlot("interactionsProfilePlot",{{}})
+	</script>
 </html>
