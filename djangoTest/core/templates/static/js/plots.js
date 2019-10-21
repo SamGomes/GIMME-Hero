@@ -1,14 +1,15 @@
-function buildInteractionsProfilePlot(data){
-	var data = [
-        {"x": -123, "y": 63, "c": "#50C2E3", "name": "A"},
-        {"x": 71, "y": 0, "c": "#50C2E3", "name": "B"},
-        {"x": 3845, "y": 77, "c": "#50C2E3", "name": "C"},
-        {"x": 3176, "y": 90, "c": "#50C2E3", "name": "D"},
-        {"x": -17, "y": 56, "c": "#50C2E3", "name": "D"},
-        {"x": 1357, "y": 58, "c": "#50C2E3", "name": "E"},
-        {"x": 7684, "y": 75, "c": "#50C2E3", "name": "F"}
-    ];
-
+var buildInteractionsProfilePlot = function(data){
+	// var data = [
+ //        {"x": 0.5, "y": 0.7, "c": "#50C2E3", "name": "A"},
+ //        {"x": 0, "y": 0.25, "c": "#50C2E3", "name": "B"},
+ //        {"x": 0.45, "y": 0.77, "c": "#50C2E3", "name": "C"},
+ //        {"x": 0.6, "y": 0.90, "c": "#50C2E3", "name": "D"},
+ //        {"x": -17, "y": 0.56, "c": "#50C2E3", "name": "D"},
+ //        {"x": 0.57, "y": 0.58, "c": "#50C2E3", "name": "E"},
+ //        {"x": 0.84, "y": 0.75, "c": "#50C2E3", "name": "F"}
+ //    ];
+    console.log(data);
+    
     var width = 500;
     var height = 500;
 
@@ -19,25 +20,17 @@ function buildInteractionsProfilePlot(data){
         left: 40
     };
 
-    var x = d3.scale.linear().range([0, width]);
-    var y = d3.scale.linear().range([height, 0]);
+    var x = d3.scaleLinear().range([0, width]);
+    var y = d3.scaleLinear().range([height, 0]);
 
-    var minX = _(data).orderBy('x').first().x;
-    var maxX = _(data).orderBy('x').last().x;
+    x.domain([0,1]);
+    y.domain([0,1]);
 
-    x.domain([minX - 500, maxX + 500]);
-    y.domain([0, 100]);
+    var xAxis = d3.axisTop(x);
 
-    var xAxis = d3.svg.axis()
-            .scale(x)
-            .orient("bottom");
+    var yAxis = d3.axisRight(y);
 
-    var yAxis = d3.svg.axis()
-            .scale(y)
-            .orient("left");
-
-    var svg = $("#interactionsProfilePlot")
-            .select("#d3")
+    var svg = d3.select("#interactionsProfilePlot")
             .append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
@@ -64,21 +57,21 @@ function buildInteractionsProfilePlot(data){
             .attr("class", "dot")
             .attr("r", 10)
             .attr("cx", function (d) {
-                return x(d.x);
+                return x(d.K_i);
             })
             .attr("cy", function (d) {
-                return y(d.y);
+                return y(d.K_cp);
             })
             .style("fill", function (d) {
                 return d.c;
             });
-            gdots.append("text").text(function(d){
-            	return d.name;
-            })
-            .attr("x", function (d) {
-                return x(d.x);
-            })
-            .attr("y", function (d) {
-                return y(d.y);
-            });
+            // gdots.append("text").text(function(d){
+            // 	return d.name;
+            // })
+            // .attr("x", function (d) {
+            //     return x(d.K_i);
+            // })
+            // .attr("y", function (d) {
+            //     return y(d.K_cp);
+            // });
 }
