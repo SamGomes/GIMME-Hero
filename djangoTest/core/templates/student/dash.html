@@ -12,20 +12,19 @@
 	</head>
 	<body class="layout-default">
 		
-		<!-- <div id="welcomeBanner">
+		<div id="welcomeBanner">
 			<section class="hero main_hero is-fullheight">
 				<div class="hero-body">
 					<div class="has-text-centered; slider-content animated zoomIn">
 						<div>
-							<p class="title is-1 main-text">Welcome to GIMME, {{username}}</p>
+							<p class="title is-1 main-text">Welcome to GIMME-Web, {{request.session.username}}</p>
 							<p class="subtitle is-4 main-text">A sophisticated Group Interactions Management Tool</p>
 						</div>
 					</div>
 				</div>
-
 			</section>
 		</div>
-		 -->
+		
 		<div id="dashboard">
 			<!-- <section class="section">
 				<div class="panel; has-text-centered;  row-full; slider-content animated zoomIn">
@@ -117,8 +116,6 @@
 			buildInteractionsProfilePlot( "interactionsProfilePlot", pastModelIncreasesGrid.cells );
 			
 			var parsedCharacteristics = parseSessionAttribute("{{request.session.currState}}").characteristics;
-			parsedCharacteristics.engagement=0.9
-			parsedCharacteristics.ability=0.4
 			var attributes = Object.keys(parsedCharacteristics) 
 			var values = Object.values(parsedCharacteristics)
 			parsedCharacteristics = []

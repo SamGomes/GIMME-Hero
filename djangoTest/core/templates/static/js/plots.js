@@ -54,16 +54,18 @@ var buildInteractionsProfilePlot = function(canvasId, data){
             })
             .style("fill", function (d) {
                 return "#50C2E3";
+            })
+            .on("mouseover",function(d){
+                d3.select(this).append("text").text(function(d){
+                            return d.name;
+                        })
+                        .attr("x", function (d) {
+                            return x(d.K_i);
+                        })
+                        .attr("y", function (d) {
+                            return y(d.K_cp);
+                        });
             });
-            // gdots.append("text").text(function(d){
-            // 	return d.name;
-            // })
-            // .attr("x", function (d) {
-            //     return x(d.K_i);
-            // })
-            // .attr("y", function (d) {
-            //     return y(d.K_cp);
-            // });
 }
 
 

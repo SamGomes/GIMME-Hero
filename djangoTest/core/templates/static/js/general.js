@@ -45,7 +45,7 @@
     {
         $("#welcomeBanner").hide();
         $("#dashboard").show();
-    }, 0);
+    }, 1500);
 
     $(".minimizerButton").click(function(){
     	
