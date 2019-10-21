@@ -1,5 +1,5 @@
 <div class="field is-grouped">
-	<form action="{% url 'dash' %}" method="POST">
+	<form action="{% url 'loginCheck' %}" method="POST">
 		{% csrf_token %}
 		{{ form }}
 		<div class="field">

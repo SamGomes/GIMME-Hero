@@ -47,7 +47,6 @@
       </div>
 
 
-      print {{request.session.keys }}
 
       {% if not request.session.username %}
         <div class="navbar-end">
@@ -98,6 +97,7 @@
               </div>
               <div class="column">
                 <button class="button is-success modal-button" data-target="accountInfoModel">Account settings</button>
+                <a href="{% url 'logout' %}"><button class="button is-success modal-button">Logout</button></a>
               </div>
             </p>
           </div>

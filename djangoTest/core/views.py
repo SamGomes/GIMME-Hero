@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../GIMME/GIMMECore/')
+sys.path.append('../../GIMME/GIMME/GIMMECore/')
 
 # coding: utf-8
 from django.shortcuts import render,render_to_response, redirect
@@ -9,6 +9,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from GIMMECore import *
 from djangoTest.core.GIMMEModelBridges import *
+
+from django.http import HttpResponse
 
 playerBridge = CustomPlayerModelBridge()
 taskBridge = CustomTaskModelBridge()
@@ -22,14 +24,16 @@ currSelectedPlayers = []
 class Views(): #acts as a namespace
 
 	def home(request):
-		if(isLoggedIn(request)):
+		if(Views.isLoggedIn(request)):
 			return Views.dash(request)
 		return render(request, 'home.html')
 
 	def login(request):
-		if(isLoggedIn(request)):
+		print(request.session.modified)
+		if(Views.isLoggedIn(request)):
 			return Views.dash(request)
 		return render(request, 'login.html')
+
 	def loginCheck(request):
 		username = request.POST.get('username')
 		email = request.POST.get('email')
@@ -41,32 +45,35 @@ class Views(): #acts as a namespace
 		storedUser = User.objects.get(username = username)
 
 		# check if pass is right
-		if not storedUser.password == password:
+		if storedUser.password != password:
 			return redirect('/home')
-
-		request.session = storedUser.__dict__
+		
+		request.session.flush()
+		userDict = storedUser.__dict__.copy()
+		userDict.pop('_state')
+		request.session.update(userDict)
+		request.session.modified = True
 		return redirect('/dash')
 
 	def logout(request):
 	    try:
-	        request.flush()
+	        request.session.flush()
 	    except KeyError:
 	        pass
-	    return HttpResponse("You're already logged out.")
+	        return HttpResponse("You're already logged out.")
+	    return render(request, 'home.html')
 
 	def registration(request):
 		return render(request, 'student/registration.html')
 
 	def isRegistered(username, email):
-		if(not username == None):
+		if(username != None):
 			try:
 				storedUser = User.objects.get(username = username)
 			except ObjectDoesNotExist as e:
 				print("user does not exist!")
 				return False
-		else:
-			return False
-		if(not email == None):
+		elif(email != None):
 			try:
 				storedUser = User.objects.get(email = email)
 			except ObjectDoesNotExist as e:
@@ -77,22 +84,18 @@ class Views(): #acts as a namespace
 		return True
 
 	def isLoggedIn(request):
-		return ((request.session.get('username')!=None) and (request.session.get('email')!=None))
+		return (request.session.get('username')!=None)
 
 	def dash(request):
-		print(len(request.session.keys()))
-
-		
-		print(request.session)
-
 		dashSwitch = {
 	        'student': 'student/dash.html',
 	        'professor': 'professor/dash.html',
 	        'designer': 'designer/dash.html',
+	        None: 'home.html'
 	    }
 
 		#case role is student then...
-		return render(request, dashSwitch[storedUser.role], storedUser.__dict__)
+		return render(request, dashSwitch.get(request.session.get("role")), request.session.__dict__)
             
 	def saveRegistration(request):
 		if request.POST:
