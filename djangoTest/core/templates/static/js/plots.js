@@ -1,14 +1,4 @@
-var buildInteractionsProfilePlot = function(data){
-	// var data = [
- //        {"x": 0.5, "y": 0.7, "c": "#50C2E3", "name": "A"},
- //        {"x": 0, "y": 0.25, "c": "#50C2E3", "name": "B"},
- //        {"x": 0.45, "y": 0.77, "c": "#50C2E3", "name": "C"},
- //        {"x": 0.6, "y": 0.90, "c": "#50C2E3", "name": "D"},
- //        {"x": -17, "y": 0.56, "c": "#50C2E3", "name": "D"},
- //        {"x": 0.57, "y": 0.58, "c": "#50C2E3", "name": "E"},
- //        {"x": 0.84, "y": 0.75, "c": "#50C2E3", "name": "F"}
- //    ];
-    console.log(data);
+var buildInteractionsProfilePlot = function(canvasId, data){
     
     var width = 500;
     var height = 500;
@@ -30,7 +20,7 @@ var buildInteractionsProfilePlot = function(data){
 
     var yAxis = d3.axisRight(y);
 
-    var svg = d3.select("#interactionsProfilePlot")
+    var svg = d3.select("#"+canvasId)
             .append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
@@ -49,13 +39,13 @@ var buildInteractionsProfilePlot = function(data){
             .append("text");
               
 
-  var gdots =  svg.selectAll("g.dot")
+  var dots =  svg.selectAll("g.dot")
             .data(data)
             .enter().append('g');
             
-            gdots.append("circle")
+            dots.append("circle")
             .attr("class", "dot")
-            .attr("r", 10)
+            .attr("r", 5)
             .attr("cx", function (d) {
                 return x(d.K_i);
             })
@@ -63,7 +53,7 @@ var buildInteractionsProfilePlot = function(data){
                 return y(d.K_cp);
             })
             .style("fill", function (d) {
-                return d.c;
+                return "#50C2E3";
             });
             // gdots.append("text").text(function(d){
             // 	return d.name;
@@ -74,4 +64,67 @@ var buildInteractionsProfilePlot = function(data){
             // .attr("y", function (d) {
             //     return y(d.K_cp);
             // });
+}
+
+
+var buildStatePlot = function(canvasId, data){
+
+    var margin = {
+        top: 15,
+        right: 25,
+        bottom: 15,
+        left: 60
+    };
+    console.log(data)
+
+    var width = 960 - margin.left - margin.right;
+    var height = 500 - margin.top - margin.bottom;
+
+    var svg = d3.select("#"+canvasId).append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var x = d3.scaleLinear()
+        .range([0, width])
+        .domain([0,1]);
+
+    var y = d3.scaleBand()
+        .range([0, height])
+        .domain(data.map(function(d) {
+            return d.name;
+        }))
+
+    var xAxis = d3.axisTop(x)
+        .tickSize(0);
+
+    var yAxis = d3.axisLeft(y)
+        .tickSize(0);
+
+
+    var bars = svg.selectAll(".bar")
+        .data(data)
+        .enter()
+        .append("g")
+
+
+    bars.append("rect")
+        .attr("class", "bar")
+        .attr("y", function (d) {
+            return y(d.name)+y.bandwidth()*3/16;
+        })
+        .attr("height", y.bandwidth()*3/4)
+        .attr("x", 0)
+        .attr("width", function (d) {
+            return x(d.value);
+        })
+        .attr("fill", "#50C2E3");
+
+    var gy = svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+    var gy = svg.append("g")
+        .attr("class", "x axis")
+        .call(xAxis)
 }

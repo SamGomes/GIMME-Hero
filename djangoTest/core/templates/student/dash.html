@@ -52,7 +52,7 @@
 			</section> -->
 				
 			<section class="section">
-				<div class="panel; row-full slider-content animated zoomIn">
+				<div class="panel animated zoomIn">
 					<div class="panel-heading">
 						<div class="columns is-vcentered">
 							<div class="column is-8">
@@ -65,16 +65,20 @@
 						</div>
 					</div>
 					<div class="panel-block">
-						<img src="{% static "images/mockedHabilityChart.png" %}"/>
+						<div class="colums">
+	  						<div class="column is-one-third"></div>
+	  						<div class="column is-one-third is-centered" id="learningStatePlot"></div>
+	  						<div class="column is-one-third"></div>
+						</div>
 					</div>
 				</div>
 			</section>
 
 			<section class="section">
-				<div class="panel; row-full slider-content animated zoomIn">
+				<div class="panel animated zoomIn">
 					<div class="panel-heading">
 						<div class="columns is-vcentered">
-							<div class="column is-8">
+							<div class="column">
 								<p>Your Interactions Profile</p>
 							</div>
 							<div class="is-pulled-left">
@@ -83,8 +87,12 @@
 							</div>
 						</div>
 					</div>
-					<div class="panel-block" id="interactionsProfilePlot">
-						<!-- <img src="{% static "images/mockedInteractionsChart.png" %}"/> -->
+					<div class="panel-block">
+						<div class="columns">
+	  						<div class="column is-one-third"></div>
+	  						<div class="column is-one-third is-centered" id="interactionsProfilePlot"></div>
+	  						<div class="column is-one-third"></div>
+						</div>
 					</div>
 				</div>
 			</section>
@@ -104,6 +112,20 @@
 	<script src="{% static "js/general.js" %}"></script>
 	<script src="{% static "js/plots.js" %}"></script>
 	<script>
-		buildInteractionsProfilePlot("interactionsProfilePlot",{{profile}})
+		$(document).ready(function(){
+			var pastModelIncreasesGrid = parseSessionAttribute("{{request.session.pastModelIncreasesGrid}}");
+			buildInteractionsProfilePlot( "interactionsProfilePlot", pastModelIncreasesGrid.cells );
+			
+			var parsedCharacteristics = parseSessionAttribute("{{request.session.currState}}").characteristics;
+			parsedCharacteristics.engagement=0.9
+			parsedCharacteristics.ability=0.4
+			var attributes = Object.keys(parsedCharacteristics) 
+			var values = Object.values(parsedCharacteristics)
+			parsedCharacteristics = []
+			for(var i=0; i < attributes.length; i++){
+				parsedCharacteristics.push({"name": attributes[i], "value": values[i]})
+			} 
+			buildStatePlot( "learningStatePlot", parsedCharacteristics )
+		});
 	</script>
 </html>

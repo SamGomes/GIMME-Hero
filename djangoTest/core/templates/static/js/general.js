@@ -1,9 +1,4 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-
-$(document).ready(function(){
+﻿$(document).ready(function(){
 
     // modals
     var rootEl = document.documentElement;
@@ -36,32 +31,32 @@ $(document).ready(function(){
         }
     });
 
-    function closeModals() {
+    var closeModals = function() {
         rootEl.classList.remove('is-clipped');
         allModals.forEach(function (el) {
             el.classList.remove('is-active');
         });
     }
 
-    // Functions
-    function getAll(selector) {
-        return Array.prototype.slice.call(document.querySelectorAll(selector), 0);
-    }
-
-
-
-
-
+    // general animations and element functionalities
     $("#dashboard").hide();
     setTimeout(
     function()
     {
         $("#welcomeBanner").hide();
         $("#dashboard").show();
-    }, 2000);
+    }, 0);
 
     $(".minimizerButton").click(function(){
     	
     });
 
 });
+
+var getAll = function(selector) {
+    return Array.prototype.slice.call(document.querySelectorAll(selector), 0);
+}
+
+var parseSessionAttribute = function(attributeStr){
+    return JSON.parse(attributeStr.replace(/&quot;/g,"\""))
+}
