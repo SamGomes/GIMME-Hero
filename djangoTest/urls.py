@@ -13,4 +13,5 @@ urlpatterns = [
     re_path(r'^saveRegistration/$', Views.saveRegistration, name="saveRegistration"),
     re_path(r'^newAvailablePlayer/$', Views.newAvailablePlayer, name="newAvailablePlayer"),
     re_path(r'^loginCheck/$', Views.loginCheck, name="loginCheck"),
+    re_path(r'^startAdaptation', Views.startAdaptation, name="startAdaptation"),
 ]

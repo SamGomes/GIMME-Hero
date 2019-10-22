@@ -25,13 +25,13 @@
 			</section>
 		</div>
 		
-		<div id="dashboard">	
+		<div id="dashboard">
 			<section class="section">
 				<div class="panel animated zoomIn">
 					<div class="panel-heading">
 						<div class="columns is-vcentered">
 							<div class="column is-8">
-								<p>Your Learning State</p>
+								<p>Class Learning State</p>
 							</div>
 							<div class="is-pulled-left">
 								<i class="fa fa-window-minimize minimizerButton" aria-hidden="true"></i>
@@ -42,7 +42,7 @@
 					<div class="panel-block">
 						<div class="colums">
 	  						<div class="column is-one-third"></div>
-	  						<div class="column is-one-third is-centered" id="learningStatePlot"></div>
+	  						<div class="column is-one-third is-centered" id="groupsPlot"></div>
 	  						<div class="column is-one-third"></div>
 						</div>
 					</div>
@@ -54,7 +54,7 @@
 					<div class="panel-heading">
 						<div class="columns is-vcentered">
 							<div class="column">
-								<p>Your Interactions Profile</p>
+								<p>AvailableTasks</p>
 							</div>
 							<div class="is-pulled-left">
 								<i class="fa fa-window-minimize minimizerButton" aria-hidden="true"></i>
@@ -63,17 +63,30 @@
 						</div>
 					</div>
 					<div class="panel-block">
-						<div class="columns">
-	  						<div class="column is-one-third"></div>
-	  						<div class="column is-one-third is-centered" id="interactionsProfilePlot"></div>
-	  						<div class="column is-one-third"></div>
+						<div class="table">
+	  						<table>
+							    <tr>
+							        <th>Field 1</th>
+							    </tr>
+							    <tr> 
+							        <td>field1</td>
+							    </tr>
+							    {% for item in tasks %}
+								    <tr> 
+								        <td>{{ item.field1 }}</td>
+								    </tr>
+							    {% endfor %}
+							</table>
 						</div>
 					</div>
 				</div>
 			</section>
 
-			<form action="{% url 'newAvailablePlayer' %}" class="section">
-				<input class="button is-large" type="submit" value="Ready for new Activity">
+			<form action="{% url 'startAdaptation' %}" class="section">
+				<div class="field requiredFormField">
+					<label class="label">Duration*</label>
+				</div>
+				<input class="button is-large" type="submit" value="Start Class Activities">
 				<!-- <input class="button is-large" type="reset" value="Journey"> -->
 			</form>
 		</div>
@@ -88,17 +101,9 @@
 	<script src="{% static "js/plots.js" %}"></script>
 	<script>
 		$(document).ready(function(){
-			var pastModelIncreasesGrid = parseSessionAttribute("{{request.session.pastModelIncreasesGrid}}");
-			buildInteractionsProfilePlot( "interactionsProfilePlot", pastModelIncreasesGrid.cells );
-			
-			var parsedCharacteristics = parseSessionAttribute("{{request.session.currState}}").characteristics;
-			var attributes = Object.keys(parsedCharacteristics) 
-			var values = Object.values(parsedCharacteristics)
-			parsedCharacteristics = []
-			for(var i=0; i < attributes.length; i++){
-				parsedCharacteristics.push({"name": attributes[i], "value": values[i]})
-			} 
-			buildStatePlot( "learningStatePlot", parsedCharacteristics )
+			// adaptationResult = parseSessionAttribute("{{request.session.currAdaptationState}}");
+			adaptationResult = `{"groups": [{"avgPersonality": {"K_cl": 0.30938960520960873, "K_cp": 0.9283846504042355, "K_i": 0.47751325917922327}, "avgPlayerState": {"characteristics": {"ability": 0.0, "engagement": 0.0}, "dist": 0, "profile": {"K_cl": 0, "K_cp": 0, "K_i": 0}}, "interactionsProfile": {"K_cl": 0.07853970145678738, "K_cp": 0.5141290940665851, "K_i": 0.4073312044766275}, "playerIds": [4, 5], "tailoredTaskId": 17}, {"avgPersonality": {"K_cl": 0.8840155594368744, "K_cp": 0.23187584695787244, "K_i": 0.5926112800501744}, "avgPlayerState": {"characteristics": {"ability": 0.0, "engagement": 0.0}, "dist": 0, "profile": {"K_cl": 0, "K_cp": 0, "K_i": 0}}, "interactionsProfile": {"K_cl": 0.47517914376711035, "K_cp": 0.22716089775105772, "K_i": 0.2976599584818319}, "playerIds": [1, 0], "tailoredTaskId": 3}, {"avgPersonality": {"K_cl": 1.7526462269886758, "K_cp": 1.4275031617709937, "K_i": 2.7907265330703566}, "avgPlayerState": {"characteristics": {"ability": 0.0, "engagement": 0.0}, "dist": 0, "profile": {"K_cl": 0, "K_cp": 0, "K_i": 0}}, "interactionsProfile": {"K_cl": 0.2570053043614851, "K_cp": 0.17106209397284422, "K_i": 0.5719326016656706}, "playerIds": [8, 7, 9], "tailoredTaskId": 17}, {"avgPersonality": {"K_cl": 2.0274644676188536, "K_cp": 1.3992134983604716, "K_i": 2.472311204596113}, "avgPlayerState": {"characteristics": {"ability": 0.0, "engagement": 0.0}, "dist": 0, "profile": {"K_cl": 0, "K_cp": 0, "K_i": 0}}, "interactionsProfile": {"K_cl": 0.3070303185705759, "K_cp": 0.3523749780741778, "K_i": 0.3405947033552463}, "playerIds": [2, 3, 6], "tailoredTaskId": 3}]}`;
+			buildGroupsPlot( "groupsPlot", adaptationResult )
 		});
 	</script>
 </html>

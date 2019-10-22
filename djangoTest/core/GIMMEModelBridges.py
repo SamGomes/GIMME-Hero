@@ -8,6 +8,13 @@ from GIMMECore import *
 from djangoTest.core.models import User
 
 
+
+# view models?
+currAdaptationState = []
+readyForNewActivity = False
+currSelectedPlayers = []
+
+
 class CustomTaskModelBridge(TaskModelBridge):
 	
 	def getSelectedTaskIds(self):
@@ -38,7 +45,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 
 	def getSelectedPlayerIds(self):
-		return Views.currSelectedPlayers
+		return currSelectedPlayers
 
 	def getPlayerName(self, playerId):
 		player = User.objects.get(username=playerId)
@@ -88,5 +95,6 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		newState.profile = profile
 		player.currState = json.dumps(newState, default=lambda o: o.__dict__)
 		player.save()
+
 
 

@@ -1,7 +1,6 @@
 import sys
 sys.path.append('../../GIMME/GIMME/GIMMECore/')
 
-# coding: utf-8
 from django.shortcuts import render,render_to_response, redirect
 from django.views.generic import View
 
@@ -17,9 +16,6 @@ taskBridge = CustomTaskModelBridge()
 
 adaptation = Adaptation()
 adaptation.init(KNNRegression(5), RandomConfigsGen(), WeightedFitness(PlayerCharacteristics(ability=0.5, engagement=0.5)), playerBridge, taskBridge, name="", numberOfConfigChoices=50, maxNumberOfPlayersPerGroup = 5, difficultyWeight = 0.5, profileWeight=0.5)
-# adaptation.iterate()
-
-currSelectedPlayers = []
 
 class Views(): #acts as a namespace
 
@@ -29,7 +25,6 @@ class Views(): #acts as a namespace
 		return render(request, 'home.html')
 
 	def login(request):
-		print(request.session.modified)
 		if(Views.isLoggedIn(request)):
 			return Views.dash(request)
 		return render(request, 'login.html')
@@ -134,4 +129,9 @@ class Views(): #acts as a namespace
 		return render(request, 'student/waiting.html')
 
 
+	def startAdaptation(request):
+		currAdaptationState = adaptation.iterate()
+		request.session["currAdaptationState"] = json.dumps(currAdaptationState, default=lambda o: o.__dict__, sort_keys=True)
+		readyForNewActivity = True
+		return Views.dash(request)
 
