@@ -95,6 +95,7 @@
 			var parsedCharacteristics = parseSessionAttribute("{{request.session.currState}}").characteristics;
 			var attributes = Object.keys(parsedCharacteristics) 
 			var values = Object.values(parsedCharacteristics)
+			console.log(parsedCharacteristics)
 			parsedCharacteristics = []
 			for(var i=0; i < attributes.length; i++){
 				parsedCharacteristics.push({"name": attributes[i], "value": values[i]})

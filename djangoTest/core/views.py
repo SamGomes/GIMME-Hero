@@ -246,7 +246,6 @@ class Views(): #acts as a namespace
 
 	def saveTaskRegistration(request):
 		if request.POST:
-			
 			# playerBridge.registerNewPlayer(playerId, name, currState, pastModelIncreasesGrid, currModelIncreases, personality)
 			return Views.dash(request)
 
@@ -257,6 +256,6 @@ class Views(): #acts as a namespace
 	def saveTaskResults(request):
 		if request.POST:
 			playerId = request.session.get('username')
-			playerBridge.setPlayerCharacteristics(playerId, "{ 'ability': '"+request.POST["ability"]+"', 'engagement': '"+request.POST["engagement"]+"'}")
-			playerBridge.setPlayerCurrProfile(playerId, "{ 'K_i': '0.3', 'K_cp': '0.1', 'K_cl': '0.5'}")
+			playerBridge.setPlayerCharacteristics(playerId, PlayerCharacteristics(ability=request.POST["ability"], engagement=request.POST["engagement"]))
+			playerBridge.setPlayerCurrProfile(playerId, InteractionsProfile(K_i=0.3, K_cp=0.1, K_cl=0.5))
 			return Views.dash(request)

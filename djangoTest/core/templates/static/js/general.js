@@ -58,5 +58,6 @@ var getAll = function(selector) {
 }
 
 var parseSessionAttribute = function(attributeStr){
+    console.log(attributeStr.replace(/&quot;/g,"\""))
     return JSON.parse(attributeStr.replace(/&quot;/g,"\""))
 }
