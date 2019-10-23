@@ -44,7 +44,7 @@
 		<section class="section columns">
 			<div class="column"></div>
 			<div class="column">
-				<form action="{% url 'saveRegistration' %}" method="POST">
+				<form action="{% url 'saveUserRegistration' %}" method="POST">
 					{% csrf_token %}
 					{{ form }}
 

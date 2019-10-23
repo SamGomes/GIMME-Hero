@@ -8,11 +8,12 @@ from GIMMECore import *
 from djangoTest.core.models import User
 
 
-
-# view models?
-currAdaptationState = []
-readyForNewActivity = False
-currSelectedPlayers = []
+class Globals():
+	def  __init__(self):
+		# view models?
+		self.currAdaptationState = []
+		self.readyForNewActivity = False
+		self.currSelectedPlayers = []
 
 
 class CustomTaskModelBridge(TaskModelBridge):

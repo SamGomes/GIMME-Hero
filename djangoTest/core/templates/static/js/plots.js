@@ -133,6 +133,7 @@ var buildStatePlot = function(canvasId, data){
 
 
 var buildGroupsPlot = function(canvasId, data){
+    // console.log(data)
 
     var svg = d3.select("#"+canvasId).append("svg")
     width = +svg.attr("width"),
@@ -141,11 +142,8 @@ var buildGroupsPlot = function(canvasId, data){
     var color = "rgb(12,240,233)";//d3.scaleOrdinal(d3.schemeCategory20);
 
     var simulation = d3.forceSimulation()
-        .force("link", d3.forceLink().id(function(d) { return d.id; }))
         .force("charge", d3.forceManyBody())
         .force("center", d3.forceCenter(width / 2, height / 2));
-
-
 
     // var link = svg.append("g")
     // .attr("class", "links")
@@ -184,7 +182,7 @@ var buildGroupsPlot = function(canvasId, data){
     function ticked() {
         node
         .attr("transform", function(d) {
-          return "translate(" + d.x + "," + d.y + ")";
+          return "translate(0.5,0.5)";
         })
     }
     

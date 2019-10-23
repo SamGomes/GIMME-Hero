@@ -24,13 +24,14 @@
 
 		<section class="section columns">
 			<div class="column"></div>
-			<div class="column">
+			<div class="panel panel-block column">
 				First time here? Lets Register you...
-				<form action="{% url 'registration' %}">
+				<form action="{% url 'registerUser' %}">
 				    <input class="button is-link" type="submit" value="Register">
 				</form>
 			</div>
-			<div class="column">
+			<div class="column"></div>
+			<div class="panel panel-block column">
 				Already Have an account? Just Log in!
 				{% include "common/login.html" %}  
 			</div>

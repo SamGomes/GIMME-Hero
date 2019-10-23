@@ -30,7 +30,7 @@
 				<div class="panel animated zoomIn">
 					<div class="panel-heading">
 						<div class="columns is-vcentered">
-							<div class="column is-8">
+							<div class="column">
 								<p>Your Learning State</p>
 							</div>
 							<div class="is-pulled-left">
@@ -89,6 +89,7 @@
 	<script>
 		$(document).ready(function(){
 			var pastModelIncreasesGrid = parseSessionAttribute("{{request.session.pastModelIncreasesGrid}}");
+			console.log(pastModelIncreasesGrid.cells)
 			buildInteractionsProfilePlot( "interactionsProfilePlot", pastModelIncreasesGrid.cells );
 			
 			var parsedCharacteristics = parseSessionAttribute("{{request.session.currState}}").characteristics;

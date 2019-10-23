@@ -1,5 +1,5 @@
 {% load staticfiles %}
-{% include "common/header.html" %}
+{% include "common/header.html" %}  
 <!DOCTYPE html>
 <html>
 	<head>
@@ -11,10 +11,34 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
 	</head>
 	<body class="layout-default">
-		Registered Players: {{currSelectedPlayers}}
-		<a href="{% url 'displayTask' %}">
-			<button class="button is-link is-loading" id="loadingButton" >Start Activity</button>
-		</a>
+		
+
+		{% if form.errors %}
+			{% for field in form %}
+				{% for error in field.errors %}
+					<div class="alert alert-danger">
+					<strong>{{ error|escape }}</strong>
+					</div>
+				{% endfor %}
+			{% endfor %}
+			{% for error in form.non_field_errors %}
+				<div class="alert alert-danger">
+				<strong>{{ error|escape }}</strong>
+				</div>
+			{% endfor %}
+		{% endif %}
+
+		<section class="section columns">
+			<div class="column"></div>
+			<div class="column">
+				<form action="{% url 'saveTaskRegistration' %}" method="POST">
+					{% csrf_token %}
+					{{ form }}
+				</form>
+			</div>
+			<div class="column"></div>		
+		</section>
+
 	</body>
 	<script
 		src="https://code.jquery.com/jquery-3.2.1.min.js"
@@ -22,7 +46,6 @@
 		crossorigin="anonymous"></script>
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 	<script src="{% static "js/general.js" %}"></script>
-	<script>
-		$("#loadingButton").removeClass("is-loading");
-	</script>
+	<script src="{% static "js/registration.js" %}"></script>
+	<script src="{% static "js/formFunctionalities.js" %}"></script>
 </html>

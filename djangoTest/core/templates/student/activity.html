@@ -17,15 +17,35 @@
 				<div class="hero-body">
 					<div class="has-text-centered; slider-content animated zoomIn">
 						<div>
-							<p class="title is-1 main-text">Lets do a new activity, {{username}}</p>
+							<p class="title is-1 main-text">Lets do a new (mocked) activity, {{request.session.username}}</p>
+							<p class="title is-1 main-text">The interactions profile is {{taskProfile}}</p>
 						</div>
 					</div>
 				</div>
-
 			</section>
 		</div>
 		
 		<div class="dashboard">
+			<form action="{% url 'saveTaskResults' %}" method="POST">
+				{% csrf_token %}
+				{{ form }}
+				<div class="field">
+					<label class="label">New Ability</label>
+					<p class="control has-icons-left">
+						<input class="input" type="text" placeholder="" name="ability">
+					</p>
+				</div>
+
+				<div class="field">
+					<label class="label">New Engagement</label>
+					<p class="control has-icons-left">
+						<input class="input" type="text" placeholder="" name="engagement">
+					</p>
+				</div>
+				<div class="control">
+					<input class="button is-link" type="submit" value="Finish Task" id="submitButton">
+				</div>
+			<form/>
 		</div>
 	</body>
 	<script
