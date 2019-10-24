@@ -143,64 +143,63 @@ var buildGroupsPlot = function(canvasId, data){
       .force('charge', d3.forceManyBody().strength(-20)) 
       .force('center', d3.forceCenter(width / 2, height / 2))
 
+    var allGroups = []
     for (i=0; i<data.length; i++){
         var group = data[i].playerIds
         for(var j=0;j<group.length; j++){
-            group[j]= {"value": group[j]}
+            allGroups.push({"value": group[j], "groupId": j});
         }
-
-        var nodeElements =
-            svg.append('g')
-              .selectAll('circle')
-              .data(group)
-              .enter().append('circle')
-                .attr('r', 10)
-                .attr('fill', "#50C2E3");
-        
-        var textElements =
-            svg.append('g')
-              .selectAll('text')
-              .data(group)
-              .enter().append('text')
-                .text(function (d) {
-                    return d.value.toString();
-                })
-                .attr('font-size', 15)
-                .attr('dx', 15)
-                .attr('dy', 4);
-
-
-
-        simulation.nodes(group).on("tick", () => {
-                nodeElements
-                    .attr("cx", node => node.x)
-                    .attr("cy", node => node.y)
-                textElements
-                    .attr("x", node => node.x)
-                    .attr("y", node => node.y)
-            })
-
-        const dragDrop = d3.drag()
-            .on('start', node => {
-                node.fx = node.x
-                node.fy = node.y
-            })
-            .on('drag', node => {
-                simulation.alphaTarget(0.7).restart()
-                node.fx = d3.event.x
-                node.fy = d3.event.y
-            })
-            .on('end', node => {
-                if (!d3.event.active) {
-                    simulation.alphaTarget(0)
-                }
-                node.fx = null
-                node.fy = null
-            })
-
-        nodeElements.call(dragDrop)
-
     } 
-    
 
+    console.log(allGroups);
+
+    var nodeElements =
+        svg.append('g')
+          .selectAll('circle')
+          .data(allGroups)
+          .enter().append('circle')
+            .attr('r', 10)
+            .attr('fill', "#50C2E3");
+    
+    var textElements =
+        svg.append('g')
+          .selectAll('text')
+          .data(allGroups)
+          .enter().append('text')
+            .text(function (d) {
+                return d.value.toString();
+            })
+            .attr('font-size', 15)
+            .attr('dx', 15)
+            .attr('dy', 4);
+
+
+    simulation.nodes(allGroups).on("tick", () => {
+            nodeElements
+                .attr("cx", node => node.x)
+                .attr("cy", node => node.y)
+            textElements
+                .attr("x", node => node.x)
+                .attr("y", node => node.y)
+        })
+
+    const dragDrop = d3.drag()
+        .on('start', node => {
+            node.fx = node.x
+            node.fy = node.y
+        })
+        .on('drag', node => {
+            simulation.alphaTarget(0.7).restart()
+            node.fx = d3.event.x
+            node.fy = d3.event.y
+        })
+        .on('end', node => {
+            if (!d3.event.active) {
+                simulation.alphaTarget(0)
+            }
+            node.fx = null
+            node.fy = null
+        })
+
+    nodeElements.call(dragDrop)
 }
