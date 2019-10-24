@@ -42,8 +42,11 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 	
 	def savePlayerState(self, playerId, newState):
 		player = User.objects.get(username = playerId)
-		player.currState = newState
-		player.save(update_fields=["active"])
+		playerStateGrid = self.getPlayerPastModelIncreases(playerId)
+		print(playerStateGrid)
+		playerStateGrid.pushToGrid(newState)
+		player.pastModelIncreasesGrid = json.dumps(playerStateGrid, default=lambda o: o.__dict__)
+		player.save()
 
 	def resetPlayer(self, playerId):
 		return 0
@@ -60,21 +63,31 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 	def getPlayerCurrProfile(self,  playerId):
 		player = User.objects.get(username=playerId)
 		profile = json.loads(player.currState)["profile"]
-		return InteractionsProfile(K_cl= profile["K_cl"], K_cp= profile["K_cp"], K_i= profile["K_i"])
+		return InteractionsProfile(K_cl=float(profile["K_cl"]), K_cp=float(profile["K_cp"]), K_i=float(profile["K_i"]))
 
 	def getPlayerPastModelIncreases(self, playerId):
 		player = User.objects.get(username=playerId)
-		return json.loads(player.pastModelIncreasesGrid)["cells"]
+		playerStateGrid = json.loads(player.pastModelIncreasesGrid)
+		cells = []
+		for state in playerStateGrid["cells"]:
+			characteristics = state["characteristics"]
+			characteristics = PlayerCharacteristics(ability= float(characteristics["ability"]), engagement= float(characteristics["engagement"]))
+
+			profile = state["profile"]
+			profile = InteractionsProfile(K_cl=float(profile["K_cl"]), K_cp=float(profile["K_cp"]), K_i=float(profile["K_i"]))
+			
+			cells.append(PlayerState(profile = profile, characteristics = characteristics, dist=state["dist"]))
+		return PlayerStateGrid(cells=cells, numCells=int(playerStateGrid["numCells"]), maxAmountOfStoredProfilesPerCell=int(playerStateGrid["maxAmountOfStoredProfilesPerCell"]))
 
 	def getPlayerCurrCharacteristics(self, playerId):
 		player = User.objects.get(username=playerId)
 		characteristics = json.loads(player.currState)["characteristics"]
-		return PlayerCharacteristics(ability= characteristics["ability"], engagement= characteristics["engagement"])
+		return PlayerCharacteristics(ability= float(characteristics["ability"]), engagement= float(characteristics["engagement"]))
 	
 	def getPlayerPersonality(self, playerId):
 		player = User.objects.get(username=playerId)
 		personality = json.loads(player.personality)
-		return InteractionsProfile(K_cl=personality["K_cl"], K_cp=personality["K_cp"], K_i=personality["K_i"])
+		return InteractionsProfile(K_cl=float(personality["K_cl"]), K_cp=float(personality["K_cp"]), K_i=float(personality["K_i"]))
 	
 	def getPlayerCurrState(self,  playerId):
 		player = User.objects.get(username=playerId)
@@ -112,8 +125,6 @@ taskBridge = CustomTaskModelBridge()
 
 adaptation = Adaptation()
 adaptation.init(KNNRegression(5), RandomConfigsGen(), WeightedFitness(PlayerCharacteristics(ability=0.5, engagement=0.5)), playerBridge, taskBridge, name="", numberOfConfigChoices=50, maxNumberOfPlayersPerGroup = 5, difficultyWeight = 0.5, profileWeight=0.5)
-
-
 
 
 
@@ -234,6 +245,7 @@ class Views(): #acts as a namespace
 
 	def startAdaptation(request):
 		currAdaptationState = adaptation.iterate()
+		print(currAdaptationState)
 		request.session["currAdaptationState"] = json.dumps(currAdaptationState, default=lambda o: o.__dict__, sort_keys=True)
 		readyForNewActivity = True
 		request.session.modified = True
@@ -258,4 +270,5 @@ class Views(): #acts as a namespace
 			playerId = request.session.get('username')
 			playerBridge.setPlayerCharacteristics(playerId, PlayerCharacteristics(ability=request.POST["ability"], engagement=request.POST["engagement"]))
 			playerBridge.setPlayerCurrProfile(playerId, InteractionsProfile(K_i=0.3, K_cp=0.1, K_cl=0.5))
+			playerBridge.savePlayerState(playerId, playerBridge.getPlayerCurrState(playerId))
 			return Views.dash(request)

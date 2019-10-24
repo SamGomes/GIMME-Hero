@@ -12,19 +12,16 @@
 	</head>
 	<body class="layout-default">
 		
-		<section class="columns is-centered">
-			<section class="column animated zoomIn">
-					<div>
-						<p class="title is-1 main-text">Welcome to GIMME-Web</p>
-						<p class="subtitle is-4 main-text">A sophisticated Group Interactions Management Tool</p>
-					</div>
-				</div>
-			</section>
-		</section>
+		<div class="has-text-centered animated zoomIn">
+			<div>
+				<p class="title main-text">Welcome to GIMME-Web</p>
+				<p class="subtitle main-text">A sophisticated Group Interactions Management Tool</p>
+			</div>
+		</div>
 
-		<section class="section columns">
+		<section class="section columns animated zoomIn">
 			<div class="column"></div>
-			<div class="panel panel-block column">
+			<div class="has-text-centered panel panel-block column">
 				First time here? Lets Register you...
 				<form action="{% url 'registerUser' %}">
 				    <input class="button is-link" type="submit" value="Register">
