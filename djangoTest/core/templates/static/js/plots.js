@@ -133,6 +133,15 @@ var buildStatePlot = function(canvasId, data){
 
 var buildGroupsPlot = function(canvasId, data){
     
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
     const width = 960;
     const height = 500;
     svg = d3.select("#"+canvasId).append('svg')
@@ -144,22 +153,24 @@ var buildGroupsPlot = function(canvasId, data){
       .force('center', d3.forceCenter(width / 2, height / 2))
 
     var allGroups = []
+    var colors = []
     for (i=0; i<data.length; i++){
         var group = data[i].playerIds
         for(var j=0;j<group.length; j++){
-            allGroups.push({"value": group[j], "groupId": j});
+            allGroups.push({"playerId": group[j], "groupId": i});
         }
+        colors[i]=getRandomColor();
     } 
-
-    console.log(allGroups);
-
+    console.log(allGroups)
     var nodeElements =
         svg.append('g')
           .selectAll('circle')
           .data(allGroups)
           .enter().append('circle')
             .attr('r', 10)
-            .attr('fill', "#50C2E3");
+            .attr('fill', function(d){
+                return colors[d.groupId]
+            });
     
     var textElements =
         svg.append('g')
@@ -167,7 +178,7 @@ var buildGroupsPlot = function(canvasId, data){
           .data(allGroups)
           .enter().append('text')
             .text(function (d) {
-                return d.value.toString();
+                return d.playerId.toString();
             })
             .attr('font-size', 15)
             .attr('dx', 15)
