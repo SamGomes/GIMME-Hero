@@ -148,24 +148,38 @@ var buildGroupsPlot = function(canvasId, data){
       .attr('width', width)
       .attr('height', height);
 
-    const simulation = d3.forceSimulation()
-      .force('charge', d3.forceManyBody().strength(-20)) 
-      .force('center', d3.forceCenter(width / 2, height / 2))
 
-    var allGroups = []
+  
+    var allNodes = []
     var colors = []
     for (i=0; i<data.length; i++){
         var group = data[i].playerIds
+        var groupCenterOfMass = {"x": Math.random(0,width), "y": Math.random(0,height)};
         for(var j=0;j<group.length; j++){
-            allGroups.push({"playerId": group[j], "groupId": i});
+            allNodes.push({"playerId": group[j], "groupId": i, "centerOfMass": groupCenterOfMass});
         }
         colors[i]=getRandomColor();
     } 
-    console.log(allGroups)
+
+    const simulation = d3.forceSimulation()
+        .nodes(allNodes)
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force('attract', d3.forceAttract()
+            .target((node) => [node.centerOfMass.x, node.centerOfMass.y])
+            .strength(0.5)
+            )
+        .force('cluster', d3.forceCluster()
+            .centers(function (d) { return d.groupId; }
+            )
+            .strength(0.5)
+            .centerInertia(0.1))
+        .force('collide', d3.forceCollide(20)
+            .strength(1))
+
     var nodeElements =
         svg.append('g')
           .selectAll('circle')
-          .data(allGroups)
+          .data(allNodes)
           .enter().append('circle')
             .attr('r', 10)
             .attr('fill', function(d){
@@ -175,7 +189,7 @@ var buildGroupsPlot = function(canvasId, data){
     var textElements =
         svg.append('g')
           .selectAll('text')
-          .data(allGroups)
+          .data(allNodes)
           .enter().append('text')
             .text(function (d) {
                 return d.playerId.toString();
@@ -185,10 +199,14 @@ var buildGroupsPlot = function(canvasId, data){
             .attr('dy', 4);
 
 
-    simulation.nodes(allGroups).on("tick", () => {
+    simulation.nodes(allNodes).on("tick", () => {
             nodeElements
-                .attr("cx", node => node.x)
-                .attr("cy", node => node.y)
+                .attr("cx", function(node) {
+                    return node.x;
+                })
+                .attr("cy", function(node) {
+                    return node.y;
+                })
             textElements
                 .attr("x", node => node.x)
                 .attr("y", node => node.y)
@@ -196,17 +214,17 @@ var buildGroupsPlot = function(canvasId, data){
 
     const dragDrop = d3.drag()
         .on('start', node => {
-            node.fx = node.x
-            node.fy = node.y
+            node.fx = node.x;
+            node.fy = node.y;
         })
         .on('drag', node => {
-            simulation.alphaTarget(0.7).restart()
-            node.fx = d3.event.x
-            node.fy = d3.event.y
+            simulation.alphaTarget(0.3).restart();
+            node.fx = d3.event.x;
+            node.fy = d3.event.y;
         })
         .on('end', node => {
             if (!d3.event.active) {
-                simulation.alphaTarget(0)
+                simulation.alphaTarget(0);
             }
             node.fx = null
             node.fy = null
