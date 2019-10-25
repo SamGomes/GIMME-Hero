@@ -150,45 +150,71 @@ var buildGroupsPlot = function(canvasId, data){
 
 
   
-    var allNodes = []
-    var colors = []
+    var playerNodes = [];
+    var groupIndicatorNodes = [];
+    var colors = [];
     for (i=0; i<data.length; i++){
         var group = data[i].playerIds
-        var groupCenterOfMass = {"x": Math.random()*width-100, "y": Math.random()*height-100};
+        var groupCenterOfMass = {"x": 100 + Math.random()*(width-200), "y": 100 + Math.random()*(height-200)};
+
+        groupIndicatorNodes.push({"groupId": i, "characteristics": group.characteristics, "profile": group.profile, "centerOfMass": groupCenterOfMass});
         for(var j=0;j<group.length; j++){
-            allNodes.push({"playerId": group[j], "groupId": i, "centerOfMass": groupCenterOfMass});
+            playerNodes.push({"playerId": group[j], "groupId": i, "centerOfMass": groupCenterOfMass});
         }
         colors[i]=getRandomColor();
     } 
 
     const simulation = d3.forceSimulation()
-        .nodes(allNodes)
-        .force('center', d3.forceCenter(width / 2, height / 2))
+        .nodes(playerNodes)
         .force('attract', d3.forceAttract()
             .target((node) => [node.centerOfMass.x, node.centerOfMass.y])
-            .strength(0.5)
+            .strength(0.8)
             )
-        .force('cluster', d3.forceCluster()
-            .centers((node) => [node.centerOfMass.x, node.centerOfMass.y])
-            .strength(0.2)
-            .centerInertia(0.1))
         .force('collide', d3.forceCollide(30)
             .strength(0.1))
+        .nodes(groupIndicatorNodes)
+        .force('collide', d3.forceCollide(30)
+            .strength(0.2))
 
     var nodeElements =
         svg.append('g')
           .selectAll('circle')
-          .data(allNodes)
+          .data(playerNodes)
           .enter().append('circle')
             .attr('r', 10)
-            .attr('fill', function(d){
-                return colors[d.groupId]
-            });
+            .attr('fill', node => colors[node.groupId]);
+
+    var groupIndicators =
+        svg.append('g')
+          .selectAll('circle')
+          .data(groupIndicatorNodes)
+          .enter().append('circle')
+            .attr('r', node => {
+                var group = playerNodes;
+                var maxRadius = 0;
+                for(var j=0; j< group.length; j++){
+                    var currNode = group[j];
+                    if(currNode.groupId != node.groupId){
+                        continue;
+                    }
+                    var currRadius = (currNode.x - currNode.centerOfMass.x)**2 + (currNode.y - currNode.centerOfMass.y)**2
+                    if(currRadius > maxRadius){
+                        maxRadius = currRadius;
+                    }
+                }
+                return Math.sqrt(maxRadius)
+            })
+            .attr('cx', node => node.centerOfMass.x)
+            .attr('cy', node => node.centerOfMass.y)
+            .attr('stroke-dasharray', '5,5')
+            .attr('stroke', node => colors[node.groupId])
+            .attr('fill', 'transparent');
+
     
     var textElements =
         svg.append('g')
           .selectAll('text')
-          .data(allNodes)
+          .data(playerNodes)
           .enter().append('text')
             .text(function (d) {
                 return d.playerId.toString();
@@ -198,13 +224,33 @@ var buildGroupsPlot = function(canvasId, data){
             .attr('dy', 4);
 
 
-    simulation.nodes(allNodes).on("tick", () => {
+    simulation.nodes(playerNodes).on("tick", () => {
             nodeElements
                 .attr("cx", node => node.x)
-                .attr("cy", node => node.y)
+                .attr("cy", node => node.y);
+
+            groupIndicators
+                .attr('cx', node => node.centerOfMass.x)
+                .attr('cy', node => node.centerOfMass.y)
+                .attr('r', node => {
+                    var group = playerNodes;
+                    var maxRadius = 0;
+                    for(var j=0; j< group.length; j++){
+                        var currNode = group[j];
+                        if(currNode.groupId != node.groupId){
+                            continue;
+                        }
+                        var currRadius = (currNode.x - currNode.centerOfMass.x)**2 + (currNode.y - currNode.centerOfMass.y)**2
+                        if(currRadius > maxRadius){
+                            maxRadius = currRadius;
+                        }
+                    }
+                    return Math.sqrt(maxRadius) + 30 
+                });
+
             textElements
                 .attr("x", node => node.x)
-                .attr("y", node => node.y)
+                .attr("y", node => node.y);
         })
 
     const dragDrop = d3.drag()
@@ -213,7 +259,7 @@ var buildGroupsPlot = function(canvasId, data){
             node.fy = node.y;
         })
         .on('drag', node => {
-            simulation.alphaTarget(0.3).restart();
+            simulation.alphaTarget(1).restart();
             node.fx = d3.event.x;
             node.fy = d3.event.y;
         })
