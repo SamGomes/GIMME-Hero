@@ -154,7 +154,7 @@ var buildGroupsPlot = function(canvasId, data){
     var colors = []
     for (i=0; i<data.length; i++){
         var group = data[i].playerIds
-        var groupCenterOfMass = {"x": Math.random(0,width), "y": Math.random(0,height)};
+        var groupCenterOfMass = {"x": Math.random()*width-100, "y": Math.random()*height-100};
         for(var j=0;j<group.length; j++){
             allNodes.push({"playerId": group[j], "groupId": i, "centerOfMass": groupCenterOfMass});
         }
@@ -169,12 +169,11 @@ var buildGroupsPlot = function(canvasId, data){
             .strength(0.5)
             )
         .force('cluster', d3.forceCluster()
-            .centers(function (d) { return d.groupId; }
-            )
-            .strength(0.5)
+            .centers((node) => [node.centerOfMass.x, node.centerOfMass.y])
+            .strength(0.2)
             .centerInertia(0.1))
-        .force('collide', d3.forceCollide(20)
-            .strength(1))
+        .force('collide', d3.forceCollide(30)
+            .strength(0.1))
 
     var nodeElements =
         svg.append('g')
@@ -201,12 +200,8 @@ var buildGroupsPlot = function(canvasId, data){
 
     simulation.nodes(allNodes).on("tick", () => {
             nodeElements
-                .attr("cx", function(node) {
-                    return node.x;
-                })
-                .attr("cy", function(node) {
-                    return node.y;
-                })
+                .attr("cx", node => node.x)
+                .attr("cy", node => node.y)
             textElements
                 .attr("x", node => node.x)
                 .attr("y", node => node.y)
