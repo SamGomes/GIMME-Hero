@@ -2,19 +2,17 @@
 {% include "common/header.html" %}
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>GIMME</title>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/assets/owl.carousel.min.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.1.20/jquery.fancybox.min.css" />
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
-	</head>
 	<body class="layout-default">
-		Registered Players: {{currSelectedPlayers}}
-		<a href="{% url 'displayTask' %}">
-			<button class="button is-link is-loading" id="loadingButton" >Start Activity</button>
-		</a>
+		<div class="panel panel-block columns field is-grouped">
+			<div class="column is-full-width">
+				Registered Players: <p id="registeredPlayersPanel"></p>
+			</div>
+			<div class="column">
+				<a href="{% url 'displayTask' %}">
+					<button class="button is-link is-loading" id="loadingButton" >Start Activity</button>
+				</a>
+			</div>
+		</div>
 	</body>
 	<script
 		src="https://code.jquery.com/jquery-3.2.1.min.js"
@@ -23,6 +21,22 @@
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 	<script src="{% static "js/general.js" %}"></script>
 	<script>
-		$("#loadingButton").removeClass("is-loading");
+
+		var fetchServerData = function(){
+			$.ajax({
+				url: '/fetchServerState/',
+				// authentication: {% csrf_token %},
+				complete: function (request) {
+					console.log("{{request.session.currSelectedPlayers}}")
+					$(registeredPlayersPanel).html(parseUnformattedString("{{request.session.currSelectedPlayers}}"));
+					if("{{request.session.readyForNewActivity}}"=="true"){
+						$("#loadingButton").removeClass("is-loading");
+					}
+					console.log(request)
+				}
+			});
+		};
+		setInterval(fetchServerData, 500);
+
 	</script>
 </html>

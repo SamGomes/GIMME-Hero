@@ -9,15 +9,56 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 
 from djangoTest.core.models import User
+from djangoTest.core.models import Task
+from djangoTest.core.models import ServerState
 
 from GIMMECore import *
 
 
+class ServerStateModelBridge():
+	def getCurrAdaptationState(self):
+		serverState = ServerState.objects.first()
+		currAdaptationState = json.loads(serverState.currAdaptationState)
+		return currAdaptationState
+	def isReadyForNewActivity(self):
+		serverState = ServerState.objects.first()
+		readyForNewActivity = json.loads(serverState.readyForNewActivity)
+		return readyForNewActivity
+	def getCurrSelectedPlayers(self):
+		serverState = ServerState.objects.first()
+		currSelectedPlayers = json.loads(serverState.currSelectedPlayers)
+		return currSelectedPlayers
 
-# view models?
-currAdaptationState = []
-readyForNewActivity = False
-currSelectedPlayers = ['Daniel', 'Nick', 'ssa']
+	def setCurrAdaptationState(self, currAdaptationState):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		else:
+			currAdaptationState = json.dumps(currAdaptationState, default=lambda o: o.__dict__, sort_keys=True)
+			serverState.currAdaptationState = currAdaptationState
+		serverState.save()
+
+	def setReadyForNewActivity(self, readyForNewActivity):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		else:
+			readyForNewActivity = json.dumps(readyForNewActivity, default=lambda o: o.__dict__, sort_keys=True)
+			serverState.readyForNewActivity = readyForNewActivity
+		serverState.save()
+
+	def setCurrSelectedPlayers(self, currSelectedPlayers):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		else:
+			currSelectedPlayers = json.dumps(currSelectedPlayers, default=lambda o: o.__dict__, sort_keys=True)
+			serverState.currSelectedPlayers = currSelectedPlayers
+		serverState.save()
+
+serverStateModelBridge = ServerStateModelBridge()
+
+
 
 
 class CustomTaskModelBridge(TaskModelBridge):
@@ -37,6 +78,9 @@ class CustomTaskModelBridge(TaskModelBridge):
 	def getTaskProfileWeight(self, taskId):
 		return 0
 
+taskBridge = CustomTaskModelBridge()
+
+
 
 class CustomPlayerModelBridge(PlayerModelBridge):
 	
@@ -53,7 +97,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 
 	def getSelectedPlayerIds(self):
-		return currSelectedPlayers
+		return serverStateModelBridge.getCurrSelectedPlayers()
 
 	def getPlayerName(self, playerId):
 		player = User.objects.get(username=playerId)
@@ -114,13 +158,15 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		player.currState = json.dumps(newState, default=lambda o: o.__dict__)
 		player.save()
 
-
-
-
-
-
 playerBridge = CustomPlayerModelBridge()
-taskBridge = CustomTaskModelBridge()
+
+
+
+
+# init server state
+serverStateModelBridge.setCurrAdaptationState([])
+serverStateModelBridge.setReadyForNewActivity(False)
+serverStateModelBridge.setCurrSelectedPlayers([])
 
 
 adaptation = Adaptation()
@@ -158,7 +204,9 @@ class Views(): #acts as a namespace
 		userDict = storedUser.__dict__.copy()
 		userDict.pop('_state')
 		request.session.update(userDict)
-		request.session.modified = True
+
+		request.session.save()
+
 		return redirect('/dash')
 
 	def logout(request):
@@ -202,7 +250,9 @@ class Views(): #acts as a namespace
 
 		#case role is student then...
 		return render(request, dashSwitch.get(request.session.get("role")), request.session.__dict__)
-            
+       
+		
+
 	def saveUserRegistration(request):
 		if request.POST:
 			username = request.POST.get('username')
@@ -237,18 +287,39 @@ class Views(): #acts as a namespace
 	# functioning methods
 	def newAvailablePlayer(request):
 		username = request.session.get('username')
-		print("globals: "+str(currSelectedPlayers))
+		# print("globals: "+str(currSelectedPlayers))
+		currSelectedPlayers = serverStateModelBridge.getCurrSelectedPlayers();
+		print(currSelectedPlayers)
 		if not username in currSelectedPlayers:
 			currSelectedPlayers.append(username)
+		serverStateModelBridge.setCurrSelectedPlayers(currSelectedPlayers)
 		return render(request, 'student/waiting.html')
 
 
+
+
+	# student methods
+	def displayTask(request):
+		return render(request, 'student/activity.html')
+
+	def saveTaskResults(request):
+		if request.POST:
+			playerId = request.session.get('username')
+			playerBridge.setPlayerCharacteristics(playerId, PlayerCharacteristics(ability=request.POST["ability"], engagement=request.POST["engagement"]))
+			playerBridge.setPlayerCurrProfile(playerId, InteractionsProfile(K_i=0.3, K_cp=0.1, K_cl=0.5))
+			playerBridge.savePlayerState(playerId, playerBridge.getPlayerCurrState(playerId))
+			return Views.dash(request)
+
+
+
+
+	# professor methods
 	def startAdaptation(request):
 		currAdaptationState = adaptation.iterate()
-		print(currAdaptationState)
 		request.session["currAdaptationState"] = json.dumps(currAdaptationState, default=lambda o: o.__dict__, sort_keys=True)
-		readyForNewActivity = True
-		request.session.modified = True
+		serverStateModelBridge.setCurrAdaptationState(currAdaptationState)
+		serverStateModelBridge.setReadyForNewActivity(True)
+		request.session.save()
 		return Views.dash(request)
 
 
@@ -262,13 +333,12 @@ class Views(): #acts as a namespace
 			return Views.dash(request)
 
 
-	def displayTask(request):
-		return render(request, 'student/activity.html')
-
-	def saveTaskResults(request):
-		if request.POST:
-			playerId = request.session.get('username')
-			playerBridge.setPlayerCharacteristics(playerId, PlayerCharacteristics(ability=request.POST["ability"], engagement=request.POST["engagement"]))
-			playerBridge.setPlayerCurrProfile(playerId, InteractionsProfile(K_i=0.3, K_cp=0.1, K_cl=0.5))
-			playerBridge.savePlayerState(playerId, playerBridge.getPlayerCurrState(playerId))
-			return Views.dash(request)
+     
+	def fetchServerState(request):
+		request.session["currSelectedPlayers"] = serverStateModelBridge.getCurrSelectedPlayers()
+		request.session["readyForNewActivity"] = serverStateModelBridge.isReadyForNewActivity()
+		if(request.session['role'] == 'professor'):
+			request.session["currAdaptationState"] = serverStateModelBridge.getCurrAdaptationState()
+		request.session.save()
+		print(request.session["currSelectedPlayers"])
+		return HttpResponse('ok')

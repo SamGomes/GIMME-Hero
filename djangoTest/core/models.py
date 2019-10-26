@@ -36,7 +36,9 @@ class Task(models.Model):
     profileImportance = models.CharField(max_length=255)
     difficultyImportance = models.CharField(max_length=255)
 
-    # email = models.URLField(max_length=500, null=True, blank=True)
-    # class Meta:
-    #     verbose_name = u'Task'
-    #     verbose_name_plural = u'Task'
+
+
+class ServerState(models.Model):
+    currAdaptationState = models.CharField(max_length=255, default="[]")
+    currSelectedPlayers = models.CharField(max_length=255, default="False")
+    readyForNewActivity = models.CharField(max_length=255, default="[]")

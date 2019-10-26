@@ -57,7 +57,12 @@ var getAll = function(selector) {
     return Array.prototype.slice.call(document.querySelectorAll(selector), 0);
 }
 
+var parseUnformattedString = function(attributeStr){
+    // console.log(attributeStr.replace(/&quot;/g,"\""))
+    return attributeStr.replace(/&quot;/g,"\"").replace(/&#39;/g,"\"")
+}
+
 var parseSessionAttribute = function(attributeStr){
-    console.log(attributeStr.replace(/&quot;/g,"\""))
-    return JSON.parse(attributeStr.replace(/&quot;/g,"\""))
+    // console.log(attributeStr.replace(/&quot;/g,"\""))
+    return JSON.parse(parseUnformattedString(attributeStr))
 }

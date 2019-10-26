@@ -11,6 +11,8 @@ SECRET_KEY = 'p+ah706u_0-zk@_jq&o#v6&u@)^w5#w&*r_re=usr@u9i-vh3d'
 DEBUG = True
 ALLOWED_HOSTS = []
 
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_SAVE_EVERY_REQUEST = True
 
 # Application definition
 INSTALLED_APPS = [

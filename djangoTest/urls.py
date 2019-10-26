@@ -23,4 +23,7 @@ urlpatterns = [
 
     re_path(r'^displayTask/', Views.displayTask, name="displayTask"),
     re_path(r'^saveTaskResults/', Views.saveTaskResults, name="saveTaskResults"),
+
+    
+    re_path(r'^fetchServerState/', Views.fetchServerState, name="fetchServerState"),
 ]

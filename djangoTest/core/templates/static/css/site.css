@@ -1,23 +1,9 @@
 ﻿
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
-}
 
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
+  background-color: transparent;
   /*position: relative;*/
   /*min-height: 100%;*/
 }
@@ -45,12 +31,13 @@ body {
   /*background: url("../images/navbar.png") center; */
   background-attachment: fixed; 
   border-radius: 25px;
-  margin: 60px;
+  margin: 40px;
 }
 
 .panel {
   background-color: white;
   border-radius: 25px;
+  border-fill: transparent;
 }
 
 .button{
