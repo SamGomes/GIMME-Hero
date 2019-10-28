@@ -34,9 +34,14 @@ body {
   margin: 40px;
 }
 
-.panel {
+.panel-heading {
+  border-radius: 25px 25px 0px 0px;
+  border-fill: transparent;
+}
+
+.panel-block {
   background-color: white;
-  border-radius: 25px;
+  border-radius: 0px 0px 25px 25px;
   border-fill: transparent;
 }
 
@@ -46,4 +51,13 @@ body {
 
 .navbar-dropdown {
   min-width: 50%;
+}
+
+.title{
+  font-size: 400%;
+  color: white;
+}
+.subtitle{
+  font-size: 200%;
+  color: white;
 }

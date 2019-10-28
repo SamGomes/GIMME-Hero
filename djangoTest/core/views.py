@@ -1,6 +1,6 @@
 import json
 import sys
-sys.path.append('../../GIMME/GIMME/GIMMECore/')
+sys.path.append('../../GIMME/GIMMECore/')
 
 from django.shortcuts import render,render_to_response, redirect
 from django.views.generic import View
@@ -11,6 +11,8 @@ from django.http import HttpResponse
 from djangoTest.core.models import User
 from djangoTest.core.models import Task
 from djangoTest.core.models import ServerState
+
+from django.views.decorators.csrf import csrf_protect
 
 from GIMMECore import *
 
@@ -284,16 +286,16 @@ class Views(): #acts as a namespace
 			# playerBridge.registerNewPlayer(playerId, name, currState, pastModelIncreasesGrid, currModelIncreases, personality)
 			return Views.dash(request)
 
-	# functioning methods
+
+	@csrf_protect
 	def newAvailablePlayer(request):
 		username = request.session.get('username')
 		# print("globals: "+str(currSelectedPlayers))
 		currSelectedPlayers = serverStateModelBridge.getCurrSelectedPlayers();
-		print(currSelectedPlayers)
 		if not username in currSelectedPlayers:
 			currSelectedPlayers.append(username)
 		serverStateModelBridge.setCurrSelectedPlayers(currSelectedPlayers)
-		return render(request, 'student/waiting.html')
+		return HttpResponse('ok')
 
 
 
@@ -333,12 +335,20 @@ class Views(): #acts as a namespace
 			return Views.dash(request)
 
 
-     
+	@csrf_protect
 	def fetchServerState(request):
+		newSessionState = {}
+		
 		request.session["currSelectedPlayers"] = serverStateModelBridge.getCurrSelectedPlayers()
+		newSessionState["currSelectedPlayers"] = request.session["currSelectedPlayers"]
+
 		request.session["readyForNewActivity"] = serverStateModelBridge.isReadyForNewActivity()
+		newSessionState["readyForNewActivity"] = request.session["readyForNewActivity"]
+
 		if(request.session['role'] == 'professor'):
 			request.session["currAdaptationState"] = serverStateModelBridge.getCurrAdaptationState()
+			newSessionState["currAdaptationState"] = request.session["currAdaptationState"]
+
 		request.session.save()
-		print(request.session["currSelectedPlayers"])
-		return HttpResponse('ok')
+		newSession = json.dumps(newSessionState, default=lambda o: o.__dict__, sort_keys=True)
+		return HttpResponse(newSession)
