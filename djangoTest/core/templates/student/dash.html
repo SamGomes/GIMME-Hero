@@ -18,12 +18,13 @@
 		</div>
 		
 		<div id="dashboard">
+			
 			<section class="section danger" id="waitingSection">
 				<div class="panel animated zoomIn">
 					<div class="panel-heading">
 						<div class="columns is-vcentered">
 							<div class="column">
-								<p>Your Learning State</p>
+								<p>Waiting Room</p>
 							</div>
 							<div class="is-pulled-left">
 								<i class="fa fa-window-minimize minimizerButton" aria-hidden="true"></i>
@@ -33,15 +34,17 @@
 					</div>
 					<div class="panel-block">
 						<div class="column is-full-width" id="registeredPlayersPanel">
-							<p>Waiting for other players...</p>
-							Registered Players:
+							<div class="table" id="waitingRoomTable"></div>
 						</div>
+
 						<a>
 							<button class="button is-link" id="readyForNewActivityButton" >Ready for new Activity</button>
 						</a>
+
 					</div>
 				</div>
 			</section>
+
 			<section class="section">
 				<div class="panel animated zoomIn">
 					<div class="panel-heading">
@@ -110,46 +113,45 @@
 						dataType: "json",
 						success: 
 							function (newServerState) {
-
 								var currSelectedPlayers = newServerState.currSelectedPlayers;
-								var currSelectedPlayersText= "[";
-								for(var i=0; i < currSelectedPlayers.length; i++){
-									currSelectedPlayersText += currSelectedPlayers[i]
-									if(i < currSelectedPlayers.length - 1){
-										currSelectedPlayersText += ",";
-									}
-								}
-								currSelectedPlayersText+="]";
 								
-								$(registeredPlayersPanel).html("Registered Players: "+currSelectedPlayersText);
-								if(newServerState.readyForNewActivity=="true"){
+								var table = $('<table>');
+							    row = $('<tr>').append($('<th>').text('Username'));
+								table.append(row);
+								
+								for(var i=0; i < currSelectedPlayers.length; i++){
+								    row = $('<tr>').append($('<td>').text(currSelectedPlayers[i]));
+									table.append(row);
+								}
+								$('#waitingRoomTable').empty();
+								$('#waitingRoomTable').append(table);
+								
+								console.log(newServerState.readyForNewActivity)
 
+								if(newServerState.readyForNewActivity){
 									$("#readyForNewActivityButton").removeClass("is-loading");
+									$("#readyForNewActivityButton").attr("href","{% url 'displayTask' %}");
 									$("#readyForNewActivityButton").html("Start Activity")
+								}else{
+									// $("#readyForNewActivityButton").addClass("is-loading");
+									$("#readyForNewActivityButton").html("Ready for new Activity")
+									$("#readyForNewActivityButton").attr("href","");
 								}
 							}
 					}
 				);
 			};
 
-
-			$("#registeredPlayersPanel").hide();
-
 			$("#readyForNewActivityButton").click(function(){
 				$("#readyForNewActivityButton").addClass("is-loading");
-				$("#readyForNewActivityButton").attr("href","{% url 'displayTask' %}");
-
 				$.ajax(
 						{
 							url: '/newAvailablePlayer/',
 						}
 					);
-				$("#registeredPlayersPanel").show();
-
-				fetchServerData();
-				setInterval(fetchServerData, 500);
 			})
-
+			fetchServerData();
+			setInterval(fetchServerData, 500);
 
 			var pastModelIncreasesGrid = parseSessionAttribute("{{request.session.pastModelIncreasesGrid}}");
 			console.log(pastModelIncreasesGrid.cells)

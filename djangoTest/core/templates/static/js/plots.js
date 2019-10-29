@@ -184,6 +184,14 @@ var buildGroupsPlot = function(canvasId, data){
             .attr('r', 10)
             .attr('fill', node => colors[node.groupId]);
 
+
+    var tooltip = svg.append("div")
+        // .style("position", "absolute")
+        .style("z-index", "10")
+        // .style("visibility", "hidden")
+        .style("background", "#111")
+        .text("Group Info:");
+
     var groupIndicators =
         svg.append('g')
           .selectAll('circle')
@@ -208,7 +216,10 @@ var buildGroupsPlot = function(canvasId, data){
             .attr('cy', node => node.centerOfMass.y)
             .attr('stroke-dasharray', '5,5')
             .attr('stroke', node => colors[node.groupId])
-            .attr('fill', 'transparent');
+            .attr('fill', 'transparent')
+            .on("mouseover", function(d){tooltip.text(d); return tooltip.style("visibility", "visible");})
+            .on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
+            .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 
     
     var textElements =

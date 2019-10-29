@@ -22,6 +22,32 @@
 		</div>
 		
 		<div id="dashboard">
+			
+			<section class="section danger" id="waitingSection">
+				<div class="panel animated zoomIn">
+					<div class="panel-heading">
+						<div class="columns is-vcentered">
+							<div class="column">
+								<p>Waiting Room</p>
+							</div>
+							<div class="is-pulled-left">
+								<i class="fa fa-window-minimize minimizerButton" aria-hidden="true"></i>
+								<i class="fa fa-window-maximize maximizerButton" aria-hidden="true"></i>
+							</div>
+						</div>
+					</div>
+					<div class="panel-block">
+						<div class="column is-full-width" id="registeredPlayersPanel">
+							<div class="table" id="waitingRoomTable"></div>
+						</div>
+
+							<div class="button is-large" type="submit" id="startAdaptation">Start Class Activities</div>
+							<!-- <input class="button is-large" type="reset" value="Journey"> -->
+						
+					</div>
+				</div>
+			</section>
+
 			<section class="section">
 				<div class="panel animated zoomIn">
 					<div class="panel-heading">
@@ -83,13 +109,6 @@
 				
 			</section>
 
-			<form action="{% url 'startAdaptation' %}" class="section">
-				<div class="field requiredFormField">
-					<label class="label">Duration*</label>
-				</div>
-				<input class="button is-large" type="submit" value="Start Class Activities">
-				<!-- <input class="button is-large" type="reset" value="Journey"> -->
-			</form>
 			
 		</div>
 	</body>
@@ -107,24 +126,70 @@
 		$(document).ready(function(){
 
 			var fetchServerData = function(){
-				$.ajax({
-					url: '/fetchServerState/',
-					// authentication: {% csrf_token %},
-					complete: function (request) {
-						console.log("{{request.session.currSelectedPlayers}}")
-						console.log(request)
+				$.ajax(
+					{
+						url: '/fetchServerState/',
+						// authentication: getCookie('csrftoken'),
+						dataType: "json",
+						success: 
+							function (newServerState) {
+								var currSelectedPlayers = newServerState.currSelectedPlayers;
+								
+								var table = $('<table>');
+							    row = $('<tr>').append($('<th>').text('Username'));
+								table.append(row);
+								
+								for(var i=0; i < currSelectedPlayers.length; i++){
+								    row = $('<tr>').append($('<td>').text(currSelectedPlayers[i]));
+									table.append(row);
+								}
+								$('#waitingRoomTable').empty();
+								$('#waitingRoomTable').append(table);
+
+								if(newServerState.readyForNewActivity=="true"){
+
+									$("#readyForNewActivityButton").removeClass("is-loading");
+									$("#readyForNewActivityButton").html("Start Activity")
+								}
+							}
 					}
-				});
+				);
 			};
+
+			fetchServerData();
 			setInterval(fetchServerData, 500);
 
 
-			// console.log("{{request.session.currAdaptationState}}")
+			var startAdaptation = function(){
+				$.ajax(
+						{
+							url: '/startAdaptation/',
+							dataType: "json",
+							success: 
+								function (newServerState) {
+									console.log(newServerState)
+									var adaptationResult = newServerState.currAdaptationState;
+									$("#groupsPlot").empty()
+									if(adaptationResult.groups != undefined){
+										buildGroupsPlot( "groupsPlot", adaptationResult.groups )
+									}
+								}
+						}
+					);
+			}
+
+
 			var adaptationResult = parseSessionAttribute("{{request.session.currAdaptationState}}");
-			// adaptationResult = parseSessionAttribute(`{"groups": [{"avgPersonality": {"K_cl": 0.30938960520960873, "K_cp": 0.9283846504042355, "K_i": 0.47751325917922327}, "avgPlayerState": {"characteristics": {"ability": 0.0, "engagement": 0.0}, "dist": 0, "profile": {"K_cl": 0, "K_cp": 0, "K_i": 0}}, "interactionsProfile": {"K_cl": 0.07853970145678738, "K_cp": 0.5141290940665851, "K_i": 0.4073312044766275}, "playerIds": [4, 5], "tailoredTaskId": 17}, {"avgPersonality": {"K_cl": 0.8840155594368744, "K_cp": 0.23187584695787244, "K_i": 0.5926112800501744}, "avgPlayerState": {"characteristics": {"ability": 0.0, "engagement": 0.0}, "dist": 0, "profile": {"K_cl": 0, "K_cp": 0, "K_i": 0}}, "interactionsProfile": {"K_cl": 0.47517914376711035, "K_cp": 0.22716089775105772, "K_i": 0.2976599584818319}, "playerIds": [1, 0], "tailoredTaskId": 3}, {"avgPersonality": {"K_cl": 1.7526462269886758, "K_cp": 1.4275031617709937, "K_i": 2.7907265330703566}, "avgPlayerState": {"characteristics": {"ability": 0.0, "engagement": 0.0}, "dist": 0, "profile": {"K_cl": 0, "K_cp": 0, "K_i": 0}}, "interactionsProfile": {"K_cl": 0.2570053043614851, "K_cp": 0.17106209397284422, "K_i": 0.5719326016656706}, "playerIds": [8, 7, 9], "tailoredTaskId": 17}, {"avgPersonality": {"K_cl": 2.0274644676188536, "K_cp": 1.3992134983604716, "K_i": 2.472311204596113}, "avgPlayerState": {"characteristics": {"ability": 0.0, "engagement": 0.0}, "dist": 0, "profile": {"K_cl": 0, "K_cp": 0, "K_i": 0}}, "interactionsProfile": {"K_cl": 0.3070303185705759, "K_cp": 0.3523749780741778, "K_i": 0.3405947033552463}, "playerIds": [2, 3, 6], "tailoredTaskId": 3}]}`);
 			if(adaptationResult.groups != undefined){
 				buildGroupsPlot( "groupsPlot", adaptationResult.groups )
 			}
+
+			$("#startAdaptation").click(function(){
+				startAdaptation();
+			})
+			// console.log("{{request.session.currAdaptationState}}")
+			// adaptationResult = parseSessionAttribute(`{"groups": [{"avgPersonality": {"K_cl": 0.30938960520960873, "K_cp": 0.9283846504042355, "K_i": 0.47751325917922327}, "avgPlayerState": {"characteristics": {"ability": 0.0, "engagement": 0.0}, "dist": 0, "profile": {"K_cl": 0, "K_cp": 0, "K_i": 0}}, "interactionsProfile": {"K_cl": 0.07853970145678738, "K_cp": 0.5141290940665851, "K_i": 0.4073312044766275}, "playerIds": [4, 5], "tailoredTaskId": 17}, {"avgPersonality": {"K_cl": 0.8840155594368744, "K_cp": 0.23187584695787244, "K_i": 0.5926112800501744}, "avgPlayerState": {"characteristics": {"ability": 0.0, "engagement": 0.0}, "dist": 0, "profile": {"K_cl": 0, "K_cp": 0, "K_i": 0}}, "interactionsProfile": {"K_cl": 0.47517914376711035, "K_cp": 0.22716089775105772, "K_i": 0.2976599584818319}, "playerIds": [1, 0], "tailoredTaskId": 3}, {"avgPersonality": {"K_cl": 1.7526462269886758, "K_cp": 1.4275031617709937, "K_i": 2.7907265330703566}, "avgPlayerState": {"characteristics": {"ability": 0.0, "engagement": 0.0}, "dist": 0, "profile": {"K_cl": 0, "K_cp": 0, "K_i": 0}}, "interactionsProfile": {"K_cl": 0.2570053043614851, "K_cp": 0.17106209397284422, "K_i": 0.5719326016656706}, "playerIds": [8, 7, 9], "tailoredTaskId": 17}, {"avgPersonality": {"K_cl": 2.0274644676188536, "K_cp": 1.3992134983604716, "K_i": 2.472311204596113}, "avgPlayerState": {"characteristics": {"ability": 0.0, "engagement": 0.0}, "dist": 0, "profile": {"K_cl": 0, "K_cp": 0, "K_i": 0}}, "interactionsProfile": {"K_cl": 0.3070303185705759, "K_cp": 0.3523749780741778, "K_i": 0.3405947033552463}, "playerIds": [2, 3, 6], "tailoredTaskId": 3}]}`);
+			
 		});
 	</script>
 </html>

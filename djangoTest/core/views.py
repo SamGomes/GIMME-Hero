@@ -1,6 +1,6 @@
 import json
 import sys
-sys.path.append('../../GIMME/GIMMECore/')
+sys.path.append('../../GIMME/GIMME/GIMMECore/')
 
 from django.shortcuts import render,render_to_response, redirect
 from django.views.generic import View
@@ -322,7 +322,7 @@ class Views(): #acts as a namespace
 		serverStateModelBridge.setCurrAdaptationState(currAdaptationState)
 		serverStateModelBridge.setReadyForNewActivity(True)
 		request.session.save()
-		return Views.dash(request)
+		return Views.fetchServerState(request)
 
 
 
