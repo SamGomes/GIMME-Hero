@@ -322,6 +322,11 @@ class Views(): #acts as a namespace
 		serverStateModelBridge.setCurrAdaptationState(currAdaptationState)
 		serverStateModelBridge.setReadyForNewActivity(True)
 		request.session.save()
+
+		# init server state
+		serverStateModelBridge.setReadyForNewActivity(False)
+		serverStateModelBridge.setCurrSelectedPlayers([])
+		
 		return Views.fetchServerState(request)
 
 
