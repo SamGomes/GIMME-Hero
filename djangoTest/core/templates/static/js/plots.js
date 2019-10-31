@@ -133,6 +133,40 @@ var buildStatePlot = function(canvasId, data){
 
 var buildGroupsPlot = function(canvasId, data){
     
+
+    // from http://bl.ocks.org/mbostock/7555321
+    function wrap(text, width) {
+        
+        text.each(function() {
+            var text = d3.select(this),
+            words = text.text().split(/\n/g).reverse(),
+            word,
+            line = [],
+            lineNumber = 0,
+            lineHeight = 1.2, // ems
+            x = text.attr("x"),
+            y = text.attr("y"),
+            dy = text.attr("dy") ? text.attr("dy") : 0;
+            tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
+
+            console.log(words);
+            console.log(words.pop());
+
+            while (words.length > 0) {
+                word = words.pop();
+                line.push(word);
+                tspan.text(line.join(" "));
+                console.log(tspan.node().getComputedTextLength());
+                if (tspan.node().getComputedTextLength() > width) {
+                    line.pop();
+                    tspan.text(line.join(" "));
+                    line = [word];
+                    tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+                }
+            }
+        });
+    }
+
     function getRandomColor() {
         var letters = '0123456789ABCDEF';
         var color = '#';
@@ -155,7 +189,7 @@ var buildGroupsPlot = function(canvasId, data){
     var colors = [];
     for (i=0; i<data.length; i++){
         var group = data[i]
-        var groupCenterOfMass = {"x": 100 + Math.random()*(width-200), "y": 100 + Math.random()*(height-200)};
+        var groupCenterOfMass = {"x": 100 + Math.random()*(width-300), "y": 100 + Math.random()*(height-300)};
 
         console.log(group)
 
@@ -244,11 +278,12 @@ var buildGroupsPlot = function(canvasId, data){
         .attr('y', 4)
         .attr('rx', '15px')
         // .attr('ry', '35px')
-        .attr('width', 200)
-        .attr('height', 160)
+        .attr('width', 300)
+        .attr('height', 200)
         .attr('fill', 'rgba(0, 0, 0, 0.59)')
         .attr('stroke', 'black');
-        
+    
+
     tooltipElements.append('text')
         .attr('x', 30)
         .attr('y', 30)
@@ -258,8 +293,8 @@ var buildGroupsPlot = function(canvasId, data){
 
         .attr('font-size', 15)
         .attr('fill','white')
-        .text(node => JSON.stringify(node).replace(/{/g,"").replace(/}/g,""));
-
+        .text(node => { return "Group Characteristics:\n "+JSON.stringify({ "characteristics": node.characteristics, "profile": node.profile} ,  undefined, 2);})
+        .call(wrap, 80);
 
 
 
@@ -320,4 +355,7 @@ var buildGroupsPlot = function(canvasId, data){
         });
 
     groupIndicators.call(dragDrop)
+
+
+
 }
