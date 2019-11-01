@@ -113,14 +113,14 @@
 						dataType: "json",
 						success: 
 							function (newServerState) {
-								var currSelectedPlayers = newServerState.currSelectedPlayers;
+								var currWaitingPlayers = newServerState.currWaitingPlayers;
 								
 								var table = $('<table>');
 							    row = $('<tr>').append($('<th>').text('Username'));
 								table.append(row);
 								
-								for(var i=0; i < currSelectedPlayers.length; i++){
-								    row = $('<tr>').append($('<td>').text(currSelectedPlayers[i]));
+								for(var i=0; i < currWaitingPlayers.length; i++){
+								    row = $('<tr>').append($('<td>').text(currWaitingPlayers[i]));
 									table.append(row);
 								}
 								$('#waitingRoomTable').empty();
@@ -128,7 +128,7 @@
 
 								if(newServerState.readyForNewActivity){
 									$("#readyForNewActivityButton").removeClass("is-loading");
-									$("#readyForNewActivityButton").attr("href","{% url 'displayTask' %}");
+									$($("#readyForNewActivityButton").parent()).attr("href","{% url 'startActivity' %}");
 									$("#readyForNewActivityButton").html("Start Activity")
 								}else{
 									// $("#readyForNewActivityButton").addClass("is-loading");

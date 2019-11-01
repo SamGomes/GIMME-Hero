@@ -135,14 +135,15 @@
 						dataType: "json",
 						success: 
 							function (newServerState) {
-								var currSelectedPlayers = newServerState.currSelectedPlayers;
+								console.log(newServerState)
+								var currWaitingPlayers = newServerState.currWaitingPlayers;
 								
 								var table = $('<table>');
 							    row = $('<tr>').append($('<th>').text('Username'));
 								table.append(row);
 								
-								for(var i=0; i < currSelectedPlayers.length; i++){
-								    row = $('<tr>').append($('<td>').text(currSelectedPlayers[i]));
+								for(var i=0; i < currWaitingPlayers.length; i++){
+								    row = $('<tr>').append($('<td>').text(currWaitingPlayers[i]));
 									table.append(row);
 								}
 								$('#waitingRoomTable').empty();

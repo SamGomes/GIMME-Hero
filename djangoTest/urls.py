@@ -21,7 +21,7 @@ urlpatterns = [
     re_path(r'^loginCheck/$', Views.loginCheck, name="loginCheck"),
     re_path(r'^startAdaptation/', Views.startAdaptation, name="startAdaptation"),
 
-    re_path(r'^displayTask/', Views.displayTask, name="displayTask"),
+    re_path(r'^startActivity/', Views.startActivity, name="startActivity"),
     re_path(r'^saveTaskResults/', Views.saveTaskResults, name="saveTaskResults"),
 
     

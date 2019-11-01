@@ -40,5 +40,6 @@ class Task(models.Model):
 
 class ServerState(models.Model):
     currAdaptationState = models.CharField(max_length=255, default="[]")
-    currSelectedPlayers = models.CharField(max_length=255, default="False")
+    currWaitingPlayers = models.CharField(max_length=255, default="False")
+    currOccupiedPlayers = models.CharField(max_length=255, default="False")
     readyForNewActivity = models.CharField(max_length=255, default="[]")
