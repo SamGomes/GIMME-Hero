@@ -101,8 +101,8 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 	
 	def savePlayerState(self, playerId, newState):
 		player = User.objects.get(username = playerId)
+
 		playerStateGrid = self.getPlayerPastModelIncreases(playerId)
-		print(playerStateGrid)
 		playerStateGrid.pushToGrid(newState)
 		player.pastModelIncreasesGrid = json.dumps(playerStateGrid, default=lambda o: o.__dict__)
 		player.save()
@@ -126,16 +126,21 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 	def getPlayerPastModelIncreases(self, playerId):
 		player = User.objects.get(username=playerId)
-		playerStateGrid = json.loads(player.pastModelIncreasesGrid)
-		cells = []
-		for state in playerStateGrid["cells"]:
-			characteristics = state["characteristics"]
-			characteristics = PlayerCharacteristics(ability= float(characteristics["ability"]), engagement= float(characteristics["engagement"]))
 
-			profile = state["profile"]
-			profile = InteractionsProfile(K_cl=float(profile["K_cl"]), K_cp=float(profile["K_cp"]), K_i=float(profile["K_i"]))
-			
-			cells.append(PlayerState(profile = profile, characteristics = characteristics, dist=state["dist"]))
+		playerStateGrid = json.loads(player.pastModelIncreasesGrid)
+		cells = [[]]
+		for cell in playerStateGrid["cells"]:
+			newCell = []
+			for state in cell:
+				characteristics = state["characteristics"]
+				characteristics = PlayerCharacteristics(ability= float(characteristics["ability"]), engagement= float(characteristics["engagement"]))
+
+				profile = state["profile"]
+				profile = InteractionsProfile(K_cl=float(profile["K_cl"]), K_cp=float(profile["K_cp"]), K_i=float(profile["K_i"]))
+				
+				newCell.append(PlayerState(profile = profile, characteristics = characteristics, dist=state["dist"]))
+			# if len(newCell) > 0:
+			cells.append(newCell)
 		return PlayerStateGrid(cells=cells, numCells=int(playerStateGrid["numCells"]), maxAmountOfStoredProfilesPerCell=int(playerStateGrid["maxAmountOfStoredProfilesPerCell"]))
 
 	def getPlayerCurrCharacteristics(self, playerId):
