@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 {% include "common/header.html" %}
 <!DOCTYPE html>
 <html>
@@ -105,11 +105,13 @@
 	<script>
 		$(document).ready(function(){
 
+			var myStateGrid = undefined;
+			var myCharacteristics = undefined;
+
 			var fetchServerData = function(){
 				$.ajax(
 					{
 						url: '/fetchServerState/',
-						// authentication: getCookie('csrftoken'),
 						dataType: "json",
 						success: 
 							function (newServerState) {
@@ -131,9 +133,31 @@
 									$($("#readyForNewActivityButton").parent()).attr("href","{% url 'startActivity' %}");
 									$("#readyForNewActivityButton").html("Start Activity")
 								}else{
-									// $("#readyForNewActivityButton").addClass("is-loading");
 									$("#readyForNewActivityButton").html("Ready for new Activity")
 									$("#readyForNewActivityButton").attr("href","");
+								}
+							}
+					}
+				);
+				$.ajax(
+					{
+						url: '/fetchPlayerState/',
+						dataType: "json",
+						success: 
+							function (newServerState) {
+								if(myStateGrid == undefined){
+									myStateGrid = newServerState.myStateGrid;
+									buildInteractionsProfilePlot("interactionsProfilePlot", myStateGrid.cells);
+								}
+								if(myCharacteristics == undefined){
+									myCharacteristics = newServerState.myCharacteristics;
+									var attributes = Object.keys(myCharacteristics) 
+									var values = Object.values(myCharacteristics)
+									var parsedCharacteristics = []
+									for(i=0; i < attributes.length; i++){
+										parsedCharacteristics.push({"name": attributes[i], "value": values[i]})
+									} 
+									buildStatePlot("learningStatePlot", parsedCharacteristics);
 								}
 							}
 					}
@@ -151,19 +175,6 @@
 			fetchServerData();
 			setInterval(fetchServerData, 500);
 
-			var pastModelIncreasesGrid = parseSessionAttribute("{{request.session.pastModelIncreasesGrid}}");
-			console.log(pastModelIncreasesGrid.cells)
-			buildInteractionsProfilePlot( "interactionsProfilePlot", pastModelIncreasesGrid.cells );
-			
-			var parsedCharacteristics = parseSessionAttribute("{{request.session.currState}}").characteristics;
-			var attributes = Object.keys(parsedCharacteristics) 
-			var values = Object.values(parsedCharacteristics)
-			console.log(parsedCharacteristics)
-			parsedCharacteristics = []
-			for(var i=0; i < attributes.length; i++){
-				parsedCharacteristics.push({"name": attributes[i], "value": values[i]})
-			} 
-			buildStatePlot( "learningStatePlot", parsedCharacteristics )
 		});
 	</script>
 </html>

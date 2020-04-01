@@ -63,6 +63,5 @@ var parseUnformattedString = function(attributeStr){
 }
 
 var parseSessionAttribute = function(attributeStr){
-    console.log(attributeStr.replace(/&quot;/g,"\""))
     return JSON.parse(parseUnformattedString(attributeStr))
 }

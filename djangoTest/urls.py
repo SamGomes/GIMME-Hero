@@ -26,4 +26,5 @@ urlpatterns = [
 
     
     re_path(r'^fetchServerState/', Views.fetchServerState, name="fetchServerState"),
+    re_path(r'^fetchPlayerState/', Views.fetchPlayerState, name="fetchPlayerState"),
 ]

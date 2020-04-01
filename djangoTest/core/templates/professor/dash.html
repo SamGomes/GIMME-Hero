@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 {% include "common/header.html" %}
 <!DOCTYPE html>
 <html>
@@ -127,6 +127,8 @@
 	<script>
 		$(document).ready(function(){
 
+			var currAdaptationState = undefined;
+
 			var fetchServerData = function(){
 				$.ajax(
 					{
@@ -137,7 +139,9 @@
 							function (newServerState) {
 								// console.log(newServerState)
 								var currWaitingPlayers = newServerState.currWaitingPlayers;
-								
+
+								console.log(currAdaptationState);
+
 								var table = $('<table>');
 							    row = $('<tr>').append($('<th>').text('Username'));
 								table.append(row);
@@ -150,10 +154,14 @@
 								$('#waitingRoomTable').append(table);
 
 								if(newServerState.readyForNewActivity=="true"){
-
 									$("#readyForNewActivityButton").removeClass("is-loading");
-									$("#readyForNewActivityButton").html("Start Activity")
+									$("#readyForNewActivityButton").html("Start Activity");
 								}
+
+								if(currAdaptationState == undefined && newServerState.currAdaptationState.groups != undefined){
+									buildGroupsPlot( "groupsPlot", newServerState.currAdaptationState);
+								}
+								currAdaptationState = newServerState.currAdaptationState;
 							}
 					}
 				);
@@ -170,37 +178,25 @@
 							dataType: "json",
 							success: 
 								function (newServerState) {
-									console.log(newServerState)
-									var adaptationResult = newServerState.currAdaptationState;
-									$("#groupsPlot").empty()
-									if(adaptationResult.groups != undefined){
-										buildGroupsPlot( "groupsPlot", adaptationResult.groups )
+									currAdaptationState = newServerState.currAdaptationState;
+									$("#groupsPlot").empty();
+									if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
+										buildGroupsPlot( "groupsPlot", currAdaptationState);
 									}
 								}
 						}
 					);
 			}
 
-
-
-
-			var adaptationResult = parseSessionAttribute("{{request.session.currAdaptationState}}");
-			if(adaptationResult.groups != undefined){
-				buildGroupsPlot( "groupsPlot", adaptationResult.groups )
-			}
-
 			$("#startAdaptation").click(function(){
 				startAdaptation();
 			})
 			$("#rebuildChart").click(function(){
-				$("#groupsPlot").empty()
-				if(adaptationResult.groups != undefined){
-					buildGroupsPlot( "groupsPlot", adaptationResult.groups )
+				$("#groupsPlot").empty();
+				if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
+					buildGroupsPlot( "groupsPlot", currAdaptationState);
 				}
 			})
-			// console.log("{{request.session.currAdaptationState}}")
-			// adaptationResult = parseSessionAttribute(`{"groups": [{"avgPersonality": {"K_cl": 0.30938960520960873, "K_cp": 0.9283846504042355, "K_i": 0.47751325917922327}, "avgPlayerState": {"characteristics": {"ability": 0.0, "engagement": 0.0}, "dist": 0, "profile": {"K_cl": 0, "K_cp": 0, "K_i": 0}}, "interactionsProfile": {"K_cl": 0.07853970145678738, "K_cp": 0.5141290940665851, "K_i": 0.4073312044766275}, "playerIds": [4, 5], "tailoredTaskId": 17}, {"avgPersonality": {"K_cl": 0.8840155594368744, "K_cp": 0.23187584695787244, "K_i": 0.5926112800501744}, "avgPlayerState": {"characteristics": {"ability": 0.0, "engagement": 0.0}, "dist": 0, "profile": {"K_cl": 0, "K_cp": 0, "K_i": 0}}, "interactionsProfile": {"K_cl": 0.47517914376711035, "K_cp": 0.22716089775105772, "K_i": 0.2976599584818319}, "playerIds": [1, 0], "tailoredTaskId": 3}, {"avgPersonality": {"K_cl": 1.7526462269886758, "K_cp": 1.4275031617709937, "K_i": 2.7907265330703566}, "avgPlayerState": {"characteristics": {"ability": 0.0, "engagement": 0.0}, "dist": 0, "profile": {"K_cl": 0, "K_cp": 0, "K_i": 0}}, "interactionsProfile": {"K_cl": 0.2570053043614851, "K_cp": 0.17106209397284422, "K_i": 0.5719326016656706}, "playerIds": [8, 7, 9], "tailoredTaskId": 17}, {"avgPersonality": {"K_cl": 2.0274644676188536, "K_cp": 1.3992134983604716, "K_i": 2.472311204596113}, "avgPlayerState": {"characteristics": {"ability": 0.0, "engagement": 0.0}, "dist": 0, "profile": {"K_cl": 0, "K_cp": 0, "K_i": 0}}, "interactionsProfile": {"K_cl": 0.3070303185705759, "K_cp": 0.3523749780741778, "K_i": 0.3405947033552463}, "playerIds": [2, 3, 6], "tailoredTaskId": 3}]}`);
-			
 		});
 	</script>
 </html>

@@ -76,7 +76,7 @@ var buildStatePlot = function(canvasId, data){
         bottom: 15,
         left: 60
     };
-    console.log(data)
+    // console.log(data)
 
     var width = 960 - margin.left - margin.right;
     var height = 500 - margin.top - margin.bottom;
@@ -149,14 +149,14 @@ var buildGroupsPlot = function(canvasId, data){
             dy = text.attr("dy") ? text.attr("dy") : 0;
             tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
 
-            console.log(words);
-            console.log(words.pop());
+            // console.log(words);
+            // console.log(words.pop());
 
             while (words.length > 0) {
                 word = words.pop();
                 line.push(word);
                 tspan.text(line.join(" "));
-                console.log(tspan.node().getComputedTextLength());
+                // console.log(tspan.node().getComputedTextLength());
                 if (tspan.node().getComputedTextLength() > width) {
                     line.pop();
                     tspan.text(line.join(" "));
@@ -182,22 +182,21 @@ var buildGroupsPlot = function(canvasId, data){
       .attr('width', width)
       .attr('height', height);
 
-
+    console.log(data);
   
     var playerNodes = [];
     var groupIndicatorNodes = [];
     var colors = [];
-    for (i=0; i<data.length; i++){
-        var group = data[i]
+    for (i=0; i<data.groups.length; i++){
+        var group = data.groups[i]
+        var avgState = data.avgStates[i]
+        var profile = data.profiles[i]
         var groupCenterOfMass = {"x": 100 + Math.random()*(width-300), "y": 100 + Math.random()*(height-300)};
 
-        console.log(group)
-
-        groupIndicatorNodes.push({"groupId": i, "characteristics": group.avgPlayerState.characteristics, "profile": group.interactionsProfile, "centerOfMass": groupCenterOfMass});
+        groupIndicatorNodes.push({"groupId": i, "characteristics": avgState.characteristics, "profile": profile, "centerOfMass": groupCenterOfMass});
         
-        var playerIds = group.playerIds;
-        for(var j=0;j<playerIds.length; j++){
-            playerNodes.push({"playerId": playerIds[j], "groupId": i, "centerOfMass": groupCenterOfMass});
+        for(var j=0;j<group.length; j++){
+            playerNodes.push({"playerId": group[j], "groupId": i, "centerOfMass": groupCenterOfMass});
         }
         colors[i]=getRandomColor();
     } 

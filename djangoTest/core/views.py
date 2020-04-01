@@ -1,8 +1,7 @@
 import json
 import sys
-sys.path.append('../../GIMME/GIMME/GIMMECore/')
 
-from django.shortcuts import render,render_to_response, redirect
+from django.shortcuts import render, redirect
 from django.views.generic import View
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -75,17 +74,19 @@ serverStateModelBridge = ServerStateModelBridge()
 
 
 
-
 class CustomTaskModelBridge(TaskModelBridge):
 	
-	def getSelectedTaskIds(self):
+	def getAllTaskIds(self):
 		return []
 
 	def getTaskInteractionsProfile(self, taskId):
 		return InteractionsProfile()
 
-	def getTaskMinRequiredAbility(self, taskId):
+	def getMinTaskRequiredAbility(self, taskId):
 		return 0
+
+	def getMinTaskDuration(self, taskId):
+		pass
 
 	def getTaskDifficultyWeight(self, taskId):
 		return 0
@@ -99,10 +100,13 @@ taskBridge = CustomTaskModelBridge()
 
 class CustomPlayerModelBridge(PlayerModelBridge):
 	
-	def savePlayerState(self, playerId, newState):
+	def setAndSavePlayerStateToGrid(self, playerId, newState):
 		player = User.objects.get(username = playerId)
 
-		playerStateGrid = self.getPlayerPastModelIncreases(playerId)
+		self.setPlayerCharacteristics(playerId, newState.characteristics)
+		self.setPlayerProfile(playerId, newState.profile)
+
+		playerStateGrid = self.getPlayerStateGrid(playerId)
 		playerStateGrid.pushToGrid(newState)
 		player.pastModelIncreasesGrid = json.dumps(playerStateGrid, default=lambda o: o.__dict__)
 		player.save()
@@ -111,7 +115,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		return 0
 
 
-	def getSelectedPlayerIds(self):
+	def getAllPlayerIds(self):
 		return serverStateModelBridge.getCurrWaitingPlayers()
 
 	def getPlayerName(self, playerId):
@@ -122,9 +126,9 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 	def getPlayerCurrProfile(self,  playerId):
 		player = User.objects.get(username=playerId)
 		profile = json.loads(player.currState)["profile"]
-		return InteractionsProfile(K_cl=float(profile["K_cl"]), K_cp=float(profile["K_cp"]), K_i=float(profile["K_i"]))
-
-	def getPlayerPastModelIncreases(self, playerId):
+		return InteractionsProfile(K_ea=float(profile["K_ea"]), K_mh=float(profile["K_mh"]), K_cp=float(profile["K_cp"]), K_i=float(profile["K_i"]))
+	
+	def getPlayerStateGrid(self, playerId):
 		player = User.objects.get(username=playerId)
 
 		playerStateGrid = json.loads(player.pastModelIncreasesGrid)
@@ -136,12 +140,12 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 				characteristics = PlayerCharacteristics(ability= float(characteristics["ability"]), engagement= float(characteristics["engagement"]))
 
 				profile = state["profile"]
-				profile = InteractionsProfile(K_cl=float(profile["K_cl"]), K_cp=float(profile["K_cp"]), K_i=float(profile["K_i"]))
+				profile = InteractionsProfile(K_ea=float(profile["K_ea"]), K_mh=float(profile["K_mh"]), K_cp=float(profile["K_cp"]), K_i=float(profile["K_i"]))
+	
 				
 				newCell.append(PlayerState(profile = profile, characteristics = characteristics, dist=state["dist"]))
-			# if len(newCell) > 0:
 			cells.append(newCell)
-		return PlayerStateGrid(cells=cells, numCells=int(playerStateGrid["numCells"]), maxAmountOfStoredProfilesPerCell=int(playerStateGrid["maxAmountOfStoredProfilesPerCell"]))
+		return PlayerStateGrid(cells=cells, numCells=int(playerStateGrid["numCells"]), maxProfilesPerCell=int(playerStateGrid["maxProfilesPerCell"]))
 
 	def getPlayerCurrCharacteristics(self, playerId):
 		player = User.objects.get(username=playerId)
@@ -151,7 +155,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 	def getPlayerPersonality(self, playerId):
 		player = User.objects.get(username=playerId)
 		personality = json.loads(player.personality)
-		return InteractionsProfile(K_cl=float(personality["K_cl"]), K_cp=float(personality["K_cp"]), K_i=float(personality["K_i"]))
+		return InteractionsProfile(K_ea=float(personality["K_ea"]), K_mh=float(personality["K_mh"]), K_cp=float(personality["K_cp"]), K_i=float(personality["K_i"]))
 	
 	def getPlayerCurrState(self,  playerId):
 		player = User.objects.get(username=playerId)
@@ -171,7 +175,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		player.currState = json.dumps(newState, default=lambda o: o.__dict__)
 		player.save()
 
-	def setPlayerCurrProfile(self, playerId, profile):
+	def setPlayerProfile(self, playerId, profile):
 		player = User.objects.get(username=playerId)
 		newState = self.getPlayerCurrState(playerId)
 		newState.profile = profile
@@ -181,18 +185,15 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 playerBridge = CustomPlayerModelBridge()
 
 
-
-
 # init server state
 serverStateModelBridge.setCurrAdaptationState([])
 serverStateModelBridge.setReadyForNewActivity(False)
 serverStateModelBridge.setCurrWaitingPlayers([])
 serverStateModelBridge.setCurrOccupiedPlayers([])
 
-
 adaptation = Adaptation()
-adaptation.init(KNNRegression(5), RandomConfigsGen(), WeightedFitness(PlayerCharacteristics(ability=0.5, engagement=0.5)), playerBridge, taskBridge, name="", numberOfConfigChoices=50, maxNumberOfPlayersPerGroup = 5, difficultyWeight = 0.5, profileWeight=0.5)
-
+simpleConfigsAlg = SimpleConfigsGen(playerBridge, regAlg = KNNRegression(playerBridge, 5), numberOfConfigChoices=100, preferredNumberOfPlayersPerGroup = 5, qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5))
+adaptation.init(playerBridge, taskBridge, configsGenAlg = simpleConfigsAlg, name="GIMME")
 
 
 class Views(): #acts as a namespace
@@ -268,8 +269,6 @@ class Views(): #acts as a namespace
 	        'designer': 'designer/dash.html',
 	        None: 'home.html'
 	    }
-
-		#case role is student then...
 		return render(request, dashSwitch.get(request.session.get("role")), request.session.__dict__)
        
 		
@@ -302,19 +301,17 @@ class Views(): #acts as a namespace
 			entry.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
 			entry.save()
 			
-			# playerBridge.registerNewPlayer(playerId, name, currState, pastModelIncreasesGrid, currModelIncreases, personality)
 			return Views.dash(request)
 
 
 	@csrf_protect
 	def newAvailablePlayer(request):
-		username = request.session.get('username')
+		username = request.session.get("username")
 		currWaitingPlayers = serverStateModelBridge.getCurrWaitingPlayers();
 		if not username in currWaitingPlayers:
 			currWaitingPlayers.append(username)
 		serverStateModelBridge.setCurrWaitingPlayers(currWaitingPlayers)
 		return HttpResponse('ok')
-
 
 
 
@@ -325,8 +322,8 @@ class Views(): #acts as a namespace
 		currWaitingPlayers = serverStateModelBridge.getCurrWaitingPlayers();
 		currOccupiedPlayers = serverStateModelBridge.getCurrOccupiedPlayers();
 
-		currWaitingPlayers.remove(request.session.get('username'))
-		currOccupiedPlayers.append(request.session.get('username'))
+		currWaitingPlayers.remove(request.session.get("username"))
+		currOccupiedPlayers.append(request.session.get("username"))
 		serverStateModelBridge.setCurrWaitingPlayers(currWaitingPlayers)
 		serverStateModelBridge.setCurrOccupiedPlayers(currOccupiedPlayers)
 		
@@ -339,35 +336,27 @@ class Views(): #acts as a namespace
 		currOccupiedPlayers = serverStateModelBridge.getCurrOccupiedPlayers()
 		currWaitingPlayers = serverStateModelBridge.getCurrWaitingPlayers();
 		
-		currOccupiedPlayers.remove(request.session.get('username'))
+		currOccupiedPlayers.remove(request.session.get("username"))
 		serverStateModelBridge.setCurrOccupiedPlayers(currOccupiedPlayers)
 		
 		if len(currWaitingPlayers) == 0 and len(currWaitingPlayers) == 0:
 			serverStateModelBridge.setReadyForNewActivity(False)
 
 		if request.POST:
-			playerId = request.session.get('username')
+			playerId = request.session.get("username")
 			playerBridge.setPlayerCharacteristics(playerId, PlayerCharacteristics(ability=request.POST["ability"], engagement=request.POST["engagement"]))
 			playerBridge.setPlayerCurrProfile(playerId, InteractionsProfile(K_i=0.3, K_cp=0.1, K_cl=0.5))
 			playerBridge.savePlayerState(playerId, playerBridge.getPlayerCurrState(playerId))
 			return Views.dash(request)
 
 
-
-
 	# professor methods
 	def startAdaptation(request):
 		currAdaptationState = adaptation.iterate()
-		request.session["currAdaptationState"] = json.dumps(currAdaptationState, default=lambda o: o.__dict__, sort_keys=True)
+		print(currAdaptationState)
 		serverStateModelBridge.setCurrAdaptationState(currAdaptationState)
 		serverStateModelBridge.setReadyForNewActivity(True)
-		request.session.save()
-
-		# # init server state
-		# serverStateModelBridge.setCurrSelectedPlayers([])
-		
 		return Views.fetchServerState(request)
-
 
 
 	def registerTask(request):
@@ -375,26 +364,34 @@ class Views(): #acts as a namespace
 
 	def saveTaskRegistration(request):
 		if request.POST:
-			# playerBridge.registerNewPlayer(playerId, name, currState, pastModelIncreasesGrid, currModelIncreases, personality)
 			return Views.dash(request)
 
+
+	# auxiliary methods
+	@csrf_protect
+	def fetchPlayerState(request):
+		playerId = request.session.get("username")
+
+		newSessionState = {}
+		
+		newSessionState["myStateGrid"] = playerBridge.getPlayerStateGrid(playerId)
+		newSessionState["myCharacteristics"] = playerBridge.getPlayerCurrCharacteristics(playerId)
+		newSessionState["myPersonality"] = playerBridge.getPlayerPersonality(playerId)
+
+		newSession = json.dumps(newSessionState, default=lambda o: o.__dict__, sort_keys=True)
+		return HttpResponse(newSession)
 
 	@csrf_protect
 	def fetchServerState(request):
 		newSessionState = {}
 		
-		request.session["currWaitingPlayers"] = serverStateModelBridge.getCurrWaitingPlayers()
-		request.session["currOccupiedPlayers"] = serverStateModelBridge.getCurrOccupiedPlayers()
-		newSessionState["currWaitingPlayers"] = request.session["currWaitingPlayers"]
-		newSessionState["currOccupiedPlayers"] = request.session["currOccupiedPlayers"]
+		newSessionState["currWaitingPlayers"] = serverStateModelBridge.getCurrWaitingPlayers()
+		newSessionState["currOccupiedPlayers"] = serverStateModelBridge.getCurrOccupiedPlayers()
 
-		request.session["readyForNewActivity"] = serverStateModelBridge.isReadyForNewActivity()
-		newSessionState["readyForNewActivity"] = request.session["readyForNewActivity"]
+		newSessionState["readyForNewActivity"] = serverStateModelBridge.isReadyForNewActivity()
 
 		if(request.session['role'] == 'professor'):
-			request.session["currAdaptationState"] = serverStateModelBridge.getCurrAdaptationState()
-			newSessionState["currAdaptationState"] = request.session["currAdaptationState"]
+			newSessionState["currAdaptationState"] = serverStateModelBridge.getCurrAdaptationState()
 
-		request.session.save()
 		newSession = json.dumps(newSessionState, default=lambda o: o.__dict__, sort_keys=True)
 		return HttpResponse(newSession)
