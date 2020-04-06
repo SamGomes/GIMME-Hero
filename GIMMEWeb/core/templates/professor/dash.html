@@ -23,7 +23,7 @@
 		
 		<div id="dashboard">
 			
-			<section class="section danger" id="waitingSection">
+			<!-- <section class="section danger" id="waitingSection">
 				<div class="panel animated zoomIn">
 					<div class="panel-heading">
 						<div class="columns is-vcentered">
@@ -37,13 +37,45 @@
 						</div>
 					</div>
 					<div class="panel-block">
-						<div class="column is-full-width" id="registeredPlayersPanel">
+						<div class="row is-full-width" id="registeredPlayersPanel">
 							<div class="table" id="waitingRoomTable"></div>
 						</div>
-
-						<div class="button is-large" type="submit" id="startAdaptation">Start Class Activities</div>
-						<!-- <input class="button is-large" type="reset" value="Journey"> -->
+						<div class="row is-full-width">
+							<div class="button is-large" type="submit" id="startAdaptation">Start Class Activities</div>
+						</div>
 						
+					</div>
+				</div>
+			</section> -->
+
+			<section class="section danger" id="Current Activity Info">
+				<div class="panel animated zoomIn">
+					<div class="panel-heading">
+						<div class="columns is-vcentered">
+							<div class="column">
+								<p>Current Activity Info</p>
+							</div>
+							<div class="is-pulled-left">
+								<i class="fa fa-window-minimize minimizerButton" aria-hidden="true"></i>
+								<i class="fa fa-window-maximize maximizerButton" aria-hidden="true"></i>
+							</div>
+						</div>
+					</div>
+					<div class="panel-block">
+						<div>Occupied Players:<div>
+						<div class="table-container column is-full-width">
+							<div class="table" id="occupiedPlayersTable"></div>
+						</div>
+						
+						<div>Waiting Room:<div>
+						<div class="table-container column is-full-width">
+							<div class="table" id="waitingRoomTable"></div>
+							<div class="button" type="submit" id="addAllPlayers">Add all</div>
+							<div class="button" type="submit" id="addSpecificPlayer">Add specific player</div>
+						</div>
+						<a>
+							<div class="button is-large" type="submit" id="startAdaptation">Compute New Adaptation</div>
+						</a>
 					</div>
 				</div>
 			</section>
@@ -67,7 +99,7 @@
 	  						<div class="column is-one-third is-centered" id="groupsPlot"></div>
 	  						<div class="column is-one-third"></div>
 
-							<div class="button is-large" type="submit" id="rebuildChart">Rebuild Chart</div>
+							<div class="button is-large" type="submit" id="rebuildPlot">Rebuild Plot</div>
 						</div>
 					</div>
 				</div>
@@ -124,11 +156,56 @@
 	<script src="https://unpkg.com/d3-force-cluster@latest"></script>
 	<script src="{% static "js/general.js" %}"></script>
 	<script src="{% static "js/plots.js" %}"></script>
+	<script type="text/javascript">
+		$.ajaxSetup({ 
+		  beforeSend: function(xhr, settings) {
+		     function getCookie(name) {
+		         var cookieValue = null;
+		         if (document.cookie && document.cookie != '') {
+		             var cookies = document.cookie.split(';');
+		             for (var i = 0; i < cookies.length; i++) {
+		                 var cookie = jQuery.trim(cookies[i]);
+		                 // Does this cookie string begin with the name we want?
+		                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
+		                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                     break;
+		                 }
+		             }
+		         }
+		         return cookieValue;
+		     }
+		     if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+		         // Only send the token to relative URLs i.e. locally.
+		         xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+		     }
+		  } 
+		});
+	</script>
 	<script>
 		$(document).ready(function(){
 
 			var currAdaptationState = undefined;
 
+			var generateTableFromArray = function(array,deleteElementCallback){
+				var table = $('<div>');
+				for(var i=0; i < array.length; i++){
+				    tag = $('<span>').text(array[i]);
+				    tag.addClass("tag");
+				    tag.addClass("is-info");
+				    tag.addClass("is-medium");
+				    tag.addClass("is-rounded");
+
+				    deleteButton = $('<button>')
+				    deleteButton.addClass("delete");
+				    deleteButton.addClass("is-medium");
+				    deleteButton.click(deleteElementCallback)
+
+				    tag.append(deleteButton)
+
+				    table.append(tag);
+				}
+				return table;
+			};
 			var fetchServerData = function(){
 				$.ajax(
 					{
@@ -137,21 +214,29 @@
 						dataType: "json",
 						success: 
 							function (newServerState) {
-								// console.log(newServerState)
 								var currWaitingPlayers = newServerState.currWaitingPlayers;
+								var currOccupiedPlayers = newServerState.currOccupiedPlayers;
+								// console.log(currAdaptationState);
 
-								console.log(currAdaptationState);
+								opTable = generateTableFromArray(currOccupiedPlayers,function(){
+							    	$.ajax({
+										  type: 'POST',
+										  url: '/addWaitingPlayer/',
+										  data: {'playerId':$(this).parent().text()}
+									});
+								});
+								wpTable = generateTableFromArray(currWaitingPlayers,function(){
+							    	$.ajax({
+										  type: 'POST',
+										  url: '/removeWaitingPlayer/',
+										  data: {'playerId':$(this).parent().text()}
+									});
+								});
+								$('#occupiedPlayersTable').empty();
+								$('#occupiedPlayersTable').append(opTable);
 
-								var table = $('<table>');
-							    row = $('<tr>').append($('<th>').text('Username'));
-								table.append(row);
-								
-								for(var i=0; i < currWaitingPlayers.length; i++){
-								    row = $('<tr>').append($('<td>').text(currWaitingPlayers[i]));
-									table.append(row);
-								}
 								$('#waitingRoomTable').empty();
-								$('#waitingRoomTable').append(table);
+								$('#waitingRoomTable').append(wpTable);
 
 								if(newServerState.readyForNewActivity=="true"){
 									$("#readyForNewActivityButton").removeClass("is-loading");
@@ -191,7 +276,18 @@
 			$("#startAdaptation").click(function(){
 				startAdaptation();
 			})
-			$("#rebuildChart").click(function(){
+			$("#addAllPlayers").click(function(){
+				$.ajax(
+						{
+							url: '/addAllPlayersWaiting/'
+						}
+				);
+			})
+			$("#addSpecificPlayer").click(function(){
+				startAdaptation();
+			}).hide()
+
+			$("#rebuildPlot").click(function(){
 				$("#groupsPlot").empty();
 				if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
 					buildGroupsPlot( "groupsPlot", currAdaptationState);

@@ -58,7 +58,6 @@ var getAll = function(selector) {
 }
 
 var parseUnformattedString = function(attributeStr){
-    // console.log(attributeStr.replace(/&quot;/g,"\""))
     return attributeStr.replace(/&quot;/g,"\"").replace(/&#39;/g,"\"")
 }
 

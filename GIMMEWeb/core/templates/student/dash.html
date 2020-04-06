@@ -18,13 +18,12 @@
 		</div>
 		
 		<div id="dashboard">
-			
-			<section class="section danger" id="waitingSection">
+			<section class="section danger" id="Current Activity Info">
 				<div class="panel animated zoomIn">
 					<div class="panel-heading">
 						<div class="columns is-vcentered">
 							<div class="column">
-								<p>Waiting Room</p>
+								<p>Current Activity Info</p>
 							</div>
 							<div class="is-pulled-left">
 								<i class="fa fa-window-minimize minimizerButton" aria-hidden="true"></i>
@@ -33,14 +32,21 @@
 						</div>
 					</div>
 					<div class="panel-block">
-						<div class="column is-full-width" id="registeredPlayersPanel">
+						<div>Current Group:<div>
+						<div class="table-container column is-full-width">
+							<div class="table" id="currentGroupTable"></div>
+						</div>	
+						<div>Current Tasks:<div>
+						<div class="table-container column is-full-width">
+							<div class="table" id="currentTasksTable"></div>
+						</div>
+						<div>Waiting Room:<div>
+						<div class="table-container column is-full-width">
 							<div class="table" id="waitingRoomTable"></div>
 						</div>
-
 						<a>
 							<button class="button is-link" id="readyForNewActivityButton" >Ready for new Activity</button>
 						</a>
-
 					</div>
 				</div>
 			</section>
@@ -166,11 +172,11 @@
 
 			$("#readyForNewActivityButton").click(function(){
 				$("#readyForNewActivityButton").addClass("is-loading");
-				$.ajax(
-						{
-							url: '/newAvailablePlayer/',
-						}
-					);
+				$.ajax({
+					  type: 'POST',
+					  url: '/removeWaitingPlayer/',
+					  data: '{playerId: + \"'+{{request.session.username}}+'\"}'
+				});
 			})
 			fetchServerData();
 			setInterval(fetchServerData, 500);

@@ -7,9 +7,9 @@ from django.views.generic import View
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 
-from djangoTest.core.models import User
-from djangoTest.core.models import Task
-from djangoTest.core.models import ServerState
+from GIMMEWeb.core.models import User
+from GIMMEWeb.core.models import Task
+from GIMMEWeb.core.models import ServerState
 
 from django.views.decorators.csrf import csrf_protect
 
@@ -32,8 +32,8 @@ class ServerStateModelBridge():
 		return currWaitingPlayers
 	def getCurrOccupiedPlayers(self):
 		serverState = ServerState.objects.first()
-		currOccupiedPlayers = json.loads(serverState.currOccupiedPlayers)
-		return currOccupiedPlayers
+		currFreePlayers = json.loads(serverState.currFreePlayers)
+		return currFreePlayers
 
 	def setCurrAdaptationState(self, currAdaptationState):
 		serverState = ServerState.objects.first()
@@ -61,14 +61,16 @@ class ServerStateModelBridge():
 			currWaitingPlayers = json.dumps(currWaitingPlayers, default=lambda o: o.__dict__, sort_keys=True)
 			serverState.currWaitingPlayers = currWaitingPlayers
 		serverState.save()
-	def setCurrOccupiedPlayers(self, currOccupiedPlayers):
+	def setCurrOccupiedPlayers(self, currFreePlayers):
 		serverState = ServerState.objects.first()
 		if serverState == None:
 			serverState = ServerState()
 		else:
-			currOccupiedPlayers = json.dumps(currOccupiedPlayers, default=lambda o: o.__dict__, sort_keys=True)
-			serverState.currOccupiedPlayers = currOccupiedPlayers
+			currFreePlayers = json.dumps(currFreePlayers, default=lambda o: o.__dict__, sort_keys=True)
+			serverState.currFreePlayers = currFreePlayers
 		serverState.save()
+
+
 
 serverStateModelBridge = ServerStateModelBridge()
 
@@ -115,7 +117,16 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		return 0
 
 
-	def getAllPlayerIds(self):
+	def getAllPlayerIds(self): #allPlayers for adaptation
+		return serverStateModelBridge.getCurrWaitingPlayers()
+
+	def getAllStoredPlayerIds(self):
+		allPlayers = User.objects.all()["playerId"]
+		allPlayersIds = []
+		for player in allPlayers:
+			if player["role"]=="student":
+				allPlayersIds.append(player["username"])
+		print(allPlayersIds)
 		return serverStateModelBridge.getCurrWaitingPlayers()
 
 	def getPlayerName(self, playerId):
@@ -186,10 +197,10 @@ playerBridge = CustomPlayerModelBridge()
 
 
 # init server state
-serverStateModelBridge.setCurrAdaptationState([])
-serverStateModelBridge.setReadyForNewActivity(False)
-serverStateModelBridge.setCurrWaitingPlayers([])
-serverStateModelBridge.setCurrOccupiedPlayers([])
+# serverStateModelBridge.setCurrAdaptationState([])
+# serverStateModelBridge.setReadyForNewActivity(False)
+# serverStateModelBridge.setCurrWaitingPlayers([])
+# serverStateModelBridge.setCurrOccupiedPlayers([])
 
 adaptation = Adaptation()
 simpleConfigsAlg = SimpleConfigsGen(playerBridge, regAlg = KNNRegression(playerBridge, 5), numberOfConfigChoices=100, preferredNumberOfPlayersPerGroup = 5, qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5))
@@ -198,6 +209,7 @@ adaptation.init(playerBridge, taskBridge, configsGenAlg = simpleConfigsAlg, name
 
 class Views(): #acts as a namespace
 
+	#global methods
 	def home(request):
 		if(Views.isLoggedIn(request)):
 			return Views.dash(request)
@@ -300,18 +312,45 @@ class Views(): #acts as a namespace
 			entry.pastModelIncreasesGrid = json.dumps(PlayerStateGrid(), default=lambda o: o.__dict__, sort_keys=True)
 			entry.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
 			entry.save()
-			
+
+			currFreePlayers = serverStateModelBridge.getCurrFreePlayers();
+			currFreePlayers.append(username)
+			serverStateModelBridge.setCurrFreePlayers(currFreePlayers)
+
 			return Views.dash(request)
+
+	@csrf_protect
+	def addAllPlayersWaiting(request): #reads (player) from args
+		serverStateModelBridge.setCurrWaitingPlayers(playerBridge.getAllStoredPlayerIds())
+		serverStateModelBridge.setCurrFreePlayers([])
+		return HttpResponse('ok')
 
 
 	@csrf_protect
-	def newAvailablePlayer(request):
-		username = request.session.get("username")
+	def addWaitingPlayer(request): #reads (player) from args
+		playerIdToAdd = request.POST.get("playerId")
 		currWaitingPlayers = serverStateModelBridge.getCurrWaitingPlayers();
-		if not username in currWaitingPlayers:
-			currWaitingPlayers.append(username)
+		currFreePlayers = serverStateModelBridge.getCurrFreePlayers();
+		if not playerIdToAdd in currWaitingPlayers:
+			currWaitingPlayers.append(playerIdToAdd)
+			currFreePlayers.remove(playerIdToAdd)
 		serverStateModelBridge.setCurrWaitingPlayers(currWaitingPlayers)
+		serverStateModelBridge.setCurrFreePlayers(currFreePlayers)
 		return HttpResponse('ok')
+
+	@csrf_protect
+	def removeWaitingPlayer(request): #reads (player) from args
+		playerIdToRemove = request.POST.get("playerId")
+		currWaitingPlayers = serverStateModelBridge.getCurrWaitingPlayers();
+		currFreePlayers = serverStateModelBridge.getCurrFreePlayers();
+		if playerIdToRemove in currWaitingPlayers:
+			currWaitingPlayers.remove(playerIdToRemove)
+			currFreePlayers.append(playerIdToRemove)
+		serverStateModelBridge.setCurrWaitingPlayers(currWaitingPlayers)
+		serverStateModelBridge.setCurrFreePlayers(currFreePlayers)
+		return HttpResponse('ok')
+
+
 
 
 
@@ -320,33 +359,32 @@ class Views(): #acts as a namespace
 	def startActivity(request):
 		# remove from waiting and move to occupied list
 		currWaitingPlayers = serverStateModelBridge.getCurrWaitingPlayers();
-		currOccupiedPlayers = serverStateModelBridge.getCurrOccupiedPlayers();
+		currFreePlayers = serverStateModelBridge.getCurrOccupiedPlayers();
 
 		currWaitingPlayers.remove(request.session.get("username"))
-		currOccupiedPlayers.append(request.session.get("username"))
+		currFreePlayers.append(request.session.get("username"))
 		serverStateModelBridge.setCurrWaitingPlayers(currWaitingPlayers)
-		serverStateModelBridge.setCurrOccupiedPlayers(currOccupiedPlayers)
-		
+		serverStateModelBridge.setCurrOccupiedPlayers(currFreePlayers)
 		return render(request, 'student/activity.html')
 
 	@csrf_protect
 	def saveTaskResults(request):
 
 		# remove from occupied list
-		currOccupiedPlayers = serverStateModelBridge.getCurrOccupiedPlayers()
+		currFreePlayers = serverStateModelBridge.getCurrOccupiedPlayers()
 		currWaitingPlayers = serverStateModelBridge.getCurrWaitingPlayers();
 		
-		currOccupiedPlayers.remove(request.session.get("username"))
-		serverStateModelBridge.setCurrOccupiedPlayers(currOccupiedPlayers)
+		currFreePlayers.remove(request.session.get("username"))
+		serverStateModelBridge.setCurrOccupiedPlayers(currFreePlayers)
 		
 		if len(currWaitingPlayers) == 0 and len(currWaitingPlayers) == 0:
 			serverStateModelBridge.setReadyForNewActivity(False)
 
 		if request.POST:
 			playerId = request.session.get("username")
-			playerBridge.setPlayerCharacteristics(playerId, PlayerCharacteristics(ability=request.POST["ability"], engagement=request.POST["engagement"]))
-			playerBridge.setPlayerCurrProfile(playerId, InteractionsProfile(K_i=0.3, K_cp=0.1, K_cl=0.5))
-			playerBridge.savePlayerState(playerId, playerBridge.getPlayerCurrState(playerId))
+			characteristics = PlayerCharacteristics(ability=request.POST["ability"], engagement=request.POST["engagement"])
+			playerBridge.setPlayerCharacteristics(playerId, characteristics)
+			playerBridge.setAndSavePlayerStateToGrid(playerId, PlayerState(characteristics=characteristics, profile=playerBridge.getPlayerCurrProfile()))
 			return Views.dash(request)
 
 
@@ -386,7 +424,7 @@ class Views(): #acts as a namespace
 		newSessionState = {}
 		
 		newSessionState["currWaitingPlayers"] = serverStateModelBridge.getCurrWaitingPlayers()
-		newSessionState["currOccupiedPlayers"] = serverStateModelBridge.getCurrOccupiedPlayers()
+		newSessionState["currFreePlayers"] = serverStateModelBridge.getCurrOccupiedPlayers()
 
 		newSessionState["readyForNewActivity"] = serverStateModelBridge.isReadyForNewActivity()
 

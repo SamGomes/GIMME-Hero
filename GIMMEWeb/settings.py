@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'djangoTest.core',
+    'GIMMEWeb.core',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -34,12 +34,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-ROOT_URLCONF = 'djangoTest.urls'
+ROOT_URLCONF = 'GIMMEWeb.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'djangoTest/core/templates/')
+            os.path.join(BASE_DIR, 'GIMMEWeb/core/templates/')
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -52,7 +52,7 @@ TEMPLATES = [
         },
     },
 ]
-WSGI_APPLICATION = 'djangoTest.wsgi.application'
+WSGI_APPLICATION = 'GIMMEWeb.wsgi.application'
 
 # Database
 DATABASES = {
@@ -90,4 +90,4 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'djangoTest/core/templates/static/') ]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'GIMMEWeb/core/templates/static/') ]

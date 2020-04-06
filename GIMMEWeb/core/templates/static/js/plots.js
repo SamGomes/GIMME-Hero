@@ -133,7 +133,6 @@ var buildStatePlot = function(canvasId, data){
 
 var buildGroupsPlot = function(canvasId, data){
     
-
     // from http://bl.ocks.org/mbostock/7555321
     function wrap(text, width) {
         
@@ -148,9 +147,6 @@ var buildGroupsPlot = function(canvasId, data){
             y = text.attr("y"),
             dy = text.attr("dy") ? text.attr("dy") : 0;
             tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
-
-            // console.log(words);
-            // console.log(words.pop());
 
             while (words.length > 0) {
                 word = words.pop();
@@ -182,8 +178,6 @@ var buildGroupsPlot = function(canvasId, data){
       .attr('width', width)
       .attr('height', height);
 
-    console.log(data);
-  
     var playerNodes = [];
     var groupIndicatorNodes = [];
     var colors = [];
@@ -209,9 +203,6 @@ var buildGroupsPlot = function(canvasId, data){
             )
         .force('collide', d3.forceCollide(30)
             .strength(0.1))
-        .nodes(groupIndicatorNodes)
-        .force('collide', d3.forceCollide(30)
-            .strength(0.2))
 
 
     var nodeElements =
@@ -293,7 +284,7 @@ var buildGroupsPlot = function(canvasId, data){
         .attr('font-size', 15)
         .attr('fill','white')
         .text(node => { return "Group Characteristics:\n "+JSON.stringify({ "characteristics": node.characteristics, "profile": node.profile} ,  undefined, 2);})
-        .call(wrap, 80);
+        .call(wrap, 100);
 
 
 
@@ -337,21 +328,30 @@ var buildGroupsPlot = function(canvasId, data){
 
     const dragDrop = d3.drag()
         .on('start', node => {
-            node.fx = node.x;
-            node.fy = node.y;
-        })
-        .on('drag', node => {
-            simulation.alphaTarget(1).restart();
-            node.fx = d3.event.x;
-            node.fy = d3.event.y;
-        })
-        .on('end', node => {
-            if (!d3.event.active) {
-                simulation.alphaTarget(0);
+            // simulation.alphaTarget(1).restart();
+            node.centerOfMass.x = d3.event.x;
+            node.centerOfMass.y = d3.event.y;
+            for(i=0; i<playerNodes.length; i++){
+                var currNode = playerNodes[i];
+                if(currNode.groupId == node.groupId){
+                    currNode.centerOfMass.x = d3.event.x;
+                    currNode.centerOfMass.y = d3.event.y;
+                }
             }
-            node.fx = null
-            node.fy = null
-        });
+            simulation.alphaTarget(1).restart();
+        })
+        // .on('drag', node => {
+        //     simulation.alphaTarget(1).restart();
+        //     node.centerOfMass.x += d3.event.x;
+        //     node.centerOfMass.y += d3.event.y;
+        // })
+        // .on('end', node => {
+        //     if (!d3.event.active) {
+        //         simulation.alphaTarget(0);
+        //     }
+        //     node.fx = null
+        //     node.fy = null
+        // });
 
     groupIndicators.call(dragDrop)
 
