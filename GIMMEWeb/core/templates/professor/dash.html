@@ -22,32 +22,6 @@
 		</div>
 		
 		<div id="dashboard">
-			
-			<!-- <section class="section danger" id="waitingSection">
-				<div class="panel animated zoomIn">
-					<div class="panel-heading">
-						<div class="columns is-vcentered">
-							<div class="column">
-								<p>Waiting Room</p>
-							</div>
-							<div class="is-pulled-left">
-								<i class="fa fa-window-minimize minimizerButton" aria-hidden="true"></i>
-								<i class="fa fa-window-maximize maximizerButton" aria-hidden="true"></i>
-							</div>
-						</div>
-					</div>
-					<div class="panel-block">
-						<div class="row is-full-width" id="registeredPlayersPanel">
-							<div class="table" id="waitingRoomTable"></div>
-						</div>
-						<div class="row is-full-width">
-							<div class="button is-large" type="submit" id="startAdaptation">Start Class Activities</div>
-						</div>
-						
-					</div>
-				</div>
-			</section> -->
-
 			<section class="section danger" id="Current Activity Info">
 				<div class="panel animated zoomIn">
 					<div class="panel-heading">
@@ -62,15 +36,16 @@
 						</div>
 					</div>
 					<div class="panel-block">
-						<div>Occupied Players:<div>
+						<div>Free Players:<div>
 						<div class="table-container column is-full-width">
-							<div class="table" id="occupiedPlayersTable"></div>
+							<div class="table" id="freePlayersTable"></div>
 						</div>
 						
 						<div>Waiting Room:<div>
 						<div class="table-container column is-full-width">
 							<div class="table" id="waitingRoomTable"></div>
 							<div class="button" type="submit" id="addAllPlayers">Add all</div>
+							<div class="button" type="submit" id="clearAllPlayers">Clear all</div>
 							<div class="button" type="submit" id="addSpecificPlayer">Add specific player</div>
 						</div>
 						<a>
@@ -186,7 +161,7 @@
 
 			var currAdaptationState = undefined;
 
-			var generateTableFromArray = function(array,deleteElementCallback){
+			var generateTableFromArray = function(array, deleteElementCallback){
 				var table = $('<div>');
 				for(var i=0; i < array.length; i++){
 				    tag = $('<span>').text(array[i]);
@@ -215,10 +190,10 @@
 						success: 
 							function (newServerState) {
 								var currWaitingPlayers = newServerState.currWaitingPlayers;
-								var currOccupiedPlayers = newServerState.currOccupiedPlayers;
+								var currFreePlayers = newServerState.currFreePlayers;
 								// console.log(currAdaptationState);
 
-								opTable = generateTableFromArray(currOccupiedPlayers,function(){
+								fpTable = generateTableFromArray(currFreePlayers,function(){
 							    	$.ajax({
 										  type: 'POST',
 										  url: '/addWaitingPlayer/',
@@ -232,8 +207,8 @@
 										  data: {'playerId':$(this).parent().text()}
 									});
 								});
-								$('#occupiedPlayersTable').empty();
-								$('#occupiedPlayersTable').append(opTable);
+								$('#freePlayersTable').empty();
+								$('#freePlayersTable').append(fpTable);
 
 								$('#waitingRoomTable').empty();
 								$('#waitingRoomTable').append(wpTable);
@@ -280,6 +255,13 @@
 				$.ajax(
 						{
 							url: '/addAllPlayersWaiting/'
+						}
+				);
+			})
+			$("#clearAllPlayers").click(function(){
+				$.ajax(
+						{
+							url: '/removeAllPlayersWaiting/'
 						}
 				);
 			})

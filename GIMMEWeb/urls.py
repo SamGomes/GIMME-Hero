@@ -18,6 +18,7 @@ urlpatterns = [
     re_path(r'^saveTaskRegistration/$', Views.saveTaskRegistration, name="saveTaskRegistration"),
 
     re_path(r'^addAllPlayersWaiting/$', Views.addAllPlayersWaiting, name="addAllPlayersWaiting"),
+    re_path(r'^removeAllPlayersWaiting/$', Views.removeAllPlayersWaiting, name="removeAllPlayersWaiting"),
     re_path(r'^addWaitingPlayer/$', Views.addWaitingPlayer, name="addWaitingPlayer"),
     re_path(r'^removeWaitingPlayer/$', Views.removeWaitingPlayer, name="removeWaitingPlayer"),
     

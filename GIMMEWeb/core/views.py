@@ -30,7 +30,7 @@ class ServerStateModelBridge():
 		serverState = ServerState.objects.first()
 		currWaitingPlayers = json.loads(serverState.currWaitingPlayers)
 		return currWaitingPlayers
-	def getCurrOccupiedPlayers(self):
+	def getCurrFreePlayers(self):
 		serverState = ServerState.objects.first()
 		currFreePlayers = json.loads(serverState.currFreePlayers)
 		return currFreePlayers
@@ -61,7 +61,7 @@ class ServerStateModelBridge():
 			currWaitingPlayers = json.dumps(currWaitingPlayers, default=lambda o: o.__dict__, sort_keys=True)
 			serverState.currWaitingPlayers = currWaitingPlayers
 		serverState.save()
-	def setCurrOccupiedPlayers(self, currFreePlayers):
+	def setCurrFreePlayers(self, currFreePlayers):
 		serverState = ServerState.objects.first()
 		if serverState == None:
 			serverState = ServerState()
@@ -121,13 +121,13 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		return serverStateModelBridge.getCurrWaitingPlayers()
 
 	def getAllStoredPlayerIds(self):
-		allPlayers = User.objects.all()["playerId"]
+		allPlayers = User.objects.all()
 		allPlayersIds = []
 		for player in allPlayers:
-			if player["role"]=="student":
-				allPlayersIds.append(player["username"])
+			if player.role=="student":
+				allPlayersIds.append(player.username)
 		print(allPlayersIds)
-		return serverStateModelBridge.getCurrWaitingPlayers()
+		return allPlayersIds
 
 	def getPlayerName(self, playerId):
 		player = User.objects.get(username=playerId)
@@ -200,7 +200,7 @@ playerBridge = CustomPlayerModelBridge()
 # serverStateModelBridge.setCurrAdaptationState([])
 # serverStateModelBridge.setReadyForNewActivity(False)
 # serverStateModelBridge.setCurrWaitingPlayers([])
-# serverStateModelBridge.setCurrOccupiedPlayers([])
+# serverStateModelBridge.setCurrFreePlayers([])
 
 adaptation = Adaptation()
 simpleConfigsAlg = SimpleConfigsGen(playerBridge, regAlg = KNNRegression(playerBridge, 5), numberOfConfigChoices=100, preferredNumberOfPlayersPerGroup = 5, qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5))
@@ -324,7 +324,11 @@ class Views(): #acts as a namespace
 		serverStateModelBridge.setCurrWaitingPlayers(playerBridge.getAllStoredPlayerIds())
 		serverStateModelBridge.setCurrFreePlayers([])
 		return HttpResponse('ok')
-
+	@csrf_protect
+	def removeAllPlayersWaiting(request): #reads (player) from args
+		serverStateModelBridge.setCurrWaitingPlayers([])
+		serverStateModelBridge.setCurrFreePlayers(playerBridge.getAllStoredPlayerIds())
+		return HttpResponse('ok')
 
 	@csrf_protect
 	def addWaitingPlayer(request): #reads (player) from args
@@ -359,23 +363,23 @@ class Views(): #acts as a namespace
 	def startActivity(request):
 		# remove from waiting and move to occupied list
 		currWaitingPlayers = serverStateModelBridge.getCurrWaitingPlayers();
-		currFreePlayers = serverStateModelBridge.getCurrOccupiedPlayers();
+		currFreePlayers = serverStateModelBridge.getCurrFreePlayers();
 
 		currWaitingPlayers.remove(request.session.get("username"))
 		currFreePlayers.append(request.session.get("username"))
 		serverStateModelBridge.setCurrWaitingPlayers(currWaitingPlayers)
-		serverStateModelBridge.setCurrOccupiedPlayers(currFreePlayers)
+		serverStateModelBridge.setCurrFreePlayers(currFreePlayers)
 		return render(request, 'student/activity.html')
 
 	@csrf_protect
 	def saveTaskResults(request):
 
 		# remove from occupied list
-		currFreePlayers = serverStateModelBridge.getCurrOccupiedPlayers()
+		currFreePlayers = serverStateModelBridge.getCurrFreePlayers()
 		currWaitingPlayers = serverStateModelBridge.getCurrWaitingPlayers();
 		
 		currFreePlayers.remove(request.session.get("username"))
-		serverStateModelBridge.setCurrOccupiedPlayers(currFreePlayers)
+		serverStateModelBridge.setCurrFreePlayers(currFreePlayers)
 		
 		if len(currWaitingPlayers) == 0 and len(currWaitingPlayers) == 0:
 			serverStateModelBridge.setReadyForNewActivity(False)
@@ -424,7 +428,7 @@ class Views(): #acts as a namespace
 		newSessionState = {}
 		
 		newSessionState["currWaitingPlayers"] = serverStateModelBridge.getCurrWaitingPlayers()
-		newSessionState["currFreePlayers"] = serverStateModelBridge.getCurrOccupiedPlayers()
+		newSessionState["currFreePlayers"] = serverStateModelBridge.getCurrFreePlayers()
 
 		newSessionState["readyForNewActivity"] = serverStateModelBridge.isReadyForNewActivity()
 
