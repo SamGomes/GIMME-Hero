@@ -36,21 +36,27 @@
 						</div>
 					</div>
 					<div class="panel-block">
-						<div>Free Players:<div>
-						<div class="table-container column is-full-width">
-							<div class="table" id="freePlayersTable"></div>
+
+						<div>
+							<div class="column is-full">Player Setup</div>
+							<div class="column is-full">Free Players:</div>
+							<div class="table-container column is-full">
+								<div class="table" id="freePlayersTable"></div>
+							</div>
+							
+							<div>Waiting Room:</div>
+							<div class="table-container column is-full">
+								<div class="table" id="waitingRoomTable"></div>
+								<div class="button" type="submit" id="addAllPlayers">Add all</div>
+								<div class="button" type="submit" id="clearAllPlayers">Clear all</div>
+								<div class="button" type="submit" id="addSpecificPlayer">Add specific player</div>
+							</div>
 						</div>
-						
-						<div>Waiting Room:<div>
-						<div class="table-container column is-full-width">
-							<div class="table" id="waitingRoomTable"></div>
-							<div class="button" type="submit" id="addAllPlayers">Add all</div>
-							<div class="button" type="submit" id="clearAllPlayers">Clear all</div>
-							<div class="button" type="submit" id="addSpecificPlayer">Add specific player</div>
+						<div>
+							<a>
+								<div class="button is-large" type="submit" id="startAdaptation">Compute New Adaptation</div>
+							</a>
 						</div>
-						<a>
-							<div class="button is-large" type="submit" id="startAdaptation">Compute New Adaptation</div>
-						</a>
 					</div>
 				</div>
 			</section>
@@ -232,12 +238,15 @@
 
 
 			var startAdaptation = function(){
+				$("#startAdaptation").addClass("is-loading");
 				$.ajax(
 						{
 							url: '/startAdaptation/',
 							dataType: "json",
-							success: 
+							complete: 
 								function (newServerState) {
+									console.log('here');
+									$("#startAdaptation").removeClass("is-loading");
 									currAdaptationState = newServerState.currAdaptationState;
 									$("#groupsPlot").empty();
 									if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
