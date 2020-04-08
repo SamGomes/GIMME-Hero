@@ -11,10 +11,10 @@ html {
 body {
   /* Margin bottom by footer height */
   background-position: absolute;
-  background-image: url("../images/background.png");
+  background-image: url("../images/background.gif");
   background-size: cover; 
   background-attachment: fixed; 
-  background-color: transparent; 
+  /*background-color: transparent; */
   background-margin: 0; 
   height: 100%;
 }

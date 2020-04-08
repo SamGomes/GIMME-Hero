@@ -403,6 +403,15 @@ class Views(): #acts as a namespace
 		return Views.fetchServerState(request)
 
 
+	def configAdaptation(request):
+		adaptation.configsGenAlg = SimpleConfigsGen(playerBridge, regAlg = KNNRegression(playerBridge, 5),
+			numberOfConfigChoices = request.POST["numberOfConfigChoices"], 
+			minNumberOfPlayersPerGroup = request.POST["minNumberOfPlayersPerGroup"], 
+			maxNumberOfPlayersPerGroup = request.POST["maxNumberOfPlayersPerGroup"], 
+			preferredNumberOfPlayersPerGroup = request.POST["preferredNumberOfPlayersPerGroup"], 
+			qualityWeights = PlayerCharacteristics(ability=request.POST["qualityWeightsAb"], engagement=request.POST["qualityWeightsEng"]))
+		return HttpResponse('ok')
+
 	def registerTask(request):
 		return Views.dash(request)
 

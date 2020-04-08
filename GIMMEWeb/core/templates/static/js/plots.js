@@ -276,7 +276,7 @@ var buildGroupsPlot = function(canvasId, data){
             }
             return "Group Info\n "+JSON.stringify({ "group Id": node.groupId, "characteristics": node.characteristics, 
             "profile": node.profile, "adaptedTaskId": node.adaptedTaskId == -1 ? node.adaptedTaskId : "<Could not compute task>" } ,  undefined, 2);})
-        ;// .call(wrap, 100);
+        .call(wrap, 100);
 
 
     groupIndicators.on("mouseover", function(d){ d3.select(tooltipElements._groups[0][d.groupId]).style("visibility", "visible");})
