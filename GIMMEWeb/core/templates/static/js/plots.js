@@ -205,7 +205,18 @@ var buildGroupsPlot = function(canvasId, data){
           .enter().append('circle')
             .attr('r', 10)
             .attr('fill', node => colors[node.groupId]);
-  
+            
+    var textElements =
+        svg.append('g')
+          .selectAll('text')
+          .data(playerNodes)
+          .enter().append('text')
+            .text(function (d) {
+                return d.playerId.toString();
+            })
+            .attr('font-size', 15)
+            .attr('dx', 15)
+            .attr('dy', 4);
 
     var groupIndicators =
         svg.append('g')
@@ -232,20 +243,7 @@ var buildGroupsPlot = function(canvasId, data){
             .attr('stroke-dasharray', '5,5')
             .attr('stroke', node => colors[node.groupId])
             .attr('fill', 'transparent');
-   
-
-
-    var textElements =
-        svg.append('g')
-          .selectAll('text')
-          .data(playerNodes)
-          .enter().append('text')
-            .text(function (d) {
-                return d.playerId.toString();
-            })
-            .attr('font-size', 15)
-            .attr('dx', 15)
-            .attr('dy', 4);
+           
 
 
     var tooltipElements =
@@ -280,18 +278,15 @@ var buildGroupsPlot = function(canvasId, data){
         .call(wrap, 100);
 
 
-
-    //events
-    groupIndicators
-        .on("mouseover", function(d){ d3.select(tooltipElements._groups[0][d.index]).style("visibility", "visible");})
-        .on("mouseout", function(d){ d3.select(tooltipElements._groups[0][d.index]).style("visibility", "hidden");});
+    groupIndicators.on("mouseover", function(d){ console.log(d); d3.select(tooltipElements._groups[0][d.groupId]).style("visibility", "visible");})
+            .on("mouseout", function(d){ d3.select(tooltipElements._groups[0][d.groupId]).style("visibility", "hidden");});        
 
 
     var simulation = d3.forceSimulation();
     var resetSim = function(){
         simulation.nodes(playerNodes)
         .force('collide', d3.forceCollide(15)
-            .strength(0.8))
+            .strength(0.2))
         .force('attract', d3.forceAttract()
                     .target((node) => {return [node.centerOfMass.x, node.centerOfMass.y];})
                     .strength(3)
@@ -324,9 +319,10 @@ var buildGroupsPlot = function(canvasId, data){
                     }
                     return Math.sqrt(maxRadius) + 30 
                 });
+                
 
             tooltipElements
-                .attr('transform', node => 'translate('+node.centerOfMass.x+' '+node.centerOfMass.y+')')
+                .attr('transform', node => 'translate('+node.centerOfMass.x+' '+node.centerOfMass.y+')');
 
             textElements
                 .attr("x", node => node.x)
@@ -354,8 +350,6 @@ var buildGroupsPlot = function(canvasId, data){
                     currNode.fy = currNode.centerOfMass.y;
                 }
             }
-
-            // simulation = resetSim();
         })
         .on('drag', node => {
             simulation.alphaTarget(1.0).restart();
@@ -373,7 +367,6 @@ var buildGroupsPlot = function(canvasId, data){
                     currNode.fy = currNode.centerOfMass.y;
                 }
             }
-            // simulation = resetSim();
         })
         .on('end', node => {
             if (!d3.event.active) {
@@ -391,11 +384,11 @@ var buildGroupsPlot = function(canvasId, data){
                     currNode.fy = null;
                 }
             }
-            // simulation.stop();
             resetSim();
         });
 
-    groupIndicators.call(dragDrop)
+    groupIndicators.call(dragDrop);
+    
 
 
 
