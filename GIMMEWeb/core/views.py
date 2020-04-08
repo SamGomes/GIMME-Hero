@@ -395,9 +395,7 @@ class Views(): #acts as a namespace
 	# professor methods
 	def startAdaptation(request):
 		try:
-			print("aqui1")
 			currAdaptationState = adaptation.iterate()
-			print("aqui2")
 		except ValueError:
 			return HttpResponse('ok')
 		serverStateModelBridge.setCurrAdaptationState(currAdaptationState)

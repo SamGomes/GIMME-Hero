@@ -195,14 +195,7 @@ var buildGroupsPlot = function(canvasId, data){
         colors[i]=getRandomColor();
     } 
 
-    const simulation = d3.forceSimulation()
-        .nodes(playerNodes)
-        .force('attract', d3.forceAttract()
-            .target((node) => [node.centerOfMass.x, node.centerOfMass.y])
-            .strength(0.8)
-            )
-        .force('collide', d3.forceCollide(30)
-            .strength(0.1))
+    
 
 
     var nodeElements =
@@ -293,8 +286,22 @@ var buildGroupsPlot = function(canvasId, data){
         .on("mouseover", function(d){ d3.select(tooltipElements._groups[0][d.index]).style("visibility", "visible");})
         .on("mouseout", function(d){ d3.select(tooltipElements._groups[0][d.index]).style("visibility", "hidden");});
 
-    
-    simulation.nodes(playerNodes).on("tick", () => {
+
+    var simulation = d3.forceSimulation();
+    var resetSim = function(){
+        simulation.nodes(playerNodes)
+        .force('collide', d3.forceCollide(15)
+            .strength(0.8))
+        .force('attract', d3.forceAttract()
+                    .target((node) => {return [node.centerOfMass.x, node.centerOfMass.y];})
+                    .strength(3)
+                    );
+    }
+
+
+    resetSim();
+
+    simulation.on("tick", () => {
             nodeElements
                 .attr("cx", node => node.x)
                 .attr("cy", node => node.y);
@@ -326,32 +333,67 @@ var buildGroupsPlot = function(canvasId, data){
                 .attr("y", node => node.y);
         });
 
+
+
     const dragDrop = d3.drag()
         .on('start', node => {
-            // simulation.alphaTarget(1).restart();
+            if (!d3.event.active)
+                simulation.alphaTarget(0.3).restart();
+
             node.centerOfMass.x = d3.event.x;
             node.centerOfMass.y = d3.event.y;
+            node.fx = node.centerOfMass.x;
+            node.fy = node.centerOfMass.y;
             for(i=0; i<playerNodes.length; i++){
                 var currNode = playerNodes[i];
                 if(currNode.groupId == node.groupId){
                     currNode.centerOfMass.x = d3.event.x;
                     currNode.centerOfMass.y = d3.event.y;
+
+                    currNode.fx = currNode.centerOfMass.x;
+                    currNode.fy = currNode.centerOfMass.y;
                 }
             }
-            simulation.alphaTarget(1).restart();
+
+            // simulation = resetSim();
         })
-        // .on('drag', node => {
-        //     simulation.alphaTarget(1).restart();
-        //     node.centerOfMass.x += d3.event.x;
-        //     node.centerOfMass.y += d3.event.y;
-        // })
-        // .on('end', node => {
-        //     if (!d3.event.active) {
-        //         simulation.alphaTarget(0);
-        //     }
-        //     node.fx = null
-        //     node.fy = null
-        // });
+        .on('drag', node => {
+            simulation.alphaTarget(1.0).restart();
+            node.centerOfMass.x = d3.event.x;
+            node.centerOfMass.y = d3.event.y;
+            node.fx = node.centerOfMass.x;
+            node.fy = node.centerOfMass.y;
+            for(i=0; i<playerNodes.length; i++){
+                var currNode = playerNodes[i];
+                if(currNode.groupId == node.groupId){
+                    currNode.centerOfMass.x = d3.event.x;
+                    currNode.centerOfMass.y = d3.event.y;
+
+                    currNode.fx = currNode.centerOfMass.x;
+                    currNode.fy = currNode.centerOfMass.y;
+                }
+            }
+            // simulation = resetSim();
+        })
+        .on('end', node => {
+            if (!d3.event.active) {
+                simulation.alphaTarget(0);
+            }
+            node.fx = null;
+            node.fy = null;
+            for(i=0; i<playerNodes.length; i++){
+                var currNode = playerNodes[i];
+                if(currNode.groupId == node.groupId){
+                    currNode.centerOfMass.x = d3.event.x;
+                    currNode.centerOfMass.y = d3.event.y;
+
+                    currNode.fx = null;
+                    currNode.fy = null;
+                }
+            }
+            // simulation.stop();
+            resetSim();
+        });
 
     groupIndicators.call(dragDrop)
 
