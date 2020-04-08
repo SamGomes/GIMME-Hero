@@ -13,6 +13,7 @@ from GIMMEWeb.core.models import ServerState
 
 from django.views.decorators.csrf import csrf_protect
 
+sys.path.insert(1,'/home/samgomes/Documents/doutoramento/reps/GIMME/GIMME')
 from GIMMECore import *
 
 
@@ -126,7 +127,6 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		for player in allPlayers:
 			if player.role=="student":
 				allPlayersIds.append(player.username)
-		print(allPlayersIds)
 		return allPlayersIds
 
 	def getPlayerName(self, playerId):
@@ -200,7 +200,7 @@ playerBridge = CustomPlayerModelBridge()
 # serverStateModelBridge.setCurrAdaptationState([])
 # serverStateModelBridge.setReadyForNewActivity(False)
 # serverStateModelBridge.setCurrWaitingPlayers([])
-# serverStateModelBridge.setCurrFreePlayers([])
+# serverStateModelBridge.setCurrFreePlayers(["s1","s2","s3","s4","s5","s6","s7","s8","s9","s10","s11","s12","s13","s14","s15","s16","s17","s18","s19","s20","s21","s22","s23","s24","s25","s26","s27","s28","s29","s30","s31","s32","s33","s34","s35","s36","s37","s38","s39","s40","s41","s42","s43","s44","s45","s46","s47","s48","s49","s50"])
 
 adaptation = Adaptation()
 simpleConfigsAlg = SimpleConfigsGen(playerBridge, regAlg = KNNRegression(playerBridge, 5), numberOfConfigChoices=100, preferredNumberOfPlayersPerGroup = 5, qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5))

@@ -135,7 +135,6 @@ var buildGroupsPlot = function(canvasId, data){
     
     // from http://bl.ocks.org/mbostock/7555321
     function wrap(text, width) {
-        
         text.each(function() {
             var text = d3.select(this),
             words = text.text().split(/\n/g).reverse(),
@@ -152,7 +151,6 @@ var buildGroupsPlot = function(canvasId, data){
                 word = words.pop();
                 line.push(word);
                 tspan.text(line.join(" "));
-                // console.log(tspan.node().getComputedTextLength());
                 if (tspan.node().getComputedTextLength() > width) {
                     line.pop();
                     tspan.text(line.join(" "));
@@ -183,11 +181,12 @@ var buildGroupsPlot = function(canvasId, data){
     var colors = [];
     for (i=0; i<data.groups.length; i++){
         var group = data.groups[i]
-        var avgState = data.avgStates[i]
+        var avgCharacteristics = data.avgCharacteristics[i]
         var profile = data.profiles[i]
+        var adaptedTaskId = data.adaptedTaskId[i]
         var groupCenterOfMass = {"x": 100 + Math.random()*(width-300), "y": 100 + Math.random()*(height-300)};
 
-        groupIndicatorNodes.push({"groupId": i, "characteristics": avgState.characteristics, "profile": profile, "centerOfMass": groupCenterOfMass});
+        groupIndicatorNodes.push({"groupId": i, "characteristics": avgCharacteristics,  "profile": profile, "adaptedTaskId": adaptedTaskId, "centerOfMass": groupCenterOfMass});
         
         for(var j=0;j<group.length; j++){
             playerNodes.push({"playerId": group[j], "groupId": i, "centerOfMass": groupCenterOfMass});
@@ -205,7 +204,7 @@ var buildGroupsPlot = function(canvasId, data){
           .enter().append('circle')
             .attr('r', 10)
             .attr('fill', node => colors[node.groupId]);
-            
+
     var textElements =
         svg.append('g')
           .selectAll('text')
@@ -259,8 +258,8 @@ var buildGroupsPlot = function(canvasId, data){
         .attr('y', 4)
         .attr('rx', '15px')
         // .attr('ry', '35px')
-        .attr('width', 300)
-        .attr('height', 200)
+        .attr('width', 400)
+        .attr('height', 300)
         .attr('fill', 'rgba(0, 0, 0, 0.59)')
         .attr('stroke', 'black');
     
@@ -269,16 +268,18 @@ var buildGroupsPlot = function(canvasId, data){
         .attr('x', 30)
         .attr('y', 30)
         
-        // .attr('width', 200)
-        // .attr('height', 160)
-
         .attr('font-size', 15)
         .attr('fill','white')
-        .text(node => { return "Group Characteristics:\n "+JSON.stringify({ "characteristics": node.characteristics, "profile": node.profile} ,  undefined, 2);})
-        .call(wrap, 100);
+        .text(node => { 
+            if(node.adaptedTaskId == -1){
+                alert("Could not compute task for group"+node.groupId+"... Maybe no tasks are available?")
+            }
+            return "Group Info\n "+JSON.stringify({ "group Id": node.groupId, "characteristics": node.characteristics, 
+            "profile": node.profile, "adaptedTaskId": node.adaptedTaskId == -1 ? node.adaptedTaskId : "<Could not compute task>" } ,  undefined, 2);})
+        ;// .call(wrap, 100);
 
 
-    groupIndicators.on("mouseover", function(d){ console.log(d); d3.select(tooltipElements._groups[0][d.groupId]).style("visibility", "visible");})
+    groupIndicators.on("mouseover", function(d){ d3.select(tooltipElements._groups[0][d.groupId]).style("visibility", "visible");})
             .on("mouseout", function(d){ d3.select(tooltipElements._groups[0][d.groupId]).style("visibility", "hidden");});        
 
 
@@ -295,7 +296,6 @@ var buildGroupsPlot = function(canvasId, data){
 
 
     resetSim();
-
     simulation.on("tick", () => {
             nodeElements
                 .attr("cx", node => node.x)

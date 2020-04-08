@@ -1,5 +1,4 @@
 {% load static %}
-{% include "common/header.html" %}
 <!DOCTYPE html>
 <html>
 	<head>
@@ -7,6 +6,7 @@
 		<title>GIMME</title>
 	</head>
 	<body class="layout-default">
+		{% include "common/header.html" %}
 		
 		<div id="welcomeBanner">
 			<section class="hero main_hero is-fullheight">
@@ -126,6 +126,8 @@
 
 			
 		</div>
+
+		{% include "common/footer.html" %}
 	</body>
 	<script
 		src="https://code.jquery.com/jquery-3.2.1.min.js"
@@ -138,6 +140,7 @@
 	<script src="{% static "js/general.js" %}"></script>
 	<script src="{% static "js/plots.js" %}"></script>
 	<script type="text/javascript">
+		//setup session cookie
 		$.ajaxSetup({ 
 		  beforeSend: function(xhr, settings) {
 		     function getCookie(name) {

@@ -6,13 +6,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
   <link rel="stylesheet" href="{% static "css/site.css" %}">
 
-  <nav class="navbar" role="navigation" aria-label="main navigation" style="background-color:#e5e5e5">
+  <nav class="navbar" role="navigation" aria-label="main navigation" style="background-color:#e5e5e5;">
     <div class="navbar-brand">
-      <div class="navbar-item">
-        <figure class="image is-300x50">
-          <img src="{% static "images/GIMMELogo.png" %}">
-        </figure>
-      </div>
+      <a class="navbar-item" href="{% url 'home' %}">
+        <img src="{% static "images/GIMMELogo.png" %}">
+      </a>
 
       <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
         <span aria-hidden="true"></span>
@@ -21,30 +19,20 @@
       </a>
     </div>
 
-    <div id="navbarBasicExample" class="navbar-menu">
+    <div class="navbar-menu">
       <div class="navbar-start">
-        
-        <a class="navbar-item"  href="{% url 'home' %}">
-          Home
-        </a>
-        <a class="navbar-item">
-          Documentation
-        </a>
 
         <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link">
-            More
+            Documentation
           </a>
 
           <div class="navbar-dropdown">
-            <a class="navbar-item">
-              About
+            <a class="navbar-item" href="https://github.com/SamGomes/GIMME">
+              GIMME-Web page
             </a>
-            <a class="navbar-item">
-              Jobs
-            </a>
-            <a class="navbar-item">
-              Contact
+            <a class="navbar-item" href="https://github.com/SamGomes/GIMME">
+              GIMME API page
             </a>
             <hr class="navbar-divider">
             <a class="navbar-item">
@@ -89,7 +77,8 @@
         </div>
         <div class="navbar-item center-left is-hoverable">
           <figure class="image is-100x100">
-            <img src="{% static "images/avatar.png" %}" alt="Placeholder image">
+            <!-- sets placeholder if no image is found -->
+            <img class="is-rounded" onError="this.onerror=null;this.src='../static/images/userAvatars/avatarPH.png';" src="../static/images/userAvatars/{{request.session.username}}.png">
           </figure>
           <div class="navbar-dropdown is-right">
 
