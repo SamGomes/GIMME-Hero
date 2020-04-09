@@ -22,12 +22,12 @@
 		</div>
 		
 		<div id="dashboard">
-			<section class="section danger" id="Current Activity Info">
+			<section class="section danger">
 				<div class="panel animated zoomIn">
 					<div class="panel-heading">
 						<div class="columns is-vcentered">
 							<div class="column">
-								<p>Player Setup</p>
+								<p>Players Setup</p>
 							</div>
 							<div class="is-pulled-left">
 								<div class="button minimizerButton"></div>
@@ -35,30 +35,94 @@
 						</div>
 					</div>
 					<div class="panel-block">
-
-						<div>
-							<div class="column is-full">Player Setup</div>
-							<div class="column is-full">Free Players:</div>
-							<div class="table-container column is-full">
+						<div class="column is-offset-1" style="padding:2em; border-color:gray; border-style:solid; border-width: 0.5em">
+							<div class="subtitle is-5" style="color:gray">Available Players</div>
+							<div class="table-container">
 								<div class="table" id="freePlayersTable"></div>
 							</div>
-							
-							<div>Waiting Room:</div>
+						</div>
+						<div class="column is-offset-1" style="padding:2em; border-color:gray; border-style:solid; border-width: 0.5em">
+							<div class="subtitle is-4" style="color:gray">Selected Players</div>
 							<div class="table-container column is-full">
 								<div class="table" id="waitingRoomTable"></div>
-								<div class="button" type="submit" id="addAllPlayers">Add all</div>
-								<div class="button" type="submit" id="clearAllPlayers">Clear all</div>
-								<div class="button" type="submit" id="addSpecificPlayer">Add specific player</div>
 							</div>
 						</div>
-						<div>
-							<a>
-								<div class="button is-large" type="submit" id="startAdaptation">Compute New Adaptation</div>
-							</a>
+					</div>
+					<div class="panel-block">
+						<div class="column is-offset-5">
+							<div class="button" type="submit" id="addSpecificPlayer">Add specific player</div>
+						</div>
+						<div class="column is-offset-1">
+							<div class="button" type="submit" id="addAllPlayers">Select all</div>
+						</div>
+						<div class="column is-offset-1">
+							<div class="button" type="submit" id="clearAllPlayers">Deselect all</div>
+						</div>
+						
+					</div>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="panel animated zoomIn">
+					<div class="panel-heading">
+						<div class="columns is-vcentered">
+							<div class="column">
+								<p>Tasks Setup</p>
+							</div>
+							<div class="is-pulled-left">
+								<div class="button minimizerButton"></div>
+							</div>
+						</div>
+					</div>
+					<div class="panel-block">
+						<div class="columns">
+							<div class="column is-offset-1" style="padding:2em; border-color:gray; border-style:solid; border-width: 0.5em">
+								<div class="subtitle is-5" style="color:gray">Available Tasks</div>
+								<div class="table-container">
+									<div class="table" id="freePlayersTable"></div>
+								</div>
+							</div>
+							<div class="column is-offset-1" style="padding:2em; border-color:gray; border-style:solid; border-width: 0.5em">
+								<div class="subtitle is-4" style="color:gray">Selected Tasks</div>
+								<div class="table-container column is-full">
+									<div class="table" id="waitingRoomTable"></div>
+								</div>
+							</div>
+						</div>
+						<div class="columns">
+							<div class="column">
+								<div class="button" type="submit" id="addAllPlayers">Add all</div>
+								<div class="button" type="submit" id="clearAllPlayers">Clear all</div>
+								<div class="button" type="submit" id="addSpecificPlayer">Add specific task</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</section>
+
+			<section class="section">
+				<div class="panel animated zoomIn">
+					<div class="panel-heading">
+						<div class="columns is-vcentered">
+							<div class="column">
+								<p>Adaptation Setup</p>
+							</div>
+							<div class="is-pulled-left">
+								<div class="button minimizerButton"></div>
+							</div>
+						</div>
+					</div>
+					<div class="panel-block">
+						
+					</div>
+				</div>
+			</section>
+			<div>
+				<a>
+					<div class="button is-large" type="submit" id="startAdaptation">Compute New Adaptation</div>
+				</a>
+			</div>
 
 			<section class="section">
 				<div class="panel animated zoomIn">
@@ -84,42 +148,6 @@
 				</div>
 			</section>
 
-			<section class="section">
-				<div class="panel animated zoomIn">
-					<div class="panel-heading">
-						<div class="columns is-vcentered">
-							<div class="column">
-								<p>Available Tasks</p>
-							</div>
-							<div class="is-pulled-left">
-								<div class="button minimizerButton"></div>
-							</div>
-						</div>
-					</div>
-					<div class="panel-block">
-						<div class="table">
-	  						<table>
-							    <tr>
-							        <th>Field 1</th>
-							    </tr>
-							    <tr> 
-							        <td>field1</td>
-							    </tr>
-							    {% for item in tasks %}
-								    <tr> 
-								        <td>{{ item.field1 }}</td>
-								    </tr>
-							    {% endfor %}
-							</table>
-						</div>
-						<form action="{% url 'registerTask' %}" class="section">
-							<input class="button is-large" type="submit" value="Register new Task">
-							<!-- <input class="button is-large" type="reset" value="Journey"> -->
-						</form>
-					</div>
-				</div>
-				
-			</section>
 
 			
 		</div>
@@ -165,8 +193,7 @@
 		$(document).ready(function(){
 
 			var currAdaptationState = undefined;
-
-			var generateTableFromArray = function(array, deleteElementCallback){
+			var generateTableFromArray = function(array, buttonIconClass, deleteElementCallback){
 				var table = $('<div>');
 				for(var i=0; i < array.length; i++){
 				    tag = $('<span>').text(array[i]);
@@ -175,9 +202,8 @@
 				    tag.addClass("is-medium");
 				    tag.addClass("is-rounded");
 
-				    deleteButton = $('<button>')
-				    deleteButton.addClass("delete");
-				    deleteButton.addClass("is-medium");
+				    deleteButton = $('<div class="button is-rounded is-small" style="color:white; background-color:transparent; border-color:transparent;">');
+				    deleteButton.append("<i class=\"fas "+buttonIconClass+"\"></i>");
 				    deleteButton.click(deleteElementCallback)
 
 				    tag.append(deleteButton)
@@ -198,18 +224,29 @@
 								var currFreePlayers = newServerState.currFreePlayers;
 								// console.log(currAdaptationState);
 
-								fpTable = generateTableFromArray(currFreePlayers,function(){
+								fpTable = generateTableFromArray(currFreePlayers, "fa-arrow-circle-right", function(){
+									
 							    	$.ajax({
 										  type: 'POST',
 										  url: '/addWaitingPlayer/',
-										  data: {'playerId':$(this).parent().text()}
+										  data: {'playerId':$(this).parent().text()},
+										  success:
+										  	function()
+											  {
+											  	$(this).find(".fa-arrow-circle-right").removeClass("fa-arrow-circle-right").addClass("fa-arrow-circle-left");
+											  }
 									});
 								});
-								wpTable = generateTableFromArray(currWaitingPlayers,function(){
+								wpTable = generateTableFromArray(currWaitingPlayers, "fa-arrow-circle-left", function(){
 							    	$.ajax({
 										  type: 'POST',
 										  url: '/removeWaitingPlayer/',
-										  data: {'playerId':$(this).parent().text()}
+										  data: {'playerId':$(this).parent().text()},
+										  success: 
+											  function()
+											  {
+											  	$(this).find(".fa-arrow-circle-right").removeClass("fa-arrow-circle-left").addClass("fa-arrow-circle-right");
+											  }
 									});
 								});
 								$('#freePlayersTable').empty();

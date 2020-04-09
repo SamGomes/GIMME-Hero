@@ -41,7 +41,7 @@ body {
 
 .panel-block {
   background-color: white;
-  border-radius: 0px 0px 25px 25px;
+  /*border-radius: 0px 0px 25px 25px;*/
   border-fill: transparent;
 }
 

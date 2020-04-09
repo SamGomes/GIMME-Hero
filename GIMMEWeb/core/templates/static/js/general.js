@@ -47,16 +47,16 @@
         $("#dashboard").show();
     }, 0);
 
-    $(".minimizerButton").append("<i class=\"fa fa-window-minimize\"></i>");
+    $(".minimizerButton").append("<i class=\"fa fa-window-maximize\"></i>").parent().parent().parent().parent().find(".panel-block").show();
     $(".minimizerButton").click(function(){
         $(this).empty();
         var content = $(this).parent().parent().parent().parent().find(".panel-block");
     	if(content.is(":hidden")){
             $(this).append("<i class=\"fa fa-window-minimize\"></i>");
-            content.show(2);
+            content.show(350);
         }else{
             $(this).append("<i class=\"fa fa-window-maximize\"></i>");
-            content.hide(2);
+            content.hide(350);
         }
     });
 });
