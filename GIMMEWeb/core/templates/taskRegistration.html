@@ -4,7 +4,6 @@
 <html>
 	<body class="layout-default">
 		
-
 		{% if form.errors %}
 			{% for field in form %}
 				{% for error in field.errors %}
@@ -22,10 +21,45 @@
 
 		<section class="section columns">
 			<div class="column"></div>
-			<div class="column">
+			<div class="panel panel-block column">
 				<form action="{% url 'saveTaskRegistration' %}" method="POST">
 					{% csrf_token %}
 					{{ form }}
+					<div class="field requiredFormField">
+					  <label class="label">Interaction Profile*</label>
+					  <div class="control" name="role">
+					    <input class="input" type="text" placeholder="" name="">
+					    <input class="input" type="text" placeholder="" name="">
+					    <input class="input" type="text" placeholder="" name="">
+					  </div>
+					</div>
+
+					<div class="field requiredFormField">
+					  <label class="label">Title*</label>
+					  <div class="control">
+					    <input class="input" type="text" placeholder="Title" name="title">
+					  </div>
+					</div>
+
+					<div class="field requiredFormField">
+					  <label class="label">Description*</label>
+					  <div class="control">
+					    <input class="input" type="text" placeholder="Description" name="description">
+					  </div>
+					</div>
+
+
+					<div class="field requiredFormField">
+					  <label class="label">Duration*</label>
+					  <div class="control">
+					    <input class="input" type="date" placeholder="Duration" name="duration">
+					  </div>
+					</div>
+
+
+					<div class="control">
+						<input class="button is-link" type="submit" value="Enter" id="submitButton">
+					</div>
 				</form>
 			</div>
 			<div class="column"></div>		

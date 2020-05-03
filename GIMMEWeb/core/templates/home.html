@@ -3,31 +3,112 @@
 <!DOCTYPE html>
 <html>
 	<body class="layout-default">
-		
-		<div class="has-text-centered animated zoomIn">
-			<div>
-				<p class="title main-text">Welcome to GIMME-Web</p>
-				<p class="subtitle main-text">A sophisticated Group Interactions Management Tool</p>
+		<div class="section is-small">
+			<div class="has-text-centered animated zoomIn">
+				<div>
+					<p class="main-title main-text">Welcome to GIMME-Web</p>
+					<p class="main-subtitle main-text">A sophisticated Group Interactions Management Tool</p>
+				</div>
 			</div>
 		</div>
-
-		<section class="section columns animated zoomIn">
-			<div class="column"></div>
-			<div class="has-text-centered panel panel-block column">
-				First time here? Lets Register you...
-				<form action="{% url 'registerUser' %}">
-				    <input class="button is-link" type="submit" value="Register">
-				</form>
+		<div class="columns is-centered animated zoomIn">
+			<div class="panel panel-block column is-3">
+				<div class="section is-small subtitle is-3">
+					First time here? Lets Register you...
+				</div>
+				<div class="section is-small">
+					<a id="registerButton" class="button is-link is-medium" href="{% url 'playerRegistration' %}">Register</a>
+					<div class="field"></div>
+					<p class="buttons">
+						<div class="field"></div>
+						<a class="button is-fullwidth">
+							<span class="icon">
+								<i class="fab fa-github"></i>
+							</span>
+							<span>Register with GitHub</span>
+						</a>
+						<div class="field"></div>
+						<a class="button is-danger is-fullwidth">
+							<span class="icon">
+								<i class="fab fa-google"></i>
+							</span>
+							<span>Register with Google</span>
+						</a>
+						<div class="field"></div>
+						<a class="button is-info is-fullwidth">
+							<span class="icon">
+								<i class="fab fa-facebook"></i>
+							</span>
+							<span>Register with Facebook</span>
+						</a>
+					</p>
+				</div>
 			</div>
-			<div class="column"></div>
-			<div class="panel panel-block column">
-				Already Have an account? Just Log in!
-				{% include "common/login.html" %}  
+			<div class="column is-1"></div>
+			<div class="panel panel-block column is-3">
+				<div class="panel-block is-small subtitle is-3">
+					Already Have an account? Just Log in!
+				</div>
+				<div class="panel-block is-small">
+					<div class="container">
+						<form>
+							<div class="field">
+							  <label class="label subtitle is-5">Username or E-Mail</label>
+							  <div class="control">
+							    <input id="loginUsername" class="input" type="text" placeholder="Username" name="username">
+							  </div>
+							</div>
+
+							<div class="field">
+								<label class="label subtitle is-5">Password</label>
+								<p class="control has-icons-left">
+									<input id="loginPassword" class="input" type="password" placeholder="Password" name="password">
+									<span class="icon is-small is-left">
+										<i class="fas fa-lock"></i>
+									</span>
+								</p>
+							</div>
+
+							<div class="control">
+								<div id="loginError" class="section hero is-danger is-centered has-text-centered">
+									<label class="label subtitle is-6 is-white">Login failed! Credentials not recognized.</label>
+								</div>
+
+								<div class="field"></div>
+								<p class="buttons">
+									<a id="loginEnterButton" class="button is-medium is-link">Enter</a>
+									<a id="loginCancelButton" class="button is-medium is-text">Cancel</a>
+								</p>
+								<p class="buttons">
+									<div class="field"></div>
+									<a class="button is-fullwidth">
+										<span class="icon">
+											<i class="fab fa-github"></i>
+										</span>
+										<span>Enter with GitHub</span>
+									</a>
+									<div class="field"></div>
+									<a class="button is-danger is-fullwidth">
+										<span class="icon">
+											<i class="fab fa-google"></i>
+										</span>
+										<span>Enter with Google</span>
+									</a>
+									<div class="field"></div>
+									<a class="button is-info is-fullwidth">
+										<span class="icon">
+											<i class="fab fa-facebook"></i>
+										</span>
+										<span>Enter with Facebook</span>
+									</a>
+								</p>
+							</div>
+								
+						</form>
+					</div>
+				</div>
 			</div>
-			<div class="column"></div>
-		</section>
-
-
+		</div>
 	</body>	
 	<script
 		src="https://code.jquery.com/jquery-3.2.1.min.js"
@@ -35,4 +116,36 @@
 		crossorigin="anonymous"></script>
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 	<script src="{% static "js/general.js" %}"></script>
+	{% include "common/setup.html" %}
+	<script>
+		$("#loginError").hide()
+		$(document).ready(function(){
+			$("#loginCancelButton").click(function(){
+				$("#loginUsername").val("");
+				$("#loginPassword").val("");
+			});
+
+			$("#loginEnterButton").click(function(){
+				$.ajax(
+					{
+						url: '/loginCheck/',
+						dataType: "json", 
+						type: 'POST',
+						data: {'username':$("#loginUsername").val(), 'password':$("#loginPassword").val()},
+						statusCode: {
+							404: function() {
+							  $("#loginError").show(500);
+							  setTimeout(function(){ $("#loginError").hide(500); }, 3000);
+							},
+							200: function(){ 
+								$("#loginError").hide();
+								window.location.reload(false); //reload after redirect
+							}
+						}
+					}
+				);
+			});
+
+		});
+	</script>
 </html>

@@ -47,7 +47,7 @@
         $("#dashboard").show();
     }, 0);
 
-    $(".minimizerButton").append("<i class=\"fa fa-window-maximize\"></i>").parent().parent().parent().parent().find(".panel-block").show();
+    $(".minimizerButton").append("<i class=\"fa fa-window-minimize\"></i>").parent().parent().parent().parent().find(".panel-block").show();
     $(".minimizerButton").click(function(){
         $(this).empty();
         var content = $(this).parent().parent().parent().parent().find(".panel-block");

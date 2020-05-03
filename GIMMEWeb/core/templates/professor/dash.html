@@ -1,13 +1,13 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
+	{% load static %}
+	<!DOCTYPE html>
+	<html>
 	<head>
 		<meta charset="utf-8">
 		<title>GIMME</title>
 	</head>
 	<body class="layout-default">
 		{% include "common/header.html" %}
-		
+
 		<div id="welcomeBanner">
 			<section class="hero main_hero is-fullheight">
 				<div class="hero-body">
@@ -20,7 +20,7 @@
 				</div>
 			</section>
 		</div>
-		
+
 		<div id="dashboard">
 			<section class="section danger">
 				<div class="panel animated zoomIn">
@@ -58,7 +58,6 @@
 						<div class="column is-offset-1">
 							<div class="button" type="submit" id="clearAllPlayers">Deselect all</div>
 						</div>
-						
 					</div>
 				</div>
 			</section>
@@ -80,173 +79,376 @@
 							<div class="column is-offset-1" style="padding:2em; border-color:gray; border-style:solid; border-width: 0.5em">
 								<div class="subtitle is-5" style="color:gray">Available Tasks</div>
 								<div class="table-container">
-									<div class="table" id="freePlayersTable"></div>
+									<div class="table" id="availableTasksTable"></div>
 								</div>
 							</div>
 							<div class="column is-offset-1" style="padding:2em; border-color:gray; border-style:solid; border-width: 0.5em">
 								<div class="subtitle is-4" style="color:gray">Selected Tasks</div>
 								<div class="table-container column is-full">
-									<div class="table" id="waitingRoomTable"></div>
+									<div class="table" id="selectedTasksTable"></div>
 								</div>
 							</div>
 						</div>
-						<div class="columns">
-							<div class="column">
-								<div class="button" type="submit" id="addAllPlayers">Add all</div>
-								<div class="button" type="submit" id="clearAllPlayers">Clear all</div>
-								<div class="button" type="submit" id="addSpecificPlayer">Add specific task</div>
-							</div>
+					</div>
+					<div class="panel-block">
+						<div class="column is-offset-5">
+							<div class="button" type="submit" id="addSpecificPlayer">Add specific player</div>
+						</div>
+						<div class="column is-offset-1">
+							<div class="button" type="submit" id="addAllPlayers">Select all</div>
+						</div>
+						<div class="column is-offset-1">
+							<div class="button" type="submit" id="clearAllPlayers">Deselect all</div>
 						</div>
 					</div>
 				</div>
 			</section>
 
-			<section class="section">
-				<div class="panel animated zoomIn">
-					<div class="panel-heading">
-						<div class="columns is-vcentered">
-							<div class="column">
-								<p>Adaptation Setup</p>
+
+		<section class="section">
+			<div class="panel animated zoomIn">
+				<div class="panel-heading">
+					<div class="columns is-vcentered">
+						<div class="column">
+							<p>Tasks Setup</p>
+						</div>
+						<div class="is-pulled-left">
+							<div class="button minimizerButton"></div>
+						</div>
+					</div>
+				</div>
+				<div class="panel-block" style="display: block;">
+					<div class="columns is-multiline is-mobile">
+						<div class="column is-full">
+							<p>Algorithms</p>
+						</div>
+					</div>
+
+					<div class="columns is-multiline is-mobile">
+						<div class="column is-half">
+							<span>Grouping Alg.</span>
+						</div>
+						<div class="column is-half">
+							<span>Regression Alg.</span>
+						</div>
+					</div>
+					<div class="columns is-multiline is-mobile">
+						<div class="column is-half">
+							<div class="dropdown">
+								<div class="dropdown-trigger">
+									<button class="button" aria-haspopup="true" aria-controls="dropdown-menu3">
+										<span id="selectedGenAlgId" >Grouping Alg.</span>
+										<span class="icon is-small" >
+											<i class="fas fa-angle-down" aria-hidden="true"></i>
+										</span>
+									</button>
+								</div>
+								<div class="dropdown-menu" id="dropdown-menu3" role="menu">
+									<div class="dropdown-content">
+										<a class="dropdown-item is-active">
+											Random
+										</a>
+										<a class="dropdown-item" data-tooltip="See GIMME-API for details">
+											Simple
+											<div class="form-group">
+												<label class="column is-4 control-label" for="textinput">Num Generated Configurations</label>  
+												<div class="control">
+													<input id="numberOfConfigChoicesId" class="input" type="number" min="1" max="1000" placeholder="100">
+												</div>
+											</div>
+
+										</a>
+									</div>
+								</div>
 							</div>
-							<div class="is-pulled-left">
-								<div class="button minimizerButton"></div>
+						</div>
+
+
+
+						<div class="column is-half">
+							<div class="dropdown">
+								<div class="dropdown-trigger">
+									<button class="button" aria-haspopup="true" aria-controls="dropdown-menu4">
+										<span id="selectedRegAlgId" >Regression Alg.</span>
+										<span class="icon is-small">
+											<i class="fas fa-angle-down" aria-hidden="true"></i>
+										</span>
+									</button>
+								</div>
+								<div class="dropdown-menu" id="dropdown-menu3" role="menu">
+									<div class="dropdown-content">
+										<a class="dropdown-item is-active">
+											KNN
+											<div class="form-group">
+												<label class="column is-4 control-label" for="textinput">Num NNs</label>  
+												<div class="control">
+													<input  id="numNNsId" class="input" type="number" min="1" max="100" placeholder="5">
+												</div>
+											</div>
+										</a>
+										<a class="dropdown-item">
+											Neural Networks
+										</a>
+										<a class="dropdown-item">
+											Reinf. Learn.
+										</a>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
-					<div class="panel-block">
-						
+				</div>
+
+				<div class="panel-block" style="display: block;">
+					<div class="columns is-multiline is-mobile">
+						<div class="column is-full">
+							<p>Groups</p>
+						</div>
+
+						<div class="column is-5 columns is-multiline is-mobile">
+							<div class="column is-half">
+								<label id="mgsInput" class="control-label" for="quantity" min="2">Min Group Size</label>  
+								<div class="control">
+									<input id="minNumberOfPlayersPerGroupId" class="input" type="number" min="2" max="100" placeholder="2">
+								</div>
+							</div>
+							<div class="column is-half">
+								<label class="control-label" for="quantity">Max Group Size</label>  
+								<div class="control">
+									<input id="maxNumberOfPlayersPerGroupId" class="input" type="number" min="3" max="100" placeholder="4">
+								</div>
+							</div>
+						</div>
+						<div class="column is-2 has-text-centered">
+							<p>OR</p>
+						</div>
+
+						<div class="column is-5">
+							<label class="control-label" for="quantity">Preferred Group Size</label>  
+							<div class="control">
+								<input id="preferredNumberOfPlayersPerGroupId" class="input" type="number" min="2" max="100" placeholder="4">
+							</div>
+						</div>
 					</div>
 				</div>
-			</section>
-			<div>
-				<a>
-					<div class="button is-large" type="submit" id="startAdaptation">Compute New Adaptation</div>
-				</a>
+
+				<div class="panel-block" style="display: block;">
+					<div class="columns is-multiline is-mobile">
+						<div class="column is-full">
+							<p>Quality Weights</p>
+						</div>
+
+						<div class="column is-half">
+							<label class="control-label" for="quantity">Ability</label>  
+							<div class="control">
+								<input id="qualityWeightsAbId" class="input" type="number" step="0.01" min="0" max="1" placeholder="0.50">
+							</div>
+						</div>
+
+						<div class="column is-half">
+							<label class="control-label" for="quantity">Engagement</label>  
+							<div class="control">
+								<input id="qualityWeightsEngId" class="input" type="number" step="0.01" min="0" max="1" placeholder="0.50">
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel-block" style="display: block;">
+					<div class="columns is-multiline is-mobile">
+						<div class="column is-full">
+							<p>Players</p>
+						</div>
+						<div class="column is-half is-centered">
+							<label class="field control-label" for="textinput" data-tooltip="This will only take effect whenever player states are updated">Players Past Models Window</label>  
+							<div class="field control">
+								<input id="playerWindowId" class="input" type="number" min="1" max="100" placeholder="10">
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel-block" style="display: block;">
+					<div columns is-multiline is-mobile" data-tooltip="This configuration is optional">
+						<div class="column is-full">
+							<p>Bootstrap</p>
+						</div>
+						<div class="column is-half">
+							<label class="field control-label" for="textinput">Number of Bootstrap Iterations</label>  
+							<div class="field control">
+								<input id="numBootstrapIterationsId" class="input" type="number" min="20" max="100" placeholder="20">
+							</div>
+						</div>
+						<div class="column is-half">
+							<label class="checkbox">
+							  <input id="precomputeBootstrapId" type="checkbox">
+							  	Pre-Compute Bootstrap
+							</label>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel-block" style="display: block;">
+					<div class="columns is-multiline is-mobile">
+						<div class="column is-half is-centered">
+							<a>
+								<div class="button is-large" type="submit" id="startAdaptation">Load Setup and Compute New Adaptation</div>
+							</a>
+						</div>
+					</div>
+				</div>
 			</div>
+		</section>
 
-			<section class="section">
-				<div class="panel animated zoomIn">
-					<div class="panel-heading">
-						<div class="columns is-vcentered">
-							<div class="column">
-								<p>Class Learning State</p>
-							</div>
-							<div class="is-pulled-left">
-								<div class="button minimizerButton"></div>
-							</div>
+
+		<section class="section">
+			<div class="panel animated zoomIn">
+				<div class="panel-heading">
+					<div class="columns is-vcentered">
+						<div class="column">
+							<p>Class Learning State</p>
 						</div>
-					</div>
-					<div class="panel-block">
-						<div class="colums">
-	  						<div class="column is-one-third"></div>
-	  						<div class="column is-one-third is-centered" id="groupsPlot"></div>
-	  						<div class="column is-one-third"></div>
-
-							<div class="button is-large" type="submit" id="rebuildPlot">Rebuild Plot</div>
+						<div class="is-pulled-left">
+							<div class="button minimizerButton"></div>
 						</div>
 					</div>
 				</div>
-			</section>
+				<div class="panel-block">
+					<div class="colums">
+						<div class="column is-one-third"></div>
+						<div class="column is-one-third is-centered" id="groupsPlot"></div>
+						<div class="column is-one-third"></div>
+
+						<div class="button is-large" type="submit" id="rebuildPlot">Rebuild Plot</div>
+					</div>
+				</div>
+			</div>
+		</section>
 
 
-			
-		</div>
-		<!-- {% include "common/footer.html" %} -->
-	</body>
-	<script
-		src="https://code.jquery.com/jquery-3.2.1.min.js"
-		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-		crossorigin="anonymous"></script>
-	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
-	<script src="https://d3js.org/d3.v5.js"></script>
-	<script src="https://unpkg.com/d3-force-attract@latest"></script>
-	<script src="https://unpkg.com/d3-force-cluster@latest"></script>
-	<script src="{% static "js/general.js" %}"></script>
-	<script src="{% static "js/plots.js" %}"></script>
-	<script type="text/javascript">
-		//setup session cookie
-		$.ajaxSetup({ 
-		  beforeSend: function(xhr, settings) {
-		     function getCookie(name) {
-		         var cookieValue = null;
-		         if (document.cookie && document.cookie != '') {
-		             var cookies = document.cookie.split(';');
-		             for (var i = 0; i < cookies.length; i++) {
-		                 var cookie = jQuery.trim(cookies[i]);
-		                 // Does this cookie string begin with the name we want?
-		                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
-		                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-		                     break;
-		                 }
-		             }
-		         }
-		         return cookieValue;
-		     }
-		     if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-		         // Only send the token to relative URLs i.e. locally.
-		         xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-		     }
-		  } 
+
+	</div>
+	<!-- {% include "common/footer.html" %} -->
+</body>
+<script
+src="https://code.jquery.com/jquery-3.2.1.min.js"
+integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+crossorigin="anonymous"></script>
+<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+<script src="https://d3js.org/d3.v5.js"></script>
+<script src="https://unpkg.com/d3-force-attract@latest"></script>
+<script src="https://unpkg.com/d3-force-cluster@latest"></script>
+<script src="{% static "js/general.js" %}"></script>
+<script src="{% static "js/plots.js" %}"></script>
+{% include "common/setup.html" %}
+<script>
+	$(document).ready(function(){
+
+		var currAdaptationState = undefined;
+		var currAdaptationConfig = {}
+
+		// special button effects
+		$("#qualityWeightsAb").change(function(){
+			console.log("here");
+			$("#qualityWeightsEng").val(1.0 - $(this).val())
 		});
-	</script>
-	<script>
-		$(document).ready(function(){
+		$("#qualityWeightsEng").change(function(){
+			$("#qualityWeightsAb").val(1.0 - $(this).val())
+		});
 
-			var currAdaptationState = undefined;
-			var generateTableFromArray = function(array, buttonIconClass, deleteElementCallback){
-				var table = $('<div>');
-				for(var i=0; i < array.length; i++){
-				    tag = $('<span>').text(array[i]);
-				    tag.addClass("tag");
-				    tag.addClass("is-info");
-				    tag.addClass("is-medium");
-				    tag.addClass("is-rounded");
 
-				    deleteButton = $('<div class="button is-rounded is-small" style="color:white; background-color:transparent; border-color:transparent;">');
-				    deleteButton.append("<i class=\"fas "+buttonIconClass+"\"></i>");
-				    deleteButton.click(deleteElementCallback)
 
-				    tag.append(deleteButton)
+		var generatePlayerTableFromArray = function(array, buttonIconClass, deleteElementCallback){
+			var table = $('<div>');
+			for(var i=0; i < array.length; i++){
+				tag = $('<span>').text(array[i]);
+				tag.addClass("tag");
+				tag.addClass("is-info");
+				tag.addClass("is-medium");
+				tag.addClass("is-rounded");
 
-				    table.append(tag);
+				changeButton = $('<div class="button is-rounded is-small" style="color:white; background-color:transparent; border-color:transparent;">');
+				changeButton.append("<i class=\"fas "+buttonIconClass+"\"></i>");
+				changeButton.click(deleteElementCallback)
+
+				tag.append(changeButton)
+
+				table.append(tag);
+			}
+			return table;
+		};
+		var generateTaskTableFromArray = function(array, buttonIconClass, deleteElementCallback, addElementCallback){
+			var table = $('<div>');
+			for(var i=0; i < array.length+1; i++){
+				var tag = $('<span>').text(array[i]);
+				changeButton = $('<div class="button is-rounded is-small" style="color:white; background-color:transparent; border-color:transparent;">');
+				if(i<array.length){
+					changeButton.append("<i class=\"fas "+buttonIconClass+"\"></i>");
+					changeButton.click(deleteElementCallback)
+				}else{
+					changeButton.append("<i class=\"fas fa-plus-circle\"></i>");
 				}
-				return table;
-			};
-			var fetchServerData = function(){
-				$.ajax(
-					{
-						url: '/fetchServerState/',
+				tag.addClass("tag");
+				tag.addClass("is-danger");
+				tag.addClass("is-medium");
+				tag.addClass("is-rounded");
+				tag.append(changeButton)
+				table.append(tag);
+			}
+			return table;
+		};
+
+
+		// var fetchPlayerData = function(){
+		// 	return $.ajax(
+		// 			{
+		// 				url: '/fetchPlayerState/',
+		// 				dataType: "json",
+		// 				success: 
+		// 					function (newPlayerServerState) {
+		// 						return newPlayerServerState;
+		// 					}
+		// 			}
+		// 		);
+		// }
+
+
+
+
+		var fetchServerData = function(){
+			$.ajax(
+			{
+				url: '/fetchServerState/',
 						// authentication: getCookie('csrftoken'),
 						dataType: "json",
 						success: 
-							function (newServerState) {
-								var currWaitingPlayers = newServerState.currWaitingPlayers;
-								var currFreePlayers = newServerState.currFreePlayers;
+						function (newServerState) {
+							var currWaitingPlayers = newServerState.currWaitingPlayers;
+							var currFreePlayers = newServerState.currFreePlayers;
 								// console.log(currAdaptationState);
 
-								fpTable = generateTableFromArray(currFreePlayers, "fa-arrow-circle-right", function(){
-									
-							    	$.ajax({
-										  type: 'POST',
-										  url: '/addWaitingPlayer/',
-										  data: {'playerId':$(this).parent().text()},
-										  success:
-										  	function()
-											  {
-											  	$(this).find(".fa-arrow-circle-right").removeClass("fa-arrow-circle-right").addClass("fa-arrow-circle-left");
-											  }
+								fpTable = generatePlayerTableFromArray(currFreePlayers, "fa-arrow-circle-right", function(){
+									$.ajax({
+										type: 'POST',
+										url: '/addWaitingPlayer/',
+										data: {'playerId':$(this).parent().text()},
+										success:
+										function()
+										{
+											$(this).find(".fa-arrow-circle-right").removeClass("fa-arrow-circle-right").addClass("fa-arrow-circle-left");
+										}
 									});
 								});
-								wpTable = generateTableFromArray(currWaitingPlayers, "fa-arrow-circle-left", function(){
-							    	$.ajax({
-										  type: 'POST',
-										  url: '/removeWaitingPlayer/',
-										  data: {'playerId':$(this).parent().text()},
-										  success: 
-											  function()
-											  {
-											  	$(this).find(".fa-arrow-circle-right").removeClass("fa-arrow-circle-left").addClass("fa-arrow-circle-right");
-											  }
+								wpTable = generatePlayerTableFromArray(currWaitingPlayers, "fa-arrow-circle-left", function(){
+									$.ajax({
+										type: 'POST',
+										url: '/removeWaitingPlayer/',
+										data: {'playerId':$(this).parent().text()},
+										success: 
+										function()
+										{
+											$(this).find(".fa-arrow-circle-right").removeClass("fa-arrow-circle-left").addClass("fa-arrow-circle-right");
+										}
 									});
 								});
 								$('#freePlayersTable').empty();
@@ -255,71 +457,149 @@
 								$('#waitingRoomTable').empty();
 								$('#waitingRoomTable').append(wpTable);
 
+								var currAvailableTasks = newServerState.currWaitingPlayers;
+								var currSelectedTasks = newServerState.currFreePlayers;
+
+
+								atTable = generateTaskTableFromArray(currAvailableTasks, "fa-arrow-circle-right", 
+									function(){
+										$.ajax({
+											type: 'POST',
+											url: '/addSelectedTask/',
+											data: {'playerId':$(this).parent().text()},
+											success:
+											function()
+											{
+												$(this).find(".fa-arrow-circle-right").removeClass("fa-arrow-circle-right").addClass("fa-arrow-circle-left");
+											}
+										});
+									},
+									function(){
+
+									});
+								stTable = generateTaskTableFromArray(currSelectedTasks, "fa-arrow-circle-left", 
+									function(){
+										$.ajax({
+											type: 'POST',
+											url: '/removeSelectedTask/',
+											data: {'playerId':$(this).parent().text()},
+											success: 
+											function()
+											{
+												$(this).find(".fa-arrow-circle-right").removeClass("fa-arrow-circle-left").addClass("fa-arrow-circle-right");
+											}
+										});
+									},function(){
+
+									});
+								$('#availableTasksTable').empty();
+								$('#availableTasksTable').append(atTable);
+
+								$('#selectedTasksTable').empty();
+								$('#selectedasksTable').append(stTable);
+
+
 								if(newServerState.readyForNewActivity=="true"){
 									$("#readyForNewActivityButton").removeClass("is-loading");
 									$("#readyForNewActivityButton").html("Start Activity");
 								}
 
-								if(currAdaptationState == undefined && newServerState.currAdaptationState.groups != undefined){
-									buildGroupsPlot( "groupsPlot", newServerState.currAdaptationState);
-								}
-								currAdaptationState = newServerState.currAdaptationState;
-							}
-					}
-				);
-			};
-
-			fetchServerData();
-			setInterval(fetchServerData, 500);
-
-
-			var startAdaptation = function(){
-				$("#startAdaptation").addClass("is-loading");
-				$.ajax(
-						{
-							url: '/startAdaptation/',
-							dataType: "json",
-							complete: 
-								function (newServerState) {
-									console.log('here');
-									$("#startAdaptation").removeClass("is-loading");
+								if(currAdaptationState == undefined && newServerState.currAdaptationState.groups != undefined && currAdaptationState != newServerState.currAdaptationState){
+									buildGroupsPlot( "groupsPlot", newServerState.currAdaptationState, undefined);
 									currAdaptationState = newServerState.currAdaptationState;
-									$("#groupsPlot").empty();
-									if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
-										buildGroupsPlot( "groupsPlot", currAdaptationState);
-									}
 								}
+							}
 						}
 					);
+		};
+
+		fetchServerData();
+		setInterval(fetchServerData, 500);
+
+
+		var startAdaptation = function(){
+			newAdaptationConfig = {
+							"selectedGenAlgId": $("#selectedGenAlgId").text(), 
+							"selectedRegAlgId": $("#selectedRegAlgId").text(),
+
+							"numberOfConfigChoices": $("#numberOfConfigChoicesId").val(),
+							"numNNs": $("#numNNsId").val(),
+							"minNumberOfPlayersPerGroup": $("#minNumberOfPlayersPerGroupId").val(),
+							"maxNumberOfPlayersPerGroup": $("#maxNumberOfPlayersPerGroupId").val(),
+							"preferredNumberOfPlayersPerGroup": $("#preferredNumberOfPlayersPerGroupId").val(),
+							"qualityWeightsAb": $("#qualityWeightsAbId").val(),
+							"qualityWeightsEng": $("#qualityWeightsEngId").val(),
+							"playerWindow": $("#playerWindowId").val(),
+							"numBootstrapIterations": $("#numBootstrapIterationsId").val(),
+							"precomputeBootstrap": $("#precomputeBootstrapId").val()
+
+						};
+			if(currAdaptationConfig != newAdaptationConfig){
+				currAdaptationConfig = newAdaptationConfig;
+				$.ajax(
+					{
+						url: "/configAdaptation/",
+						dataType: "json",
+						data: newAdaptationConfig,
+						complete: 
+						function (newServerState) {
+							console.log('here');
+							$("#startAdaptation").removeClass("is-loading");
+							currAdaptationState = newServerState.currAdaptationState;
+							$("#groupsPlot").empty();
+							if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
+								buildGroupsPlot( "groupsPlot", currAdaptationState);
+							}
+						}
+					}
+				);
 			}
-
-			$("#startAdaptation").click(function(){
-				startAdaptation();
-			})
-			$("#addAllPlayers").click(function(){
-				$.ajax(
-						{
-							url: '/addAllPlayersWaiting/'
-						}
-				);
-			})
-			$("#clearAllPlayers").click(function(){
-				$.ajax(
-						{
-							url: '/removeAllPlayersWaiting/'
-						}
-				);
-			})
-			$("#addSpecificPlayer").click(function(){
-				startAdaptation();
-			}).hide()
-
-			$("#rebuildPlot").click(function(){
-				$("#groupsPlot").empty();
-				if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
-					buildGroupsPlot( "groupsPlot", currAdaptationState);
+			$("#startAdaptation").addClass("is-loading");
+			$.ajax(
+			{
+				url: '/startAdaptation/',
+				dataType: "json",
+				complete: 
+				function (newServerState) {
+					console.log('here');
+					$("#startAdaptation").removeClass("is-loading");
+					currAdaptationState = newServerState.currAdaptationState;
+					$("#groupsPlot").empty();
+					if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
+						buildGroupsPlot( "groupsPlot", currAdaptationState);
+					}
 				}
-			})
-		});
-	</script>
+			}
+			);
+		}
+
+		$("#startAdaptation").click(function(){
+			startAdaptation();
+		})
+		$("#addAllPlayers").click(function(){
+			$.ajax(
+			{
+				url: '/addAllPlayersWaiting/'
+			}
+			);
+		})
+		$("#clearAllPlayers").click(function(){
+			$.ajax(
+			{
+				url: '/removeAllPlayersWaiting/'
+			}
+			);
+		})
+		$("#addSpecificPlayer").click(function(){
+			startAdaptation();
+		}).hide()
+
+		$("#rebuildPlot").click(function(){
+			$("#groupsPlot").empty();
+			if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
+				buildGroupsPlot( "groupsPlot", currAdaptationState);
+			}
+		})
+	});
+</script>
 </html>

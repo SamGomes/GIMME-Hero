@@ -19,49 +19,49 @@ var buildInteractionsProfilePlot = function(canvasId, data){
     var xAxis = d3.axisTop(x);
     var yAxis = d3.axisRight(y);
 
-    var svg = d3.select("#"+canvasId)
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var svg = d3.select('#'+canvasId)
+            .append('svg')
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom)
+            .append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    svg.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(" + 0 + "," + height / 2 + ")")
+    svg.append('g')
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(' + 0 + ',' + height / 2 + ')')
             .call(xAxis);
 
-    svg.append("g")
-            .attr("class", "y axis")
-            .attr("transform", "translate(" + width / 2 + "," + 0 + ")")
+    svg.append('g')
+            .attr('class', 'y axis')
+            .attr('transform', 'translate(' + width / 2 + ',' + 0 + ')')
             .call(yAxis)
-            .append("text");
+            .append('text');
               
 
-  var dots =  svg.selectAll("g.dot")
+  var dots =  svg.selectAll('g.dot')
             .data(data)
             .enter().append('g');
             
-            dots.append("circle")
-                .attr("class", "dot")
-                .attr("r", 5)
-                .attr("cx", function (d) {
+            dots.append('circle')
+                .attr('class', 'dot')
+                .attr('r', 5)
+                .attr('cx', function (d) {
                     return x(d.K_i);
                 })
-                .attr("cy", function (d) {
+                .attr('cy', function (d) {
                     return y(d.K_cp);
                 })
-                .style("fill", function (d) {
-                    return "#50C2E3";
+                .style('fill', function (d) {
+                    return '#50C2E3';
                 })
-                .on("mouseover",function(d){
-                    d3.select(this).append("text").text(function(d){
+                .on('mouseover',function(d){
+                    d3.select(this).append('text').text(function(d){
                                 return d.name;
                             })
-                            .attr("x", function (d) {
+                            .attr('x', function (d) {
                                 return x(d.K_i);
                             })
-                            .attr("y", function (d) {
+                            .attr('y', function (d) {
                                 return y(d.K_cp);
                             });
                 });
@@ -81,11 +81,11 @@ var buildStatePlot = function(canvasId, data){
     var width = 960 - margin.left - margin.right;
     var height = 500 - margin.top - margin.bottom;
 
-    var svg = d3.select("#"+canvasId).append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var svg = d3.select('#'+canvasId).append('svg')
+        .attr('width', width + margin.left + margin.right)
+        .attr('height', height + margin.top + margin.bottom)
+        .append('g')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     var x = d3.scaleLinear()
         .range([0, width])
@@ -104,58 +104,64 @@ var buildStatePlot = function(canvasId, data){
         .tickSize(0);
 
 
-    var bars = svg.selectAll(".bar")
+    var bars = svg.selectAll('.bar')
         .data(data)
         .enter()
-        .append("g")
+        .append('g')
 
 
-    bars.append("rect")
-        .attr("class", "bar")
-        .attr("y", function (d) {
+    bars.append('rect')
+        .attr('class', 'bar')
+        .attr('y', function (d) {
             return y(d.name)+y.bandwidth()*3/16;
         })
-        .attr("height", y.bandwidth()*3/4)
-        .attr("x", 0)
-        .attr("width", function (d) {
+        .attr('height', y.bandwidth()*3/4)
+        .attr('x', 0)
+        .attr('width', function (d) {
             return x(d.value);
         })
-        .attr("fill", "#50C2E3");
+        .attr('fill', '#50C2E3');
 
-    var gy = svg.append("g")
-        .attr("class", "y axis")
+    var gy = svg.append('g')
+        .attr('class', 'y axis')
         .call(yAxis)
-    var gy = svg.append("g")
-        .attr("class", "x axis")
+    var gy = svg.append('g')
+        .attr('class', 'x axis')
         .call(xAxis)
 }
 
 
-var buildGroupsPlot = function(canvasId, data){
+var buildGroupsPlot = function(canvasId, data, fetchPlayerStateCallback){
     
     // from http://bl.ocks.org/mbostock/7555321
     function wrap(text, width) {
-        text.each(function() {
+        text.each(function () {
             var text = d3.select(this),
-            words = text.text().split(/\n/g).reverse(),
-            word,
-            line = [],
-            lineNumber = 0,
-            lineHeight = 1.2, // ems
-            x = text.attr("x"),
-            y = text.attr("y"),
-            dy = text.attr("dy") ? text.attr("dy") : 0;
-            tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
-
-            while (words.length > 0) {
-                word = words.pop();
+                words = text.text().split(/\s+/).reverse(),
+                word,
+                line = [],
+                lineNumber = 0,
+                lineHeight = 1.1, // ems
+                x = text.attr("x"),
+                y = text.attr("y"),
+                dy = 0, //parseFloat(text.attr("dy")),
+                tspan = text.text(null)
+                            .append("tspan")
+                            .attr("x", x)
+                            .attr("y", y)
+                            .attr("dy", dy + "em");
+            while (word = words.pop()) {
                 line.push(word);
                 tspan.text(line.join(" "));
                 if (tspan.node().getComputedTextLength() > width) {
                     line.pop();
                     tspan.text(line.join(" "));
                     line = [word];
-                    tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+                    tspan = text.append("tspan")
+                                .attr("x", x)
+                                .attr("y", y)
+                                .attr("dy", ++lineNumber * lineHeight + dy + "em")
+                                .text(word);
                 }
             }
         });
@@ -170,52 +176,41 @@ var buildGroupsPlot = function(canvasId, data){
         return color;
     }
 
+    function sqrDistBetweenVectors(vec1, vec2){
+        return (Math.pow(vec1.ability - vec2.ability, 2) + Math.pow(vec1.engagement - vec2.engagement, 2));
+    }
+
     const width = 1400;
     const height = 500;
-    svg = d3.select("#"+canvasId).append('svg')
+    svg = d3.select('#'+canvasId).append('svg')
       .attr('width', width)
       .attr('height', height);
 
     var playerNodes = [];
     var groupIndicatorNodes = [];
     var colors = [];
+
+    var currPlotIndex = 0;
+ 
     for (i=0; i<data.groups.length; i++){
         var group = data.groups[i]
         var avgCharacteristics = data.avgCharacteristics[i]
         var profile = data.profiles[i]
         var adaptedTaskId = data.adaptedTaskId[i]
-        var groupCenterOfMass = {"x": 100 + Math.random()*(width-300), "y": 100 + Math.random()*(height-300)};
+        var groupCenterOfMass = {'x': 100 + Math.random()*(width - 300), 'y': 100 + Math.random()*(height - 300)};
 
-        groupIndicatorNodes.push({"groupId": i, "characteristics": avgCharacteristics,  "profile": profile, "adaptedTaskId": adaptedTaskId, "centerOfMass": groupCenterOfMass});
+        groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'profile': profile, 'adaptedTaskId': adaptedTaskId, 'centerOfMass': groupCenterOfMass});
         
         for(var j=0;j<group.length; j++){
-            playerNodes.push({"playerId": group[j], "groupId": i, "centerOfMass": groupCenterOfMass});
+            //TODO: add player characteristics
+            var playerId = group[j];
+            playerNodes.push({'plotIndex': currPlotIndex++, 'playerId': playerId, 'playerState': { 'myCharacteristics': {'ability': Math.random(), 'engagement': Math.random()} }, 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
+            // playerNodes.push({'playerId': playerId, 'playerState': fetchPlayerStateCallback(playerId), 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
         }
-        colors[i]=getRandomColor();
+        colors[i] = getRandomColor();
     } 
 
     
-
-
-    var nodeElements =
-        svg.append('g')
-          .selectAll('circle')
-          .data(playerNodes)
-          .enter().append('circle')
-            .attr('r', 10)
-            .attr('fill', node => colors[node.groupId]);
-
-    var textElements =
-        svg.append('g')
-          .selectAll('text')
-          .data(playerNodes)
-          .enter().append('text')
-            .text(function (d) {
-                return d.playerId.toString();
-            })
-            .attr('font-size', 15)
-            .attr('dx', 15)
-            .attr('dy', 4);
 
     var groupIndicators =
         svg.append('g')
@@ -245,7 +240,45 @@ var buildGroupsPlot = function(canvasId, data){
            
 
 
-    var tooltipElements =
+
+
+    var generatePlayerColor = function(node){
+        var playerChar = node.playerState.myCharacteristics;
+
+        var baseColor = colors[node.groupId].split('#')[1];
+        var transparency = 80 + Math.round(175*(1 - sqrDistBetweenVectors(node.groupCharacteristics, playerChar)));
+        return '#' +  baseColor + transparency.toString(16);
+    }
+
+    var nodeElements =
+        svg.append('g')
+          .selectAll('circle')
+          .data(playerNodes)
+          .enter().append('circle')
+            .attr('r', 10)
+            .attr('fill', function(node){
+                                return generatePlayerColor(node);
+                            });
+
+
+    // var textElements =
+    //     svg.append('g')
+    //       .selectAll('text')
+    //       .data(playerNodes)
+    //       .enter().append('text')
+    //         .text(function (d) {
+    //             return d.playerId.toString();
+    //         })
+    //         .attr('font-size', 10)
+    //         .attr('dx', -5)
+    //         .attr('dy', 5);
+
+
+
+
+
+
+    var groupInfoTooltips =
         svg.append('g')
             .selectAll('text')
             .data(groupIndicatorNodes)
@@ -253,34 +286,85 @@ var buildGroupsPlot = function(canvasId, data){
             .append('g')
             .style('visibility','hidden');
 
-    tooltipElements.append('rect')
+    groupInfoTooltips.append('rect')
         .attr('x', 15)
         .attr('y', 4)
         .attr('rx', '15px')
         // .attr('ry', '35px')
         .attr('width', 400)
         .attr('height', 300)
-        .attr('fill', 'rgba(0, 0, 0, 0.59)')
+        .attr('fill', function(node){
+                                var baseColor = colors[node.groupId].split('#')[1];
+                                transparency = 127;
+                                return '#' +  baseColor + transparency.toString(16);
+                            })
         .attr('stroke', 'black');
     
 
-    tooltipElements.append('text')
+    groupInfoTooltips.append('text')
         .attr('x', 30)
         .attr('y', 30)
         
         .attr('font-size', 15)
-        .attr('fill','white')
+        .attr('fill','black')
         .text(node => { 
             if(node.adaptedTaskId == -1){
-                alert("Could not compute task for group"+node.groupId+"... Maybe no tasks are available?")
+                alert('Could not compute task for group'+node.groupId+'... Maybe no tasks are available?')
             }
-            return "Group Info\n "+JSON.stringify({ "group Id": node.groupId, "characteristics": node.characteristics, 
-            "profile": node.profile, "adaptedTaskId": node.adaptedTaskId == -1 ? node.adaptedTaskId : "<Could not compute task>" } ,  undefined, 2);})
-        .call(wrap, 100);
+            return 'Group Info\n '+JSON.stringify({ 'group Id': node.groupId, 'characteristics': node.characteristics, 
+            'profile': node.profile, 'adaptedTaskId': node.adaptedTaskId == -1 ? node.adaptedTaskId : '<Could not compute task>' } ,  undefined, 2);
+
+        })
+        .call(wrap, 300);
 
 
-    groupIndicators.on("mouseover", function(d){ d3.select(tooltipElements._groups[0][d.groupId]).style("visibility", "visible");})
-            .on("mouseout", function(d){ d3.select(tooltipElements._groups[0][d.groupId]).style("visibility", "hidden");});        
+    groupIndicators.on('mouseover', function(d){ d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'visible');})
+            .on('mouseout', function(d){ d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'hidden');});        
+
+
+
+
+
+    var playerInfoTooltips =
+        svg.append('g')
+            .selectAll('text')
+            .data(playerNodes)
+            .enter()
+            .append('g')
+            .style('visibility','hidden');
+
+    playerInfoTooltips.append('rect')
+        .attr('x', 15)
+        .attr('y', 4)
+        .attr('rx', '15px')
+        // .attr('ry', '35px')
+        .attr('width', 400)
+        .attr('height', 300)
+        .attr('fill', function(node){
+                                return generatePlayerColor(node);
+                            })
+        .attr('stroke', 'black');
+    
+
+    console.log(wrap)
+    playerInfoTooltips.append('text')
+        .attr('x', 30)
+        .attr('y', 30)
+        
+        .attr('font-size', 15)
+        .attr('fill','black')
+        .text(node => { 
+                    return 'Player Info '+ JSON.stringify({'playerId': node.playerId, 'playerState': node.playerState},  undefined, 2);
+                })
+        .call(wrap, 300);
+
+     nodeElements.on('mouseover', function(d){ d3.select(playerInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'visible');})
+            .on('mouseout', function(d){ d3.select(playerInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'hidden');});        
+
+            
+
+
+
 
 
     var simulation = d3.forceSimulation();
@@ -296,10 +380,10 @@ var buildGroupsPlot = function(canvasId, data){
 
 
     resetSim();
-    simulation.on("tick", () => {
+    simulation.on('tick', () => {
             nodeElements
-                .attr("cx", node => node.x)
-                .attr("cy", node => node.y);
+                .attr('cx', node => node.x)
+                .attr('cy', node => node.y);
 
             groupIndicators
                 .attr('cx', node => node.centerOfMass.x)
@@ -321,12 +405,16 @@ var buildGroupsPlot = function(canvasId, data){
                 });
                 
 
-            tooltipElements
+            groupInfoTooltips
                 .attr('transform', node => 'translate('+node.centerOfMass.x+' '+node.centerOfMass.y+')');
 
-            textElements
-                .attr("x", node => node.x)
-                .attr("y", node => node.y);
+            // textElements
+            //     .attr('x', node => node.x)
+            //     .attr('y', node => node.y);
+
+            playerInfoTooltips
+                .attr('transform', node => 'translate('+node.x+' '+node.y+')');
+
         });
 
 

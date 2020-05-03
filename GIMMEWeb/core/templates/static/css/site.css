@@ -33,6 +33,10 @@ body {
   border-radius: 25px;
   margin: 40px;
 }
+.section{
+  border-radius: 20px;
+  border-fill: #131444;
+}
 
 .panel-heading {
   border-radius: 25px 25px 0px 0px;
@@ -53,11 +57,28 @@ body {
   min-width: 50%;
 }
 
+.main-title{
+  font-size: 400%;
+  text-shadow: -4px 0 #131444, 0 4px #131444, 4px 0 #131444, 0 -4px #131444;
+  color: white;
+
+  font-weight: bold;
+}
+.main-subtitle{
+  font-size: 200%;
+  text-shadow: -4px 0 #131444, 0 4px #131444, 4px 0 #131444, 0 -4px #131444;
+  color: white;
+
+  font-weight: bold;
+}
+
 .title{
   font-size: 400%;
-  color: white;
+  color: #131444;
+  font-weight: bold;
 }
 .subtitle{
   font-size: 200%;
-  color: white;
+  color: #131444;
+  font-weight: bold;
 }

@@ -4,20 +4,6 @@
 <html>
 	<body class="layout-default">
 		
-		<div id="welcomeBanner">
-			<section class="hero main_hero is-fullheight">
-				<div class="hero-body">
-					<div class="has-text-centered; slider-content animated zoomIn">
-						<div>
-							<p class="title is-1 main-text">Registration to GIMME-Web</p>
-							<p class="subtitle is-4 main-text">A sophisticated Group Interactions Management Tool</p>
-						</div>
-					</div>
-				</div>
-
-			</section>
-		</div>
-
 		{% if form.errors %}
 			{% for field in form %}
 				{% for error in field.errors %}
@@ -35,7 +21,7 @@
 
 		<section class="section columns">
 			<div class="column"></div>
-			<div class="column">
+			<div class="panel panel-block column">
 				<form action="{% url 'saveUserRegistration' %}" method="POST">
 					{% csrf_token %}
 					{{ form }}
