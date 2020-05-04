@@ -43,6 +43,11 @@
 		}
 	}
 
+	var initialInputSelections = $(document).find(".input");
+	for (var i=0; i< initialInputSelections.length; i++){
+		var inputItem = $(initialInputSelections[i]);
+		inputItem.val(inputItem.attr("placeholder"));
+	}
 
 	//setup session cookie
 	$.ajaxSetup({ 

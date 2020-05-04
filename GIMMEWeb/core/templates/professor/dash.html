@@ -292,7 +292,12 @@
 					<div class="columns is-multiline is-mobile">
 						<div class="column is-half is-centered">
 							<a>
-								<div class="button is-large" type="submit" id="startAdaptation">Load Setup and Compute New Adaptation</div>
+								<div class="button is-large" type="submit" id="loadAndStartAdaptation">Load Setup and Compute New Adaptation</div>
+							</a>
+						</div>
+						<div class="column is-half is-centered">
+							<a>
+								<div class="button is-large" type="submit" id="forceStartAdaptation">Force Start Adaptation</div>
 							</a>
 						</div>
 					</div>
@@ -346,6 +351,8 @@ crossorigin="anonymous"></script>
 
 		var currAdaptationState = undefined;
 		var currAdaptationConfig = {}
+
+
 
 		// special button effects
 		$("#qualityWeightsAb").change(function(){
@@ -518,6 +525,25 @@ crossorigin="anonymous"></script>
 
 
 		var startAdaptation = function(){
+			$("#startAdaptation").addClass("is-loading");
+			$.ajax(
+				{
+					url: '/startAdaptation/',
+					dataType: "json",
+					complete: 
+					function (newServerState) {
+						console.log('here');
+						$("#startAdaptation").removeClass("is-loading");
+						currAdaptationState = newServerState.currAdaptationState;
+						$("#groupsPlot").empty();
+						if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
+							buildGroupsPlot( "groupsPlot", currAdaptationState);
+						}
+					}
+				}
+			);
+		}
+		var loadAndStartAdaptation = function(){
 			newAdaptationConfig = {
 							"selectedGenAlgId": $("#selectedGenAlgId").text(), 
 							"selectedRegAlgId": $("#selectedRegAlgId").text(),
@@ -539,41 +565,28 @@ crossorigin="anonymous"></script>
 				$.ajax(
 					{
 						url: "/configAdaptation/",
+						type: "POST",
 						dataType: "json",
 						data: newAdaptationConfig,
 						complete: 
 						function (newServerState) {
 							console.log('here');
-							$("#startAdaptation").removeClass("is-loading");
 							currAdaptationState = newServerState.currAdaptationState;
 							$("#groupsPlot").empty();
-							if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
-								buildGroupsPlot( "groupsPlot", currAdaptationState);
-							}
+							startAdaptation();
 						}
 					}
 				);
+			}else{
+				startAdaptation();
 			}
-			$("#startAdaptation").addClass("is-loading");
-			$.ajax(
-			{
-				url: '/startAdaptation/',
-				dataType: "json",
-				complete: 
-				function (newServerState) {
-					console.log('here');
-					$("#startAdaptation").removeClass("is-loading");
-					currAdaptationState = newServerState.currAdaptationState;
-					$("#groupsPlot").empty();
-					if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
-						buildGroupsPlot( "groupsPlot", currAdaptationState);
-					}
-				}
-			}
-			);
+			
 		}
 
-		$("#startAdaptation").click(function(){
+		$("#loadAndStartAdaptation").click(function(){
+			loadAndStartAdaptation();
+		})
+		$("#forceStartAdaptation").click(function(){
 			startAdaptation();
 		})
 		$("#addAllPlayers").click(function(){

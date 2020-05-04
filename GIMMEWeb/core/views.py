@@ -214,10 +214,8 @@ adaptation = Adaptation()
 # 	profileTemplate.dimensions["dim_"+str(d)] = 0.0
 
 
-
 defaultConfigsAlg = SimpleConfigsGen(playerBridge, intProfTemplate.generateCopy(), regAlg = KNNRegression(playerBridge, 5), numberOfConfigChoices=100, preferredNumberOfPlayersPerGroup = 5, qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5))
 adaptation.init(playerBridge, taskBridge, configsGenAlg = defaultConfigsAlg, name="GIMME")
-
 
 
 class Views(): #acts as a namespace
@@ -370,8 +368,6 @@ class Views(): #acts as a namespace
 
 
 
-
-
 	# student methods
 	@csrf_protect
 	def startActivity(request):
@@ -407,11 +403,12 @@ class Views(): #acts as a namespace
 
 
 	# professor methods
+	@csrf_protect
 	def startAdaptation(request):
-		return Views.fetchServerState(request)
+		# return Views.fetchServerState(request)
 		# try:
+		# breakpoint()
 		currAdaptationState = adaptation.iterate()
-		print(currAdaptationState)
 		# except ValueError:
 		# 	return HttpResponseNotFound('something went wrong!')
 		serverStateModelBridge.setCurrAdaptationState(currAdaptationState)
@@ -419,14 +416,14 @@ class Views(): #acts as a namespace
 		return Views.fetchServerState(request)
 
 
+	@csrf_protect
 	def configAdaptation(request):
-		print(json.dumps(request.POST, default=lambda o: o.__dict__, sort_keys=True))
-		return HttpResponse('ok')
+		# print(json.dumps(request.POST, default=lambda o: o.__dict__, sort_keys=True))
 		selectedRegAlg = {}		
 		def selectedRegAlgSwitcherKNN(request):
 			KNNRegression( 
 				playerBridge, 
-				request.POST["numNNs"]
+				int(request.POST["numNNs"])
 			)
 
 		selectedRegAlgSwitcher = { 
@@ -436,20 +433,19 @@ class Views(): #acts as a namespace
 
 
 		selectedGenAlg = {}
-		def selectedGenAlgSwitcherRandom(request):
-			return SimpleConfigsGen(playerBridge, regAlg = selectedRegAlg, 
-				numberOfConfigChoices = request.POST["numberOfConfigChoices"], 
-				minNumberOfPlayersPerGroup = request.POST["minNumberOfPlayersPerGroup"], 
-				maxNumberOfPlayersPerGroup = request.POST["maxNumberOfPlayersPerGroup"], 
-				preferredNumberOfPlayersPerGroup = request.POST["preferredNumberOfPlayersPerGroup"], 
-				qualityWeights = PlayerCharacteristics(ability=request.POST["qualityWeightsAb"], engagement=request.POST["qualityWeightsEng"]))
-
 		def selectedGenAlgSwitcherSimple(request):
-			return RandomConfigsGen(playerBridge, regAlg = selectedRegAlg, 
-				minNumberOfPlayersPerGroup = request.POST["minNumberOfPlayersPerGroup"], 
-				maxNumberOfPlayersPerGroup = request.POST["maxNumberOfPlayersPerGroup"], 
-				preferredNumberOfPlayersPerGroup = request.POST["preferredNumberOfPlayersPerGroup"], 
-				qualityWeights = PlayerCharacteristics(ability=request.POST["qualityWeightsAb"], engagement=request.POST["qualityWeightsEng"]))
+			return SimpleConfigsGen(playerBridge, intProfTemplate.generateCopy(), regAlg = selectedRegAlg, 
+				numberOfConfigChoices = int(request.POST["numberOfConfigChoices"]), 
+				minNumberOfPlayersPerGroup = int(request.POST["minNumberOfPlayersPerGroup"]), 
+				maxNumberOfPlayersPerGroup = int(request.POST["maxNumberOfPlayersPerGroup"]), 
+				preferredNumberOfPlayersPerGroup = int(request.POST["preferredNumberOfPlayersPerGroup"]), 
+				qualityWeights = PlayerCharacteristics(ability=float(request.POST["qualityWeightsAb"]), engagement=float(request.POST["qualityWeightsEng"])))
+
+		def selectedGenAlgSwitcherRandom(request):
+			return RandomConfigsGen(playerBridge, intProfTemplate.generateCopy(),
+				minNumberOfPlayersPerGroup = int(request.POST["minNumberOfPlayersPerGroup"]), 
+				maxNumberOfPlayersPerGroup = int(request.POST["maxNumberOfPlayersPerGroup"]), 
+				preferredNumberOfPlayersPerGroup = int(request.POST["preferredNumberOfPlayersPerGroup"]))
 
 		selectedGenAlgSwitcher = { 
 		    "Random": selectedGenAlgSwitcherRandom(request), 
@@ -457,6 +453,7 @@ class Views(): #acts as a namespace
 		} 
 		selectedGenAlg = selectedGenAlgSwitcher.get(request.POST["selectedGenAlgId"], defaultConfigsAlg)
 
+		# breakpoint()
 		adaptation.init(playerBridge, taskBridge, configsGenAlg = selectedGenAlg, name="GIMME")
 		return HttpResponse('ok')
 
