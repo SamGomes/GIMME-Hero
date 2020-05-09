@@ -350,13 +350,27 @@ crossorigin="anonymous"></script>
 	$(document).ready(function(){
 
 		var currAdaptationState = undefined;
-		var currAdaptationConfig = {}
+		var currAdaptationConfig = {
+							"selectedGenAlgId": "", 
+							"selectedRegAlgId": "",
+
+							"numberOfConfigChoices": "",
+							"numNNs": "",
+							"minNumberOfPlayersPerGroup": "",
+							"maxNumberOfPlayersPerGroup": "",
+							"preferredNumberOfPlayersPerGroup": "",
+							"qualityWeightsAb": "",
+							"qualityWeightsEng": "",
+							"playerWindow": "",
+							"numBootstrapIterations": "",
+							"precomputeBootstrap": ""
+						};
+
 
 
 
 		// special button effects
 		$("#qualityWeightsAb").change(function(){
-			console.log("here");
 			$("#qualityWeightsEng").val(1.0 - $(this).val())
 		});
 		$("#qualityWeightsEng").change(function(){
@@ -432,8 +446,6 @@ crossorigin="anonymous"></script>
 						function (newServerState) {
 							var currWaitingPlayers = newServerState.currWaitingPlayers;
 							var currFreePlayers = newServerState.currFreePlayers;
-								// console.log(currAdaptationState);
-
 								fpTable = generatePlayerTableFromArray(currFreePlayers, "fa-arrow-circle-right", function(){
 									$.ajax({
 										type: 'POST',
@@ -532,17 +544,30 @@ crossorigin="anonymous"></script>
 					dataType: "json",
 					complete: 
 					function (newServerState) {
-						console.log('here');
 						$("#startAdaptation").removeClass("is-loading");
 						currAdaptationState = newServerState.currAdaptationState;
 						$("#groupsPlot").empty();
-						if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
-							buildGroupsPlot( "groupsPlot", currAdaptationState);
-						}
+						// if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
+						// 	buildGroupsPlot( "groupsPlot", currAdaptationState);
+						// }
 					}
 				}
 			);
 		}
+
+		var adaptationConfigChanged = function(oldConfig, newConfig){
+			var keys = Object.keys(currAdaptationConfig);
+			for (var i = 0; i < keys.length; i++){
+				currKey = keys[i];
+				oldVal = oldConfig[currKey];
+				newVal = newConfig[currKey];
+				if(oldVal != newVal){
+					return true;
+				}
+			}
+			return false;
+		};
+
 		var loadAndStartAdaptation = function(){
 			newAdaptationConfig = {
 							"selectedGenAlgId": $("#selectedGenAlgId").text(), 
@@ -558,9 +583,8 @@ crossorigin="anonymous"></script>
 							"playerWindow": $("#playerWindowId").val(),
 							"numBootstrapIterations": $("#numBootstrapIterationsId").val(),
 							"precomputeBootstrap": $("#precomputeBootstrapId").val()
-
 						};
-			if(currAdaptationConfig != newAdaptationConfig){
+			if(adaptationConfigChanged(currAdaptationConfig, newAdaptationConfig)){
 				currAdaptationConfig = newAdaptationConfig;
 				$.ajax(
 					{
@@ -572,7 +596,6 @@ crossorigin="anonymous"></script>
 						function (newServerState) {
 							console.log('here');
 							currAdaptationState = newServerState.currAdaptationState;
-							$("#groupsPlot").empty();
 							startAdaptation();
 						}
 					}

@@ -407,7 +407,6 @@ class Views(): #acts as a namespace
 	def startAdaptation(request):
 		# return Views.fetchServerState(request)
 		# try:
-		# breakpoint()
 		currAdaptationState = adaptation.iterate()
 		# except ValueError:
 		# 	return HttpResponseNotFound('something went wrong!')
@@ -421,7 +420,7 @@ class Views(): #acts as a namespace
 		# print(json.dumps(request.POST, default=lambda o: o.__dict__, sort_keys=True))
 		selectedRegAlg = {}		
 		def selectedRegAlgSwitcherKNN(request):
-			KNNRegression( 
+			return KNNRegression( 
 				playerBridge, 
 				int(request.POST["numNNs"])
 			)
