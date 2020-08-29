@@ -1,10 +1,14 @@
 import json
 import sys
 
+import random
+import string
+
 from django.shortcuts import render, redirect
 from django.views.generic import View
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseNotFound
 
 from GIMMEWeb.core.models import User
@@ -160,14 +164,26 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 				
 				newCell.append(PlayerState(profile = profile, characteristics = characteristics, dist=state["dist"]))
 			cells.append(newCell)
-		return PlayerStateGrid(intProfTemplate.generateCopy(), cells=cells, numCells=int(playerStateGrid["numCells"]), maxProfilesPerCell=int(playerStateGrid["maxProfilesPerCell"]))
+
+		gridTrimAlg = json.loads(json.dumps(playerStateGrid["gridTrimAlg"]))
+		# print(gridTrimAlg)
+		return	PlayerStateGrid(
+			cells = cells,
+			interactionsProfileTemplate = intProfTemplate.generateCopy().reset(), 
+			gridTrimAlg = QualitySortGridTrimAlg(
+			# gridTrimAlg = AgeSortGridTrimAlg(
+				maxNumModelElements = int(gridTrimAlg["maxNumModelElements"]), 
+				qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5)
+				), 
+			numCells = int(playerStateGrid["numCells"])
+			)
 
 	def getPlayerCurrCharacteristics(self, playerId):
 		player = User.objects.get(username=playerId)
 		characteristics = json.loads(player.currState)["characteristics"]
 		return PlayerCharacteristics(ability= float(characteristics["ability"]), engagement= float(characteristics["engagement"]))
 	
-	def getPlayerPersonality(self, playerId):
+	def getPlayerPersonalityEst(self, playerId):
 		player = User.objects.get(username=playerId)
 		personality = json.loads(player.personality)
 		personality = InteractionsProfile(dimensions= personality["dimensions"])
@@ -178,7 +194,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		return PlayerState(profile = self.getPlayerCurrProfile(playerId), characteristics = self.getPlayerCurrCharacteristics(playerId), dist = json.loads(player.currState)["dist"])
 
 
-	def setPlayerPersonality(self, playerId, personality):
+	def setPlayerPersonalityEst(self, playerId, personality):
 		player = User.objects.get(username=playerId)
 		player.personality = json.dumps(personality, default=lambda o: o.__dict__)
 		player.save()
@@ -214,7 +230,20 @@ adaptation = Adaptation()
 # 	profileTemplate.dimensions["dim_"+str(d)] = 0.0
 
 
-defaultConfigsAlg = SimpleConfigsGen(playerBridge, intProfTemplate.generateCopy(), regAlg = KNNRegression(playerBridge, 5), numberOfConfigChoices=100, preferredNumberOfPlayersPerGroup = 5, qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5))
+defaultConfigsAlg = StochasticHillclimberConfigsGen(
+	playerModelBridge = playerBridge, 
+	interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+	regAlg = KNNRegression(playerBridge, 5), 
+	persEstAlg = ExplorationPersonalityEstAlg(
+		playerModelBridge = playerBridge, 
+		interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+		regAlg = KNNRegression(playerBridge, 5),
+		numTestedPlayerProfiles = 100, 
+		qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5)), 
+	numberOfConfigChoices = 300, 
+	preferredNumberOfPlayersPerGroup = 5, 
+	qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5)
+)
 adaptation.init(playerBridge, taskBridge, configsGenAlg = defaultConfigsAlg, name="GIMME")
 
 
@@ -223,8 +252,6 @@ class Views(): #acts as a namespace
 
 	#global methods
 	def home(request):
-		if(Views.isLoggedIn(request)):
-			return Views.dash(request)
 		return render(request, 'home.html')
 
 	@csrf_protect
@@ -237,7 +264,7 @@ class Views(): #acts as a namespace
 		print(email)
 		print(password)
 
-		if(not Views.isRegistered(username, email)):
+		if(not Views.isRegistered(username)["user"]):
 			return HttpResponseNotFound("username not found")
 
 		storedUser = User.objects.get(username = username)
@@ -263,28 +290,26 @@ class Views(): #acts as a namespace
 	        return HttpResponse("You're already logged out.")
 	    return redirect("/home")
 
-	def playerRegistration(request):
-		return render(request, 'playerRegistration.html')
+	def userRegistration(request):
+		print("here")
+		return render(request, 'userRegistration.html')
 
-	def isRegistered(username, email):
+	def isRegistered(username):
+		returned = {}
 		if(username != None):
 			try:
-				storedUser = User.objects.get(username = username)
+				returned["user"] = User.objects.get(username=username)
+				returned["storedUsers"] = User.objects.filter(username__contains=username)
 			except ObjectDoesNotExist as e:
 				print("user does not exist!")
-				return False
-		elif(email != None):
-			try:
-				storedUser = User.objects.get(email = email)
-			except ObjectDoesNotExist as e:
-				print("user  does not exist!")
-				return False
-		else:
-			return False
-		return True
+				returned = {"user": False, "storedUsers": User.objects.filter(username__contains=username)}
+		return returned
 
 	def isLoggedIn(request):
-		return (request.session.get('username')!=None)
+		if(request.session.get('username')!=None):
+			return HttpResponse('200')
+		else:
+			return HttpResponse('500')
 
 	def dash(request):
 		dashSwitch = {
@@ -296,20 +321,39 @@ class Views(): #acts as a namespace
 		return render(request, dashSwitch.get(request.session.get("role")), request.session.__dict__)
        
 		
+	def updateRegMode(request):
+		request.session["isNewRegRequest"] = request.POST["isNewRegRequest"]
+		return HttpResponse('ok')
+	
+	def getRandomString(length):
+		letters = string.ascii_lowercase
+		numbers = "0123456789"
+		chars = letters + numbers
+		result_str = random.choice(numbers) + ''.join(random.choice(chars) for i in range(length))
+		return result_str
 
 	def saveUserRegistration(request):
 		if request.POST:
-			username = request.POST.get('username')
-			email = request.POST.get('email')
-			password = request.POST.get('password')
-			if(Views.isRegistered(username, email)):
-				return redirect('/home')
-			
-			entry = User() 
-
 			requestInfo = request.POST
 
-			entry.username = requestInfo["username"]
+			isNewRegRequest = json.loads(request.session.get("isNewRegRequest"))
+
+			entry = User() 
+
+
+			username = ""
+			if(isNewRegRequest):
+				lenOfIsReg = 1
+				while(lenOfIsReg > 0):
+					username = requestInfo["fullName"].replace(" ", "")
+					username = username + Views.getRandomString(10) #if username exists in other regs, register username1, username2, etc.
+
+					isReg = Views.isRegistered(username)
+					lenOfIsReg = len(isReg["storedUsers"])
+			else:
+				username = requestInfo["username"]
+
+			entry.username = username
 			# entry.isAuthenticated = requestInfo["isAuthenticated"]
 			entry.email = requestInfo["email"]
 			entry.password = requestInfo["password"]
@@ -319,17 +363,43 @@ class Views(): #acts as a namespace
 			entry.preferences = requestInfo["preferences"]
 			entry.fullName = requestInfo["fullName"]
 
+
 			# Adaptation stuff
-			entry.currState = json.dumps(PlayerState(), default=lambda o: o.__dict__, sort_keys=True)
-			entry.pastModelIncreasesGrid = json.dumps(PlayerStateGrid(intProfTemplate), default=lambda o: o.__dict__, sort_keys=True)
-			entry.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
-			entry.save()
+			if(isNewRegRequest):
+				entry.currState = json.dumps(PlayerState(), default=lambda o: o.__dict__, sort_keys=True)
+				entry.pastModelIncreasesGrid = json.dumps(
+					PlayerStateGrid(
+						interactionsProfileTemplate = intProfTemplate.generateCopy().reset(), 
+						gridTrimAlg = QualitySortGridTrimAlg(
+						# gridTrimAlg = AgeSortGridTrimAlg(
+							maxNumModelElements = 30, #requestInfo["maxNumModelElements"]
+							qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5) #requestInfo["ability"]...
+							), 
+						numCells = 1 #requestInfo["numCells"]
+					), 
+				default=lambda o: o.__dict__, sort_keys=True)
+				entry.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
+				try:
+					entry.save()
+				except IntegrityError as e:
+					request.session["playerRegistrationError", e]
+					return HttpResponse('500')
+
+			else:
+				breakpoint()
+				try:
+					User.objects.filter(username=username).update(**entry.__dict__)
+				except IntegrityError as e:
+					request.session["playerRegistrationError", e]
+					return HttpResponse('500')
+
+
 
 			currFreePlayers = serverStateModelBridge.getCurrFreePlayers();
 			currFreePlayers.append(username)
 			serverStateModelBridge.setCurrFreePlayers(currFreePlayers)
 
-			return Views.dash(request)
+			return HttpResponse('200')
 
 	@csrf_protect
 	def addAllPlayersWaiting(request): #reads (player) from args
@@ -396,9 +466,10 @@ class Views(): #acts as a namespace
 
 		if request.POST:
 			playerId = request.session.get("username")
-			characteristics = PlayerCharacteristics(ability=request.POST["ability"], engagement=request.POST["engagement"])
+			characteristics = playerBridge.getPlayerCurrCharacteristics(playerId)
+			characteristics = PlayerCharacteristics(ability=float(request.POST["ability"]) - characteristics.ability, engagement=float(request.POST["engagement"]) - characteristics.engagement)
 			playerBridge.setPlayerCharacteristics(playerId, characteristics)
-			playerBridge.setAndSavePlayerStateToGrid(playerId, PlayerState(characteristics=characteristics, profile=playerBridge.getPlayerCurrProfile()))
+			playerBridge.setAndSavePlayerStateToGrid(playerId, PlayerState(characteristics=characteristics, profile=playerBridge.getPlayerCurrProfile(playerId)))
 			return Views.dash(request)
 
 
@@ -417,6 +488,8 @@ class Views(): #acts as a namespace
 
 	@csrf_protect
 	def configAdaptation(request):
+		# breakpoint()
+
 		# print(json.dumps(request.POST, default=lambda o: o.__dict__, sort_keys=True))
 		selectedRegAlg = {}		
 		def selectedRegAlgSwitcherKNN(request):
@@ -432,27 +505,60 @@ class Views(): #acts as a namespace
 
 
 		selectedGenAlg = {}
-		def selectedGenAlgSwitcherSimple(request):
-			return SimpleConfigsGen(playerBridge, intProfTemplate.generateCopy(), regAlg = selectedRegAlg, 
-				numberOfConfigChoices = int(request.POST["numberOfConfigChoices"]), 
-				minNumberOfPlayersPerGroup = int(request.POST["minNumberOfPlayersPerGroup"]), 
-				maxNumberOfPlayersPerGroup = int(request.POST["maxNumberOfPlayersPerGroup"]), 
-				preferredNumberOfPlayersPerGroup = int(request.POST["preferredNumberOfPlayersPerGroup"]), 
-				qualityWeights = PlayerCharacteristics(ability=float(request.POST["qualityWeightsAb"]), engagement=float(request.POST["qualityWeightsEng"])))
+		def selectedGenAlgSwitcherStochasticHillclimber(request):
+			return StochasticHillclimberConfigsGen(
+							playerModelBridge = playerBridge, 
+							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+							regAlg = selectedRegAlg, 
+							persEstAlg = ExplorationPersonalityEstAlg(
+								playerModelBridge = playerBridge, 
+								interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+								regAlg = selectedRegAlg,
+								numTestedPlayerProfiles = 100, 
+								qualityWeights = PlayerCharacteristics(ability=float(request.POST["qualityWeightsAb"]), engagement=float(request.POST["qualityWeightsEng"]))),
+							numberOfConfigChoices = int(request.POST["numberOfConfigChoices"]), 
+					minNumberOfPlayersPerGroup = int(request.POST["minNumberOfPlayersPerGroup"]), 
+					maxNumberOfPlayersPerGroup = int(request.POST["maxNumberOfPlayersPerGroup"]), 
+					preferredNumberOfPlayersPerGroup = int(request.POST["preferredNumberOfPlayersPerGroup"]),
+							qualityWeights = PlayerCharacteristics(ability=float(request.POST["qualityWeightsAb"]), engagement=float(request.POST["qualityWeightsEng"]))
+					)
+
+		def selectedGenAlgSwitcherSimulatedAnnealing(request):
+			return SimulatedAnnealingConfigsGen(
+							playerModelBridge = playerBridge, 
+							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+							regAlg = selectedRegAlg, 
+							persEstAlg = ExplorationPersonalityEstAlg(
+								playerModelBridge = playerBridge, 
+								interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+								regAlg = selectedRegAlg,
+								numTestedPlayerProfiles = 100, 
+								qualityWeights = PlayerCharacteristics(ability=float(request.POST["qualityWeightsAb"]), engagement=float(request.POST["qualityWeightsEng"]))),
+							numberOfConfigChoices = int(request.POST["numberOfConfigChoices"]), 
+							minNumberOfPlayersPerGroup = int(request.POST["minNumberOfPlayersPerGroup"]), 
+							maxNumberOfPlayersPerGroup = int(request.POST["maxNumberOfPlayersPerGroup"]), 
+							preferredNumberOfPlayersPerGroup = int(request.POST["preferredNumberOfPlayersPerGroup"]),
+							qualityWeights = PlayerCharacteristics(ability=float(request.POST["qualityWeightsAb"]), engagement=float(request.POST["qualityWeightsEng"])),
+							temperatureDecay = float(request.POST["temperatureDecay"])
+					)
+
 
 		def selectedGenAlgSwitcherRandom(request):
-			return RandomConfigsGen(playerBridge, intProfTemplate.generateCopy(),
+			return RandomConfigsGen(
+				playerModelBridge = playerBridge, 
+				interactionsProfileTemplate = intProfTemplate.generateCopy(),
 				minNumberOfPlayersPerGroup = int(request.POST["minNumberOfPlayersPerGroup"]), 
 				maxNumberOfPlayersPerGroup = int(request.POST["maxNumberOfPlayersPerGroup"]), 
 				preferredNumberOfPlayersPerGroup = int(request.POST["preferredNumberOfPlayersPerGroup"]))
 
 		selectedGenAlgSwitcher = { 
 		    "Random": selectedGenAlgSwitcherRandom(request), 
-		    "Simple": selectedGenAlgSwitcherSimple(request)
+		    "StochasticHillclimber": selectedGenAlgSwitcherStochasticHillclimber(request),
+		    "SimulatedAnnealing": selectedGenAlgSwitcherSimulatedAnnealing(request)
 		} 
+		# breakpoint()
 		selectedGenAlg = selectedGenAlgSwitcher.get(request.POST["selectedGenAlgId"], defaultConfigsAlg)
 
-		# breakpoint()
 		adaptation.init(playerBridge, taskBridge, configsGenAlg = selectedGenAlg, name="GIMME")
 		return HttpResponse('ok')
 
@@ -468,13 +574,12 @@ class Views(): #acts as a namespace
 	# auxiliary methods
 	@csrf_protect
 	def fetchPlayerState(request):
-		playerId = request.POST.get("playerId")
+		username = request.session.get("username")
 
 		newSessionState = {}
-		
-		newSessionState["myStateGrid"] = playerBridge.getPlayerStateGrid(playerId)
-		newSessionState["myCharacteristics"] = playerBridge.getPlayerCurrCharacteristics(playerId)
-		newSessionState["myPersonality"] = playerBridge.getPlayerPersonality(playerId)
+		newSessionState["myStateGrid"] = playerBridge.getPlayerStateGrid(username)
+		newSessionState["myCharacteristics"] = playerBridge.getPlayerCurrCharacteristics(username)
+		newSessionState["myPersonality"] = playerBridge.getPlayerPersonalityEst(username)
 
 		newSession = json.dumps(newSessionState, default=lambda o: o.__dict__, sort_keys=True)
 		return HttpResponse(newSession)

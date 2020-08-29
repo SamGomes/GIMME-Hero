@@ -1,5 +1,7 @@
-﻿$(document).ready(function(){
+﻿{% include 'common/setup.html' %}
 
+<script type="text/javascript">
+$(document).ready(function(){
     // modals
     var rootEl = document.documentElement;
     var allModals = getAll('.modal');
@@ -72,3 +74,18 @@ var parseUnformattedString = function(attributeStr){
 var parseSessionAttribute = function(attributeStr){
     return JSON.parse(parseUnformattedString(attributeStr))
 }
+
+
+var callReg = function(isNewRegRequest){
+    $.ajax({
+                type: 'POST',
+                url: '/updateRegMode/',
+                data: { 'isNewRegRequest': isNewRegRequest },
+                success:
+                function()
+                {
+                    document.location.href = '/userRegistration/';
+                }
+    });
+}
+</script>

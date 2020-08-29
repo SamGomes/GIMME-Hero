@@ -2,161 +2,273 @@
 	<!DOCTYPE html>
 	<html>
 	<head>
-		<meta charset="utf-8">
+		<meta charset='utf-8'>
 		<title>GIMME</title>
 	</head>
-	<body class="layout-default">
-		{% include "common/header.html" %}
+	<body class='layout-default'>
+		{% include 'common/header.html' %}
 
-		<div id="welcomeBanner">
-			<section class="hero main_hero is-fullheight">
-				<div class="hero-body">
-					<div class="has-text-centered; slider-content animated zoomIn">
+		<div id='welcomeBanner'>
+			<section class='hero main_hero is-fullheight'>
+				<div class='hero-body'>
+					<div class='has-text-centered; slider-content animated zoomIn'>
 						<div>
-							<p class="title is-1 main-text">Welcome to GIMME-Web, {{request.session.username}}</p>
-							<p class="subtitle is-4 main-text">A sophisticated Group Interactions Management Tool</p>
+							<p class='title is-1 main-text'>Welcome to GIMME-Web, {{request.session.username}}</p>
+							<p class='subtitle is-4 main-text'>A sophisticated Group Interactions Management Tool</p>
 						</div>
 					</div>
 				</div>
 			</section>
 		</div>
 
-		<div id="dashboard">
-			<section class="section danger">
-				<div class="panel animated zoomIn">
-					<div class="panel-heading">
-						<div class="columns is-vcentered">
-							<div class="column">
+		<div id='dashboard'>
+			<section class='section danger'>
+				<div class='panel animated zoomIn'>
+					<div class='panel-heading'>
+						<div class='columns is-vcentered'>
+							<div class='column'>
 								<p>Players Setup</p>
 							</div>
-							<div class="is-pulled-left">
-								<div class="button minimizerButton"></div>
+							<div class='is-pulled-left'>
+								<div class='button minimizerButton'></div>
 							</div>
 						</div>
 					</div>
-					<div class="panel-block">
-						<div class="column is-offset-1" style="padding:2em; border-color:gray; border-style:solid; border-width: 0.5em">
-							<div class="subtitle is-5" style="color:gray">Available Players</div>
-							<div class="table-container">
-								<div class="table" id="freePlayersTable"></div>
+					<div class='panel-block'>
+						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
+							<div class='subtitle is-5' style='color:gray'>Available Players</div>
+							<div class='table-container'>
+								<div class='table' id='freePlayersTable'></div>
 							</div>
 						</div>
-						<div class="column is-offset-1" style="padding:2em; border-color:gray; border-style:solid; border-width: 0.5em">
-							<div class="subtitle is-4" style="color:gray">Selected Players</div>
-							<div class="table-container column is-full">
-								<div class="table" id="waitingRoomTable"></div>
+						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
+							<div class='subtitle is-4' style='color:gray'>Selected Players</div>
+							<div class='table-container column is-full'>
+								<div class='table' id='waitingRoomTable'></div>
 							</div>
 						</div>
 					</div>
-					<div class="panel-block">
-						<div class="column is-offset-5">
-							<div class="button" type="submit" id="addSpecificPlayer">Add specific player</div>
+					<div class='panel-block'>
+						<div class='column is-offset-5'>
+							<div class='button' type='submit' id='addSpecificPlayer'>Add specific player</div>
 						</div>
-						<div class="column is-offset-1">
-							<div class="button" type="submit" id="addAllPlayers">Select all</div>
+						<div class='column is-offset-1'>
+							<div class='button' type='submit' id='addAllPlayers'>Select all</div>
 						</div>
-						<div class="column is-offset-1">
-							<div class="button" type="submit" id="clearAllPlayers">Deselect all</div>
+						<div class='column is-offset-1'>
+							<div class='button' type='submit' id='clearAllPlayers'>Deselect all</div>
 						</div>
 					</div>
 				</div>
 			</section>
 
-			<section class="section">
-				<div class="panel animated zoomIn">
-					<div class="panel-heading">
-						<div class="columns is-vcentered">
-							<div class="column">
+			<section class='section'>
+				<div class='panel animated zoomIn'>
+					<div class='panel-heading'>
+						<div class='columns is-vcentered'>
+							<div class='column'>
 								<p>Tasks Setup</p>
 							</div>
-							<div class="is-pulled-left">
-								<div class="button minimizerButton"></div>
+							<div class='is-pulled-left'>
+								<div class='button minimizerButton'></div>
 							</div>
 						</div>
 					</div>
-					<div class="panel-block">
-						<div class="columns">
-							<div class="column is-offset-1" style="padding:2em; border-color:gray; border-style:solid; border-width: 0.5em">
-								<div class="subtitle is-5" style="color:gray">Available Tasks</div>
-								<div class="table-container">
-									<div class="table" id="availableTasksTable"></div>
+					<div class='panel-block'>
+						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
+							<div class='subtitle is-5' style='color:gray' >Available Tasks</div>
+							<div class='table-container'>
+								<div class='table' id='availableTasksTable'>
+									
+									<!-- <span class='tag is-info is-medium is-rounded'>s43
+										<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>
+											<i class='fas fa-arrow-circle-right'></i>
+										</div>
+									</span>
+
+									<span class='tag is-info is-medium is-rounded'>s43
+										<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>
+											<i class='fas fa-arrow-circle-right'></i>
+										</div>
+									</span>
+
+									<span class='tag is-info is-medium is-rounded'>s43
+										<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>
+											<i class='fas fa-arrow-circle-right'></i>
+										</div>
+									</span>
+									
+									<span class='tag is-info is-medium is-rounded'>s43
+										<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>
+											<i class='fas fa-arrow-circle-right'></i>
+										</div>
+									</span>
+
+									<span class='section hero is-danger is-medium is-rounded' style='margin:1em; padding:1em; border-radius:3em'>
+										<div style='color:white; background-color:transparent; border-color:transparent;'>
+
+											<div class='title is-3'>Id</div> 
+											<div class='form-group'>
+												<label class='column is-4 control-label'>Title</label> 
+												<div class='control'>
+													<input id='' class='input' type='text' placeholder='Default title'>
+												</div>
+											</div>
+											<div class='form-group'>
+												<label class='column is-4 control-label'>Description</label> 
+												<div class='control'>
+													<textarea name='Text1' cols='40' rows='5'></textarea>
+												</div>
+											</div>
+											<div class='form-group'>
+												<label class='column is-4 control-label' for='textinput'>Profile</label> 
+												<div>
+													Self Improvement
+													<div class='form-group'>
+														<div class='control'>
+															<input class='input' type='number' min='0' max='1' step='0.01' placeholder='0.25'>
+														</div>
+													</div>
+												</div>
+												<div>
+													Competition
+													<div class='form-group'>
+														<div class='control'>
+															<input class='input' type='number' min='0' max='1' step='0.01' placeholder='0.25'>
+														</div>
+													</div>
+												</div>
+												<div>
+													Mutual Help
+													<div class='form-group'>
+														<div class='control'>
+															<input class='input' type='number' min='0' max='1' step='0.01' placeholder='0.25'>
+														</div>
+													</div>
+												</div>
+												<div>
+													Extreme Altruism
+													<div class='form-group'>
+														<div class='control'>
+															<input class='input' type='number' min='0' max='1' step='0.01' placeholder='0.25'>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class='form-group'>
+												<div class='button is-rounded is-medium is-pulled-right' style='color:white; background-color:transparent; border-color:transparent;'>
+													<i class='fas fa-trash'></i>
+												</div>
+												<div class='button is-rounded is-medium is-pulled-right' style='color:white; background-color:transparent; border-color:transparent;'>
+													<i class='fas fa-compress'></i>
+												</div>
+											</div>
+
+										</div>
+									</span>
+
+									<span class='tag is-info is-medium is-rounded'>s43
+										<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>
+											<i class='fas fa-arrow-circle-right'></i>
+										</div>
+									</span>
+									
+									<span class='tag is-info is-medium is-rounded'>s43
+										<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>
+											<i class='fas fa-arrow-circle-right'></i>
+										</div>
+									</span> -->
+
 								</div>
 							</div>
-							<div class="column is-offset-1" style="padding:2em; border-color:gray; border-style:solid; border-width: 0.5em">
-								<div class="subtitle is-4" style="color:gray">Selected Tasks</div>
-								<div class="table-container column is-full">
-									<div class="table" id="selectedTasksTable"></div>
-								</div>
+						</div>
+						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
+							<div class='subtitle is-4' style='color:gray'>Selected Tasks</div>
+							<div class='table-container column is-full'>
+								<div class='table' id='selectedTasksTable'></div>
 							</div>
 						</div>
 					</div>
-					<div class="panel-block">
-						<div class="column is-offset-5">
-							<div class="button" type="submit" id="addSpecificPlayer">Add specific player</div>
+					<div class='panel-block'>
+						<div class='column is-offset-5'></div>
+						<div class='column is-offset-1'>
+							<div class='button' type='submit' id='addAllPlayers'>Select all</div>
 						</div>
-						<div class="column is-offset-1">
-							<div class="button" type="submit" id="addAllPlayers">Select all</div>
-						</div>
-						<div class="column is-offset-1">
-							<div class="button" type="submit" id="clearAllPlayers">Deselect all</div>
+						<div class='column is-offset-1'>
+							<div class='button' type='submit' id='clearAllPlayers'>Deselect all</div>
 						</div>
 					</div>
 				</div>
 			</section>
 
 
-		<section class="section">
-			<div class="panel animated zoomIn">
-				<div class="panel-heading">
-					<div class="columns is-vcentered">
-						<div class="column">
-							<p>Tasks Setup</p>
+		<section class='section'>
+			<div class='panel animated zoomIn'>
+				<div class='panel-heading'>
+					<div class='columns is-vcentered'>
+						<div class='column'>
+							<p>Adaptation Setup</p>
 						</div>
-						<div class="is-pulled-left">
-							<div class="button minimizerButton"></div>
+						<div class='is-pulled-left'>
+							<div class='button minimizerButton'></div>
 						</div>
 					</div>
 				</div>
-				<div class="panel-block" style="display: block;">
-					<div class="columns is-multiline is-mobile">
-						<div class="column is-full">
+				<div class='panel-block' style='display: block;'>
+					<div class='columns is-multiline is-mobile'>
+						<div class='column is-full'>
 							<p>Algorithms</p>
 						</div>
 					</div>
 
-					<div class="columns is-multiline is-mobile">
-						<div class="column is-half">
+					<div class='columns is-multiline is-mobile'>
+						<div class='column is-half'>
 							<span>Grouping Alg.</span>
 						</div>
-						<div class="column is-half">
+						<div class='column is-half'>
 							<span>Regression Alg.</span>
 						</div>
 					</div>
-					<div class="columns is-multiline is-mobile">
-						<div class="column is-half">
-							<div class="dropdown">
-								<div class="dropdown-trigger">
-									<button class="button" aria-haspopup="true" aria-controls="dropdown-menu3">
-										<span id="selectedGenAlgId" >Grouping Alg.</span>
-										<span class="icon is-small" >
-											<i class="fas fa-angle-down" aria-hidden="true"></i>
+					<div class='columns is-multiline is-mobile'>
+						<div class='column is-half'>
+							<div class='dropdown'>
+								<div class='dropdown-trigger'>
+									<button class='button' aria-haspopup='true' aria-controls='dropdown-menu3'>
+										<span id='selectedGenAlgId'>
+											Grouping Alg.
+										</span>
+										<span class='icon is-small' >
+											<i class='fas fa-angle-down' aria-hidden='true'></i>
 										</span>
 									</button>
 								</div>
-								<div class="dropdown-menu" id="dropdown-menu3" role="menu">
-									<div class="dropdown-content">
-										<a class="dropdown-item is-active">
+								<div class='dropdown-menu' id='dropdown-menu3' role='menu'>
+									<div class='dropdown-content'>
+										<a class='dropdown-item is-active'>
 											Random
 										</a>
-										<a class="dropdown-item" data-tooltip="See GIMME-API for details">
-											Simple
-											<div class="form-group">
-												<label class="column is-4 control-label" for="textinput">Num Generated Configurations</label>  
-												<div class="control">
-													<input id="numberOfConfigChoicesId" class="input" type="number" min="1" max="1000" placeholder="100">
+										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
+											StochasticHillclimber
+											<div class='form-group'>
+												<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
+												<div class='control'>
+													<input id='numberOfConfigChoicesId' class='input' type='number' min='1' max='1000' placeholder='100'>
 												</div>
 											</div>
+										</a>
+										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
+											SimulatedAnnealing
+											<div class='form-group'>
+												<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
+												<div class='control'>
+													<input id='numberOfConfigChoicesId' class='input' type='number' min='1' max='1000' placeholder='100'>
+												</div>
 
+												<label class='column is-4 control-label' for='textinput'>Temperature Decay</label>  
+												<div class='control'>
+													<input id='temperatureDecay' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.5'>
+												</div>
+											</div>
 										</a>
 									</div>
 								</div>
@@ -165,31 +277,31 @@
 
 
 
-						<div class="column is-half">
-							<div class="dropdown">
-								<div class="dropdown-trigger">
-									<button class="button" aria-haspopup="true" aria-controls="dropdown-menu4">
-										<span id="selectedRegAlgId" >Regression Alg.</span>
-										<span class="icon is-small">
-											<i class="fas fa-angle-down" aria-hidden="true"></i>
+						<div class='column is-half'>
+							<div class='dropdown'>
+								<div class='dropdown-trigger'>
+									<button class='button' aria-haspopup='true' aria-controls='dropdown-menu4'>
+										<span id='selectedRegAlgId' >Regression Alg.</span>
+										<span class='icon is-small'>
+											<i class='fas fa-angle-down' aria-hidden='true'></i>
 										</span>
 									</button>
 								</div>
-								<div class="dropdown-menu" id="dropdown-menu3" role="menu">
-									<div class="dropdown-content">
-										<a class="dropdown-item is-active">
+								<div class='dropdown-menu' id='dropdown-menu3' role='menu'>
+									<div class='dropdown-content'>
+										<a class='dropdown-item is-active'>
 											KNN
-											<div class="form-group">
-												<label class="column is-4 control-label" for="textinput">Num NNs</label>  
-												<div class="control">
-													<input  id="numNNsId" class="input" type="number" min="1" max="100" placeholder="5">
+											<div class='form-group'>
+												<label class='column is-4 control-label' for='textinput'>Num NNs</label>  
+												<div class='control'>
+													<input  id='numNNsId' class='input' type='number' min='1' max='100' placeholder='5'>
 												</div>
 											</div>
 										</a>
-										<a class="dropdown-item">
+										<a class='dropdown-item'>
 											Neural Networks
 										</a>
-										<a class="dropdown-item">
+										<a class='dropdown-item'>
 											Reinf. Learn.
 										</a>
 									</div>
@@ -199,105 +311,105 @@
 					</div>
 				</div>
 
-				<div class="panel-block" style="display: block;">
-					<div class="columns is-multiline is-mobile">
-						<div class="column is-full">
+				<div class='panel-block' style='display: block;'>
+					<div class='columns is-multiline is-mobile'>
+						<div class='column is-full'>
 							<p>Groups</p>
 						</div>
 
-						<div class="column is-5 columns is-multiline is-mobile">
-							<div class="column is-half">
-								<label id="mgsInput" class="control-label" for="quantity" min="2">Min Group Size</label>  
-								<div class="control">
-									<input id="minNumberOfPlayersPerGroupId" class="input" type="number" min="2" max="100" placeholder="2">
+						<div class='column is-5 columns is-multiline is-mobile'>
+							<div class='column is-half'>
+								<label id='mgsInput' class='control-label' for='quantity' min='2'>Min Group Size</label>  
+								<div class='control'>
+									<input id='minNumberOfPlayersPerGroupId' class='input' type='number' min='2' max='100' placeholder='2'>
 								</div>
 							</div>
-							<div class="column is-half">
-								<label class="control-label" for="quantity">Max Group Size</label>  
-								<div class="control">
-									<input id="maxNumberOfPlayersPerGroupId" class="input" type="number" min="3" max="100" placeholder="4">
+							<div class='column is-half'>
+								<label class='control-label' for='quantity'>Max Group Size</label>  
+								<div class='control'>
+									<input id='maxNumberOfPlayersPerGroupId' class='input' type='number' min='3' max='100' placeholder='4'>
 								</div>
 							</div>
 						</div>
-						<div class="column is-2 has-text-centered">
+						<div class='column is-2 has-text-centered'>
 							<p>OR</p>
 						</div>
 
-						<div class="column is-5">
-							<label class="control-label" for="quantity">Preferred Group Size</label>  
-							<div class="control">
-								<input id="preferredNumberOfPlayersPerGroupId" class="input" type="number" min="2" max="100" placeholder="4">
+						<div class='column is-5'>
+							<label class='control-label' for='quantity'>Preferred Group Size</label>  
+							<div class='control'>
+								<input id='preferredNumberOfPlayersPerGroupId' class='input' type='number' min='2' max='100' placeholder='4'>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<div class="panel-block" style="display: block;">
-					<div class="columns is-multiline is-mobile">
-						<div class="column is-full">
+				<div class='panel-block' style='display: block;'>
+					<div class='columns is-multiline is-mobile'>
+						<div class='column is-full'>
 							<p>Quality Weights</p>
 						</div>
 
-						<div class="column is-half">
-							<label class="control-label" for="quantity">Ability</label>  
-							<div class="control">
-								<input id="qualityWeightsAbId" class="input" type="number" step="0.01" min="0" max="1" placeholder="0.50">
+						<div class='column is-half'>
+							<label class='control-label' for='quantity'>Ability</label>  
+							<div class='control'>
+								<input id='qualityWeightsAbId' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
 							</div>
 						</div>
 
-						<div class="column is-half">
-							<label class="control-label" for="quantity">Engagement</label>  
-							<div class="control">
-								<input id="qualityWeightsEngId" class="input" type="number" step="0.01" min="0" max="1" placeholder="0.50">
+						<div class='column is-half'>
+							<label class='control-label' for='quantity'>Engagement</label>  
+							<div class='control'>
+								<input id='qualityWeightsEngId' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<div class="panel-block" style="display: block;">
-					<div class="columns is-multiline is-mobile">
-						<div class="column is-full">
+				<div class='panel-block' style='display: block;'>
+					<div class='columns is-multiline is-mobile'>
+						<div class='column is-full'>
 							<p>Players</p>
 						</div>
-						<div class="column is-half is-centered">
-							<label class="field control-label" for="textinput" data-tooltip="This will only take effect whenever player states are updated">Players Past Models Window</label>  
-							<div class="field control">
-								<input id="playerWindowId" class="input" type="number" min="1" max="100" placeholder="10">
+						<div class='column is-half is-centered'>
+							<label class='field control-label' for='textinput' data-tooltip='This will only take effect whenever player states are updated'>Players Past Models Window</label>  
+							<div class='field control'>
+								<input id='playerWindowId' class='input' type='number' min='1' max='100' placeholder='10'>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<div class="panel-block" style="display: block;">
-					<div columns is-multiline is-mobile" data-tooltip="This configuration is optional">
-						<div class="column is-full">
+				<div class='panel-block' style='display: block;'>
+					<div columns is-multiline is-mobile' data-tooltip='This configuration is optional'>
+						<div class='column is-full'>
 							<p>Bootstrap</p>
 						</div>
-						<div class="column is-half">
-							<label class="field control-label" for="textinput">Number of Bootstrap Iterations</label>  
-							<div class="field control">
-								<input id="numBootstrapIterationsId" class="input" type="number" min="20" max="100" placeholder="20">
+						<div class='column is-half'>
+							<label class='field control-label' for='textinput'>Number of Bootstrap Iterations</label>  
+							<div class='field control'>
+								<input id='numBootstrapIterationsId' class='input' type='number' min='20' max='100' placeholder='20'>
 							</div>
 						</div>
-						<div class="column is-half">
-							<label class="checkbox">
-							  <input id="precomputeBootstrapId" type="checkbox">
+						<div class='column is-half'>
+							<label class='checkbox'>
+							  <input id='precomputeBootstrapId' type='checkbox'>
 							  	Pre-Compute Bootstrap
 							</label>
 						</div>
 					</div>
 				</div>
 
-				<div class="panel-block" style="display: block;">
-					<div class="columns is-multiline is-mobile">
-						<div class="column is-half is-centered">
+				<div class='panel-block' style='display: block;'>
+					<div class='columns is-multiline is-mobile'>
+						<div class='column is-half is-centered'>
 							<a>
-								<div class="button is-large" type="submit" id="loadAndStartAdaptation">Load Setup and Compute New Adaptation</div>
+								<div class='button is-large' type='submit' id='loadAndStartAdaptation'>Load Setup and Compute New Adaptation</div>
 							</a>
 						</div>
-						<div class="column is-half is-centered">
+						<div class='column is-half is-centered'>
 							<a>
-								<div class="button is-large" type="submit" id="forceStartAdaptation">Force Start Adaptation</div>
+								<div class='button is-large' type='submit' id='forceStartAdaptation'>Force Start Adaptation</div>
 							</a>
 						</div>
 					</div>
@@ -306,25 +418,25 @@
 		</section>
 
 
-		<section class="section">
-			<div class="panel animated zoomIn">
-				<div class="panel-heading">
-					<div class="columns is-vcentered">
-						<div class="column">
+		<section class='section'>
+			<div class='panel animated zoomIn'>
+				<div class='panel-heading'>
+					<div class='columns is-vcentered'>
+						<div class='column'>
 							<p>Class Learning State</p>
 						</div>
-						<div class="is-pulled-left">
-							<div class="button minimizerButton"></div>
+						<div class='is-pulled-left'>
+							<div class='button minimizerButton'></div>
 						</div>
 					</div>
 				</div>
-				<div class="panel-block">
-					<div class="colums">
-						<div class="column is-one-third"></div>
-						<div class="column is-one-third is-centered" id="groupsPlot"></div>
-						<div class="column is-one-third"></div>
+				<div class='panel-block'>
+					<div class='colums'>
+						<div class='column is-one-third'></div>
+						<div class='column is-one-third is-centered' id='groupsPlot'></div>
+						<div class='column is-one-third'></div>
 
-						<div class="button is-large" type="submit" id="rebuildPlot">Rebuild Plot</div>
+						<div class='button is-large' type='submit' id='rebuildPlot'>Rebuild Plot</div>
 					</div>
 				</div>
 			</div>
@@ -333,49 +445,58 @@
 
 
 	</div>
-	<!-- {% include "common/footer.html" %} -->
+	<!-- {% include 'common/footer.html' %} -->
 </body>
 <script
-src="https://code.jquery.com/jquery-3.2.1.min.js"
-integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-crossorigin="anonymous"></script>
-<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
-<script src="https://d3js.org/d3.v5.js"></script>
-<script src="https://unpkg.com/d3-force-attract@latest"></script>
-<script src="https://unpkg.com/d3-force-cluster@latest"></script>
-<script src="{% static "js/general.js" %}"></script>
-<script src="{% static "js/plots.js" %}"></script>
-{% include "common/setup.html" %}
+src='https://code.jquery.com/jquery-3.2.1.min.js'
+integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='
+crossorigin='anonymous'></script>
+<script defer src='https://use.fontawesome.com/releases/v5.0.7/js/all.js'></script>
+<script src='https://d3js.org/d3.v5.js'></script>
+<script src='https://unpkg.com/d3-force-attract@latest'></script>
+<script src='https://unpkg.com/d3-force-cluster@latest'></script>
+<script src='{% static 'js/plots.js' %}'></script>
+{% include 'common/general.html' %}
 <script>
 	$(document).ready(function(){
 
 		var currAdaptationState = undefined;
+		var currServerState = undefined;
 		var currAdaptationConfig = {
-							"selectedGenAlgId": "", 
-							"selectedRegAlgId": "",
+							'selectedGenAlgId': '', 
+							'selectedRegAlgId': '',
 
-							"numberOfConfigChoices": "",
-							"numNNs": "",
-							"minNumberOfPlayersPerGroup": "",
-							"maxNumberOfPlayersPerGroup": "",
-							"preferredNumberOfPlayersPerGroup": "",
-							"qualityWeightsAb": "",
-							"qualityWeightsEng": "",
-							"playerWindow": "",
-							"numBootstrapIterations": "",
-							"precomputeBootstrap": ""
+							'numberOfConfigChoices': '',
+							'numNNs': '',
+							'minNumberOfPlayersPerGroup': '',
+							'maxNumberOfPlayersPerGroup': '',
+							'preferredNumberOfPlayersPerGroup': '',
+							'qualityWeightsAb': '',
+							'qualityWeightsEng': '',
+							'playerWindow': '',
+							'numBootstrapIterations': '',
+							'precomputeBootstrap': ''
 						};
 
 
 
 
 		// special button effects
-		$("#qualityWeightsAb").change(function(){
-			$("#qualityWeightsEng").val(1.0 - $(this).val())
+		$('#qualityWeightsAb').change(function(){
+			$('#qualityWeightsEng').val(1.0 - $(this).val())
 		});
-		$("#qualityWeightsEng").change(function(){
-			$("#qualityWeightsAb").val(1.0 - $(this).val())
+		$('#qualityWeightsEng').change(function(){
+			$('#qualityWeightsAb').val(1.0 - $(this).val())
 		});
+
+
+
+
+
+		var objChanged = function(obj1, obj2){
+			return !(JSON.stringify(obj1) === JSON.stringify(obj2));
+		};
+
 
 
 
@@ -383,13 +504,13 @@ crossorigin="anonymous"></script>
 			var table = $('<div>');
 			for(var i=0; i < array.length; i++){
 				tag = $('<span>').text(array[i]);
-				tag.addClass("tag");
-				tag.addClass("is-info");
-				tag.addClass("is-medium");
-				tag.addClass("is-rounded");
+				tag.addClass('tag');
+				tag.addClass('is-info');
+				tag.addClass('is-medium');
+				tag.addClass('is-rounded');
 
-				changeButton = $('<div class="button is-rounded is-small" style="color:white; background-color:transparent; border-color:transparent;">');
-				changeButton.append("<i class=\"fas "+buttonIconClass+"\"></i>");
+				changeButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
+				changeButton.append('<i class=\'fas '+buttonIconClass+'\'></i>');
 				changeButton.click(deleteElementCallback)
 
 				tag.append(changeButton)
@@ -401,20 +522,93 @@ crossorigin="anonymous"></script>
 		var generateTaskTableFromArray = function(array, buttonIconClass, deleteElementCallback, addElementCallback){
 			var table = $('<div>');
 			for(var i=0; i < array.length+1; i++){
-				var tag = $('<span>').text(array[i]);
-				changeButton = $('<div class="button is-rounded is-small" style="color:white; background-color:transparent; border-color:transparent;">');
+				var extendedTag = $('<span id="extendedTab'+i+'"class="hero" style="argin:1em; padding:1em; border-radius:3em">').text(array[i]);
+				extendedTag.append(
+							"<div style='color:white; background-color:transparent; border-color:transparent;'>\
+								<div class='title is-3'>"+array[i]+"</div> \
+								<div class='form-group'>\
+									<label class='column is-4 control-label'>Title</label> \
+									<div class='control'>\
+										<input id='' class='input' type='text' placeholder='Default title'>\
+									</div>\
+								</div>\
+								<div class='form-group'>\
+									<label class='column is-4 control-label'>Description</label> \
+									<div class='control'>\
+										<textarea name='Text1' cols='40' rows='5'></textarea>\
+									</div>\
+								</div>\
+								<div class='form-group'>\
+									<label class='column is-4 control-label' for='textinput'>Profile</label> \
+									<div>\
+										Self Improvement\
+										<div class='form-group'>\
+											<div class='control'>\
+												<input class='input' type='number' min='0' max='1' step='0.01' placeholder='0.25'>\
+											</div>\
+										</div>\
+									</div>\
+									<div>\
+										Competition\
+										<div class='form-group'>\
+											<div class='control'>\
+												<input class='input' type='number' min='0' max='1' step='0.01' placeholder='0.25'>\
+											</div>\
+										</div>\
+									</div>\
+									<div>\
+										Mutual Help\
+										<div class='form-group'>\
+											<div class='control'>\
+												<input class='input' type='number' min='0' max='1' step='0.01' placeholder='0.25'>\
+											</div>\
+										</div>\
+									</div>\
+									<div>\
+										Extreme Altruism\
+										<div class='form-group'>\
+											<div class='control'>\
+												<input class='input' type='number' min='0' max='1' step='0.01' placeholder='0.25'>\
+											</div>\
+										</div>\
+									</div>\
+								</div>\
+								<div class='form-group'>\
+									<div class='button is-rounded is-medium is-pulled-right' style='color:white; background-color:transparent; border-color:transparent;'>\
+										<i class='fas fa-trash'></i>\
+									</div>\
+									<div class='button is-rounded is-medium is-pulled-right' style='color:white; background-color:transparent; border-color:transparent;'>\
+										<i class='fas fa-compress'></i>\
+									</div>\
+								</div>\
+							</div>"
+						);
+				extendedTag.hide()
+
+
+				var tag = $('<span class="button">').text(array[i]);
+				tag.click(
+					function(){
+						console.log('#extendedTab'+array.indexOf($(this)));
+						$('#extendedTab'+array.indexOf($(this))).show();
+						$(this).hide();
+					}
+				);
+
+				changeButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
 				if(i<array.length){
-					changeButton.append("<i class=\"fas "+buttonIconClass+"\"></i>");
+					changeButton.append('<i class=\'fas '+buttonIconClass+'\'></i>');
 					changeButton.click(deleteElementCallback)
 				}else{
-					changeButton.append("<i class=\"fas fa-plus-circle\"></i>");
+					changeButton.append('<i class=\'fas fa-plus-circle\'></i>');
 				}
-				tag.addClass("tag");
-				tag.addClass("is-danger");
-				tag.addClass("is-medium");
-				tag.addClass("is-rounded");
+				tag.addClass('tag');
+				tag.addClass('is-danger');
+				tag.addClass('is-medium');
+				tag.addClass('is-rounded');
 				tag.append(changeButton)
 				table.append(tag);
+				table.append(extendedTag);
 			}
 			return table;
 		};
@@ -424,7 +618,7 @@ crossorigin="anonymous"></script>
 		// 	return $.ajax(
 		// 			{
 		// 				url: '/fetchPlayerState/',
-		// 				dataType: "json",
+		// 				dataType: 'json',
 		// 				success: 
 		// 					function (newPlayerServerState) {
 		// 						return newPlayerServerState;
@@ -441,12 +635,16 @@ crossorigin="anonymous"></script>
 			{
 				url: '/fetchServerState/',
 						// authentication: getCookie('csrftoken'),
-						dataType: "json",
+						dataType: 'json',
 						success: 
 						function (newServerState) {
+							if(!objChanged(currServerState, newServerState)){
+								return;
+							}
+							currServerState = newServerState;
 							var currWaitingPlayers = newServerState.currWaitingPlayers;
 							var currFreePlayers = newServerState.currFreePlayers;
-								fpTable = generatePlayerTableFromArray(currFreePlayers, "fa-arrow-circle-right", function(){
+								fpTable = generatePlayerTableFromArray(currFreePlayers, 'fa-arrow-circle-right', function(){
 									$.ajax({
 										type: 'POST',
 										url: '/addWaitingPlayer/',
@@ -454,11 +652,11 @@ crossorigin="anonymous"></script>
 										success:
 										function()
 										{
-											$(this).find(".fa-arrow-circle-right").removeClass("fa-arrow-circle-right").addClass("fa-arrow-circle-left");
+											$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-right').addClass('fa-arrow-circle-left');
 										}
 									});
 								});
-								wpTable = generatePlayerTableFromArray(currWaitingPlayers, "fa-arrow-circle-left", function(){
+								wpTable = generatePlayerTableFromArray(currWaitingPlayers, 'fa-arrow-circle-left', function(){
 									$.ajax({
 										type: 'POST',
 										url: '/removeWaitingPlayer/',
@@ -466,7 +664,7 @@ crossorigin="anonymous"></script>
 										success: 
 										function()
 										{
-											$(this).find(".fa-arrow-circle-right").removeClass("fa-arrow-circle-left").addClass("fa-arrow-circle-right");
+											$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-left').addClass('fa-arrow-circle-right');
 										}
 									});
 								});
@@ -480,34 +678,35 @@ crossorigin="anonymous"></script>
 								var currSelectedTasks = newServerState.currFreePlayers;
 
 
-								atTable = generateTaskTableFromArray(currAvailableTasks, "fa-arrow-circle-right", 
+								atTable = generateTaskTableFromArray(currAvailableTasks, 'fa-arrow-circle-right', 
 									function(){
-										$.ajax({
-											type: 'POST',
-											url: '/addSelectedTask/',
-											data: {'playerId':$(this).parent().text()},
-											success:
-											function()
-											{
-												$(this).find(".fa-arrow-circle-right").removeClass("fa-arrow-circle-right").addClass("fa-arrow-circle-left");
-											}
-										});
+										// $.ajax({
+										// 	type: 'POST',
+										// 	url: '/addSelectedTask/',
+										// 	data: {'playerId':$(this).parent().text()},
+										// 	success:
+										// 	function()
+										// 	{
+										// 		$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-right').addClass('fa-arrow-circle-left');
+										// 	}
+										// });
 									},
 									function(){
 
 									});
-								stTable = generateTaskTableFromArray(currSelectedTasks, "fa-arrow-circle-left", 
+
+								stTable = generateTaskTableFromArray(currSelectedTasks, 'fa-arrow-circle-left', 
 									function(){
-										$.ajax({
-											type: 'POST',
-											url: '/removeSelectedTask/',
-											data: {'playerId':$(this).parent().text()},
-											success: 
-											function()
-											{
-												$(this).find(".fa-arrow-circle-right").removeClass("fa-arrow-circle-left").addClass("fa-arrow-circle-right");
-											}
-										});
+										// $.ajax({
+										// 	type: 'POST',
+										// 	url: '/removeSelectedTask/',
+										// 	data: {'playerId':$(this).parent().text()},
+										// 	success: 
+										// 	function()
+										// 	{
+										// 		$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-left').addClass('fa-arrow-circle-right');
+										// 	}
+										// });
 									},function(){
 
 									});
@@ -518,13 +717,13 @@ crossorigin="anonymous"></script>
 								$('#selectedasksTable').append(stTable);
 
 
-								if(newServerState.readyForNewActivity=="true"){
-									$("#readyForNewActivityButton").removeClass("is-loading");
-									$("#readyForNewActivityButton").html("Start Activity");
+								if(newServerState.readyForNewActivity=='true'){
+									$('#readyForNewActivityButton').removeClass('is-loading');
+									$('#readyForNewActivityButton').html('Start Activity');
 								}
 
 								if(currAdaptationState == undefined && newServerState.currAdaptationState.groups != undefined && currAdaptationState != newServerState.currAdaptationState){
-									buildGroupsPlot( "groupsPlot", newServerState.currAdaptationState, undefined);
+									buildGroupsPlot( 'groupsPlot', newServerState.currAdaptationState, undefined);
 									currAdaptationState = newServerState.currAdaptationState;
 								}
 							}
@@ -537,60 +736,49 @@ crossorigin="anonymous"></script>
 
 
 		var startAdaptation = function(){
-			$("#startAdaptation").addClass("is-loading");
 			$.ajax(
 				{
 					url: '/startAdaptation/',
-					dataType: "json",
+					dataType: 'json',
 					complete: 
 					function (newServerState) {
-						$("#startAdaptation").removeClass("is-loading");
+						$('#loadAndStartAdaptation').removeClass("is-loading");
 						currAdaptationState = newServerState.currAdaptationState;
-						$("#groupsPlot").empty();
+						$('#groupsPlot').empty();
 						// if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
-						// 	buildGroupsPlot( "groupsPlot", currAdaptationState);
+						// 	buildGroupsPlot( 'groupsPlot', currAdaptationState);
 						// }
 					}
 				}
 			);
 		}
 
-		var adaptationConfigChanged = function(oldConfig, newConfig){
-			var keys = Object.keys(currAdaptationConfig);
-			for (var i = 0; i < keys.length; i++){
-				currKey = keys[i];
-				oldVal = oldConfig[currKey];
-				newVal = newConfig[currKey];
-				if(oldVal != newVal){
-					return true;
-				}
-			}
-			return false;
-		};
 
 		var loadAndStartAdaptation = function(){
 			newAdaptationConfig = {
-							"selectedGenAlgId": $("#selectedGenAlgId").text(), 
-							"selectedRegAlgId": $("#selectedRegAlgId").text(),
+							'selectedGenAlgId': $('#selectedGenAlgId').text(), 
+							'selectedRegAlgId': $('#selectedRegAlgId').text(),
 
-							"numberOfConfigChoices": $("#numberOfConfigChoicesId").val(),
-							"numNNs": $("#numNNsId").val(),
-							"minNumberOfPlayersPerGroup": $("#minNumberOfPlayersPerGroupId").val(),
-							"maxNumberOfPlayersPerGroup": $("#maxNumberOfPlayersPerGroupId").val(),
-							"preferredNumberOfPlayersPerGroup": $("#preferredNumberOfPlayersPerGroupId").val(),
-							"qualityWeightsAb": $("#qualityWeightsAbId").val(),
-							"qualityWeightsEng": $("#qualityWeightsEngId").val(),
-							"playerWindow": $("#playerWindowId").val(),
-							"numBootstrapIterations": $("#numBootstrapIterationsId").val(),
-							"precomputeBootstrap": $("#precomputeBootstrapId").val()
+							'temperatureDecay': $('#temperatureDecay').val(),
+
+							'numberOfConfigChoices': $('#numberOfConfigChoicesId').val(),
+							'numNNs': $('#numNNsId').val(),
+							'minNumberOfPlayersPerGroup': $('#minNumberOfPlayersPerGroupId').val(),
+							'maxNumberOfPlayersPerGroup': $('#maxNumberOfPlayersPerGroupId').val(),
+							'preferredNumberOfPlayersPerGroup': $('#preferredNumberOfPlayersPerGroupId').val(),
+							'qualityWeightsAb': $('#qualityWeightsAbId').val(),
+							'qualityWeightsEng': $('#qualityWeightsEngId').val(),
+							'playerWindow': $('#playerWindowId').val(),
+							'numBootstrapIterations': $('#numBootstrapIterationsId').val(),
+							'precomputeBootstrap': $('#precomputeBootstrapId').val()
 						};
-			if(adaptationConfigChanged(currAdaptationConfig, newAdaptationConfig)){
+			// if(objChanged(currAdaptationConfig, newAdaptationConfig)){
 				currAdaptationConfig = newAdaptationConfig;
 				$.ajax(
 					{
-						url: "/configAdaptation/",
-						type: "POST",
-						dataType: "json",
+						url: '/configAdaptation/',
+						type: 'POST',
+						dataType: 'json',
 						data: newAdaptationConfig,
 						complete: 
 						function (newServerState) {
@@ -600,40 +788,41 @@ crossorigin="anonymous"></script>
 						}
 					}
 				);
-			}else{
-				startAdaptation();
-			}
+			// }else{
+			// 	startAdaptation();
+			// }
 			
 		}
 
-		$("#loadAndStartAdaptation").click(function(){
+		$('#loadAndStartAdaptation').click(function(){
+			$('#loadAndStartAdaptation').addClass("is-loading");
 			loadAndStartAdaptation();
 		})
-		$("#forceStartAdaptation").click(function(){
+		$('#forceStartAdaptation').click(function(){
 			startAdaptation();
 		})
-		$("#addAllPlayers").click(function(){
+		$('#addAllPlayers').click(function(){
 			$.ajax(
 			{
 				url: '/addAllPlayersWaiting/'
 			}
 			);
 		})
-		$("#clearAllPlayers").click(function(){
+		$('#clearAllPlayers').click(function(){
 			$.ajax(
 			{
 				url: '/removeAllPlayersWaiting/'
 			}
 			);
 		})
-		$("#addSpecificPlayer").click(function(){
+		$('#addSpecificPlayer').click(function(){
 			startAdaptation();
 		}).hide()
 
-		$("#rebuildPlot").click(function(){
-			$("#groupsPlot").empty();
+		$('#rebuildPlot').click(function(){
+			$('#groupsPlot').empty();
 			if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
-				buildGroupsPlot( "groupsPlot", currAdaptationState);
+				buildGroupsPlot( 'groupsPlot', currAdaptationState);
 			}
 		})
 	});

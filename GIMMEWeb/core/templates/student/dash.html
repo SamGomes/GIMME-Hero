@@ -106,7 +106,7 @@
 		crossorigin="anonymous"></script>
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 	<script src="https://d3js.org/d3.v5.js"></script>
-	<script src="{% static "js/general.js" %}"></script>
+	{% include 'common/general.html' %}
 	<script src="{% static "js/plots.js" %}"></script>
 	<script>
 		$(document).ready(function(){
@@ -180,7 +180,7 @@
 			})
 			fetchServerData();
 			setInterval(fetchServerData, 500);
-
+			
 		});
 	</script>
 </html>

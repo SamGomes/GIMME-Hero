@@ -241,12 +241,14 @@ var buildGroupsPlot = function(canvasId, data, fetchPlayerStateCallback){
 
 
 
+    function clamp(num, min, max) {
+      return num <= min ? min : num >= max ? max : num;
+    }
 
     var generatePlayerColor = function(node){
         var playerChar = node.playerState.myCharacteristics;
-
         var baseColor = colors[node.groupId].split('#')[1];
-        var transparency = 80 + Math.round(175*(1 - sqrDistBetweenVectors(node.groupCharacteristics, playerChar)));
+        var transparency = 50 + Math.round(175*(1 - sqrDistBetweenVectors(node.groupCharacteristics, playerChar)/2));
         return '#' +  baseColor + transparency.toString(16);
     }
 

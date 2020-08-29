@@ -7,8 +7,8 @@
   <link rel="stylesheet" href="{% static "css/site.css" %}">
 
   <nav class="navbar" role="navigation" aria-label="main navigation" style="background-color:#e5e5e5;">
-    <div class="navbar-brand">
-      <a class="navbar-item" href="{% url 'home' %}">
+    <div class="navbar-brand"  id="logo_header">
+      <a class="navbar-item">
         <img style="max-height: 3rem" src="{% static "images/GIMMELogo.png" %}">
       </a>
 
@@ -29,10 +29,10 @@
 
           <div class="navbar-dropdown">
             <a class="navbar-item" href="https://github.com/SamGomes/GIMME" target="_blank">
-              GIMME-Web page
+              GIMME API repo
             </a>
-            <a class="navbar-item" href="https://github.com/SamGomes/GIMME" target="_blank">
-              GIMME API page
+            <a class="navbar-item" href="https://github.com/SamGomes/GIMME/wiki" target="_blank">
+              GIMME API wiki
             </a>
             <hr class="navbar-divider">
             <a class="navbar-item">
@@ -48,9 +48,9 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
-              <a class="button is-link" href="{% url 'playerRegistration' %}">
+              <div class="button is-link" id="newRegButton">
                 <strong>Register</strong>
-              </a>
+              </div>
               <!-- <a class="button is-light" href="{% url 'home' %}">
                 Log In
               </a> -->
@@ -58,23 +58,6 @@
           </div>
         </div>
       {% else %}
-        <div id="accountInfoModel" class="modal">
-          <div class="modal-background"></div>
-          <div class="modal-card">
-            <header class="modal-card-head">
-              <p class="modal-card-title">Modal title</p>
-              <button class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-              Account settings:
-
-            </section>
-            <footer class="modal-card-foot">
-              <button class="button is-link">Save changes</button>
-              <button class="button">Cancel</button>
-            </footer>
-          </div>
-        </div>
         <div class="navbar-item center-left is-hoverable">
           <figure class="image navbar-item"  height=100px >
             <!-- sets placeholder if no image is found -->
@@ -84,7 +67,7 @@
 
             <p class="navbar-item columns" >
               <div class="column">
-                Logged in as a <strong>{{request.session.role}}</strong>  called <strong>{{request.session.fullName}}</strong>
+                Logged in as a <strong>{{request.session.role}}</strong> called <strong>{{request.session.fullName}}</strong>
               </div>
               <div class="column">
                 username: <strong>{{request.session.username}}</strong>
@@ -93,7 +76,9 @@
                 email: <strong>{{request.session.email}}</strong>
               </div>
               <div class="column">
-                <button class="button is-link modal-button" data-target="accountInfoModel">Account settings</button>
+                <div class="button is-link" id="updateRegButton">
+                  <strong>Manage Account</strong>
+                </div>
               </div>
               <div class="column">
                 <a href="{% url 'logout' %}"><button class="button is-link modal-button">Logout</button></a>
@@ -105,3 +90,32 @@
     </div>
   </nav>
 </header>
+<script
+    src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+{% include 'common/general.html' %}
+<script type="text/javascript">
+  $('#logo_header').click(function(){
+    $.ajax({
+            type: 'POST',
+            url: '/isLoggedIn/',
+            statusCode: {
+              500: function() {
+                document.location.href = '/home/';
+              },
+              200: function(){ 
+                document.location.href = '/dash/';
+            }
+        }
+    });
+  })
+  $(document).ready(function(){
+    $("#newRegButton").click(function(){
+      callReg("true");
+    });
+    $("#updateRegButton").click(function(){
+      callReg("false");
+    });
+  });
+</script>

@@ -30,6 +30,7 @@ class Task(models.Model):
 
     id = models.CharField(primary_key=True, max_length=255)
     
+    # title = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     minReqAbility = models.CharField(max_length=255)
     profile = models.CharField(max_length=255)

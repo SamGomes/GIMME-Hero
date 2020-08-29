@@ -1,0 +1,278 @@
+{% load static %}
+{% include "common/header.html" %}  
+
+<!DOCTYPE html>
+<html>
+	<body class="layout-default">
+		
+	{% if form.errors %}
+		{% for field in form %}
+			{% for error in field.errors %}
+				<div class="alert alert-danger">
+				<strong>{{ error|escape }}</strong>
+				</div>
+			{% endfor %}
+		{% endfor %}
+		{% for error in form.non_field_errors %}
+			<div class="alert alert-danger">
+			<strong>{{ error|escape }}</strong>
+			</div>
+		{% endfor %}
+	{% endif %}
+
+
+		<section class="section columns">
+			<div class="column"></div>
+			<div class="panel panel-block column">
+
+				<div id="error_userRegistration" class="section hero is-danger is-centered has-text-centered">
+					<label class="label subtitle is-4 is-white">Registry Fail! Please check all fields.</label>
+				</div>
+
+				<form id="form_userRegistration">
+					{{ form }}
+					{% csrf_token %}
+
+					{% if not request.session.username %}
+						<div class="subtitle">Account Registration</div>
+						<p>* fields are mandatory</p>
+			
+						<div class="field requiredFormField">
+						  <label class="label">Role*</label>
+						  <div class="control" name="role">
+							<input type="radio" name="role" value="designer"> designer<br>
+							<input type="radio" name="role" value="professor"> professor<br>
+						    <input type="radio" name="role" value="student"> student
+						  </div>
+						</div>
+
+						<div class="field requiredFormField">
+							<label class="label">E-Mail*</label>
+							<p class="control has-icons-left">
+								<input class="input" type="text" placeholder="E-Mail" name="email">
+								<!-- <input class="input" type="email" placeholder="E-Mail" name="email"> -->
+								<span class="icon is-small is-left">
+									<i class="fas fa-lock"></i>
+								</span>
+							</p>
+						</div>
+
+						<div class="field requiredFormField">
+							<label class="label">Password*</label>
+							<p class="control has-icons-left">
+								<input class="input" type="password" placeholder="Password" name="password" id="password_userRegistration">
+								<span class="icon is-small is-left">
+									<i class="fas fa-lock"></i>
+								</span>
+							</p>
+						</div>
+
+						<div class="field requiredFormField">
+							<label class="label">Repeat Password*</label>
+							<p class="control has-icons-left">
+								<input class="input" type="password" placeholder="Password" id="repPassword_userRegistration">
+								<span class="icon is-small is-left">
+									<i class="fas fa-lock"></i>
+								</span>
+							</p>
+						</div>
+
+						<!-- <div class="field requiredFormField">
+						  <label class="label">Username*</label>
+						  <div class="control">
+						    <input class="input" type="text" placeholder="Username" name="username">
+						  </div>
+						</div> -->
+
+						<div class="field requiredFormField">
+						  <label class="label">Full Name*</label>
+						  <div class="control">
+						    <input class="input" type="text" placeholder="Full Name" name="fullName">
+						  </div>
+						</div>
+
+
+						<div class="field requiredFormField">
+						  <label class="label">Age*</label>
+						  <div class="control">
+						    <input class="input" type="number" placeholder="Age" name="age">
+						  </div>
+						</div>
+
+
+
+						<div class="field requiredFormField">
+						  <label class="label">Gender*</label>
+						  <div class="control" name="gender">
+						    <input type="radio" name="gender" value="male"> Male<br>
+							<input type="radio" name="gender" value="female"> Female<br>
+							<input type="radio" name="gender" value="other"> Other 
+						  </div>
+						</div>
+
+
+
+						<div class="field">
+						  <label class="label">Preferences</label>
+						  <div class="control">
+						    <input class="input" type="text" placeholder="Tell us a little about yourself..." name="preferences">
+						  </div>
+						</div>
+
+
+						<div class="control">
+							<input class="button is-link" value="Enter" id="submitButton_userRegistration">
+						</div>
+			
+					{% else %}
+
+						<div class="subtitle">
+							Manage Account
+						</div>
+						<p>* fields are mandatory</p>
+
+						<div class="subtitle">
+							<h5>Change Account</h5>
+						</div>
+
+						<div class="field requiredFormField">
+						  <label class="label">Role</label>
+						  <div class="control" name="role">
+							<input type="radio" name="role" value="{{request.session.role}}" checked=true disabled> {{request.session.role}}<br>
+						  </div>
+						</div>
+
+						<div class="field requiredFormField">
+							<label class="label">E-Mail</label>
+							<p class="control has-icons-left">
+								<input class="input" type="text" value="{{request.session.email}}" name="email">
+								
+								<span class="icon is-small is-left">
+									<i class="fas fa-lock"></i>
+								</span>
+							</p>
+						</div>
+
+						<div class="field requiredFormField">
+							<label class="label">Password</label>
+							<p class="control has-icons-left">
+								<input class="input" type="password" value="{{request.session.password}}" name="password" id="password_userRegistration">
+								<span class="icon is-small is-left">
+									<i class="fas fa-lock"></i>
+								</span>
+							</p>
+						</div>
+
+						<div class="field requiredFormField">
+							<label class="label">Repeat Password*</label>
+							<p class="control has-icons-left">
+								<input class="input" type="password" placeholder="Password" id="repPassword_userRegistration">
+								<span class="icon is-small is-left">
+									<i class="fas fa-lock"></i>
+								</span>
+							</p>
+						</div>
+
+						<!-- <div class="field requiredFormField">
+						  <label class="label">Username</label>
+						  <div class="control">
+						    <input class="input" type="text" value="{{request.session.username}}" name="username" disabled>
+						  </div>
+						</div> -->
+
+						<div class="field requiredFormField">
+						  <label class="label">Full Name</label>
+						  <div class="control">
+						    <input class="input" type="text" value="{{request.session.fullName}}" name="fullName">
+						  </div>
+						</div>
+
+
+						<div class="field requiredFormField">
+						  <label class="label">Age</label>
+						  <div class="control">
+						    <input class="input" type="number" value="{{request.session.age}}" name="age">
+						  </div>
+						</div>
+
+
+
+						<div class="field requiredFormField">
+						  <label class="label">Gender</label>
+						  <div class="control" name="gender">
+							<input type="radio" name="gender" value="{{request.session.gender}}" checked=true> {{request.session.gender}}<br>
+						  </div>
+						</div>
+
+
+
+						<div class="field">
+						  <label class="label">Preferences</label>
+						  <div class="control">
+						    <input class="input" type="text" value="{{request.session.preferences}}" name="preferences">
+						  </div>
+						</div>
+
+						<div class="field control">
+							<input class="button is-link" value="Change Account" id="changeButton_userRegistration">
+						</div>
+
+						<div class="panel">
+							<div class="subtitle has-text-danger">
+								<h5>Danger Zone</h5>
+							</div>
+
+							<div class="field control">
+								<input class="button is-danger" value="Remove Account" id="removeButton_userRegistration">
+							</div>
+						</div>
+
+
+					{% endif %}
+
+				</form>
+			</div>
+			<div class="column"></div>		
+		</section>
+
+
+	</body>
+	<script
+		src="https://code.jquery.com/jquery-3.2.1.min.js"
+		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+		crossorigin="anonymous"></script>
+	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+	{% include 'common/general.html' %}
+	<script>
+		$('#error_userRegistration').hide()
+		$(document).ready(function(){
+			var passCheck = function(){
+		    	$('#submitButton_userRegistration').attr('disabled', ($('#password_userRegistration').val().localeCompare($('#repPassword_userRegistration').val()) != 0) || ($('#password_userRegistration').val().length <= 0 || $('#repPassword_userRegistration').val().length <= 0));
+		    };
+
+		    passCheck();
+		    $('#password_userRegistration').on('input',passCheck);
+		    $('#repPassword_userRegistration').on('input',passCheck);
+
+		    $('#submitButton_userRegistration').click(function(){
+			    console.log($('#form_userRegistration').serialize())
+		    	$.ajax({
+	                type: 'POST',
+	                url: '/saveUserRegistration/',
+	                data: $('#form_userRegistration').serialize(),
+	                statusCode: {
+						500: function() {
+						  $('#error_userRegistration').show(500);
+						  setTimeout(function(){ $('#error_userRegistration').hide(500); }, 3000);
+						},
+						200: function(){ 
+							$('#error_userRegistration').hide();
+							document.location.href = '/dash/';
+						}
+					}
+			    });
+		    });
+		});
+	</script>
+	<script src="{% static "js/formFunctionalities.js" %}"></script>
+</html>

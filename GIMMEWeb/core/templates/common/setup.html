@@ -1,5 +1,4 @@
 <script type="text/javascript">
-
 	// bulma dropdowns setup
 	var dropdowns = $(".dropdown");
 	for (var i=0; i< dropdowns.length; i++){
@@ -67,6 +66,8 @@
 	         }
 	         return cookieValue;
 	     }
+
+	  	 // console.log("here")
 	     if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
 	         // Only send the token to relative URLs i.e. locally.
 	         xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
