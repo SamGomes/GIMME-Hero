@@ -1,2 +1,7 @@
 **/*.gif
 **/*.png
+*.pyc
+
+*.csv
+
+*.sqlite3

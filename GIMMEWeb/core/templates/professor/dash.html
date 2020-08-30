@@ -53,10 +53,10 @@
 							<div class='button' type='submit' id='addSpecificPlayer'>Add specific player</div>
 						</div>
 						<div class='column is-offset-1'>
-							<div class='button' type='submit' id='addAllPlayers'>Select all</div>
+							<div class='button' type='submit' id='addAllUsers'>Select all</div>
 						</div>
 						<div class='column is-offset-1'>
-							<div class='button' type='submit' id='clearAllPlayers'>Deselect all</div>
+							<div class='button' type='submit' id='clearAllUsers'>Deselect all</div>
 						</div>
 					</div>
 				</div>
@@ -79,106 +79,6 @@
 							<div class='subtitle is-5' style='color:gray' >Available Tasks</div>
 							<div class='table-container'>
 								<div class='table' id='freeTasksTable'>
-									
-									<!-- <span class='tag is-info is-medium is-rounded'>s43
-										<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>
-											<i class='fas fa-arrow-circle-right'></i>
-										</div>
-									</span>
-
-									<span class='tag is-info is-medium is-rounded'>s43
-										<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>
-											<i class='fas fa-arrow-circle-right'></i>
-										</div>
-									</span>
-
-									<span class='tag is-info is-medium is-rounded'>s43
-										<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>
-											<i class='fas fa-arrow-circle-right'></i>
-										</div>
-									</span>
-									
-									<span class='tag is-info is-medium is-rounded'>s43
-										<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>
-											<i class='fas fa-arrow-circle-right'></i>
-										</div>
-									</span>
-
-									<span class='section hero is-danger is-medium is-rounded' style='margin:1em; padding:1em; border-radius:3em'>
-										<div style='color:white; background-color:transparent; border-color:transparent;'>
-
-											<div class='title is-3'>Id</div> 
-											<div class='form-group'>
-												<label class='column is-4 control-label'>Title</label> 
-												<div class='control'>
-													<input id='' class='input' type='text' placeholder='Default title'>
-												</div>
-											</div>
-											<div class='form-group'>
-												<label class='column is-4 control-label'>Description</label> 
-												<div class='control'>
-													<textarea name='Text1' cols='40' rows='5'></textarea>
-												</div>
-											</div>
-											<div class='form-group'>
-												<label class='column is-4 control-label' for='textinput'>Profile</label> 
-												<div>
-													Self Improvement
-													<div class='form-group'>
-														<div class='control'>
-															<input class='input' type='number' min='0' max='1' step='0.01' placeholder='0.25'>
-														</div>
-													</div>
-												</div>
-												<div>
-													Competition
-													<div class='form-group'>
-														<div class='control'>
-															<input class='input' type='number' min='0' max='1' step='0.01' placeholder='0.25'>
-														</div>
-													</div>
-												</div>
-												<div>
-													Mutual Help
-													<div class='form-group'>
-														<div class='control'>
-															<input class='input' type='number' min='0' max='1' step='0.01' placeholder='0.25'>
-														</div>
-													</div>
-												</div>
-												<div>
-													Extreme Altruism
-													<div class='form-group'>
-														<div class='control'>
-															<input class='input' type='number' min='0' max='1' step='0.01' placeholder='0.25'>
-														</div>
-													</div>
-												</div>
-											</div>
-											<div class='form-group'>
-												<div class='button is-rounded is-medium is-pulled-right' style='color:white; background-color:transparent; border-color:transparent;'>
-													<i class='fas fa-trash'></i>
-												</div>
-												<div class='button is-rounded is-medium is-pulled-right' style='color:white; background-color:transparent; border-color:transparent;'>
-													<i class='fas fa-compress'></i>
-												</div>
-											</div>
-
-										</div>
-									</span>
-
-									<span class='tag is-info is-medium is-rounded'>s43
-										<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>
-											<i class='fas fa-arrow-circle-right'></i>
-										</div>
-									</span>
-									
-									<span class='tag is-info is-medium is-rounded'>s43
-										<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>
-											<i class='fas fa-arrow-circle-right'></i>
-										</div>
-									</span> -->
-
 								</div>
 							</div>
 						</div>
@@ -192,10 +92,10 @@
 					<div class='panel-block'>
 						<div class='column is-offset-5'></div>
 						<div class='column is-offset-1'>
-							<div class='button' type='submit' id='addAllPlayers'>Select all</div>
+							<div class='button' type='submit' id='addAllTasks'>Select all</div>
 						</div>
 						<div class='column is-offset-1'>
-							<div class='button' type='submit' id='clearAllPlayers'>Deselect all</div>
+							<div class='button' type='submit' id='clearAllTasks'>Deselect all</div>
 						</div>
 					</div>
 				</div>
@@ -587,13 +487,16 @@ crossorigin='anonymous'></script>
 
 
 				var tag = $('<span class="button">').text(array[i]);
-				tag.click(
-					function(){
-						// console.log('#extendedTab'+array.indexOf($(this)));
-						// $('#extendedTab'+array.indexOf($(this))).show();
-      					callTaskReg('true');
-					}
-				);
+				// tag.click(
+				// 	function(){
+				// 		if(array.indexOf($(this)) == array.length - 1){
+				// 			$('#extendedTab'+array.indexOf($(this))).show();
+    //   						callTaskReg('true');
+				// 		}else{
+				// 			deleteElementCallback();
+				// 		}
+				// 	}
+				// );
 
 				changeButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
 				if(i<array.length){
@@ -601,6 +504,7 @@ crossorigin='anonymous'></script>
 					changeButton.click(deleteElementCallback)
 				}else{
 					changeButton.append('<i class=\'fas fa-plus-circle\'></i>');
+      				changeButton.click(function(){callTaskReg('true');});
 				}
 				tag.addClass('tag');
 				tag.addClass('is-danger');
@@ -632,7 +536,7 @@ crossorigin='anonymous'></script>
 							var fuTable = generateUserTableFromArray(currFreeUsers, 'fa-arrow-circle-right', function(){
 								$.ajax({
 									type: 'POST',
-									url: '/addSelectedPlayer/',
+									url: '/addSelectedUser/',
 									data: {'userId': $(this).parent().text()},
 									success:
 									function()
@@ -644,7 +548,7 @@ crossorigin='anonymous'></script>
 							var suTable = generateUserTableFromArray(currSelectedUsers, 'fa-arrow-circle-left', function(){
 								$.ajax({
 									type: 'POST',
-									url: '/removeSelectedPlayer/',
+									url: '/removeSelectedUser/',
 									data: {'userId': $(this).parent().text()},
 									success: 
 									function()
@@ -699,7 +603,7 @@ crossorigin='anonymous'></script>
 							$('#freeTasksTable').append(ftTable);
 
 							$('#selectedTasksTable').empty();
-							$('#selectedasksTable').append(stTable);
+							$('#selectedTasksTable').append(stTable);
 
 
 
@@ -790,17 +694,31 @@ crossorigin='anonymous'></script>
 		$('#forceStartAdaptation').click(function(){
 			startAdaptation();
 		})
-		$('#addAllPlayers').click(function(){
+		$('#addAllUsers').click(function(){
 			$.ajax(
 			{
-				url: '/addAllPlayersSelected/'
+				url: '/addAllUsersSelected/'
 			}
 			);
 		})
-		$('#clearAllPlayers').click(function(){
+		$('#clearAllUsers').click(function(){
 			$.ajax(
 			{
-				url: '/removeAllPlayersSelected/'
+				url: '/removeAllUsersSelected/'
+			}
+			);
+		})
+		$('#addAllTasks').click(function(){
+			$.ajax(
+			{
+				url: '/addAllTasksSelected/'
+			}
+			);
+		})
+		$('#clearAllTasks').click(function(){
+			$.ajax(
+			{
+				url: '/removeAllTasksSelected/'
 			}
 			);
 		})

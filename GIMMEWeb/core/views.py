@@ -117,6 +117,14 @@ class CustomTaskModelBridge(TaskModelBridge):
 	
 	def getAllTaskIds(self):
 		return []
+	
+	def getAllStoredTaskIds(self):
+		allTasks = Task.objects.all()
+		allTasksIds = []
+		for task in allTasks:
+			allTasksIds.append(task.taskId)
+		return allTasksIds
+
 
 	def getTaskInteractionsProfile(self, taskId):
 		return InteractionsProfile()
@@ -275,10 +283,9 @@ class Views(): #acts as a namespace
 		serverStateModelBridge.setCurrAdaptationState([])
 		serverStateModelBridge.setReadyForNewActivity(False)
 		serverStateModelBridge.setCurrSelectedUsers([])
-		print(playerBridge.getAllStoredUserIds())
 		serverStateModelBridge.setCurrFreeUsers(playerBridge.getAllStoredUserIds())
 		serverStateModelBridge.setCurrSelectedTasks([])
-		serverStateModelBridge.setCurrFreeTasks([])
+		serverStateModelBridge.setCurrFreeTasks(taskBridge.getAllStoredTaskIds())
 		return HttpResponse('ok')
 
 	#global methods
@@ -436,18 +443,18 @@ class Views(): #acts as a namespace
 			return HttpResponse('200')
 
 	@csrf_protect
-	def addAllPlayersSelected(request): #reads (player) from args
+	def addAllUsersSelected(request): #reads (player) from args
 		serverStateModelBridge.setCurrSelectedUsers(playerBridge.getAllStoredUserIds())
 		serverStateModelBridge.setCurrFreeUsers([])
 		return HttpResponse('ok')
 	@csrf_protect
-	def removeAllPlayersSelected(request): #reads (player) from args
+	def removeAllUsersSelected(request): #reads (player) from args
 		serverStateModelBridge.setCurrSelectedUsers([])
 		serverStateModelBridge.setCurrFreeUsers(playerBridge.getAllStoredUserIds())
 		return HttpResponse('ok')
 
 	@csrf_protect
-	def addSelectedPlayer(request): #reads (player) from args
+	def addSelectedUser(request): #reads (player) from args
 		playerIdToAdd = request.POST.get('userId')
 		currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
 		currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
@@ -459,7 +466,7 @@ class Views(): #acts as a namespace
 		return HttpResponse('ok')
 
 	@csrf_protect
-	def removeSelectedPlayer(request): #reads (player) from args
+	def removeSelectedUser(request): #reads (player) from args
 		userIdToRemove = request.POST.get('userId')
 		currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
 		currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
@@ -468,6 +475,44 @@ class Views(): #acts as a namespace
 			currFreeUsers.append(userIdToRemove)
 		serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
 		serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
+		return HttpResponse('ok')
+
+
+
+	@csrf_protect
+	def addAllTasksSelected(request): #reads (player) from args
+		serverStateModelBridge.setCurrSelectedTasks(taskBridge.getAllStoredTaskIds())
+		serverStateModelBridge.setCurrFreeTasks([])
+		return HttpResponse('ok')
+
+	@csrf_protect
+	def removeAllTasksSelected(request): #reads (player) from args
+		serverStateModelBridge.setCurrSelectedTasks([])
+		serverStateModelBridge.setCurrFreeTasks(taskBridge.getAllStoredTaskIds())
+		return HttpResponse('ok')
+
+	@csrf_protect
+	def addSelectedTask(request): #reads (player) from args
+		playerIdToAdd = request.POST.get('taskId')
+		currSelectedTasks = serverStateModelBridge.getCurrSelectedTasks();
+		currFreeTasks = serverStateModelBridge.getCurrFreeTasks();
+		if not playerIdToAdd in currSelectedTasks:
+			currSelectedTasks.append(playerIdToAdd)
+			currFreeTasks.remove(playerIdToAdd)
+		serverStateModelBridge.setCurrSelectedTasks(currSelectedTasks)
+		serverStateModelBridge.setCurrFreeTasks(currFreeTasks)
+		return HttpResponse('ok')
+
+	@csrf_protect
+	def removeSelectedTask(request): #reads (player) from args
+		TaskIdToRemove = request.POST.get('taskId')
+		currSelectedTasks = serverStateModelBridge.getCurrSelectedTasks();
+		currFreeTasks = serverStateModelBridge.getCurrFreeTasks();
+		if TaskIdToRemove in currSelectedTasks:
+			currSelectedTasks.remove(TaskIdToRemove)
+			currFreeTasks.append(TaskIdToRemove)
+		serverStateModelBridge.setCurrSelectedTasks(currSelectedTasks)
+		serverStateModelBridge.setCurrFreeTasks(currFreeTasks)
 		return HttpResponse('ok')
 
 

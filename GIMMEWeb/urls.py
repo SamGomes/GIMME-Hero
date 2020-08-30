@@ -22,11 +22,16 @@ urlpatterns = [
     re_path(r'^saveUserRegistration/$', Views.saveUserRegistration, name="saveUserRegistration"),
     re_path(r'^saveTaskRegistration/$', Views.saveTaskRegistration, name="saveTaskRegistration"),
 
-    re_path(r'^addAllPlayersSelected/$', Views.addAllPlayersSelected, name="addAllPlayersSelected"),
-    re_path(r'^removeAllPlayersSelected/$', Views.removeAllPlayersSelected, name="removeAllPlayersSelected"),
-    re_path(r'^addSelectedPlayer/$', Views.addSelectedPlayer, name="addSelectedPlayer"),
-    re_path(r'^removeSelectedPlayer/$', Views.removeSelectedPlayer, name="removeSelectedPlayer"),
+    re_path(r'^addAllUsersSelected/$', Views.addAllUsersSelected, name="addAllUsersSelected"),
+    re_path(r'^removeAllUsersSelected/$', Views.removeAllUsersSelected, name="removeAllUsersSelected"),
+    re_path(r'^addSelectedUser/$', Views.addSelectedUser, name="addSelectedUser"),
+    re_path(r'^removeSelectedUser/$', Views.removeSelectedUser, name="removeSelectedUser"),
     
+    re_path(r'^addAllTasksSelected/$', Views.addAllTasksSelected, name="addAllTasksSelected"),
+    re_path(r'^removeAllTasksSelected/$', Views.removeAllTasksSelected, name="removeAllTasksSelected"),
+    re_path(r'^addSelectedTask/$', Views.addSelectedTask, name="addSelectedTask"),
+    re_path(r'^removeSelectedTask/$', Views.removeSelectedTask, name="removeSelectedTask"),
+
     re_path(r'^loginCheck/$', Views.loginCheck, name="loginCheck"),
     re_path(r'^startAdaptation/', Views.startAdaptation, name="startAdaptation"),
     re_path(r'^configAdaptation/', Views.configAdaptation, name="configAdaptation"),
