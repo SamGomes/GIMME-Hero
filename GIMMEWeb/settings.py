@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'GIMMEWeb.core',
+    'GIMMEWeb.core'
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -91,3 +91,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'GIMMEWeb/core/templates/static/') ]
+
+MEDIA_ROOT = '/static/media/'

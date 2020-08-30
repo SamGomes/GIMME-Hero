@@ -17,7 +17,7 @@
 					<h5>First time here? Lets Register you...</h5>
 				</div>
 				<div class="section is-small">
-					<div id="newRegButton_home" class="button is-link is-medium is-fullwidth">Register</div>
+					<div id="newUserRegButton_home" class="button is-link is-medium is-fullwidth">Register</div>
 				</div>
 			</div>
 			<div class="column is-1"></div>
@@ -29,9 +29,9 @@
 					<div class="container">
 						<form>
 							<div class="field">
-							  <label class="label subtitle is-5">Username or E-Mail</label>
+							  <label class="label subtitle is-5">User Id</label>
 							  <div class="control">
-							    <input id="loginUsername_home" class="input" type="text" placeholder="Username" name="username">
+							    <input id="loginUserId_home" class="input" type="text" placeholder="User Id" name="userId">
 							  </div>
 							</div>
 
@@ -96,12 +96,12 @@
 		$('#loginError_home').hide()
 		$(document).ready(function(){
 
-			$('#newRegButton_home').click(function(){
-		    	callReg('true');
+			$('#newUserRegButton_home').click(function(){
+		    	callUserReg('true');
 		    });
 
 			$('#loginCancelButton_home').click(function(){
-				$('#loginUsername_home').val('');
+				$('#loginUserId_home').val('');
 				$('#loginPassword_home').val('');
 			});
 
@@ -111,7 +111,7 @@
 						url: '/loginCheck/',
 						dataType: "json", 
 						type: 'POST',
-						data: {'username':$('#loginUsername_home').val(), 'password':$('#loginPassword_home').val()},
+						data: {'userId': $('#loginUserId_home').val(), 'password':$('#loginPassword_home').val() },
 						statusCode: {
 							404: function() {
 							  $('#loginError_home').show(500);

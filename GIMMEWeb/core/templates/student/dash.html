@@ -9,7 +9,7 @@
 				<div class="hero-body">
 					<div class="has-text-centered; slider-content animated zoomIn">
 						<div>
-							<p class="title is-1 main-text">Welcome to GIMME-Web, {{request.session.username}}</p>
+							<p class="title is-1 main-text">Welcome to GIMME-Web, {{request.session.userId}}</p>
 							<p class="subtitle is-4 main-text">A sophisticated Group Interactions Management Tool</p>
 						</div>
 					</div>
@@ -26,8 +26,7 @@
 								<p>Current Activity Info</p>
 							</div>
 							<div class="is-pulled-left">
-								<i class="fa fa-window-minimize minimizerButton" aria-hidden="true"></i>
-								<i class="fa fa-window-maximize maximizerButton" aria-hidden="true"></i>
+								<div class='button minimizerButton'></div>
 							</div>
 						</div>
 					</div>
@@ -40,9 +39,9 @@
 						<div class="table-container column is-full-width">
 							<div class="table" id="currentTasksTable"></div>
 						</div>
-						<div>Waiting Room:<div>
+						<div>Selected Players:<div>
 						<div class="table-container column is-full-width">
-							<div class="table" id="waitingRoomTable"></div>
+							<div class="table" id="selectedRoomTable"></div>
 						</div>
 						<a>
 							<button class="button is-link" id="readyForNewActivityButton" >Ready for new Activity</button>
@@ -59,8 +58,7 @@
 								<p>Your Learning State</p>
 							</div>
 							<div class="is-pulled-left">
-								<i class="fa fa-window-minimize minimizerButton" aria-hidden="true"></i>
-								<i class="fa fa-window-maximize maximizerButton" aria-hidden="true"></i>
+								<div class='button minimizerButton'></div>
 							</div>
 						</div>
 					</div>
@@ -82,8 +80,7 @@
 								<p>Your Interactions Profile</p>
 							</div>
 							<div class="is-pulled-left">
-								<i class="fa fa-window-minimize minimizerButton" aria-hidden="true"></i>
-								<i class="fa fa-window-maximize maximizerButton" aria-hidden="true"></i>
+								<div class='button minimizerButton'></div>
 							</div>
 						</div>
 					</div>
@@ -106,7 +103,7 @@
 		crossorigin="anonymous"></script>
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 	<script src="https://d3js.org/d3.v5.js"></script>
-	{% include 'common/general.html' %}
+	{% include 'common/CSRFTSetup.html' %}
 	<script src="{% static "js/plots.js" %}"></script>
 	<script>
 		$(document).ready(function(){
@@ -121,18 +118,18 @@
 						dataType: "json",
 						success: 
 							function (newServerState) {
-								var currWaitingPlayers = newServerState.currWaitingPlayers;
+								var currSelectedPlayers = newServerState.currSelectedPlayers;
 								
 								var table = $('<table>');
-							    row = $('<tr>').append($('<th>').text('Username'));
+							    row = $('<tr>').append($('<th>').text('userId'));
 								table.append(row);
 								
-								for(var i=0; i < currWaitingPlayers.length; i++){
-								    row = $('<tr>').append($('<td>').text(currWaitingPlayers[i]));
+								for(var i=0; i < currSelectedPlayers.length; i++){
+								    row = $('<tr>').append($('<td>').text(currSelectedPlayers[i]));
 									table.append(row);
 								}
-								$('#waitingRoomTable').empty();
-								$('#waitingRoomTable').append(table);
+								$('#selectedRoomTable').empty();
+								$('#selectedRoomTable').append(table);
 
 								if(newServerState.readyForNewActivity){
 									$("#readyForNewActivityButton").removeClass("is-loading");
@@ -174,13 +171,13 @@
 				$("#readyForNewActivityButton").addClass("is-loading");
 				$.ajax({
 					  type: 'POST',
-					  url: '/removeWaitingPlayer/',
-					  data: '{playerId: + \"'+{{request.session.username}}+'\"}'
+					  url: '/removeSelectedPlayer/',
+					  data: {'userId': + '{{request.session.userId}}'}
 				});
 			})
 			fetchServerData();
 			setInterval(fetchServerData, 500);
-			
+
 		});
 	</script>
 </html>

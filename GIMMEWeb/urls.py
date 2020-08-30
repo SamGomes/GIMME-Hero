@@ -9,19 +9,23 @@ urlpatterns = [
     re_path(r'^logout/$', Views.logout, name="logout"),
     re_path(r'^isLoggedIn/$', Views.isLoggedIn, name="isLoggedIn"),
 
+    re_path(r'^initServer/$', Views.initServer, name="initServer"),
+
     re_path(r'^dash/$', Views.dash, name="dash"),
 
     re_path(r'^userRegistration/$', Views.userRegistration, name="userRegistration"),
     re_path(r'^taskRegistration/', Views.taskRegistration, name="taskRegistration"),
 
-    re_path(r'^updateRegMode/$', Views.updateRegMode, name="updateRegMode"),
+    re_path(r'^updateUserRegMode/$', Views.updateUserRegMode, name="updateRegMode"),
+    re_path(r'^updateTaskRegMode/$', Views.updateTaskRegMode, name="updateRegMode"),
+
     re_path(r'^saveUserRegistration/$', Views.saveUserRegistration, name="saveUserRegistration"),
     re_path(r'^saveTaskRegistration/$', Views.saveTaskRegistration, name="saveTaskRegistration"),
 
-    re_path(r'^addAllPlayersWaiting/$', Views.addAllPlayersWaiting, name="addAllPlayersWaiting"),
-    re_path(r'^removeAllPlayersWaiting/$', Views.removeAllPlayersWaiting, name="removeAllPlayersWaiting"),
-    re_path(r'^addWaitingPlayer/$', Views.addWaitingPlayer, name="addWaitingPlayer"),
-    re_path(r'^removeWaitingPlayer/$', Views.removeWaitingPlayer, name="removeWaitingPlayer"),
+    re_path(r'^addAllPlayersSelected/$', Views.addAllPlayersSelected, name="addAllPlayersSelected"),
+    re_path(r'^removeAllPlayersSelected/$', Views.removeAllPlayersSelected, name="removeAllPlayersSelected"),
+    re_path(r'^addSelectedPlayer/$', Views.addSelectedPlayer, name="addSelectedPlayer"),
+    re_path(r'^removeSelectedPlayer/$', Views.removeSelectedPlayer, name="removeSelectedPlayer"),
     
     re_path(r'^loginCheck/$', Views.loginCheck, name="loginCheck"),
     re_path(r'^startAdaptation/', Views.startAdaptation, name="startAdaptation"),
@@ -34,3 +38,6 @@ urlpatterns = [
     re_path(r'^fetchServerState/', Views.fetchServerState, name="fetchServerState"),
     re_path(r'^fetchPlayerState/', Views.fetchPlayerState, name="fetchPlayerState"),
 ]
+
+# if settings.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

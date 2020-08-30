@@ -13,7 +13,7 @@
 				<div class='hero-body'>
 					<div class='has-text-centered; slider-content animated zoomIn'>
 						<div>
-							<p class='title is-1 main-text'>Welcome to GIMME-Web, {{request.session.username}}</p>
+							<p class='title is-1 main-text'>Welcome to GIMME-Web, {{request.session.fullName}}</p>
 							<p class='subtitle is-4 main-text'>A sophisticated Group Interactions Management Tool</p>
 						</div>
 					</div>
@@ -44,7 +44,7 @@
 						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
 							<div class='subtitle is-4' style='color:gray'>Selected Players</div>
 							<div class='table-container column is-full'>
-								<div class='table' id='waitingRoomTable'></div>
+								<div class='table' id='selectedRoomTable'></div>
 							</div>
 						</div>
 					</div>
@@ -456,7 +456,7 @@ crossorigin='anonymous'></script>
 <script src='https://unpkg.com/d3-force-attract@latest'></script>
 <script src='https://unpkg.com/d3-force-cluster@latest'></script>
 <script src='{% static 'js/plots.js' %}'></script>
-{% include 'common/general.html' %}
+{% include 'common/CSRFTSetup.html' %}
 <script>
 	$(document).ready(function(){
 
@@ -614,21 +614,6 @@ crossorigin='anonymous'></script>
 		};
 
 
-		// var fetchPlayerData = function(){
-		// 	return $.ajax(
-		// 			{
-		// 				url: '/fetchPlayerState/',
-		// 				dataType: 'json',
-		// 				success: 
-		// 					function (newPlayerServerState) {
-		// 						return newPlayerServerState;
-		// 					}
-		// 			}
-		// 		);
-		// }
-
-
-
 
 		var fetchServerData = function(){
 			$.ajax(
@@ -642,13 +627,13 @@ crossorigin='anonymous'></script>
 								return;
 							}
 							currServerState = newServerState;
-							var currWaitingPlayers = newServerState.currWaitingPlayers;
+							var currSelectedPlayers = newServerState.currSelectedPlayers;
 							var currFreePlayers = newServerState.currFreePlayers;
 								fpTable = generatePlayerTableFromArray(currFreePlayers, 'fa-arrow-circle-right', function(){
 									$.ajax({
 										type: 'POST',
-										url: '/addWaitingPlayer/',
-										data: {'playerId':$(this).parent().text()},
+										url: '/addSelectedPlayer/',
+										data: {'userId':$(this).parent().text()},
 										success:
 										function()
 										{
@@ -656,10 +641,10 @@ crossorigin='anonymous'></script>
 										}
 									});
 								});
-								wpTable = generatePlayerTableFromArray(currWaitingPlayers, 'fa-arrow-circle-left', function(){
+								wpTable = generatePlayerTableFromArray(currSelectedPlayers, 'fa-arrow-circle-left', function(){
 									$.ajax({
 										type: 'POST',
-										url: '/removeWaitingPlayer/',
+										url: '/removeSelectedPlayer/',
 										data: {'playerId':$(this).parent().text()},
 										success: 
 										function()
@@ -671,25 +656,25 @@ crossorigin='anonymous'></script>
 								$('#freePlayersTable').empty();
 								$('#freePlayersTable').append(fpTable);
 
-								$('#waitingRoomTable').empty();
-								$('#waitingRoomTable').append(wpTable);
+								$('#selectedRoomTable').empty();
+								$('#selectedRoomTable').append(wpTable);
 
-								var currAvailableTasks = newServerState.currWaitingPlayers;
+								var currAvailableTasks = newServerState.currSelectedPlayers;
 								var currSelectedTasks = newServerState.currFreePlayers;
 
 
 								atTable = generateTaskTableFromArray(currAvailableTasks, 'fa-arrow-circle-right', 
 									function(){
-										// $.ajax({
-										// 	type: 'POST',
-										// 	url: '/addSelectedTask/',
-										// 	data: {'playerId':$(this).parent().text()},
-										// 	success:
-										// 	function()
-										// 	{
-										// 		$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-right').addClass('fa-arrow-circle-left');
-										// 	}
-										// });
+										$.ajax({
+											type: 'POST',
+											url: '/addSelectedTask/',
+											data: {'playerId':$(this).parent().text()},
+											success:
+											function()
+											{
+												$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-right').addClass('fa-arrow-circle-left');
+											}
+										});
 									},
 									function(){
 
@@ -697,16 +682,16 @@ crossorigin='anonymous'></script>
 
 								stTable = generateTaskTableFromArray(currSelectedTasks, 'fa-arrow-circle-left', 
 									function(){
-										// $.ajax({
-										// 	type: 'POST',
-										// 	url: '/removeSelectedTask/',
-										// 	data: {'playerId':$(this).parent().text()},
-										// 	success: 
-										// 	function()
-										// 	{
-										// 		$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-left').addClass('fa-arrow-circle-right');
-										// 	}
-										// });
+										$.ajax({
+											type: 'POST',
+											url: '/removeSelectedTask/',
+											data: {'playerId':$(this).parent().text()},
+											success: 
+											function()
+											{
+												$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-left').addClass('fa-arrow-circle-right');
+											}
+										});
 									},function(){
 
 									});
@@ -804,14 +789,14 @@ crossorigin='anonymous'></script>
 		$('#addAllPlayers').click(function(){
 			$.ajax(
 			{
-				url: '/addAllPlayersWaiting/'
+				url: '/addAllPlayersSelected/'
 			}
 			);
 		})
 		$('#clearAllPlayers').click(function(){
 			$.ajax(
 			{
-				url: '/removeAllPlayersWaiting/'
+				url: '/removeAllPlayersSelected/'
 			}
 			);
 		})

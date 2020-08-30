@@ -9,7 +9,7 @@
   <nav class="navbar" role="navigation" aria-label="main navigation" style="background-color:#e5e5e5;">
     <div class="navbar-brand"  id="logo_header">
       <a class="navbar-item">
-        <img style="max-height: 3rem" src="{% static "images/GIMMELogo.png" %}">
+        <img style="max-height: 3rem" src="{% static "media/images/GIMMELogo.png" %}">
       </a>
 
       <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -18,6 +18,7 @@
         <span aria-hidden="true"></span>
       </a>
     </div>
+    <div class="button" id="initServerButton_header"> Init Server</div>
 
     <div class="navbar-menu">
       <div class="navbar-start">
@@ -44,11 +45,11 @@
 
 
 
-      {% if not request.session.username %}
+      {% if not request.session.userId %}
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
-              <div class="button is-link" id="newRegButton">
+              <div class="button is-link" id="newUserRegButton">
                 <strong>Register</strong>
               </div>
               <!-- <a class="button is-light" href="{% url 'home' %}">
@@ -61,7 +62,7 @@
         <div class="navbar-item center-left is-hoverable">
           <figure class="image navbar-item"  height=100px >
             <!-- sets placeholder if no image is found -->
-            <img class="is-rounded" style="max-height: 3.5rem" onError="this.onerror=null;this.src='../static/images/userAvatars/avatarPH.png';" src="../static/images/userAvatars/{{request.session.username}}.png">
+            <img class="is-rounded" style="max-height: 3.5rem" onError="this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';" src="../static/media/images/userAvatars/{{request.session.userId}}.png">
           </figure>
           <div class="navbar-dropdown is-right">
 
@@ -70,13 +71,13 @@
                 Logged in as a <strong>{{request.session.role}}</strong> called <strong>{{request.session.fullName}}</strong>
               </div>
               <div class="column">
-                username: <strong>{{request.session.username}}</strong>
+                userId: <strong>{{request.session.userId}}</strong>
               </div>
               <div class="column">
                 email: <strong>{{request.session.email}}</strong>
               </div>
               <div class="column">
-                <div class="button is-link" id="updateRegButton">
+                <div class="button is-link" id="updateUserRegButton">
                   <strong>Manage Account</strong>
                 </div>
               </div>
@@ -111,11 +112,18 @@
     });
   })
   $(document).ready(function(){
-    $("#newRegButton").click(function(){
-      callReg("true");
+    $('#newUserRegButton').click(function(){
+      callUserReg('true');
     });
-    $("#updateRegButton").click(function(){
-      callReg("false");
+    $('#updateUserRegButton').click(function(){
+      callUserReg('false');
     });
+  });
+
+  $('#initServerButton_header').click(function(){
+    $.ajax({
+            type: 'POST',
+            url: '/initServer/'
+          });
   });
 </script>

@@ -26,14 +26,15 @@
 			<div class="panel panel-block column">
 
 				<div id="error_userRegistration" class="section hero is-danger is-centered has-text-centered">
-					<label class="label subtitle is-4 is-white">Registry Fail! Please check all fields.</label>
+					<label class="label subtitle is-4 is-white">Registry Fail (Error {{request.session.playerRegistrationError}})! Please check all fields.</label>
 				</div>
+
 
 				<form id="form_userRegistration">
 					{{ form }}
 					{% csrf_token %}
 
-					{% if not request.session.username %}
+					{% if not request.session.userId %}
 						<div class="subtitle">Account Registration</div>
 						<p>* fields are mandatory</p>
 			
@@ -76,13 +77,6 @@
 								</span>
 							</p>
 						</div>
-
-						<!-- <div class="field requiredFormField">
-						  <label class="label">Username*</label>
-						  <div class="control">
-						    <input class="input" type="text" placeholder="Username" name="username">
-						  </div>
-						</div> -->
 
 						<div class="field requiredFormField">
 						  <label class="label">Full Name*</label>
@@ -135,6 +129,19 @@
 							<h5>Change Account</h5>
 						</div>
 
+
+						<div class="file is-boxed">
+						  <label class="file-label">
+						    <input class="file-input" type="file" name="avatar" id="avatar_userRegistration">
+						    <span class="file-cta">
+						      <img id="avatarImg_userRegistration" class="is-rounded" style="max-height: 3.5rem" onError="this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';" src="../static/media/images/userAvatars/{{request.session.userId}}.png">
+						      <span class="file-label">
+						        Upload your Avatar
+						      </span>
+						    </span>
+						  </label>
+						</div>
+
 						<div class="field requiredFormField">
 						  <label class="label">Role</label>
 						  <div class="control" name="role">
@@ -172,13 +179,6 @@
 								</span>
 							</p>
 						</div>
-
-						<!-- <div class="field requiredFormField">
-						  <label class="label">Username</label>
-						  <div class="control">
-						    <input class="input" type="text" value="{{request.session.username}}" name="username" disabled>
-						  </div>
-						</div> -->
 
 						<div class="field requiredFormField">
 						  <label class="label">Full Name</label>
@@ -242,6 +242,7 @@
 		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
 		crossorigin="anonymous"></script>
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+	{% include 'common/CSRFTSetup.html' %}
 	{% include 'common/general.html' %}
 	<script>
 		$('#error_userRegistration').hide()
@@ -254,23 +255,42 @@
 		    $('#password_userRegistration').on('input',passCheck);
 		    $('#repPassword_userRegistration').on('input',passCheck);
 
+		    var file = $("#avatar_userRegistration").change(function(){
+			    if(this.files.length > 0)
+			    {
+			    	var reader = new FileReader();
+					reader.onload = function() {
+
+						var arrayBuffer = this.result,
+						array = new Uint8Array(arrayBuffer),
+						binaryString = String.fromCharCode.apply(null, array);
+
+			      		$("#avatarImg_userRegistration").attr('src', `data:image/png;base64,${binaryString}`);
+					}
+					reader.readAsArrayBuffer(this.files[0])
+
+			    }
+			});
+
 		    $('#submitButton_userRegistration').click(function(){
 			    console.log($('#form_userRegistration').serialize())
-		    	$.ajax({
-	                type: 'POST',
-	                url: '/saveUserRegistration/',
-	                data: $('#form_userRegistration').serialize(),
-	                statusCode: {
-						500: function() {
-						  $('#error_userRegistration').show(500);
-						  setTimeout(function(){ $('#error_userRegistration').hide(500); }, 3000);
-						},
-						200: function(){ 
-							$('#error_userRegistration').hide();
-							document.location.href = '/dash/';
+			    // for(i=0; i<30; i++){
+			    	$.ajax({
+		                type: 'POST',
+		                url: '/saveUserRegistration/',
+		                data: $('#form_userRegistration').serialize(),
+		                statusCode: {
+							500: function() {
+							  $('#error_userRegistration').show(500);
+							  setTimeout(function(){ $('#error_userRegistration').hide(500); }, 3000);
+							},
+							200: function(){ 
+								$('#error_userRegistration').hide();
+								document.location.href = '/dash/';
+							}
 						}
-					}
-			    });
+				    });
+			    // }
 		    });
 		});
 	</script>

@@ -1,7 +1,58 @@
-﻿{% include 'common/setup.html' %}
+﻿{% include 'common/CSRFTSetup.html' %}
 
 <script type="text/javascript">
 $(document).ready(function(){
+    // bulma dropdowns setup
+    var dropdowns = $(".dropdown");
+    for (var i=0; i< dropdowns.length; i++){
+        var dropdown = $(dropdowns[i]);
+        if (dropdown != null){
+            dropdown.click(function(event) {
+              event.stopPropagation();
+              $(this).find(".dropdown-menu").toggle();
+            });
+        }
+    }
+
+
+    var selectDropdownItem = function(dropdownItem){
+        var neighborItems = dropdownItem.parent().children();
+        for (var j=0; j< neighborItems.length; j++){
+            neighborItem = neighborItems[j];
+            $(neighborItem).removeClass("is-active");
+        }
+        dropdownItem.addClass("is-active");
+        //update that dropdown text
+        $($($(dropdownItem.parent().parent().parent().children()[0]).children()[0]).children()[0]).text(dropdownItem.text().split('\n')[1].replace(/\W/g, ""));
+    }
+
+    var dropdownItems = $(".dropdown-item");
+    for (var i=0; i< dropdownItems.length; i++){
+        var dropdownItem = $(dropdownItems[i]);
+        if (dropdownItem != null){
+            dropdownItem.click(function(event) {
+                event.stopPropagation();
+                selectDropdownItem($(this));
+            });
+        }
+    }
+
+    var initialDropdownSelections = $(document).find(".dropdown-item.is-active");
+    for (var i=0; i< initialDropdownSelections.length; i++){
+        var dropdownItem = $(initialDropdownSelections[i]);
+        if (dropdownItem != null){
+            selectDropdownItem(dropdownItem);
+        }
+    }
+
+    var initialInputSelections = $(document).find(".input");
+    for (var i=0; i< initialInputSelections.length; i++){
+        var inputItem = $(initialInputSelections[i]);
+        inputItem.val(inputItem.attr("placeholder"));
+    }
+
+
+
     // modals
     var rootEl = document.documentElement;
     var allModals = getAll('.modal');
@@ -76,11 +127,11 @@ var parseSessionAttribute = function(attributeStr){
 }
 
 
-var callReg = function(isNewRegRequest){
+var callUserReg = function(isNewUserRegRequest){
     $.ajax({
                 type: 'POST',
-                url: '/updateRegMode/',
-                data: { 'isNewRegRequest': isNewRegRequest },
+                url: '/updateUserRegMode/',
+                data: { 'isNewUserRegRequest': isNewUserRegRequest },
                 success:
                 function()
                 {
@@ -88,4 +139,18 @@ var callReg = function(isNewRegRequest){
                 }
     });
 }
+
+var callTaskReg = function(isNewTaskRegRequest){
+    $.ajax({
+                type: 'POST',
+                url: '/updateTaskRegMode/',
+                data: { 'isNewTaskRegRequest': isNewTaskRegRequest },
+                success:
+                function()
+                {
+                    document.location.href = '/taskRegistration/';
+                }
+    });
+}
+
 </script>
