@@ -96,6 +96,25 @@
 		$('#loginError_home').hide()
 		$(document).ready(function(){
 
+			var loginCheck = function(userId, password, errorFunc){
+				$.ajax(
+					{
+						url: '/loginCheck/',
+						dataType: "json", 
+						type: 'POST',
+						data: {'userId': userId, 'password': password },
+						statusCode: {
+							404: errorFunc(),
+							200: function(){ 
+								$('#loginError_home').hide();
+	                			document.location.href = '/dash/';
+							}
+						}
+					}
+				);
+			};
+			loginCheck('{{request.session.userId}}','{{request.session.password}}', function(){ $('#loginError_home').hide(); });
+
 			$('#newUserRegButton_home').click(function(){
 		    	callUserReg('true');
 		    });
@@ -106,24 +125,12 @@
 			});
 
 			$('#loginEnterButton_home').click(function(){
-				$.ajax(
-					{
-						url: '/loginCheck/',
-						dataType: "json", 
-						type: 'POST',
-						data: {'userId': $('#loginUserId_home').val(), 'password':$('#loginPassword_home').val() },
-						statusCode: {
-							404: function() {
+				loginCheck($('#loginUserId_home').val(),
+							$('#loginPassword_home').val(),
+							function() {
 							  $('#loginError_home').show(500);
 							  setTimeout(function(){ $('#loginError_home').hide(500); }, 3000);
-							},
-							200: function(){ 
-								$('#loginError_home').hide();
-								window.location.reload(false); //reload after redirect
-							}
-						}
-					}
-				);
+							});
 			});
 
 		});

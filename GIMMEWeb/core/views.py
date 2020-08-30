@@ -3,6 +3,8 @@ import sys
 
 import random
 import string
+import time
+from datetime import datetime, date, time, timedelta
 
 from django.shortcuts import render, redirect
 from django.views.generic import View
@@ -36,11 +38,12 @@ class ServerStateModelBridge():
 	
 	def getCurrSelectedUsers(self):
 		serverState = ServerState.objects.first()
-		currSelectedPlayers = json.loads(serverState.currSelectedPlayers)
-		return currSelectedPlayers
+		currSelectedUsers = json.loads(serverState.currSelectedUsers)
+		return currSelectedUsers
 	def getCurrFreeUsers(self):
 		serverState = ServerState.objects.first()
-		currFreePlayers = json.loads(serverState.currFreePlayers)
+		currFreeUsers = json.loads(serverState.currFreeUsers)
+		return currFreeUsers
 		
 	def getCurrSelectedTasks(self):
 		serverState = ServerState.objects.first()
@@ -70,21 +73,22 @@ class ServerStateModelBridge():
 		serverState.save()
 
 
-	def setCurrSelectedPlayers(self, currSelectedPlayers):
+	def setCurrSelectedUsers(self, currSelectedUsers):
 		serverState = ServerState.objects.first()
 		if serverState == None:
 			serverState = ServerState()
 		else:
-			currSelectedPlayers = json.dumps(currSelectedPlayers, default=lambda o: o.__dict__, sort_keys=True)
-			serverState.currSelectedPlayers = currSelectedPlayers
+			currSelectedUsers = json.dumps(currSelectedUsers, default=lambda o: o.__dict__, sort_keys=True)
+			serverState.currSelectedUsers = currSelectedUsers
 		serverState.save()
-	def setCurrFreePlayers(self, currFreePlayers):
+
+	def setCurrFreeUsers(self, currFreeUsers):
 		serverState = ServerState.objects.first()
 		if serverState == None:
 			serverState = ServerState()
 		else:
-			currFreePlayers = json.dumps(currFreePlayers, default=lambda o: o.__dict__, sort_keys=True)
-			serverState.currFreePlayers = currFreePlayers
+			currFreeUsers = json.dumps(currFreeUsers, default=lambda o: o.__dict__, sort_keys=True)
+			serverState.currFreeUsers = currFreeUsers
 		serverState.save()
 
 
@@ -156,7 +160,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 	def getAllStoredUserIds(self):
 		allUsers = User.objects.all()
 		allUsersIds = []
-		for player in allPlayers:
+		for player in allUsers:
 			if player.role=="student":
 				allUsersIds.append(player.userId)
 		return allUsersIds
@@ -271,6 +275,7 @@ class Views(): #acts as a namespace
 		serverStateModelBridge.setCurrAdaptationState([])
 		serverStateModelBridge.setReadyForNewActivity(False)
 		serverStateModelBridge.setCurrSelectedUsers([])
+		print(playerBridge.getAllStoredUserIds())
 		serverStateModelBridge.setCurrFreeUsers(playerBridge.getAllStoredUserIds())
 		serverStateModelBridge.setCurrSelectedTasks([])
 		serverStateModelBridge.setCurrFreeTasks([])
@@ -421,46 +426,46 @@ class Views(): #acts as a namespace
 
 
 			if entry.role=="student":
-				currFreePlayers = serverStateModelBridge.getCurrFreeUsers();
-				currFreePlayers.append(userId)
-				serverStateModelBridge.setCurrFreePlayers(currFreePlayers)
+				currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
+				currFreeUsers.append(userId)
+				serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
 
 			Views.loginCheck(request)
 			return HttpResponse('200')
 
 	@csrf_protect
 	def addAllPlayersSelected(request): #reads (player) from args
-		serverStateModelBridge.setCurrSelectedPlayers(playerBridge.getAllStoredUserIds())
-		serverStateModelBridge.setCurrFreePlayers([])
+		serverStateModelBridge.setCurrSelectedUsers(playerBridge.getAllStoredUserIds())
+		serverStateModelBridge.setCurrFreeUsers([])
 		return HttpResponse('ok')
 	@csrf_protect
 	def removeAllPlayersSelected(request): #reads (player) from args
-		serverStateModelBridge.setCurrSelectedPlayers([])
-		serverStateModelBridge.setCurrFreePlayers(playerBridge.getAllStoredUserIds())
+		serverStateModelBridge.setCurrSelectedUsers([])
+		serverStateModelBridge.setCurrFreeUsers(playerBridge.getAllStoredUserIds())
 		return HttpResponse('ok')
 
 	@csrf_protect
 	def addSelectedPlayer(request): #reads (player) from args
-		playerIdToAdd = request.POST.get("userId")
-		currSelectedPlayers = serverStateModelBridge.getCurrSelectedUsers();
-		currFreePlayers = serverStateModelBridge.getCurrFreeUsers();
-		if not playerIdToAdd in currSelectedPlayers:
-			currSelectedPlayers.append(playerIdToAdd)
-			currFreePlayers.remove(playerIdToAdd)
-		serverStateModelBridge.setCurrSelectedPlayers(currSelectedPlayers)
-		serverStateModelBridge.setCurrFreePlayers(currFreePlayers)
+		playerIdToAdd = request.POST.get('userId')
+		currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
+		currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
+		if not playerIdToAdd in currSelectedUsers:
+			currSelectedUsers.append(playerIdToAdd)
+			currFreeUsers.remove(playerIdToAdd)
+		serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
+		serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
 		return HttpResponse('ok')
 
 	@csrf_protect
 	def removeSelectedPlayer(request): #reads (player) from args
-		playerIdToRemove = request.POST.get("userId")
-		currSelectedPlayers = serverStateModelBridge.getCurrSelectedUsers();
-		currFreePlayers = serverStateModelBridge.getCurrFreeUsers();
-		if playerIdToRemove in currSelectedPlayers:
-			currSelectedPlayers.remove(playerIdToRemove)
-			currFreePlayers.append(playerIdToRemove)
-		serverStateModelBridge.setCurrSelectedPlayers(currSelectedPlayers)
-		serverStateModelBridge.setCurrFreePlayers(currFreePlayers)
+		userIdToRemove = request.POST.get('userId')
+		currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
+		currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
+		if userIdToRemove in currSelectedUsers:
+			currSelectedUsers.remove(userIdToRemove)
+			currFreeUsers.append(userIdToRemove)
+		serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
+		serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
 		return HttpResponse('ok')
 
 
@@ -469,26 +474,26 @@ class Views(): #acts as a namespace
 	@csrf_protect
 	def startActivity(request):
 		# remove from selected and move to occupied list
-		currSelectedPlayers = serverStateModelBridge.getCurrSelectedUsers();
-		currFreePlayers = serverStateModelBridge.getCurrFreeUsers();
+		currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
+		currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
 
-		currSelectedPlayers.remove(request.session.get("userId"))
-		currFreePlayers.append(request.session.get("userId"))
-		serverStateModelBridge.setCurrSelectedPlayers(currSelectedPlayers)
-		serverStateModelBridge.setCurrFreePlayers(currFreePlayers)
+		currSelectedUsers.remove(request.session.get("userId"))
+		currFreeUsers.append(request.session.get("userId"))
+		serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
+		serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
 		return render(request, 'student/activity.html')
 
 	@csrf_protect
 	def saveTaskResults(request):
 
 		# remove from occupied list
-		currFreePlayers = serverStateModelBridge.getCurrFreeUsers()
-		currSelectedPlayers = serverStateModelBridge.getCurrSelectedUsers();
+		currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
+		currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
 		
-		currFreePlayers.remove(request.session.get("userId"))
-		serverStateModelBridge.setCurrFreePlayers(currFreePlayers)
+		currFreeUsers.remove(request.session.get("userId"))
+		serverStateModelBridge.setcurrFreeUsers(currFreeUsers)
 		
-		if len(currSelectedPlayers) == 0 and len(currSelectedPlayers) == 0:
+		if len(currSelectedUsers) == 0 and len(currSelectedUsers) == 0:
 			serverStateModelBridge.setReadyForNewActivity(False)
 
 		if request.POST:
@@ -596,15 +601,15 @@ class Views(): #acts as a namespace
 		return render(request, 'taskRegistration.html')
 
 
-	def isTaskRegistered(userId):
+	def isTaskRegistered(taskId):
 		returned = {}
-		if(userId != None):
+		if(taskId != None):
 			try:
-				returned['task'] = User.objects.get(taskId=taskId)
-				returned['storedTasks'] = User.objects.filter(taskId__contains=taskId)
+				returned['task'] = Task.objects.get(taskId=taskId)
+				returned['storedTasks'] = Task.objects.filter(taskId__contains=taskId)
 			except ObjectDoesNotExist as e:
-				print("task does not exist!")
-				returned = {"task": False, "storedTasks": User.objects.filter(taskId__contains=taskId)}
+				print('task does not exist!')
+				returned = { 'task': False, 'storedTasks': Task.objects.filter(taskId__contains=taskId) }
 		return returned
 
 
@@ -615,14 +620,15 @@ class Views(): #acts as a namespace
 
 	def saveTaskRegistration(request):
 		if request.POST:
+			print(request.POST)
 			requestInfo = request.POST
-			isNewRegRequest = json.loads(request.session.get("isNewTaskRegRequest"))
+			isNewRegRequest = json.loads(request.session.get('isNewTaskRegRequest'))
 
-			entry = User() 
+			entry = Task() 
 
 			taskId = ''
 			
-			entry.creator = userId
+			entry.creator = request.session.get('userId')
 			# requestInfo._mutable = True
 			# requestInfo['taskId'] = taskId
 			# requestInfo._mutable = False
@@ -633,11 +639,11 @@ class Views(): #acts as a namespace
 			if(isNewRegRequest):
 				lenOfIsReg = 1
 				while(lenOfIsReg > 0):
-					taskId = requestInfo['title'].replace(" ", "")
+					taskId = requestInfo['title'].replace(' ', '')
 					taskId = taskId + Views.getRandomString(10) #if userId exists in other regs, register userId1, userId2, etc.
 
 					isReg = Views.isTaskRegistered(taskId)
-					lenOfIsReg = len(isReg["storedTasks"])
+					lenOfIsReg = len(isReg['storedTasks'])
 			else:
 				taskId = requestInfo['taskId']
 
@@ -684,16 +690,16 @@ class Views(): #acts as a namespace
 	def fetchServerState(request):
 		newSessionState = {}
 		
-		newSessionState["currSelectedPlayers"] = serverStateModelBridge.getCurrSelectedUsers()
-		newSessionState["currFreePlayers"] = serverStateModelBridge.getCurrFreeUsers()
+		newSessionState['currSelectedUsers'] = serverStateModelBridge.getCurrSelectedUsers()
+		newSessionState['currFreeUsers'] = serverStateModelBridge.getCurrFreeUsers()
 
-		newSessionState["currSelectedTasks"] = serverStateModelBridge.getCurrSelectedTasks()
-		newSessionState["currFreeTasks"] = serverStateModelBridge.getCurrFreeTasks()
+		newSessionState['currSelectedTasks'] = serverStateModelBridge.getCurrSelectedTasks()
+		newSessionState['currFreeTasks'] = serverStateModelBridge.getCurrFreeTasks()
 
-		newSessionState["readyForNewActivity"] = serverStateModelBridge.isReadyForNewActivity()
+		newSessionState['readyForNewActivity'] = serverStateModelBridge.isReadyForNewActivity()
 
 		if(request.session['role'] == 'professor'):
-			newSessionState["currAdaptationState"] = serverStateModelBridge.getCurrAdaptationState()
+			newSessionState['currAdaptationState'] = serverStateModelBridge.getCurrAdaptationState()
 
 		newSession = json.dumps(newSessionState, default=lambda o: o.__dict__, sort_keys=True)
 

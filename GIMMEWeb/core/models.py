@@ -39,10 +39,13 @@ class Task(models.Model):
 class ServerState(models.Model):
     currAdaptationState = models.CharField(max_length=255, default="[]")
 
-    currSelectedPlayers = models.CharField(max_length=255, default="[]")
-    currFreePlayers = models.CharField(max_length=255, default="[]")
+    currSelectedUsers = models.CharField(max_length=255, default="[]")
+    currFreeUsers = models.CharField(max_length=255, default="[]")
 
     currSelectedTasks = models.CharField(max_length=255, default="[]")
     currFreeTasks = models.CharField(max_length=255, default="[]")
 
     readyForNewActivity = models.CharField(max_length=255, default="false")
+
+    initDate = models.CharField(max_length=255, default="[]")
+    finalDate = models.CharField(max_length=255, default="[]")
