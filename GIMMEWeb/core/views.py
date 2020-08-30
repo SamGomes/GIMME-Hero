@@ -413,6 +413,13 @@ class Views(): #acts as a namespace
 				entry.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
 				try:
 					entry.save()
+
+					# add user to free users
+					if entry.role=="student":
+						currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
+						currFreeUsers.append(userId)
+						serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
+
 				except IntegrityError as e:
 					request.session["playerRegistrationError"] = e.__class__.__name__
 					return HttpResponse('500')
@@ -424,11 +431,6 @@ class Views(): #acts as a namespace
 					request.session["playerRegistrationError"] = e.__class__.__name__
 					return HttpResponse('500')
 
-
-			if entry.role=="student":
-				currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
-				currFreeUsers.append(userId)
-				serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
 
 			Views.loginCheck(request)
 			return HttpResponse('200')
@@ -620,7 +622,6 @@ class Views(): #acts as a namespace
 
 	def saveTaskRegistration(request):
 		if request.POST:
-			print(request.POST)
 			requestInfo = request.POST
 			isNewRegRequest = json.loads(request.session.get('isNewTaskRegRequest'))
 
@@ -647,9 +648,17 @@ class Views(): #acts as a namespace
 			else:
 				taskId = requestInfo['taskId']
 
+			entry.taskId = taskId
 			entry.description = requestInfo['description']
 			entry.minReqAbility = requestInfo['minReqAbility']
-			entry.profile = requestInfo['profile']
+			entry.profile = json.dumps(InteractionsProfile(
+				{
+				 "K_cp": float(requestInfo['profileDim0']),
+				 "K_ea": float(requestInfo['profileDim1']),
+				 "K_i":  float(requestInfo['profileDim2']),
+				 "K_mh": float(requestInfo['profileDim3'])
+				 }
+			), default=lambda o: o.__dict__, sort_keys=True)
 			entry.profileImportance = requestInfo['profileImportance']
 			entry.difficultyImportance = requestInfo['difficultyImportance']
 
@@ -659,6 +668,12 @@ class Views(): #acts as a namespace
 			if(isNewRegRequest):
 				try:
 					entry.save()
+
+					# add task to free tasks
+					currFreeTasks = serverStateModelBridge.getCurrFreeTasks();
+					currFreeTasks.append(taskId)
+					serverStateModelBridge.setCurrFreeTasks(currFreeTasks)
+
 				except IntegrityError as e:
 					request.session['playerRegistrationError'] = e.__class__.__name__
 					return HttpResponse('500')
@@ -668,6 +683,7 @@ class Views(): #acts as a namespace
 				except IntegrityError as e:
 					request.session['playerRegistrationError'] = e.__class__.__name__
 					return HttpResponse('500')
+
 
 			return HttpResponse('200')
 
@@ -703,5 +719,5 @@ class Views(): #acts as a namespace
 
 		newSession = json.dumps(newSessionState, default=lambda o: o.__dict__, sort_keys=True)
 
-		print(newSessionState)
+		# print(newSessionState)
 		return HttpResponse(newSession)

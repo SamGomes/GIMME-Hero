@@ -33,15 +33,6 @@
 					<div class="subtitle">Task Registration</div>
 					<p>* fields are mandatory</p>
 
-					<div class="field requiredFormField">
-					  <label class="label">Interaction Profile*</label>
-					  <div class="control" name="role">
-					    <input class="input" type="number" placeholder="0.25" step="0.01" name="">
-					    <input class="input" type="number" placeholder="0.25" step="0.01" name="">
-					    <input class="input" type="number" placeholder="0.25" step="0.01" name="">
-					    <input class="input" type="number" placeholder="0.25" step="0.01" name="">
-					  </div>
-					</div>
 
 					<div class="field requiredFormField">
 					  <label class="label">Title*</label>
@@ -50,12 +41,6 @@
 					  </div>
 					</div>
 
-					<div class="field requiredFormField">
-					  <label class="label">Minimum Required Ability*</label>
-					  <div class="control">
-					    <input class="input" type="text" placeholder="Title" name="minReqAbility">
-					  </div>
-					</div>
 
 					<div class="field requiredFormField">
 					  <label class="label">Description*</label>
@@ -63,6 +48,29 @@
 					    <textarea class="input" type="text" placeholder="Description" name="description"></textarea>
 					  </div>
 					</div>
+
+					<div class="field requiredFormField">
+					  <label class="label">Interaction Profile*</label>
+					  <div class="control">
+					    <input name="profileDim0" class="input" type="number" placeholder="0.25" step="0.01" name="">
+					    <input name="profileDim1" class="input" type="number" placeholder="0.25" step="0.01" name="">
+					    <input name="profileDim2" class="input" type="number" placeholder="0.25" step="0.01" name="">
+					    <input name="profileDim3" class="input" type="number" placeholder="0.25" step="0.01" name="">
+					  </div>
+					</div>
+
+					Profile Importance
+					<input class='input' type='number' name="profileImportance" min='0' max='1' step="0.01" placeholder='0.5'>
+
+					<div class="field requiredFormField">
+					  <label class="label">Minimum Required Ability*</label>
+					  <div class="control">
+					    <input class="input" type="text" placeholder="Title" name="minReqAbility">
+					  </div>
+					</div>
+
+					Ability Importance
+					<input class='input' type='number' name="difficultyImportance" min='0' max='1' step="0.01" placeholder='0.5'>
 
 
 					<div class="field requiredFormField">
@@ -88,7 +96,7 @@
 					<br></br>
 
 					<div class="control">
-						<input class="button is-link" type="submit" value="Register Task" id="submitButton">
+						<input class="button is-link" value="Register Task" id="submitButton_taskRegistration">
 					</div>
 				</form>
 			</div>
@@ -107,7 +115,7 @@
 		$('#error_taskRegistration').hide()
 		$(document).ready(function(){
 			
-		    $('#submitButton_userRegistration').click(function(){
+		    $('#submitButton_taskRegistration').click(function(){
 			    console.log($('#form_taskRegistration').serialize())
 			    // for(i=0; i<30; i++){
 			    	$.ajax({
@@ -121,7 +129,7 @@
 							},
 							200: function(){ 
 								$('#error_taskRegistration').hide();
-								// document.location.href = '/dash/';
+								document.location.href = '/dash/';
 							}
 						}
 				    });
