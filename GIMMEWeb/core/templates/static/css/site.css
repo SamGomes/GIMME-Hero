@@ -11,7 +11,7 @@ html {
 body {
   /* Margin bottom by footer height */
   background-position: absolute;
-  background-image: url("../media/images/background.gif");
+  background-image: url("../media/images/background.png");
   background-size: cover; 
   background-attachment: fixed; 
   /*background-color: transparent; */

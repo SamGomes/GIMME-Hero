@@ -736,16 +736,22 @@ class Views(): #acts as a namespace
 
 	# auxiliary methods
 	@csrf_protect
-	def fetchPlayerState(request):
-		userId = request.session.get("userId")
+	def fetchSelectedUserStates(request):
+		selectedUserIds = serverStateModelBridge.getCurrSelectedUsers()
 
-		newSessionState = {}
-		newSessionState["myStateGrid"] = playerBridge.getPlayerStateGrid(userId)
-		newSessionState["myCharacteristics"] = playerBridge.getPlayerCurrCharacteristics(userId)
-		newSessionState["myPersonality"] = playerBridge.getPlayerPersonalityEst(userId)
+		userStates = {}
+		for userId in selectedUserIds:
+			userState = {}
+			userState["myStateGrid"] = playerBridge.getPlayerStateGrid(userId)
+			userState["myCharacteristics"] = playerBridge.getPlayerCurrCharacteristics(userId)
+			userState["myPersonality"] = playerBridge.getPlayerPersonalityEst(userId)
 
-		newSession = json.dumps(newSessionState, default=lambda o: o.__dict__, sort_keys=True)
-		return HttpResponse(newSession)
+			userStates[userId] = userState
+
+
+		userStates = json.dumps(userStates, default=lambda o: o.__dict__, sort_keys=True)
+		# print(userStates)
+		return HttpResponse(userStates)
 
 	@csrf_protect
 	def fetchServerState(request):

@@ -131,7 +131,7 @@ var buildStatePlot = function(canvasId, data){
 }
 
 
-var buildGroupsPlot = function(canvasId, data, fetchPlayerStateCallback){
+var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     
     // from http://bl.ocks.org/mbostock/7555321
     function wrap(text, width) {
@@ -186,7 +186,7 @@ var buildGroupsPlot = function(canvasId, data, fetchPlayerStateCallback){
       .attr('width', width)
       .attr('height', height);
 
-    var playerNodes = [];
+    var userNodes = [];
     var groupIndicatorNodes = [];
     var colors = [];
 
@@ -202,10 +202,12 @@ var buildGroupsPlot = function(canvasId, data, fetchPlayerStateCallback){
         groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'profile': profile, 'adaptedTaskId': adaptedTaskId, 'centerOfMass': groupCenterOfMass});
         
         for(var j=0;j<group.length; j++){
-            //TODO: add player characteristics
-            var playerId = group[j];
-            playerNodes.push({'plotIndex': currPlotIndex++, 'playerId': playerId, 'playerState': { 'myCharacteristics': {'ability': Math.random(), 'engagement': Math.random()} }, 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
-            // playerNodes.push({'playerId': playerId, 'playerState': fetchPlayerStateCallback(playerId), 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
+            //TODO: add user characteristics
+            var userId = group[j];
+            userState = selectedUsersStates[userId];
+            console.log(userState)
+            userNodes.push({'plotIndex': currPlotIndex++, 'userId': userId, 'userState': userState, 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
+            // userNodes.push({'userId': userId, 'userState': fetchPlayerStateCallback(userId), 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
         }
         colors[i] = getRandomColor();
     } 
@@ -218,7 +220,7 @@ var buildGroupsPlot = function(canvasId, data, fetchPlayerStateCallback){
           .data(groupIndicatorNodes)
           .enter().append('circle')
             .attr('r', node => {
-                var group = playerNodes;
+                var group = userNodes;
                 var maxRadius = 0;
                 for(var j=0; j< group.length; j++){
                     var currNode = group[j];
@@ -246,16 +248,16 @@ var buildGroupsPlot = function(canvasId, data, fetchPlayerStateCallback){
     }
 
     var generatePlayerColor = function(node){
-        var playerChar = node.playerState.myCharacteristics;
+        var userChar = node.userState.myCharacteristics;
         var baseColor = colors[node.groupId].split('#')[1];
-        var transparency = 50 + Math.round(175*(1 - sqrDistBetweenVectors(node.groupCharacteristics, playerChar)/2));
+        var transparency = 50 + Math.round(175*(1 - sqrDistBetweenVectors(node.groupCharacteristics, userChar)/2));
         return '#' +  baseColor + transparency.toString(16);
     }
 
     var nodeElements =
         svg.append('g')
           .selectAll('circle')
-          .data(playerNodes)
+          .data(userNodes)
           .enter().append('circle')
             .attr('r', 10)
             .attr('fill', function(node){
@@ -266,10 +268,10 @@ var buildGroupsPlot = function(canvasId, data, fetchPlayerStateCallback){
     // var textElements =
     //     svg.append('g')
     //       .selectAll('text')
-    //       .data(playerNodes)
+    //       .data(userNodes)
     //       .enter().append('text')
     //         .text(function (d) {
-    //             return d.playerId.toString();
+    //             return d.userId.toString();
     //         })
     //         .attr('font-size', 10)
     //         .attr('dx', -5)
@@ -327,15 +329,15 @@ var buildGroupsPlot = function(canvasId, data, fetchPlayerStateCallback){
 
 
 
-    var playerInfoTooltips =
+    var userInfoTooltips =
         svg.append('g')
             .selectAll('text')
-            .data(playerNodes)
+            .data(userNodes)
             .enter()
             .append('g')
             .style('visibility','hidden');
 
-    playerInfoTooltips.append('rect')
+    userInfoTooltips.append('rect')
         .attr('x', 15)
         .attr('y', 4)
         .attr('rx', '15px')
@@ -349,19 +351,19 @@ var buildGroupsPlot = function(canvasId, data, fetchPlayerStateCallback){
     
 
     console.log(wrap)
-    playerInfoTooltips.append('text')
+    userInfoTooltips.append('text')
         .attr('x', 30)
         .attr('y', 30)
         
         .attr('font-size', 15)
         .attr('fill','black')
         .text(node => { 
-                    return 'Player Info '+ JSON.stringify({'playerId': node.playerId, 'playerState': node.playerState},  undefined, 2);
+                    return 'User Info '+ JSON.stringify({'userId': node.userId, 'userState': node.userState},  undefined, 2);
                 })
         .call(wrap, 300);
 
-     nodeElements.on('mouseover', function(d){ d3.select(playerInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'visible');})
-            .on('mouseout', function(d){ d3.select(playerInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'hidden');});        
+     nodeElements.on('mouseover', function(d){ d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'visible');})
+            .on('mouseout', function(d){ d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'hidden');});        
 
             
 
@@ -371,7 +373,7 @@ var buildGroupsPlot = function(canvasId, data, fetchPlayerStateCallback){
 
     var simulation = d3.forceSimulation();
     var resetSim = function(){
-        simulation.nodes(playerNodes)
+        simulation.nodes(userNodes)
         .force('collide', d3.forceCollide(15)
             .strength(0.2))
         .force('attract', d3.forceAttract()
@@ -391,7 +393,7 @@ var buildGroupsPlot = function(canvasId, data, fetchPlayerStateCallback){
                 .attr('cx', node => node.centerOfMass.x)
                 .attr('cy', node => node.centerOfMass.y)
                 .attr('r', node => {
-                    var group = playerNodes;
+                    var group = userNodes;
                     var maxRadius = 0;
                     for(var j=0; j< group.length; j++){
                         var currNode = group[j];
@@ -414,7 +416,7 @@ var buildGroupsPlot = function(canvasId, data, fetchPlayerStateCallback){
             //     .attr('x', node => node.x)
             //     .attr('y', node => node.y);
 
-            playerInfoTooltips
+            userInfoTooltips
                 .attr('transform', node => 'translate('+node.x+' '+node.y+')');
 
         });
@@ -430,8 +432,8 @@ var buildGroupsPlot = function(canvasId, data, fetchPlayerStateCallback){
             node.centerOfMass.y = d3.event.y;
             node.fx = node.centerOfMass.x;
             node.fy = node.centerOfMass.y;
-            for(i=0; i<playerNodes.length; i++){
-                var currNode = playerNodes[i];
+            for(i=0; i<userNodes.length; i++){
+                var currNode = userNodes[i];
                 if(currNode.groupId == node.groupId){
                     currNode.centerOfMass.x = d3.event.x;
                     currNode.centerOfMass.y = d3.event.y;
@@ -447,8 +449,8 @@ var buildGroupsPlot = function(canvasId, data, fetchPlayerStateCallback){
             node.centerOfMass.y = d3.event.y;
             node.fx = node.centerOfMass.x;
             node.fy = node.centerOfMass.y;
-            for(i=0; i<playerNodes.length; i++){
-                var currNode = playerNodes[i];
+            for(i=0; i<userNodes.length; i++){
+                var currNode = userNodes[i];
                 if(currNode.groupId == node.groupId){
                     currNode.centerOfMass.x = d3.event.x;
                     currNode.centerOfMass.y = d3.event.y;
@@ -464,8 +466,8 @@ var buildGroupsPlot = function(canvasId, data, fetchPlayerStateCallback){
             }
             node.fx = null;
             node.fy = null;
-            for(i=0; i<playerNodes.length; i++){
-                var currNode = playerNodes[i];
+            for(i=0; i<userNodes.length; i++){
+                var currNode = userNodes[i];
                 if(currNode.groupId == node.groupId){
                     currNode.centerOfMass.x = d3.event.x;
                     currNode.centerOfMass.y = d3.event.y;

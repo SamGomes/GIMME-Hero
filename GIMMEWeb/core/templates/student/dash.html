@@ -39,7 +39,7 @@
 						<div class="table-container column is-full-width">
 							<div class="table" id="currentTasksTable"></div>
 						</div>
-						<div>Selected Players:<div>
+						<div>Selected Students:<div>
 						<div class="table-container column is-full-width">
 							<div class="table" id="selectedRoomTable"></div>
 						</div>
@@ -118,14 +118,14 @@
 						dataType: "json",
 						success: 
 							function (newServerState) {
-								var currSelectedPlayers = newServerState.currSelectedPlayers;
+								var currSelectedUsers = newServerState.currSelectedUsers;
 								
 								var table = $('<table>');
 							    row = $('<tr>').append($('<th>').text('userId'));
 								table.append(row);
 								
-								for(var i=0; i < currSelectedPlayers.length; i++){
-								    row = $('<tr>').append($('<td>').text(currSelectedPlayers[i]));
+								for(var i=0; i < currSelectedUsers.length; i++){
+								    row = $('<tr>').append($('<td>').text(currSelectedUsers[i]));
 									table.append(row);
 								}
 								$('#selectedRoomTable').empty();

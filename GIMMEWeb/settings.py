@@ -2,6 +2,10 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# print(BASE_DIR)
+
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -86,6 +90,7 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+CSRF_COOKIE_SECURE = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'

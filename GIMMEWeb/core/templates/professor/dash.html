@@ -27,7 +27,7 @@
 					<div class='panel-heading'>
 						<div class='columns is-vcentered'>
 							<div class='column'>
-								<p>Players Setup</p>
+								<p>Students Setup</p>
 							</div>
 							<div class='is-pulled-left'>
 								<div class='button minimizerButton'></div>
@@ -36,13 +36,13 @@
 					</div>
 					<div class='panel-block'>
 						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
-							<div class='subtitle is-5' style='color:gray'>Available Players</div>
+							<div class='subtitle is-5' style='color:gray'>Available Students</div>
 							<div class='table-container'>
 								<div class='table' id='freeUsersTable'></div>
 							</div>
 						</div>
 						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
-							<div class='subtitle is-4' style='color:gray'>Selected Players</div>
+							<div class='subtitle is-4' style='color:gray'>Selected Students</div>
 							<div class='table-container column is-full'>
 								<div class='table' id='selectedUsersTable'></div>
 							</div>
@@ -269,10 +269,10 @@
 				<div class='panel-block' style='display: block;'>
 					<div class='columns is-multiline is-mobile'>
 						<div class='column is-full'>
-							<p>Players</p>
+							<p>Students</p>
 						</div>
 						<div class='column is-half is-centered'>
-							<label class='field control-label' for='textinput' data-tooltip='This will only take effect whenever player states are updated'>Players Past Models Window</label>  
+							<label class='field control-label' for='textinput' data-tooltip='This will only take effect whenever player states are updated'>Students Past Models Window</label>  
 							<div class='field control'>
 								<input id='playerWindowId' class='input' type='number' min='1' max='100' placeholder='10'>
 							</div>
@@ -518,7 +518,6 @@ crossorigin='anonymous'></script>
 		};
 
 
-
 		var fetchServerData = function(){
 			$.ajax(
 			{
@@ -606,16 +605,31 @@ crossorigin='anonymous'></script>
 							$('#selectedTasksTable').append(stTable);
 
 
-
-
+							var selectedUsersStates = {}
+							for(var i=0; i<currSelectedUsers; i++){
+								currUserId = currSelectedUsers[i];
+								selectedUsersStates[currUserId] = fetchUserStateCallBack(currUserId)
+							}
+							
 							if(newServerState.readyForNewActivity=='true'){
 								$('#readyForNewActivityButton').removeClass('is-loading');
 								$('#readyForNewActivityButton').html('Start Activity');
 							}
 
 							if(currAdaptationState == undefined && newServerState.currAdaptationState.groups != undefined && currAdaptationState != newServerState.currAdaptationState){
-								buildGroupsPlot('groupsPlot', newServerState.currAdaptationState, undefined);
-								currAdaptationState = newServerState.currAdaptationState;
+
+								$.ajax({
+									type: 'POST',
+									url: '/fetchSelectedUserStates/',
+									success: 
+									function(selectedUsersStates)
+									{
+										buildGroupsPlot('groupsPlot', newServerState.currAdaptationState, JSON.parse(selectedUsersStates));
+										currAdaptationState = newServerState.currAdaptationState;
+									}
+								});
+								
+
 							}
 
 

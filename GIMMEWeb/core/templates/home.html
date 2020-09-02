@@ -1,79 +1,79 @@
 {% load static %}
-{% include "common/header.html" %}  
+{% include 'common/header.html' %}  
 <!DOCTYPE html>
 <html>
-	<body class="layout-default">
-		<div class="section is-small">
-			<div class="has-text-centered animated zoomIn">
+	<body class='layout-default' style='background-image: url("{% static "/media/images/backgroundAnim.gif" %}");'>
+		<div class='section is-small'>
+			<div class='has-text-centered animated zoomIn'>
 				<div>
-					<p class="main-title main-text">Welcome to GIMME-Web</p>
-					<p class="main-subtitle main-text">A sophisticated Group Interactions Management Tool</p>
+					<p class='main-title main-text'>Welcome to GIMME-Web</p>
+					<p class='main-subtitle main-text'>A sophisticated Group Interactions Management Tool</p>
 				</div>
 			</div>
 		</div>
-		<div class="columns is-centered animated zoomIn">
-			<div class="panel panel-block column is-5">
-				<div class="section is-small subtitle is-4">
+		<div class='columns is-centered animated zoomIn'>
+			<div class='panel panel-block column is-5'>
+				<div class='section is-small subtitle is-4'>
 					<h5>First time here? Lets Register you...</h5>
 				</div>
-				<div class="section is-small">
-					<div id="newUserRegButton_home" class="button is-link is-medium is-fullwidth">Register</div>
+				<div class='section is-small'>
+					<div id='newUserRegButton_home' class='button is-link is-medium is-fullwidth'>Register</div>
 				</div>
 			</div>
-			<div class="column is-1"></div>
-			<div class="panel panel-block column is-5">
-				<div class="panel-block is-small subtitle is-4">
+			<div class='column is-1'></div>
+			<div class='panel panel-block column is-5'>
+				<div class='panel-block is-small subtitle is-4'>
 					<h5>Already Have an account? Just Log in!</h5>
 				</div>
-				<div class="panel-block is-small">
-					<div class="container">
+				<div class='panel-block is-small'>
+					<div class='container'>
 						<form>
-							<div class="field">
-							  <label class="label subtitle is-5">User Id</label>
-							  <div class="control">
-							    <input id="loginUserId_home" class="input" type="text" placeholder="User Id" name="userId">
+							<div class='field'>
+							  <label class='label subtitle is-5'>User Id</label>
+							  <div class='control'>
+							    <input id='loginUserId_home' class='input' type='text' placeholder='User Id' name='userId'>
 							  </div>
 							</div>
 
-							<div class="field">
-								<label class="label subtitle is-5">Password</label>
-								<p class="control has-icons-left">
-									<input id="loginPassword_home" class="input" type="password" placeholder="Password" name="password">
-									<span class="icon is-small is-left">
-										<i class="fas fa-lock"></i>
+							<div class='field'>
+								<label class='label subtitle is-5'>Password</label>
+								<p class='control has-icons-left'>
+									<input id='loginPassword_home' class='input' type='password' placeholder='Password' name='password'>
+									<span class='icon is-small is-left'>
+										<i class='fas fa-lock'></i>
 									</span>
 								</p>
 							</div>
 
-							<div class="control">
-								<div id="loginError_home" class="section hero is-danger is-centered has-text-centered">
-									<label class="label subtitle is-4 is-white">Login failed! Credentials not recognized.</label>
+							<div class='control'>
+								<div id='loginError_home' class='section hero is-danger is-centered has-text-centered'>
+									<label class='label subtitle is-4 is-white'>Login failed! Credentials not recognized.</label>
 								</div>
 
-								<div class="field"></div>
-								<p class="buttons">
-									<a id="loginEnterButton_home" class="button is-medium is-link">Enter</a>
-									<a id="loginCancelButton_home" class="button is-medium is-text">Cancel</a>
+								<div class='field'></div>
+								<p class='buttons'>
+									<a id='loginEnterButton_home' class='button is-medium is-link'>Enter</a>
+									<a id='loginCancelButton_home' class='button is-medium is-text'>Cancel</a>
 								</p>
-								<p class="buttons">
-									<div class="field"></div>
-									<a class="button is-fullwidth">
-										<span class="icon">
-											<i class="fab fa-github"></i>
+								<p class='buttons'>
+									<div class='field'></div>
+									<a class='button is-fullwidth'>
+										<span class='icon'>
+											<i class='fab fa-github'></i>
 										</span>
 										<span>Enter with GitHub</span>
 									</a>
-									<div class="field"></div>
-									<a class="button is-danger is-fullwidth">
-										<span class="icon">
-											<i class="fab fa-google"></i>
+									<div class='field'></div>
+									<a class='button is-danger is-fullwidth'>
+										<span class='icon'>
+											<i class='fab fa-google'></i>
 										</span>
 										<span>Enter with Google</span>
 									</a>
-									<div class="field"></div>
-									<a class="button is-info is-fullwidth">
-										<span class="icon">
-											<i class="fab fa-facebook"></i>
+									<div class='field'></div>
+									<a class='button is-info is-fullwidth'>
+										<span class='icon'>
+											<i class='fab fa-facebook'></i>
 										</span>
 										<span>Enter with Facebook</span>
 									</a>
@@ -87,10 +87,10 @@
 		</div>
 	</body>	
 	<script
-		src="https://code.jquery.com/jquery-3.2.1.min.js"
-		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-		crossorigin="anonymous"></script>
-	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+		src='https://code.jquery.com/jquery-3.2.1.min.js'
+		integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='
+		crossorigin='anonymous'></script>
+	<script defer src='https://use.fontawesome.com/releases/v5.0.7/js/all.js'></script>
 	{% include 'common/general.html' %}
 	<script>
 		$('#loginError_home').hide()
@@ -100,7 +100,7 @@
 				$.ajax(
 					{
 						url: '/loginCheck/',
-						dataType: "json", 
+						dataType: 'json', 
 						type: 'POST',
 						data: {'userId': userId, 'password': password },
 						statusCode: {
