@@ -248,7 +248,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     }
 
     var generatePlayerColor = function(node){
-        var userChar = node.userState.myCharacteristics;
+        var userChar = node.userState.characteristics;
         var baseColor = colors[node.groupId].split('#')[1];
         var transparency = 50 + Math.round(175*(1 - sqrDistBetweenVectors(node.groupCharacteristics, userChar)/2));
         return '#' +  baseColor + transparency.toString(16);

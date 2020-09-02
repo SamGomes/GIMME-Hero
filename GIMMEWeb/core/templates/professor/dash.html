@@ -624,6 +624,7 @@ crossorigin='anonymous'></script>
 									success: 
 									function(selectedUsersStates)
 									{
+										console.log(JSON.parse(selectedUsersStates))
 										buildGroupsPlot('groupsPlot', newServerState.currAdaptationState, JSON.parse(selectedUsersStates));
 										currAdaptationState = newServerState.currAdaptationState;
 									}

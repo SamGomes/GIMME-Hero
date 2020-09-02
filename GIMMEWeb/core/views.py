@@ -226,9 +226,14 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		personality = InteractionsProfile(dimensions= personality["dimensions"])
 		return personality
 
-	def getPlayerCurrState(self,  playerId):
+	def getPlayerCurrState(self, playerId):
 		player = User.objects.get(userId=playerId)
 		return PlayerState(profile = self.getPlayerCurrProfile(playerId), characteristics = self.getPlayerCurrCharacteristics(playerId), dist = json.loads(player.currState)["dist"])
+
+	def getPlayerFullName(self, playerId):
+		player = User.objects.get(userId=playerId)
+		return player.fullName
+
 
 
 	def setPlayerPersonalityEst(self, playerId, personality):
@@ -742,15 +747,15 @@ class Views(): #acts as a namespace
 		userStates = {}
 		for userId in selectedUserIds:
 			userState = {}
-			userState["myStateGrid"] = playerBridge.getPlayerStateGrid(userId)
-			userState["myCharacteristics"] = playerBridge.getPlayerCurrCharacteristics(userId)
-			userState["myPersonality"] = playerBridge.getPlayerPersonalityEst(userId)
+			# userState["myStateGrid"] = playerBridge.getPlayerStateGrid(userId)
+			userState["fullName"] = playerBridge.getPlayerFullName(userId)
+			userState["characteristics"] = playerBridge.getPlayerCurrCharacteristics(userId)
+			userState["personalityEst"] = playerBridge.getPlayerPersonalityEst(userId)
 
 			userStates[userId] = userState
 
 
 		userStates = json.dumps(userStates, default=lambda o: o.__dict__, sort_keys=True)
-		# print(userStates)
 		return HttpResponse(userStates)
 
 	@csrf_protect
