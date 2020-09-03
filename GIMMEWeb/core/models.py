@@ -33,6 +33,11 @@ class Task(models.Model):
     profileImportance = models.CharField(max_length=255)
     difficultyImportance = models.CharField(max_length=255)
 
+
+    initDate = models.CharField(max_length=255)
+    finalDate = models.CharField(max_length=255)
+
+
     filePaths = models.CharField(max_length=255)
 
 

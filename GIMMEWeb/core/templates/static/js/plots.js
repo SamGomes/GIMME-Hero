@@ -196,7 +196,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         var group = data.groups[i]
         var avgCharacteristics = data.avgCharacteristics[i]
         var profile = data.profiles[i]
-        var adaptedTaskId = data.adaptedTaskId[i]
+        var adaptedTaskId = data.adaptedTaskIds[i]
         var groupCenterOfMass = {'x': 100 + Math.random()*(width - 300), 'y': 100 + Math.random()*(height - 300)};
 
         groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'profile': profile, 'adaptedTaskId': adaptedTaskId, 'centerOfMass': groupCenterOfMass});
@@ -205,7 +205,6 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             //TODO: add user characteristics
             var userId = group[j];
             userState = selectedUsersStates[userId];
-            console.log(userState)
             userNodes.push({'plotIndex': currPlotIndex++, 'userId': userId, 'userState': userState, 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
             // userNodes.push({'userId': userId, 'userState': fetchPlayerStateCallback(userId), 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
         }
@@ -312,11 +311,11 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         .attr('font-size', 15)
         .attr('fill','black')
         .text(node => { 
-            if(node.adaptedTaskId == -1){
+            if(node.adaptedTaskId == []){
                 alert('Could not compute task for group'+node.groupId+'... Maybe no tasks are available?')
             }
             return 'Group Info\n '+JSON.stringify({ 'group Id': node.groupId, 'characteristics': node.characteristics, 
-            'profile': node.profile, 'adaptedTaskId': node.adaptedTaskId == -1 ? node.adaptedTaskId : '<Could not compute task>' } ,  undefined, 2);
+            'profile': node.profile, 'adaptedTaskId': node.adaptedTaskId == [] ? '<Could not compute task>' : node.adaptedTaskId } ,  undefined, 2);
 
         })
         .call(wrap, 300);
@@ -349,8 +348,6 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                             })
         .attr('stroke', 'black');
     
-
-    console.log(wrap)
     userInfoTooltips.append('text')
         .attr('x', 30)
         .attr('y', 30)

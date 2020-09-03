@@ -116,7 +116,7 @@ serverStateModelBridge = ServerStateModelBridge()
 class CustomTaskModelBridge(TaskModelBridge):
 	
 	def getAllTaskIds(self):
-		return []
+		return serverStateModelBridge.getCurrSelectedTasks()
 	
 	def getAllStoredTaskIds(self):
 		allTasks = Task.objects.all()
@@ -127,19 +127,36 @@ class CustomTaskModelBridge(TaskModelBridge):
 
 
 	def getTaskInteractionsProfile(self, taskId):
-		return InteractionsProfile()
+		task = Task.objects.get(taskId = taskId)
+		return InteractionsProfile(dimensions = json.loads(task.profile)["dimensions"])
 
 	def getMinTaskRequiredAbility(self, taskId):
-		return 0
+		task = Task.objects.get(taskId = taskId)
+		return float(task.minReqAbility)
+
 
 	def getMinTaskDuration(self, taskId):
 		pass
 
+	def getTaskInitDate(self, taskId):
+		task = Task.objects.get(taskId = taskId)
+		return task.initDate
+
+	def getTaskFinalDate(self, taskId):
+		task = Task.objects.get(taskId = taskId)
+		return task.finalDate
+
 	def getTaskDifficultyWeight(self, taskId):
-		return 0
+		task = Task.objects.get(taskId = taskId)
+		return float(task.difficultyImportance)
 
 	def getTaskProfileWeight(self, taskId):
-		return 0
+		task = Task.objects.get(taskId = taskId)
+		return float(task.profileImportance)
+
+	def getTaskFilePaths(self, taskId):
+		task = Task.objects.get(taskId = taskId)
+		return task.filePaths
 
 taskBridge = CustomTaskModelBridge()
 
@@ -147,18 +164,18 @@ taskBridge = CustomTaskModelBridge()
 
 class CustomPlayerModelBridge(PlayerModelBridge):
 	
-	def setAndSavePlayerStateToGrid(self, playerId, newState):
-		player = User.objects.get(userId = playerId)
+	def setAndSavePlayerStateToGrid(self, userId, newState):
+		player = User.objects.get(userId = userId)
 
-		self.setPlayerCharacteristics(playerId, newState.characteristics)
-		self.setPlayerProfile(playerId, newState.profile)
+		self.setPlayerCharacteristics(userId, newState.characteristics)
+		self.setPlayerProfile(userId, newState.profile)
 
-		playerStateGrid = self.getPlayerStateGrid(playerId)
+		playerStateGrid = self.getPlayerStateGrid(userId)
 		playerStateGrid.pushToGrid(newState)
 		player.pastModelIncreasesGrid = json.dumps(playerStateGrid, default=lambda o: o.__dict__)
 		player.save()
 
-	def resetPlayer(self, playerId):
+	def resetPlayer(self, userId):
 		return 0
 
 
@@ -173,20 +190,20 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 				allUsersIds.append(player.userId)
 		return allUsersIds
 
-	def getPlayerName(self, playerId):
-		player = User.objects.get(userId=playerId)
+	def getPlayerName(self, userId):
+		player = User.objects.get(userId=userId)
 		return player.fullName
 
 	
-	def getPlayerCurrProfile(self,  playerId):
-		player = User.objects.get(userId=playerId)
+	def getPlayerCurrProfile(self,  userId):
+		player = User.objects.get(userId=userId)
 		# print(json.dumps(player, default= lambda o: o.__dict__, sort_keys=True))
 		profile = json.loads(player.currState)["profile"]
 		profile = InteractionsProfile(dimensions= profile["dimensions"])
 		return profile
 	
-	def getPlayerStateGrid(self, playerId):
-		player = User.objects.get(userId=playerId)
+	def getPlayerStateGrid(self, userId):
+		player = User.objects.get(userId=userId)
 
 		playerStateGrid = json.loads(player.pastModelIncreasesGrid)
 		cells = [[]]
@@ -215,43 +232,43 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 			numCells = int(playerStateGrid["numCells"])
 			)
 
-	def getPlayerCurrCharacteristics(self, playerId):
-		player = User.objects.get(userId=playerId)
+	def getPlayerCurrCharacteristics(self, userId):
+		player = User.objects.get(userId=userId)
 		characteristics = json.loads(player.currState)["characteristics"]
 		return PlayerCharacteristics(ability= float(characteristics["ability"]), engagement= float(characteristics["engagement"]))
 	
-	def getPlayerPersonalityEst(self, playerId):
-		player = User.objects.get(userId=playerId)
+	def getPlayerPersonalityEst(self, userId):
+		player = User.objects.get(userId=userId)
 		personality = json.loads(player.personality)
 		personality = InteractionsProfile(dimensions= personality["dimensions"])
 		return personality
 
-	def getPlayerCurrState(self, playerId):
-		player = User.objects.get(userId=playerId)
-		return PlayerState(profile = self.getPlayerCurrProfile(playerId), characteristics = self.getPlayerCurrCharacteristics(playerId), dist = json.loads(player.currState)["dist"])
+	def getPlayerCurrState(self, userId):
+		player = User.objects.get(userId=userId)
+		return PlayerState(profile = self.getPlayerCurrProfile(userId), characteristics = self.getPlayerCurrCharacteristics(userId), dist = json.loads(player.currState)["dist"])
 
-	def getPlayerFullName(self, playerId):
-		player = User.objects.get(userId=playerId)
+	def getPlayerFullName(self, userId):
+		player = User.objects.get(userId=userId)
 		return player.fullName
 
 
 
-	def setPlayerPersonalityEst(self, playerId, personality):
-		player = User.objects.get(userId=playerId)
+	def setPlayerPersonalityEst(self, userId, personality):
+		player = User.objects.get(userId=userId)
 		player.personality = json.dumps(personality, default=lambda o: o.__dict__)
 		player.save()
 
 
-	def setPlayerCharacteristics(self, playerId, characteristics):
-		player = User.objects.get(userId=playerId)
-		newState = self.getPlayerCurrState(playerId)
+	def setPlayerCharacteristics(self, userId, characteristics):
+		player = User.objects.get(userId=userId)
+		newState = self.getPlayerCurrState(userId)
 		newState.characteristics = characteristics
 		player.currState = json.dumps(newState, default=lambda o: o.__dict__)
 		player.save()
 
-	def setPlayerProfile(self, playerId, profile):
-		player = User.objects.get(userId=playerId)
-		newState = self.getPlayerCurrState(playerId)
+	def setPlayerProfile(self, userId, profile):
+		player = User.objects.get(userId=userId)
+		newState = self.getPlayerCurrState(userId)
 		newState.profile = profile
 		player.currState = json.dumps(newState, default=lambda o: o.__dict__)
 		player.save()
@@ -460,12 +477,12 @@ class Views(): #acts as a namespace
 
 	@csrf_protect
 	def addSelectedUser(request): #reads (player) from args
-		playerIdToAdd = request.POST.get('userId')
+		userIdToAdd = request.POST.get('userId')
 		currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
 		currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
-		if not playerIdToAdd in currSelectedUsers:
-			currSelectedUsers.append(playerIdToAdd)
-			currFreeUsers.remove(playerIdToAdd)
+		if not userIdToAdd in currSelectedUsers:
+			currSelectedUsers.append(userIdToAdd)
+			currFreeUsers.remove(userIdToAdd)
 		serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
 		serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
 		return HttpResponse('ok')
@@ -498,12 +515,12 @@ class Views(): #acts as a namespace
 
 	@csrf_protect
 	def addSelectedTask(request): #reads (player) from args
-		playerIdToAdd = request.POST.get('taskId')
+		userIdToAdd = request.POST.get('taskId')
 		currSelectedTasks = serverStateModelBridge.getCurrSelectedTasks();
 		currFreeTasks = serverStateModelBridge.getCurrFreeTasks();
-		if not playerIdToAdd in currSelectedTasks:
-			currSelectedTasks.append(playerIdToAdd)
-			currFreeTasks.remove(playerIdToAdd)
+		if not userIdToAdd in currSelectedTasks:
+			currSelectedTasks.append(userIdToAdd)
+			currFreeTasks.remove(userIdToAdd)
 		serverStateModelBridge.setCurrSelectedTasks(currSelectedTasks)
 		serverStateModelBridge.setCurrFreeTasks(currFreeTasks)
 		return HttpResponse('ok')
@@ -549,11 +566,11 @@ class Views(): #acts as a namespace
 			serverStateModelBridge.setReadyForNewActivity(False)
 
 		if request.POST:
-			playerId = request.session.get("userId")
-			characteristics = playerBridge.getPlayerCurrCharacteristics(playerId)
+			userId = request.session.get("userId")
+			characteristics = playerBridge.getPlayerCurrCharacteristics(userId)
 			characteristics = PlayerCharacteristics(ability=float(request.POST["ability"]) - characteristics.ability, engagement=float(request.POST["engagement"]) - characteristics.engagement)
-			playerBridge.setPlayerCharacteristics(playerId, characteristics)
-			playerBridge.setAndSavePlayerStateToGrid(playerId, PlayerState(characteristics=characteristics, profile=playerBridge.getPlayerCurrProfile(playerId)))
+			playerBridge.setPlayerCharacteristics(userId, characteristics)
+			playerBridge.setAndSavePlayerStateToGrid(userId, PlayerState(characteristics=characteristics, profile=playerBridge.getPlayerCurrProfile(userId)))
 			return Views.dash(request)
 
 
