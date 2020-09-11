@@ -338,6 +338,10 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     var htmlFromJSON = function(json, fatherElem, currX, currY){
         
+        if(typeof json == "string" || typeof json == "number"){
+            return;
+        }
+
         var keys = Object.keys(json)
         var x = currX + 50;
         var y = currY + 35;
@@ -349,6 +353,9 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                 continue;
             }
 
+            if(typeof currJson != "string" && typeof currJson != "number"){
+                currKey+=" ↴";
+            }
 
             fatherElem
             .append('text')
@@ -378,11 +385,6 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                 .attr('color', function(node){ return "black"; })
                 .call(wrap, 300)
                 .text(currJson);
-
-            }
-
-            if(typeof currJson == "string"){
-                return;
             }
 
             htmlFromJSON(currJson, fatherElem, x, y);
@@ -401,7 +403,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         .attr('rx', '15px')
         // .attr('ry', '35px')
         .attr('width', 600)
-        .attr('height', 900)
+        .attr('height', 600)
         .attr('fill', function(node){
                                 // var baseColor = colors[node.groupId].split('#')[1];
                                 // transparency = 127;
@@ -442,8 +444,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         .attr('y', 4)
         .attr('rx', '15px')
         // .attr('ry', '35px')
-        .attr('width', 400)
-        .attr('height', 300)
+        .attr('width', 600)
+        .attr('height', 600)
         .attr('fill', function(node){
                                 return generatePlayerColor(node);
                             })
