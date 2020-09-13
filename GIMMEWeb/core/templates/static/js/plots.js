@@ -76,7 +76,6 @@ var buildStatePlot = function(canvasId, data){
         bottom: 15,
         left: 60
     };
-    // console.log(data)
 
     var width = 960 - margin.left - margin.right;
     var height = 500 - margin.top - margin.bottom;
@@ -214,8 +213,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         return (Math.pow(vec1.ability - vec2.ability, 2) + Math.pow(vec1.engagement - vec2.engagement, 2));
     }
 
-    const width = 1400;
-    const height = 500;
+    const width = 2000;
+    const height = 900;
     svg = d3.select('#'+canvasId).append('svg')
       .attr('width', width)
       .attr('height', height);
@@ -269,8 +268,9 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             })
             .attr('cx', node => node.centerOfMass.x)
             .attr('cy', node => node.centerOfMass.y)
-            .attr('stroke-dasharray', '5,5')
+            .attr('stroke-dasharray', '6,5')
             .attr('stroke', node => colors[node.groupId])
+            .attr('stroke-width', '3') 
             .attr('fill', 'transparent');
            
 
@@ -372,14 +372,14 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                 .append('rect')
                 .attr('x', x + 180)
                 .attr('y', y)
-                .attr('width', 180)
+                .attr('width', 220)
                 .attr('height', 30)
                 .attr('fill', function(node){ return "white"; })
                 .attr('stroke', 'black');
 
                 fatherElem
                 .append('text')
-                .attr('x', x + 180)
+                .attr('x', x + 190)
                 .attr('y', y + 20)
                 .attr('font-size', 20)
                 .attr('color', function(node){ return "black"; })
@@ -390,8 +390,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             htmlFromJSON(currJson, fatherElem, x, y);
 
             y += 35*(1+getJSONLength(currJson));
-
         }
+
     };
 
 
@@ -403,7 +403,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         .attr('rx', '15px')
         // .attr('ry', '35px')
         .attr('width', 600)
-        .attr('height', 600)
+        .attr('height', 450)
         .attr('fill', function(node){
                                 // var baseColor = colors[node.groupId].split('#')[1];
                                 // transparency = 127;
@@ -414,14 +414,15 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     
 
     groupInfoTooltips.each(function(node){ 
-            if(node.adaptedTaskId == []){
-                alert('Could not compute task for group'+node.groupId+'... Maybe no tasks are available?')
-            }
-            json = { 'group Id': node.groupId, 'characteristics': node.characteristics, 
-            'profile': node.profile, 'adaptedTaskId': node.adaptedTaskId == [] ? '<Could not compute task>' : node.adaptedTaskId };
-            htmlFromJSON(json, groupInfoTooltips, 0, 0);
+        if(node.adaptedTaskId == []){
+            alert('Could not compute task for group '+node.groupId+'... Maybe no tasks are available?')
+        }
+        json = { 'group Id': node.groupId, 'characteristics': node.characteristics, 
+        'profile': node.profile, 'adaptedTaskId': node.adaptedTaskId == [] ? '<Could not compute task>' : node.adaptedTaskId };
+        var currTooltip = d3.select(groupInfoTooltips._groups[0][node.groupId]);
+        htmlFromJSON(json, currTooltip, 0, 0);
 
-        });
+    });
 
 
     groupIndicators.on('mouseover', function(d){ d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'visible');})
@@ -444,21 +445,23 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         .attr('y', 4)
         .attr('rx', '15px')
         // .attr('ry', '35px')
-        .attr('width', 600)
-        .attr('height', 600)
+        .attr('width', 630)
+        .attr('height', 480)
         .attr('fill', function(node){
                                 return generatePlayerColor(node);
                             })
         .attr('stroke', 'black');
     
     userInfoTooltips.each(function(node){
-        htmlFromJSON({'userId': node.userId, 'userState': node.userState}, userInfoTooltips, 0, 0);
+        var currTooltip = d3.select(userInfoTooltips._groups[0][node.plotIndex]);
+
+        htmlFromJSON({'userId': node.userId, 'userState': node.userState}, currTooltip, 0, 0);
     })
 
-     nodeElements.on('mouseover', function(d){ d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'visible');})
-            .on('mouseout', function(d){ d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'hidden');});        
+    nodeElements.on('mouseover', function(d){ d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'visible');})
+        .on('mouseout', function(d){ d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'hidden');});        
 
-            
+        
 
 
 
