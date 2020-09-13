@@ -360,7 +360,6 @@ crossorigin='anonymous'></script>
 <script>
 	$(document).ready(function(){
 
-		var currAdaptationState = undefined;
 		var currServerState = undefined;
 		var currAdaptationConfig = {
 							'selectedGenAlgId': '', 
@@ -396,8 +395,6 @@ crossorigin='anonymous'></script>
 		var objChanged = function(obj1, obj2){
 			return !(JSON.stringify(obj1) === JSON.stringify(obj2));
 		};
-
-
 
 
 		var generateUserTableFromArray = function(array, buttonIconClass, deleteElementCallback){
@@ -526,10 +523,7 @@ crossorigin='anonymous'></script>
 						dataType: 'json',
 						success: 
 						function (newServerState) {
-							if(!objChanged(currServerState, newServerState)){
-								return;
-							}
-							currServerState = newServerState;
+							
 							var currSelectedUsers = newServerState.currSelectedUsers;
 							var currFreeUsers = newServerState.currFreeUsers;
 							var fuTable = generateUserTableFromArray(currFreeUsers, 'fa-arrow-circle-right', function(){
@@ -604,6 +598,11 @@ crossorigin='anonymous'></script>
 							$('#selectedTasksTable').empty();
 							$('#selectedTasksTable').append(stTable);
 
+							if(currServerState!=undefined && currServerState.currAdaptationState!=undefined && !objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState)){
+								return;
+							}
+
+							currServerState = newServerState;
 
 							var selectedUsersStates = {}
 							for(var i=0; i<currSelectedUsers; i++){
@@ -615,24 +614,19 @@ crossorigin='anonymous'></script>
 								$('#readyForNewActivityButton').removeClass('is-loading');
 								$('#readyForNewActivityButton').html('Start Activity');
 							}
+							
 
-							if(currAdaptationState == undefined && newServerState.currAdaptationState.groups != undefined && currAdaptationState != newServerState.currAdaptationState){
+							$.ajax({
+								type: 'POST',
+								url: '/fetchSelectedUserStates/',
+								success: 
+								function(selectedUsersStates)
+								{
+									currServerState.selectedUsersStates = JSON.parse(selectedUsersStates);
+									buildGroupsPlot('groupsPlot', currServerState.currAdaptationState, currServerState.selectedUsersStates);
 
-								$.ajax({
-									type: 'POST',
-									url: '/fetchSelectedUserStates/',
-									success: 
-									function(selectedUsersStates)
-									{
-										buildGroupsPlot('groupsPlot', newServerState.currAdaptationState, JSON.parse(selectedUsersStates));
-										currAdaptationState = newServerState.currAdaptationState;
-									}
-								});
-								
-
-							}
-
-
+								}
+							});
 						}
 					}
 				);
@@ -650,7 +644,7 @@ crossorigin='anonymous'></script>
 					complete: 
 					function (newServerState) {
 						$('#loadAndStartAdaptation').removeClass("is-loading");
-						currAdaptationState = newServerState.currAdaptationState;
+						currServerState.currAdaptationState = newServerState.currAdaptationState;
 						$('#groupsPlot').empty();
 						// if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
 						// 	buildGroupsPlot( 'groupsPlot', currAdaptationState);
@@ -689,8 +683,7 @@ crossorigin='anonymous'></script>
 						data: newAdaptationConfig,
 						complete: 
 						function (newServerState) {
-							console.log('here');
-							currAdaptationState = newServerState.currAdaptationState;
+							currServerState.currAdaptationState = newServerState.currAdaptationState;
 							startAdaptation();
 						}
 					}
@@ -742,8 +735,8 @@ crossorigin='anonymous'></script>
 
 		$('#rebuildPlot').click(function(){
 			$('#groupsPlot').empty();
-			if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
-				buildGroupsPlot( 'groupsPlot', currAdaptationState);
+			if(currServerState.currAdaptationState != undefined && currServerState.currAdaptationState.groups != undefined){
+				buildGroupsPlot('groupsPlot', currServerState.currAdaptationState, currServerState.selectedUsersStates);
 			}
 		})
 	});

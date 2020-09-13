@@ -362,7 +362,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             .attr('x', x)
             .attr('y', y + 20)
             .attr('font-size', 20)
-            .attr('color', function(node){ return  invertColor(colors[node.groupId], true); })
+            .attr('font-family', 'Calibri,sans-serif')
+            .attr('color', function(node){ return invertColor(colors[node.groupId], true); })
             .call(wrap, 300)
             .text(currKey);
 
@@ -370,18 +371,19 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
                 fatherElem
                 .append('rect')
-                .attr('x', x + 180)
+                .attr('x', x + 140)
                 .attr('y', y)
-                .attr('width', 220)
+                .attr('width', 260)
                 .attr('height', 30)
                 .attr('fill', function(node){ return "white"; })
                 .attr('stroke', 'black');
 
                 fatherElem
                 .append('text')
-                .attr('x', x + 190)
+                .attr('x', x + 150)
                 .attr('y', y + 20)
                 .attr('font-size', 20)
+                .attr('font-family', 'Calibri,sans-serif')
                 .attr('color', function(node){ return "black"; })
                 .call(wrap, 300)
                 .text(currJson);
@@ -403,25 +405,24 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         .attr('rx', '15px')
         // .attr('ry', '35px')
         .attr('width', 600)
-        .attr('height', 450)
+        .attr('height', 650)
         .attr('fill', function(node){
-                                // var baseColor = colors[node.groupId].split('#')[1];
-                                // transparency = 127;
-                                // return '#' +  baseColor + transparency.toString(16);
-                                return colors[node.groupId];
+                                var baseColor = colors[node.groupId].split('#')[1];
+                                transparency = 200;
+                                return '#' +  baseColor + transparency.toString(16);
+                                // return colors[node.groupId];
                             })
         .attr('stroke', 'black');
     
 
     groupInfoTooltips.each(function(node){ 
-        if(node.adaptedTaskId == []){
+        if(node.adaptedTaskId == -1){
             alert('Could not compute task for group '+node.groupId+'... Maybe no tasks are available?')
         }
         json = { 'group Id': node.groupId, 'characteristics': node.characteristics, 
-        'profile': node.profile, 'adaptedTaskId': node.adaptedTaskId == [] ? '<Could not compute task>' : node.adaptedTaskId };
+        'profile': node.profile, 'adaptedTaskId': node.adaptedTaskId == -1 ? '<No computed task>' : node.adaptedTaskId };
         var currTooltip = d3.select(groupInfoTooltips._groups[0][node.groupId]);
         htmlFromJSON(json, currTooltip, 0, 0);
-
     });
 
 
@@ -454,7 +455,6 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     
     userInfoTooltips.each(function(node){
         var currTooltip = d3.select(userInfoTooltips._groups[0][node.plotIndex]);
-
         htmlFromJSON({'userId': node.userId, 'userState': node.userState}, currTooltip, 0, 0);
     })
 
