@@ -115,6 +115,14 @@ serverStateModelBridge = ServerStateModelBridge()
 
 class CustomTaskModelBridge(TaskModelBridge):
 	
+
+	def saveTask(self, task):
+		task.save()
+
+	def removeTask(self, taskId):
+		task = Task.objects.get(taskId=taskId)
+		task.delete()
+
 	def getAllTaskIds(self):
 		return serverStateModelBridge.getCurrSelectedTasks()
 	
@@ -138,6 +146,15 @@ class CustomTaskModelBridge(TaskModelBridge):
 	def getMinTaskDuration(self, taskId):
 		pass
 
+	def getTaskDifficultyWeight(self, taskId):
+		task = Task.objects.get(taskId = taskId)
+		return float(task.difficultyWeight)
+
+	def getTaskProfileWeight(self, taskId):
+		task = Task.objects.get(taskId = taskId)
+		return float(task.profileWeight)
+
+
 	def getTaskInitDate(self, taskId):
 		task = Task.objects.get(taskId = taskId)
 		return task.initDate
@@ -146,13 +163,6 @@ class CustomTaskModelBridge(TaskModelBridge):
 		task = Task.objects.get(taskId = taskId)
 		return task.finalDate
 
-	def getTaskDifficultyWeight(self, taskId):
-		task = Task.objects.get(taskId = taskId)
-		return float(task.difficultyImportance)
-
-	def getTaskProfileWeight(self, taskId):
-		task = Task.objects.get(taskId = taskId)
-		return float(task.profileImportance)
 
 	def getTaskFilePaths(self, taskId):
 		task = Task.objects.get(taskId = taskId)
@@ -164,6 +174,13 @@ taskBridge = CustomTaskModelBridge()
 
 class CustomPlayerModelBridge(PlayerModelBridge):
 	
+	def savePlayer(self, user):
+		player.save()
+
+	def removePlayer(self, userId):
+		player = User.objects.get(userId=userId)
+		player.delete()
+
 	def setAndSavePlayerStateToGrid(self, userId, newState):
 		player = User.objects.get(userId = userId)
 
@@ -441,11 +458,11 @@ class Views(): #acts as a namespace
 				default=lambda o: o.__dict__, sort_keys=True)
 				entry.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
 				try:
-					entry.save()
+					playerBridge.savePlayer(entry)
 
 					# add user to free users
 					if entry.role=="student":
-						currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
+						currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
 						currFreeUsers.append(userId)
 						serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
 
@@ -463,6 +480,26 @@ class Views(): #acts as a namespace
 
 			Views.loginCheck(request)
 			return HttpResponse('200')
+
+
+	@csrf_protect
+	def removeUserRegistration(request):
+		userId = request.POST["userId"]
+
+		currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
+		if userId in currFreeUsers:
+			currFreeUsers.remove(userId)
+			serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
+
+		currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers()
+		if userId in currSelectedUsers:
+			currSelectedUsers.remove(userId)
+			serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
+
+		playerBridge.removePlayer(userId)
+		return HttpResponse('200')
+
+
 
 	@csrf_protect
 	def addAllUsersSelected(request): #reads (player) from args
@@ -687,6 +724,7 @@ class Views(): #acts as a namespace
 		request.session["isNewTaskRegRequest"] = request.POST["isNewTaskRegRequest"]
 		return HttpResponse('ok')
 
+	@csrf_protect	
 	def saveTaskRegistration(request):
 		if request.POST:
 			requestInfo = request.POST
@@ -726,15 +764,15 @@ class Views(): #acts as a namespace
 				 "K_mh": float(requestInfo['profileDim3'])
 				 }
 			), default=lambda o: o.__dict__, sort_keys=True)
-			entry.profileImportance = requestInfo['profileImportance']
-			entry.difficultyImportance = requestInfo['difficultyImportance']
+			entry.profileWeight = requestInfo['profileWeight']
+			entry.difficultyWeight = requestInfo['difficultyWeight']
 
 			entry.filePaths = ''
 
 			# Adaptation stuff
 			if(isNewRegRequest):
 				try:
-					entry.save()
+					taskBridge.saveTask(entry)
 
 					# add task to free tasks
 					currFreeTasks = serverStateModelBridge.getCurrFreeTasks();
@@ -754,6 +792,23 @@ class Views(): #acts as a namespace
 
 			return HttpResponse('200')
 
+
+	@csrf_protect
+	def removeTaskRegistration(request):
+		taskId = request.POST["taskId"]
+
+		currFreeTasks = serverStateModelBridge.getCurrFreeTasks()
+		if(taskId in currFreeTasks):
+			currFreeTasks.remove(taskId)
+			serverStateModelBridge.setCurrFreeTasks(currFreeTasks)
+
+		currSelectedTasks = serverStateModelBridge.getCurrSelectedTasks()
+		if(taskId in currSelectedTasks):
+			currSelectedTasks.remove(taskId)
+			serverStateModelBridge.setCurrSelectedTasks(currSelectedTasks)
+
+		taskBridge.removeTask(taskId)
+		return HttpResponse('200')
 
 
 	# auxiliary methods

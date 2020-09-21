@@ -371,7 +371,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
                 fatherElem
                 .append('rect')
-                .attr('x', x + 140)
+                .attr('x', x + 160)
                 .attr('y', y)
                 .attr('width', 260)
                 .attr('height', 30)
@@ -380,7 +380,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
                 fatherElem
                 .append('text')
-                .attr('x', x + 150)
+                .attr('x', x + 170)
                 .attr('y', y + 20)
                 .attr('font-size', 20)
                 .attr('font-family', 'Calibri,sans-serif')
@@ -404,7 +404,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         .attr('y', 4)
         .attr('rx', '15px')
         // .attr('ry', '35px')
-        .attr('width', 600)
+        .attr('width', 650)
         .attr('height', 650)
         .attr('fill', function(node){
                                 var baseColor = colors[node.groupId].split('#')[1];

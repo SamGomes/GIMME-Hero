@@ -38,25 +38,25 @@
 						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
 							<div class='subtitle is-5' style='color:gray'>Available Students</div>
 							<div class='table-container'>
-								<div class='table' id='freeUsersTable'></div>
+								<div class='table' id='freeUsersTable_professor_dash'></div>
 							</div>
 						</div>
 						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
 							<div class='subtitle is-4' style='color:gray'>Selected Students</div>
 							<div class='table-container column is-full'>
-								<div class='table' id='selectedUsersTable'></div>
+								<div class='table' id='selectedUsersTable_professor_dash'></div>
 							</div>
 						</div>
 					</div>
 					<div class='panel-block'>
 						<div class='column is-offset-5'>
-							<div class='button' type='submit' id='addSpecificPlayer'>Add specific player</div>
+							<div class='button' type='submit' id='addSpecificPlayer_professor_dash'>Add specific player</div>
 						</div>
 						<div class='column is-offset-1'>
-							<div class='button' type='submit' id='addAllUsers'>Select all</div>
+							<div class='button' type='submit' id='addAllUsers_professor_dash'>Select all</div>
 						</div>
 						<div class='column is-offset-1'>
-							<div class='button' type='submit' id='clearAllUsers'>Deselect all</div>
+							<div class='button' type='submit' id='clearAllUsers_professor_dash'>Deselect all</div>
 						</div>
 					</div>
 				</div>
@@ -78,24 +78,24 @@
 						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
 							<div class='subtitle is-5' style='color:gray' >Available Tasks</div>
 							<div class='table-container'>
-								<div class='table' id='freeTasksTable'>
+								<div class='table' id='freeTasksTable_professor_dash'>
 								</div>
 							</div>
 						</div>
 						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
 							<div class='subtitle is-4' style='color:gray'>Selected Tasks</div>
 							<div class='table-container column is-full'>
-								<div class='table' id='selectedTasksTable'></div>
+								<div class='table' id='selectedTasksTable_professor_dash'></div>
 							</div>
 						</div>
 					</div>
 					<div class='panel-block'>
 						<div class='column is-offset-5'></div>
 						<div class='column is-offset-1'>
-							<div class='button' type='submit' id='addAllTasks'>Select all</div>
+							<div class='button' type='submit' id='addAllTasks_professor_dash'>Select all</div>
 						</div>
 						<div class='column is-offset-1'>
-							<div class='button' type='submit' id='clearAllTasks'>Deselect all</div>
+							<div class='button' type='submit' id='clearAllTasks_professor_dash'>Deselect all</div>
 						</div>
 					</div>
 				</div>
@@ -134,7 +134,7 @@
 							<div class='dropdown'>
 								<div class='dropdown-trigger'>
 									<button class='button' aria-haspopup='true' aria-controls='dropdown-menu3'>
-										<span id='selectedGenAlgId'>
+										<span id='selectedGenAlgId_professor_dash'>
 											Grouping Alg.
 										</span>
 										<span class='icon is-small' >
@@ -142,7 +142,7 @@
 										</span>
 									</button>
 								</div>
-								<div class='dropdown-menu' id='dropdown-menu3' role='menu'>
+								<div class='dropdown-menu' id='dropdown-menu3_professor_dash' role='menu'>
 									<div class='dropdown-content'>
 										<a class='dropdown-item is-active'>
 											Random
@@ -152,7 +152,7 @@
 											<div class='form-group'>
 												<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
 												<div class='control'>
-													<input id='numberOfConfigChoicesId' class='input' type='number' min='1' max='1000' placeholder='100'>
+													<input id='numberOfConfigChoicesId_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
 												</div>
 											</div>
 										</a>
@@ -161,17 +161,20 @@
 											<div class='form-group'>
 												<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
 												<div class='control'>
-													<input id='numberOfConfigChoicesId' class='input' type='number' min='1' max='1000' placeholder='100'>
+													<input id='numberOfConfigChoicesId_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
 												</div>
 
 												<label class='column is-4 control-label' for='textinput'>Temperature Decay</label>  
 												<div class='control'>
-													<input id='temperatureDecay' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.5'>
+													<input id='temperatureDecay_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.5'>
 												</div>
 											</div>
 										</a>
 									</div>
 								</div>
+							</div>
+							<div id='adaptationError_professor_dash' class='section hero is-danger is-centered has-text-centered'>
+								<label class='label subtitle is-4 is-white'>Login failed! Credentials not recognized.</label>
 							</div>
 						</div>
 
@@ -181,20 +184,20 @@
 							<div class='dropdown'>
 								<div class='dropdown-trigger'>
 									<button class='button' aria-haspopup='true' aria-controls='dropdown-menu4'>
-										<span id='selectedRegAlgId' >Regression Alg.</span>
+										<span id='selectedRegAlgId_professor_dash' >Regression Alg.</span>
 										<span class='icon is-small'>
 											<i class='fas fa-angle-down' aria-hidden='true'></i>
 										</span>
 									</button>
 								</div>
-								<div class='dropdown-menu' id='dropdown-menu3' role='menu'>
+								<div class='dropdown-menu' id='dropdown-menu3_professor_dash' role='menu'>
 									<div class='dropdown-content'>
 										<a class='dropdown-item is-active'>
 											KNN
 											<div class='form-group'>
 												<label class='column is-4 control-label' for='textinput'>Num NNs</label>  
 												<div class='control'>
-													<input  id='numNNsId' class='input' type='number' min='1' max='100' placeholder='5'>
+													<input  id='numNNsId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>
 												</div>
 											</div>
 										</a>
@@ -219,15 +222,15 @@
 
 						<div class='column is-5 columns is-multiline is-mobile'>
 							<div class='column is-half'>
-								<label id='mgsInput' class='control-label' for='quantity' min='2'>Min Group Size</label>  
+								<label id='mgsInput_professor_dash' class='control-label' for='quantity' min='2'>Min Group Size</label>  
 								<div class='control'>
-									<input id='minNumberOfPlayersPerGroupId' class='input' type='number' min='2' max='100' placeholder='2'>
+									<input id='minNumberOfPlayersPerGroupId_professor_dash' class='input' type='number' min='2' max='100' placeholder='2'>
 								</div>
 							</div>
 							<div class='column is-half'>
 								<label class='control-label' for='quantity'>Max Group Size</label>  
 								<div class='control'>
-									<input id='maxNumberOfPlayersPerGroupId' class='input' type='number' min='3' max='100' placeholder='4'>
+									<input id='maxNumberOfPlayersPerGroupId_professor_dash' class='input' type='number' min='3' max='100' placeholder='4'>
 								</div>
 							</div>
 						</div>
@@ -238,7 +241,7 @@
 						<div class='column is-5'>
 							<label class='control-label' for='quantity'>Preferred Group Size</label>  
 							<div class='control'>
-								<input id='preferredNumberOfPlayersPerGroupId' class='input' type='number' min='2' max='100' placeholder='4'>
+								<input id='preferredNumberOfPlayersPerGroupId_professor_dash' class='input' type='number' min='2' max='100' placeholder='4'>
 							</div>
 						</div>
 					</div>
@@ -253,14 +256,14 @@
 						<div class='column is-half'>
 							<label class='control-label' for='quantity'>Ability</label>  
 							<div class='control'>
-								<input id='qualityWeightsAbId' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
+								<input id='qualityWeightsAbId_professor_dash' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
 							</div>
 						</div>
 
 						<div class='column is-half'>
 							<label class='control-label' for='quantity'>Engagement</label>  
 							<div class='control'>
-								<input id='qualityWeightsEngId' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
+								<input id='qualityWeightsEngId_professor_dash' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
 							</div>
 						</div>
 					</div>
@@ -274,7 +277,7 @@
 						<div class='column is-half is-centered'>
 							<label class='field control-label' for='textinput' data-tooltip='This will only take effect whenever player states are updated'>Students Past Models Window</label>  
 							<div class='field control'>
-								<input id='playerWindowId' class='input' type='number' min='1' max='100' placeholder='10'>
+								<input id='playerWindowId_professor_dash' class='input' type='number' min='1' max='100' placeholder='10'>
 							</div>
 						</div>
 					</div>
@@ -288,12 +291,12 @@
 						<div class='column is-half'>
 							<label class='field control-label' for='textinput'>Number of Bootstrap Iterations</label>  
 							<div class='field control'>
-								<input id='numBootstrapIterationsId' class='input' type='number' min='20' max='100' placeholder='20'>
+								<input id='numBootstrapIterationsId_professor_dash' class='input' type='number' min='20' max='100' placeholder='20'>
 							</div>
 						</div>
 						<div class='column is-half'>
 							<label class='checkbox'>
-							  <input id='precomputeBootstrapId' type='checkbox'>
+							  <input id='precomputeBootstrapId_professor_dash' type='checkbox'>
 							  	Pre-Compute Bootstrap
 							</label>
 						</div>
@@ -304,12 +307,12 @@
 					<div class='columns is-multiline is-mobile'>
 						<div class='column is-half is-centered'>
 							<a>
-								<div class='button is-large' type='submit' id='loadAndStartAdaptation'>Load Setup and Compute New Adaptation</div>
+								<div class='button is-large' type='submit' id='loadAndStartAdaptation_professor_dash'>Load Setup and Compute New Adaptation</div>
 							</a>
 						</div>
 						<div class='column is-half is-centered'>
 							<a>
-								<div class='button is-large' type='submit' id='forceStartAdaptation'>Force Start Adaptation</div>
+								<div class='button is-large' type='submit' id='forceStartAdaptation_professor_dash'>Force Start Adaptation</div>
 							</a>
 						</div>
 					</div>
@@ -333,10 +336,10 @@
 				<div class='panel-block'>
 					<div class='colums'>
 						<div class='column is-one-third'></div>
-						<div class='column is-one-third is-centered' id='groupsPlot'></div>
+						<div class='column is-one-third is-centered' id='groupsPlot_professor_dash'></div>
 						<div class='column is-one-third'></div>
 
-						<div class='button is-large' type='submit' id='rebuildPlot'>Rebuild Plot</div>
+						<div class='button is-large' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plot</div>
 					</div>
 				</div>
 			</div>
@@ -381,11 +384,11 @@ crossorigin='anonymous'></script>
 
 
 		// special button effects
-		$('#qualityWeightsAb').change(function(){
-			$('#qualityWeightsEng').val(1.0 - $(this).val())
+		$('#qualityWeightsAb_professor_dash').change(function(){
+			$('#qualityWeightsEng_professor_dash').val(1.0 - $(this).val())
 		});
-		$('#qualityWeightsEng').change(function(){
-			$('#qualityWeightsAb').val(1.0 - $(this).val())
+		$('#qualityWeightsEng_professor_dash').change(function(){
+			$('#qualityWeightsAb_professor_dash').val(1.0 - $(this).val())
 		});
 
 
@@ -397,122 +400,38 @@ crossorigin='anonymous'></script>
 		};
 
 
-		var generateUserTableFromArray = function(array, buttonIconClass, deleteElementCallback){
-			var table = $('<div>');
-			for(var i=0; i < array.length; i++){
-				tag = $('<span>').text(array[i]);
-				tag.addClass('tag');
-				tag.addClass('is-info');
-				tag.addClass('is-medium');
-				tag.addClass('is-rounded');
-
-				changeButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-				changeButton.append('<i class=\'fas '+buttonIconClass+'\'></i>');
-				changeButton.click(deleteElementCallback)
-
-				tag.append(changeButton)
-
-				table.append(tag);
-			}
-			return table;
-		};
-		var generateTaskTableFromArray = function(array, buttonIconClass, deleteElementCallback, addElementCallback){
+		var generateTableFromArray = function(canAdd, array, tagClass, buttonIconClass, moveElementCallback, addElementCallback, deleteElementCallback){
 			var table = $('<div>');
 			for(var i=0; i < array.length+1; i++){
-				var extendedTag = $('<span id="extendedTab'+i+'"class="hero" style="argin:1em; padding:1em; border-radius:3em">').text(array[i]);
-				extendedTag.append(
-							"<div style='color:white; background-color:transparent; border-color:transparent;'>\
-								<div class='title is-3'>"+array[i]+"</div> \
-								<div class='form-group'>\
-									<label class='column is-4 control-label'>Title</label> \
-									<div class='control'>\
-										<input id='' class='input' type='text' placeholder='Default title'>\
-									</div>\
-								</div>\
-								<div class='form-group'>\
-									<label class='column is-4 control-label'>Description</label> \
-									<div class='control'>\
-										<textarea name='Text1' cols='40' rows='5'></textarea>\
-									</div>\
-								</div>\
-								<div class='form-group'>\
-									<label class='column is-4 control-label' for='textinput'>Profile</label> \
-									<div>\
-										Self Improvement\
-										<div class='form-group'>\
-											<div class='control'>\
-												<input class='input' type='number' min='0' max='1' step='0.01' placeholder='0.25'>\
-											</div>\
-										</div>\
-									</div>\
-									<div>\
-										Competition\
-										<div class='form-group'>\
-											<div class='control'>\
-												<input class='input' type='number' min='0' max='1' step='0.01' placeholder='0.25'>\
-											</div>\
-										</div>\
-									</div>\
-									<div>\
-										Mutual Help\
-										<div class='form-group'>\
-											<div class='control'>\
-												<input class='input' type='number' min='0' max='1' step='0.01' placeholder='0.25'>\
-											</div>\
-										</div>\
-									</div>\
-									<div>\
-										Extreme Altruism\
-										<div class='form-group'>\
-											<div class='control'>\
-												<input class='input' type='number' min='0' max='1' step='0.01' placeholder='0.25'>\
-											</div>\
-										</div>\
-									</div>\
-								</div>\
-								<div class='form-group'>\
-									<div class='button is-rounded is-medium is-pulled-right' style='color:white; background-color:transparent; border-color:transparent;'>\
-										<i class='fas fa-trash'></i>\
-									</div>\
-									<div class='button is-rounded is-medium is-pulled-right' style='color:white; background-color:transparent; border-color:transparent;'>\
-										<i class='fas fa-compress'></i>\
-									</div>\
-								</div>\
-							</div>"
-						);
-				extendedTag.hide()
-
-
+				
 				var tag = $('<span class="button">').text(array[i]);
-				// tag.click(
-				// 	function(){
-				// 		if(array.indexOf($(this)) == array.length - 1){
-				// 			$('#extendedTab'+array.indexOf($(this))).show();
-    //   						callTaskReg('true');
-				// 		}else{
-				// 			deleteElementCallback();
-				// 		}
-				// 	}
-				// );
-
-				changeButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
+				if(!canAdd && i == array.length){
+					return table;
+				}
 				if(i<array.length){
-					changeButton.append('<i class=\'fas '+buttonIconClass+'\'></i>');
-					changeButton.click(deleteElementCallback)
+					var deleteButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
+					deleteButton.append('<i class=\'fas fa-trash\'></i>').click(deleteElementCallback);
+					tag.append(deleteButton);
+					
+					var changeButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
+					changeButton.append('<i class=\'fas '+buttonIconClass+'\'></i>').click(moveElementCallback);
+					tag.append(changeButton);
+
 				}else{
+					var changeButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
 					changeButton.append('<i class=\'fas fa-plus-circle\'></i>');
-      				changeButton.click(function(){callTaskReg('true');});
+      				changeButton.click(addElementCallback);
+					tag.append(changeButton);
 				}
 				tag.addClass('tag');
-				tag.addClass('is-danger');
+				tag.addClass(tagClass);
 				tag.addClass('is-medium');
 				tag.addClass('is-rounded');
-				tag.append(changeButton)
 				table.append(tag);
-				table.append(extendedTag);
 			}
 			return table;
 		};
+
 
 
 		var fetchServerData = function(){
@@ -526,19 +445,35 @@ crossorigin='anonymous'></script>
 							
 							var currSelectedUsers = newServerState.currSelectedUsers;
 							var currFreeUsers = newServerState.currFreeUsers;
-							var fuTable = generateUserTableFromArray(currFreeUsers, 'fa-arrow-circle-right', function(){
-								$.ajax({
-									type: 'POST',
-									url: '/addSelectedUser/',
-									data: {'userId': $(this).parent().text()},
-									success:
-									function()
-									{
-										$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-right').addClass('fa-arrow-circle-left');
-									}
+							var fuTable = generateTableFromArray(true, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
+								function(){
+									$.ajax({
+										type: 'POST',
+										url: '/addSelectedUser/',
+										data: {'userId': $(this).parent().text()},
+										success:
+										function()
+										{
+											$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-right').addClass('fa-arrow-circle-left');
+										}
+									});
+								},
+								function(){
+									callUserReg('true');
+								},
+								function(){
+									$.ajax({
+										type: 'POST',
+										url: '/removeUserRegistration/',
+										data: {'userId': $(this).parent().text()},
+										success:
+										function()
+										{
+										}
+									});
 								});
-							});
-							var suTable = generateUserTableFromArray(currSelectedUsers, 'fa-arrow-circle-left', function(){
+							var suTable = generateTableFromArray(false, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
+								function(){
 								$.ajax({
 									type: 'POST',
 									url: '/removeSelectedUser/',
@@ -548,18 +483,35 @@ crossorigin='anonymous'></script>
 									{
 										$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-left').addClass('fa-arrow-circle-right');
 									}
+								},
+								function(){
+									callUserReg('true');
+								},
+								function(){
+									$.ajax({
+										type: 'POST',
+										url: '/removeUserRegistration/',
+										data: {'userId': $(this).parent().text()},
+										success:
+										function()
+										{
+										}
+									});
 								});
 							});
-							$('#freeUsersTable').empty();
-							$('#freeUsersTable').append(fuTable);
+							$('#freeUsersTable_professor_dash').empty();
+							$('#freeUsersTable_professor_dash').append(fuTable);
 
-							$('#selectedUsersTable').empty();
-							$('#selectedUsersTable').append(suTable);
+							$('#selectedUsersTable_professor_dash').empty();
+							$('#selectedUsersTable_professor_dash').append(suTable);
 
 							var currFreeTasks = newServerState.currFreeTasks;
 							var currSelectedTasks = newServerState.currSelectedTasks;
 
-							ftTable = generateTaskTableFromArray(currFreeTasks, 'fa-arrow-circle-right', 
+							console.log(currFreeTasks);
+							console.log(currSelectedTasks);
+
+							ftTable = generateTableFromArray(true, currFreeTasks, 'is-danger', 'fa-arrow-circle-right', 
 										function(){
 											$.ajax({
 												type: 'POST',
@@ -573,10 +525,21 @@ crossorigin='anonymous'></script>
 											});
 										},
 										function(){
-
+											callTaskReg('true');
+										},
+										function(){
+											$.ajax({
+												type: 'POST',
+												url: '/removeTaskRegistration/',
+												data: {'taskId': $(this).parent().text()},
+												success:
+												function()
+												{
+												}
+											});
 										});
 
-							stTable = generateTaskTableFromArray(currSelectedTasks, 'fa-arrow-circle-left', 
+							stTable = generateTableFromArray(false, currSelectedTasks, 'is-danger', 'fa-arrow-circle-left', 
 										function(){
 											$.ajax({
 												type: 'POST',
@@ -588,15 +551,27 @@ crossorigin='anonymous'></script>
 													$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-left').addClass('fa-arrow-circle-right');
 												}
 											});
-										},function(){
-
+										},
+										function(){
+											callTaskReg('true');
+										},
+										function(){
+											$.ajax({
+												type: 'POST',
+												url: '/removeTaskRegistration/',
+												data: {'taskId': $(this).parent().text()},
+												success:
+												function()
+												{
+												}
+											});
 										});
 
-							$('#freeTasksTable').empty();
-							$('#freeTasksTable').append(ftTable);
+							$('#freeTasksTable_professor_dash').empty();
+							$('#freeTasksTable_professor_dash').append(ftTable);
 
-							$('#selectedTasksTable').empty();
-							$('#selectedTasksTable').append(stTable);
+							$('#selectedTasksTable_professor_dash').empty();
+							$('#selectedTasksTable_professor_dash').append(stTable);
 
 							if(currServerState!=undefined && currServerState.currAdaptationState!=undefined && !objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState)){
 								return;
@@ -611,8 +586,8 @@ crossorigin='anonymous'></script>
 							}
 							
 							if(newServerState.readyForNewActivity=='true'){
-								$('#readyForNewActivityButton').removeClass('is-loading');
-								$('#readyForNewActivityButton').html('Start Activity');
+								$('#readyForNewActivityButton_professor_dash').removeClass('is-loading');
+								$('#readyForNewActivityButton_professor_dash').html('Start Activity');
 							}
 							
 
@@ -657,21 +632,21 @@ crossorigin='anonymous'></script>
 
 		var loadAndStartAdaptation = function(){
 			newAdaptationConfig = {
-							'selectedGenAlgId': $('#selectedGenAlgId').text(), 
-							'selectedRegAlgId': $('#selectedRegAlgId').text(),
+							'selectedGenAlgId': $('#selectedGenAlgId_professor_dash').text(), 
+							'selectedRegAlgId': $('#selectedRegAlgId_professor_dash').text(),
 
-							'temperatureDecay': $('#temperatureDecay').val(),
+							'temperatureDecay': $('#temperatureDecay_professor_dash').val(),
 
-							'numberOfConfigChoices': $('#numberOfConfigChoicesId').val(),
-							'numNNs': $('#numNNsId').val(),
-							'minNumberOfPlayersPerGroup': $('#minNumberOfPlayersPerGroupId').val(),
-							'maxNumberOfPlayersPerGroup': $('#maxNumberOfPlayersPerGroupId').val(),
-							'preferredNumberOfPlayersPerGroup': $('#preferredNumberOfPlayersPerGroupId').val(),
-							'qualityWeightsAb': $('#qualityWeightsAbId').val(),
-							'qualityWeightsEng': $('#qualityWeightsEngId').val(),
-							'playerWindow': $('#playerWindowId').val(),
-							'numBootstrapIterations': $('#numBootstrapIterationsId').val(),
-							'precomputeBootstrap': $('#precomputeBootstrapId').val()
+							'numberOfConfigChoices': $('#numberOfConfigChoicesId_professor_dash').val(),
+							'numNNs': $('#numNNsId_professor_dash').val(),
+							'minNumberOfPlayersPerGroup': $('#minNumberOfPlayersPerGroupId_professor_dash').val(),
+							'maxNumberOfPlayersPerGroup': $('#maxNumberOfPlayersPerGroupId_professor_dash').val(),
+							'preferredNumberOfPlayersPerGroup': $('#preferredNumberOfPlayersPerGroupId_professor_dash').val(),
+							'qualityWeightsAb': $('#qualityWeightsAbId_professor_dash').val(),
+							'qualityWeightsEng': $('#qualityWeightsEngId_professor_dash').val(),
+							'playerWindow': $('#playerWindowId_professor_dash').val(),
+							'numBootstrapIterations': $('#numBootstrapIterationsId_professor_dash').val(),
+							'precomputeBootstrap': $('#precomputeBootstrapId_professor_dash').val()
 						};
 			// if(objChanged(currAdaptationConfig, newAdaptationConfig)){
 				currAdaptationConfig = newAdaptationConfig;
@@ -694,47 +669,47 @@ crossorigin='anonymous'></script>
 			
 		}
 
-		$('#loadAndStartAdaptation').click(function(){
-			$('#loadAndStartAdaptation').addClass("is-loading");
+		$('#loadAndStartAdaptation_professor_dash').click(function(){
+			$('#loadAndStartAdaptation_professor_dash').addClass("is-loading");
 			loadAndStartAdaptation();
 		})
-		$('#forceStartAdaptation').click(function(){
+		$('#forceStartAdaptation_professor_dash').click(function(){
 			startAdaptation();
 		})
-		$('#addAllUsers').click(function(){
+		$('#addAllUsers_professor_dash').click(function(){
 			$.ajax(
 			{
 				url: '/addAllUsersSelected/'
 			}
 			);
 		})
-		$('#clearAllUsers').click(function(){
+		$('#clearAllUsers_professor_dash').click(function(){
 			$.ajax(
 			{
 				url: '/removeAllUsersSelected/'
 			}
 			);
 		})
-		$('#addAllTasks').click(function(){
+		$('#addAllTasks_professor_dash').click(function(){
 			$.ajax(
 			{
 				url: '/addAllTasksSelected/'
 			}
 			);
 		})
-		$('#clearAllTasks').click(function(){
+		$('#clearAllTasks_professor_dash').click(function(){
 			$.ajax(
 			{
 				url: '/removeAllTasksSelected/'
 			}
 			);
 		})
-		$('#addSpecificPlayer').click(function(){
+		$('#addSpecificPlayer_professor_dash').click(function(){
 			startAdaptation();
 		}).hide()
 
-		$('#rebuildPlot').click(function(){
-			$('#groupsPlot').empty();
+		$('#rebuildPlot_professor_dash').click(function(){
+			$('#groupsPlot_professor_dash').empty();
 			if(currServerState.currAdaptationState != undefined && currServerState.currAdaptationState.groups != undefined){
 				buildGroupsPlot('groupsPlot', currServerState.currAdaptationState, currServerState.selectedUsersStates);
 			}

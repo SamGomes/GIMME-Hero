@@ -30,8 +30,9 @@ class Task(models.Model):
     description = models.CharField(max_length=255)
     minReqAbility = models.CharField(max_length=255)
     profile = models.CharField(max_length=255)
-    profileImportance = models.CharField(max_length=255)
-    difficultyImportance = models.CharField(max_length=255)
+    
+    profileWeight = models.CharField(max_length=255)
+    difficultyWeight = models.CharField(max_length=255)
 
 
     initDate = models.CharField(max_length=255)
