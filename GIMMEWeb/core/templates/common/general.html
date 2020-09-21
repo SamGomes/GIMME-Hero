@@ -128,29 +128,19 @@ var parseSessionAttribute = function(attributeStr){
 
 
 var callUserReg = function(isNewUserRegRequest){
-    $.ajax({
-                type: 'POST',
-                url: '/updateUserRegMode/',
-                data: { 'isNewUserRegRequest': isNewUserRegRequest },
-                success:
-                function()
-                {
-                    document.location.href = '/userRegistration/';
-                }
-    });
+    if(isNewUserRegRequest){
+        document.location.href = '/userRegistration/';
+    }else{
+        document.location.href = '/userUpdate/';
+    }
 }
 
 var callTaskReg = function(isNewTaskRegRequest){
-    $.ajax({
-                type: 'POST',
-                url: '/updateTaskRegMode/',
-                data: { 'isNewTaskRegRequest': isNewTaskRegRequest },
-                success:
-                function()
-                {
-                    document.location.href = '/taskRegistration/';
-                }
-    });
+    if(isNewTaskRegRequest){
+        document.location.href = '/taskRegistration/';
+    }else{
+        document.location.href = '/taskUpdate/';
+    }
 }
 
 </script>

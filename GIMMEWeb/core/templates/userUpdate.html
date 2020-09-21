@@ -34,23 +34,40 @@
 					{{ form }}
 					{% csrf_token %}
 
-					<div class="subtitle">Account Registration</div>
+					<div class="subtitle">
+						Manage Account
+					</div>
 					<p>* fields are mandatory</p>
-		
+
+					<div class="subtitle">
+						<h5>Change Account</h5>
+					</div>
+
+
+					<div class="file is-boxed">
+					  <label class="file-label">
+					    <input class="file-input" type="file" name="avatar" id="avatar_userRegistration">
+					    <span class="file-cta">
+					      <img id="avatarImg_userRegistration" class="is-rounded" style="max-height: 3.5rem" onError="this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';" src="../static/media/images/userAvatars/{{request.session.userId}}.png">
+					      <span class="file-label">
+					        Upload your Avatar
+					      </span>
+					    </span>
+					  </label>
+					</div>
+
 					<div class="field requiredFormField">
-					  <label class="label">Role*</label>
+					  <label class="label">Role</label>
 					  <div class="control" name="role">
-						<input type="radio" name="role" value="designer"> designer<br>
-						<input type="radio" name="role" value="professor"> professor<br>
-					    <input type="radio" name="role" value="student"> student
+						<input type="radio" name="role" value="{{request.session.role}}" checked=true disabled> {{request.session.role}}<br>
 					  </div>
 					</div>
 
 					<div class="field requiredFormField">
-						<label class="label">E-Mail*</label>
+						<label class="label">E-Mail</label>
 						<p class="control has-icons-left">
-							<input class="input" type="text" placeholder="E-Mail" name="email">
-							<!-- <input class="input" type="email" placeholder="E-Mail" name="email"> -->
+							<input class="input" type="text" value="{{request.session.email}}" name="email">
+							
 							<span class="icon is-small is-left">
 								<i class="fas fa-lock"></i>
 							</span>
@@ -58,9 +75,9 @@
 					</div>
 
 					<div class="field requiredFormField">
-						<label class="label">Password*</label>
+						<label class="label">Password</label>
 						<p class="control has-icons-left">
-							<input class="input" type="password" placeholder="Password" name="password" id="password_userRegistration">
+							<input class="input" type="password" value="{{request.session.password}}" name="password" id="password_userRegistration">
 							<span class="icon is-small is-left">
 								<i class="fas fa-lock"></i>
 							</span>
@@ -78,28 +95,26 @@
 					</div>
 
 					<div class="field requiredFormField">
-					  <label class="label">Full Name*</label>
+					  <label class="label">Full Name</label>
 					  <div class="control">
-					    <input class="input" type="text" placeholder="Full Name" name="fullName">
+					    <input class="input" type="text" value="{{request.session.fullName}}" name="fullName">
 					  </div>
 					</div>
 
-
+<!-- 
 					<div class="field requiredFormField">
-					  <label class="label">Age*</label>
+					  <label class="label">Age</label>
 					  <div class="control">
-					    <input class="input" type="number" placeholder="Age" name="age">
+					    <input class="input" type="number" value="{{request.session.age}}" name="age">
 					  </div>
-					</div>
+					</div> -->
 
 
 
 					<div class="field requiredFormField">
-					  <label class="label">Gender*</label>
+					  <label class="label">Gender</label>
 					  <div class="control" name="gender">
-					    <input type="radio" name="gender" value="male"> Male<br>
-						<input type="radio" name="gender" value="female"> Female<br>
-						<input type="radio" name="gender" value="other"> Other 
+						<input type="radio" name="gender" value="{{request.session.gender}}" checked=true> {{request.session.gender}}<br>
 					  </div>
 					</div>
 
@@ -108,15 +123,23 @@
 					<div class="field">
 					  <label class="label">Preferences</label>
 					  <div class="control">
-					    <input class="input" type="text" placeholder="Tell us a little about yourself..." name="preferences">
+					    <input class="input" type="text" value="{{request.session.preferences}}" name="preferences">
 					  </div>
 					</div>
 
-
-					<div class="control">
-						<input class="button is-link" value="Enter" id="submitButton_userRegistration">
+					<div class="field control">
+						<input class="button is-link" value="Change Account" id="changeButton_userRegistration">
 					</div>
-		
+
+					<div class="panel">
+						<div class="subtitle has-text-danger">
+							<h5>Danger Zone</h5>
+						</div>
+
+						<div class="field control">
+							<input class="button is-danger" value="Remove Account" id="removeButton_userRegistration">
+						</div>
+					</div>
 
 				</form>
 			</div>

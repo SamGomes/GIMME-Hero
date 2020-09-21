@@ -366,6 +366,8 @@ class Views(): #acts as a namespace
 
 	def userRegistration(request):
 		return render(request, 'userRegistration.html')
+	def userUpdate(request):
+		return render(request, 'userUpdate.html')
 
 	def isUserRegistered(userId):
 		returned = {}
@@ -393,11 +395,6 @@ class Views(): #acts as a namespace
 	    }
 		return render(request, dashSwitch.get(request.session.get("role")), request.session.__dict__)
        
-	
-	@csrf_protect	
-	def updateUserRegMode(request):
-		request.session["isNewUserRegRequest"] = request.POST["isNewUserRegRequest"]
-		return HttpResponse('ok')
 	
 	def getRandomString(length):
 		letters = string.ascii_lowercase
@@ -704,7 +701,14 @@ class Views(): #acts as a namespace
 
 
 	def taskRegistration(request):
+		if(request.session.get('role') != "professor"):
+			return HttpResponse('500')
 		return render(request, 'taskRegistration.html')
+	
+	def taskUpdate(request):
+		if(request.session.get('role') != "professor"):
+			return HttpResponse('500')
+		return render(request, 'taskUpdate.html')
 
 
 	def isTaskRegistered(taskId):
@@ -718,11 +722,6 @@ class Views(): #acts as a namespace
 				returned = { 'task': False, 'storedTasks': Task.objects.filter(taskId__contains=taskId) }
 		return returned
 
-
-	@csrf_protect	
-	def updateTaskRegMode(request):
-		request.session["isNewTaskRegRequest"] = request.POST["isNewTaskRegRequest"]
-		return HttpResponse('ok')
 
 	@csrf_protect	
 	def saveTaskRegistration(request):

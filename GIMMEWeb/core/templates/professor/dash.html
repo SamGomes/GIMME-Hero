@@ -445,7 +445,8 @@ crossorigin='anonymous'></script>
 							
 							var currSelectedUsers = newServerState.currSelectedUsers;
 							var currFreeUsers = newServerState.currFreeUsers;
-							var fuTable = generateTableFromArray(true, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
+							var fuTable = generateTableFromArray(
+								true, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
 								function(){
 									$.ajax({
 										type: 'POST',
@@ -459,7 +460,7 @@ crossorigin='anonymous'></script>
 									});
 								},
 								function(){
-									callUserReg('true');
+									callUserReg(true);
 								},
 								function(){
 									$.ajax({
@@ -472,20 +473,21 @@ crossorigin='anonymous'></script>
 										}
 									});
 								});
-							var suTable = generateTableFromArray(false, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
+							var suTable = generateTableFromArray(
+								false, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
 								function(){
-								$.ajax({
-									type: 'POST',
-									url: '/removeSelectedUser/',
-									data: {'userId': $(this).parent().text()},
-									success: 
-									function()
-									{
-										$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-left').addClass('fa-arrow-circle-right');
-									}
+									$.ajax({
+										type: 'POST',
+										url: '/removeSelectedUser/',
+										data: {'userId': $(this).parent().text()},
+										success: 
+										function()
+										{
+											$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-left').addClass('fa-arrow-circle-right');
+										}
 								},
 								function(){
-									callUserReg('true');
+									callUserReg(true);
 								},
 								function(){
 									$.ajax({
@@ -508,64 +510,63 @@ crossorigin='anonymous'></script>
 							var currFreeTasks = newServerState.currFreeTasks;
 							var currSelectedTasks = newServerState.currSelectedTasks;
 
-							console.log(currFreeTasks);
-							console.log(currSelectedTasks);
+							ftTable = generateTableFromArray(
+								true, currFreeTasks, 'is-danger', 'fa-arrow-circle-right', 
+								function(){
+									$.ajax({
+										type: 'POST',
+										url: '/addSelectedTask/',
+										data: {'taskId': $(this).parent().text()},
+										success:
+										function()
+										{
+											$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-right').addClass('fa-arrow-circle-left');
+										}
+									});
+								},
+								function(){
+									callTaskReg(true);
+								},
+								function(){
+									$.ajax({
+										type: 'POST',
+										url: '/removeTaskRegistration/',
+										data: {'taskId': $(this).parent().text()},
+										success:
+										function()
+										{
+										}
+									});
+								});
 
-							ftTable = generateTableFromArray(true, currFreeTasks, 'is-danger', 'fa-arrow-circle-right', 
-										function(){
-											$.ajax({
-												type: 'POST',
-												url: '/addSelectedTask/',
-												data: {'taskId': $(this).parent().text()},
-												success:
-												function()
-												{
-													$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-right').addClass('fa-arrow-circle-left');
-												}
-											});
-										},
-										function(){
-											callTaskReg('true');
-										},
-										function(){
-											$.ajax({
-												type: 'POST',
-												url: '/removeTaskRegistration/',
-												data: {'taskId': $(this).parent().text()},
-												success:
-												function()
-												{
-												}
-											});
-										});
-
-							stTable = generateTableFromArray(false, currSelectedTasks, 'is-danger', 'fa-arrow-circle-left', 
-										function(){
-											$.ajax({
-												type: 'POST',
-												url: '/removeSelectedTask/',
-												data: {'taskId': $(this).parent().text()},
-												success: 
-												function()
-												{
-													$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-left').addClass('fa-arrow-circle-right');
-												}
-											});
-										},
-										function(){
-											callTaskReg('true');
-										},
-										function(){
-											$.ajax({
-												type: 'POST',
-												url: '/removeTaskRegistration/',
-												data: {'taskId': $(this).parent().text()},
-												success:
-												function()
-												{
-												}
-											});
-										});
+							stTable = generateTableFromArray(
+								false, currSelectedTasks, 'is-danger', 'fa-arrow-circle-left', 
+								function(){
+									$.ajax({
+										type: 'POST',
+										url: '/removeSelectedTask/',
+										data: {'taskId': $(this).parent().text()},
+										success: 
+										function()
+										{
+											$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-left').addClass('fa-arrow-circle-right');
+										}
+									});
+								},
+								function(){
+									callTaskReg(true);
+								},
+								function(){
+									$.ajax({
+										type: 'POST',
+										url: '/removeTaskRegistration/',
+										data: {'taskId': $(this).parent().text()},
+										success:
+										function()
+										{
+										}
+									});
+								});
 
 							$('#freeTasksTable_professor_dash').empty();
 							$('#freeTasksTable_professor_dash').append(ftTable);
@@ -597,8 +598,11 @@ crossorigin='anonymous'></script>
 								success: 
 								function(selectedUsersStates)
 								{
-									currServerState.selectedUsersStates = JSON.parse(selectedUsersStates);
-									buildGroupsPlot('groupsPlot', currServerState.currAdaptationState, currServerState.selectedUsersStates);
+									console.log(currServerState)
+									if(currServerState.currAdaptationState != undefined && currServerState.currAdaptationState.groups != undefined){
+										currServerState.selectedUsersStates = JSON.parse(selectedUsersStates);
+										buildGroupsPlot('groupsPlot', currServerState.currAdaptationState, currServerState.selectedUsersStates);
+									}
 
 								}
 							});
