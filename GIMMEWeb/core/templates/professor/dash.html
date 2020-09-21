@@ -102,6 +102,7 @@
 			</section>
 
 
+
 		<section class='section'>
 			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
@@ -393,8 +394,6 @@ crossorigin='anonymous'></script>
 
 
 
-
-
 		var objChanged = function(obj1, obj2){
 			return !(JSON.stringify(obj1) === JSON.stringify(obj2));
 		};
@@ -574,7 +573,7 @@ crossorigin='anonymous'></script>
 							$('#selectedTasksTable_professor_dash').empty();
 							$('#selectedTasksTable_professor_dash').append(stTable);
 
-							if(currServerState!=undefined && currServerState.currAdaptationState!=undefined && !objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState)){
+							if(currServerState!=undefined && newServerState!=undefined && currServerState.currAdaptationState!=undefined && newServerState.currAdaptationState!=undefined && !objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState)){
 								return;
 							}
 
@@ -598,12 +597,10 @@ crossorigin='anonymous'></script>
 								success: 
 								function(selectedUsersStates)
 								{
+									console.log("here")
 									console.log(currServerState)
-									if(currServerState.currAdaptationState != undefined && currServerState.currAdaptationState.groups != undefined){
-										currServerState.selectedUsersStates = JSON.parse(selectedUsersStates);
-										buildGroupsPlot('groupsPlot', currServerState.currAdaptationState, currServerState.selectedUsersStates);
-									}
-
+									currServerState.selectedUsersStates = JSON.parse(selectedUsersStates);
+									buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.selectedUsersStates);
 								}
 							});
 						}
@@ -622,9 +619,9 @@ crossorigin='anonymous'></script>
 					dataType: 'json',
 					complete: 
 					function (newServerState) {
-						$('#loadAndStartAdaptation').removeClass("is-loading");
+						$('#loadAndStartAdaptation_professor_dash').removeClass("is-loading");
 						currServerState.currAdaptationState = newServerState.currAdaptationState;
-						$('#groupsPlot').empty();
+						$('#groupsPlot_professor_dash').empty();
 						// if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
 						// 	buildGroupsPlot( 'groupsPlot', currAdaptationState);
 						// }
@@ -715,7 +712,7 @@ crossorigin='anonymous'></script>
 		$('#rebuildPlot_professor_dash').click(function(){
 			$('#groupsPlot_professor_dash').empty();
 			if(currServerState.currAdaptationState != undefined && currServerState.currAdaptationState.groups != undefined){
-				buildGroupsPlot('groupsPlot', currServerState.currAdaptationState, currServerState.selectedUsersStates);
+				buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.selectedUsersStates);
 			}
 		})
 	});
