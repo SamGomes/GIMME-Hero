@@ -611,11 +611,14 @@ class Views(): #acts as a namespace
 	# professor methods
 	@csrf_protect
 	def startAdaptation(request):
-		# return Views.fetchServerState(request)
-		# try:
-		currAdaptationState = adaptation.iterate()
-		# except ValueError:
-		# 	return HttpResponseNotFound('something went wrong!')
+		
+		try:
+			currAdaptationState = adaptation.iterate()
+		except ValueError:
+			print("ValueError error!")
+			return HttpResponse('error')
+
+		print("here")
 		serverStateModelBridge.setCurrAdaptationState(currAdaptationState)
 		serverStateModelBridge.setReadyForNewActivity(True)
 		return Views.fetchServerState(request)

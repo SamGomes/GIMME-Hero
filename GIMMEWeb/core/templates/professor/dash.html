@@ -174,9 +174,6 @@
 									</div>
 								</div>
 							</div>
-							<div id='adaptationError_professor_dash' class='section hero is-danger is-centered has-text-centered'>
-								<label class='label subtitle is-4 is-white'>Login failed! Credentials not recognized.</label>
-							</div>
 						</div>
 
 
@@ -317,9 +314,16 @@
 							</a>
 						</div>
 					</div>
+
+					<div id='adaptationError_professor_dash' class='section hero is-danger is-centered has-text-centered'>
+						<label class='label subtitle is-4 is-white'>Adaptation Error! Tip: verify if enough players are selected.</label>
+					</div>
+					
+
 				</div>
 			</div>
 		</section>
+
 
 
 		<section class='section'>
@@ -363,6 +367,8 @@ crossorigin='anonymous'></script>
 {% include 'common/CSRFTSetup.html' %}
 <script>
 	$(document).ready(function(){
+
+		$("#adaptationError_professor_dash").hide();
 
 		var currServerState = undefined;
 		var currAdaptationConfig = {
@@ -440,8 +446,7 @@ crossorigin='anonymous'></script>
 						// authentication: getCookie('csrftoken'),
 						dataType: 'json',
 						success: 
-						function (newServerState) {
-							
+						function (newServerState) {							
 							var currSelectedUsers = newServerState.currSelectedUsers;
 							var currFreeUsers = newServerState.currFreeUsers;
 							var fuTable = generateTableFromArray(
@@ -573,7 +578,9 @@ crossorigin='anonymous'></script>
 							$('#selectedTasksTable_professor_dash').empty();
 							$('#selectedTasksTable_professor_dash').append(stTable);
 
-							if(currServerState!=undefined && newServerState!=undefined && currServerState.currAdaptationState!=undefined && newServerState.currAdaptationState!=undefined && !objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState)){
+
+							
+							if((currServerState!=undefined && currServerState.currAdaptationState!=undefined) && !objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState)){
 								return;
 							}
 
@@ -597,13 +604,12 @@ crossorigin='anonymous'></script>
 								success: 
 								function(selectedUsersStates)
 								{
-									console.log("here")
-									console.log(currServerState)
 									currServerState.selectedUsersStates = JSON.parse(selectedUsersStates);
 									buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.selectedUsersStates);
 								}
 							});
 						}
+
 					}
 				);
 		};
@@ -617,14 +623,25 @@ crossorigin='anonymous'></script>
 				{
 					url: '/startAdaptation/',
 					dataType: 'json',
-					complete: 
-					function (newServerState) {
+					error:
+					function(){
+						$("#adaptationError_professor_dash").show();
+					},
+					success:
+					function(){
+						$("#adaptationError_professor_dash").hide();
+					},
+					complete:
+					function(newServerState){
+
 						$('#loadAndStartAdaptation_professor_dash').removeClass("is-loading");
+						if(!$("#adaptationError_professor_dash").is(":hidden")){
+							return;
+						}
+
 						currServerState.currAdaptationState = newServerState.currAdaptationState;
 						$('#groupsPlot_professor_dash').empty();
-						// if(currAdaptationState != undefined && currAdaptationState.groups != undefined){
-						// 	buildGroupsPlot( 'groupsPlot', currAdaptationState);
-						// }
+						
 					}
 				}
 			);
