@@ -132,8 +132,10 @@ var buildStatePlot = function(canvasId, data){
 
 var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     
+
+
     // from http://bl.ocks.org/mbostock/7555321
-    function wrap(text, width) {
+    var wrap = function (text, width) {
         text.each(function () {
             var text = d3.select(this),
                 words = text.text().split(/\s+/).reverse(),
@@ -166,7 +168,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         });
     }
 
-    function getRandomColor() {
+    var getRandomColor = function() {
         var letters = '0123456789ABCDEF';
         var color = '#';
         for (var i = 0; i < 6; i++) {
@@ -176,7 +178,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     }
 
     // from: https://stackoverflow.com/questions/35969656/how-can-i-generate-the-opposite-color-according-to-current-color
-    function invertColor(hex, isBW) {
+    var invertColor = function(hex, isBW) {
         if (hex.indexOf('#') === 0) {
             hex = hex.slice(1);
         }
@@ -203,21 +205,31 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         // pad each with zeros and return
         return "#" + padZero(r) + padZero(g) + padZero(b);
     }
-    function padZero(str, len) {
+    var padZero = function(str, len) {
         len = len || 2;
         var zeros = new Array(len).join('0');
         return (zeros + str).slice(-len);
     }
 
-    function sqrDistBetweenVectors(vec1, vec2){
+    var sqrDistBetweenVectors = function(vec1, vec2){
         return (Math.pow(vec1.ability - vec2.ability, 2) + Math.pow(vec1.engagement - vec2.engagement, 2));
     }
 
-    const width = 2000;
-    const height = 900;
-    svg = d3.select('#'+canvasId).append('svg')
-      .attr('width', width)
-      .attr('height', height);
+    var resizeCanvas = function(canvas){
+        var targetWidth = canvasContainer.getBoundingClientRect().width-50;
+        canvas.attr("width", targetWidth);
+        canvas.attr("height", targetWidth/aspect);
+    }
+
+    svg = d3.select('#'+canvasId).append('svg');
+
+    var canvas = svg;
+    var canvasContainer = canvas.node().parentNode.parentNode.parentNode;
+
+    aspect = 2.0 / 0.5;
+
+    resizeCanvas(canvas);
+
 
     var userNodes = [];
     var groupIndicatorNodes = [];
@@ -225,12 +237,25 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     var currPlotIndex = 0;
  
+    d3.select(window)
+        .on("resize", function() {
+            resizeCanvas(canvas);
+            // for (i=0; i<data.groups.length; i++){
+            //     var group = data.groups[i]  
+            //     var groupCenterOfMass = {'x': 100 + Math.random()*(canvasContainer.getBoundingClientRect().width - 300), 'y': 100 + Math.random()*(canvasContainer.getBoundingClientRect().height - 300)};
+            //     groupIndicatorNodes[i]['centerOfMass'] = groupCenterOfMass;
+            //     for(var j=0;j<group.length; j++){
+            //         userNodes[j]['centerOfMass'] = groupCenterOfMass;
+            //     }
+            // }
+        });
+
     for (i=0; i<data.groups.length; i++){
         var group = data.groups[i]
         var avgCharacteristics = data.avgCharacteristics[i]
         var profile = data.profiles[i]
         var adaptedTaskId = data.adaptedTaskIds[i]
-        var groupCenterOfMass = {'x': 100 + Math.random()*(width - 300), 'y': 100 + Math.random()*(height - 300)};
+        var groupCenterOfMass = {'x': 100 + Math.random()*(canvasContainer.getBoundingClientRect().width - 300), 'y': 100 + Math.random()*(canvasContainer.getBoundingClientRect().height - 300)};
 
         groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'profile': profile, 'adaptedTaskId': adaptedTaskId, 'centerOfMass': groupCenterOfMass});
         
@@ -276,7 +301,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
 
 
-    function clamp(num, min, max) {
+    var clamp = function(num, min, max) {
       return num <= min ? min : num >= max ? max : num;
     }
 

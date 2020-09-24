@@ -370,7 +370,7 @@ crossorigin='anonymous'></script>
 
 		$("#adaptationError_professor_dash").hide();
 
-		var currServerState = undefined;
+		var currServerState = {};
 		var currAdaptationConfig = {
 							'selectedGenAlgId': '', 
 							'selectedRegAlgId': '',
@@ -403,6 +403,9 @@ crossorigin='anonymous'></script>
 		var objChanged = function(obj1, obj2){
 			return !(JSON.stringify(obj1) === JSON.stringify(obj2));
 		};
+		var canComputeAdaptation = function(newServerState){
+			return currServerState=={} || (objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState) && newServerState.currAdaptationState!=undefined);
+		}
 
 
 		var generateTableFromArray = function(canAdd, array, tagClass, buttonIconClass, moveElementCallback, addElementCallback, deleteElementCallback){
@@ -578,9 +581,7 @@ crossorigin='anonymous'></script>
 							$('#selectedTasksTable_professor_dash').empty();
 							$('#selectedTasksTable_professor_dash').append(stTable);
 
-
-							
-							if((currServerState!=undefined && currServerState.currAdaptationState!=undefined) && !objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState)){
+							if(currSelectedUsers.length==0 || !canComputeAdaptation(newServerState)){
 								return;
 							}
 
@@ -623,25 +624,18 @@ crossorigin='anonymous'></script>
 				{
 					url: '/startAdaptation/',
 					dataType: 'json',
-					error:
-					function(){
-						$("#adaptationError_professor_dash").show();
-					},
-					success:
-					function(){
-						$("#adaptationError_professor_dash").hide();
-					},
 					complete:
 					function(newServerState){
-
 						$('#loadAndStartAdaptation_professor_dash').removeClass("is-loading");
-						if(!$("#adaptationError_professor_dash").is(":hidden")){
+
+						if(newServerState.responseText.localeCompare("error")==0){
+							$("#adaptationError_professor_dash").show();
 							return;
 						}
 
-						currServerState.currAdaptationState = newServerState.currAdaptationState;
+						$("#adaptationError_professor_dash").hide();
+						currServerState = newServerState;
 						$('#groupsPlot_professor_dash').empty();
-						
 					}
 				}
 			);
@@ -666,7 +660,7 @@ crossorigin='anonymous'></script>
 							'numBootstrapIterations': $('#numBootstrapIterationsId_professor_dash').val(),
 							'precomputeBootstrap': $('#precomputeBootstrapId_professor_dash').val()
 						};
-			// if(objChanged(currAdaptationConfig, newAdaptationConfig)){
+			// if(canComputeAdaptation()){
 				currAdaptationConfig = newAdaptationConfig;
 				$.ajax(
 					{

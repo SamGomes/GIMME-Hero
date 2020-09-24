@@ -617,8 +617,7 @@ class Views(): #acts as a namespace
 		except ValueError:
 			print("ValueError error!")
 			return HttpResponse('error')
-
-		print("here")
+			
 		serverStateModelBridge.setCurrAdaptationState(currAdaptationState)
 		serverStateModelBridge.setReadyForNewActivity(True)
 		return Views.fetchServerState(request)
