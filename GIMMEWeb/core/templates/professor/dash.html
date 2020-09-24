@@ -404,7 +404,7 @@ crossorigin='anonymous'></script>
 			return !(JSON.stringify(obj1) === JSON.stringify(obj2));
 		};
 		var canComputeAdaptation = function(newServerState){
-			return currServerState=={} || (objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState) && newServerState.currAdaptationState!=undefined);
+			return currServerState!="error" && (currServerState=={} || (objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState) && newServerState!= undefined && newServerState.currAdaptationState!=undefined));
 		}
 
 
@@ -628,14 +628,15 @@ crossorigin='anonymous'></script>
 					function(newServerState){
 						$('#loadAndStartAdaptation_professor_dash').removeClass("is-loading");
 
+						$('#groupsPlot_professor_dash').empty();
 						if(newServerState.responseText.localeCompare("error")==0){
 							$("#adaptationError_professor_dash").show();
+							currServerState = "error";
 							return;
 						}
 
 						$("#adaptationError_professor_dash").hide();
 						currServerState = newServerState;
-						$('#groupsPlot_professor_dash').empty();
 					}
 				}
 			);
