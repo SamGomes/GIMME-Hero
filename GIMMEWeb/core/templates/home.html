@@ -96,24 +96,29 @@
 		$('#loginError_home').hide()
 		$(document).ready(function(){
 
-			var loginCheck = function(userId, password, errorFunc){
-				$.ajax(
-					{
-						url: '/loginCheck/',
+			var loginCheck = function(userId, password){
+				$.ajax({
+						url: '/loginCheck/', 
 						dataType: 'json', 
-						type: 'POST',
-						data: {'userId': userId, 'password': password },
+						type: 'POST', 
+						data: {'userId': userId, 'password': password }, 
 						statusCode: {
-							404: errorFunc(),
-							200: function(){ 
+							200: 
+							function(response){ 
+								console.log("why?")
 								$('#loginError_home').hide();
-	                			document.location.href = '/dash/';
+								document.location.href = '/dash/';
+							}, 
+							500: 
+							function(response){ 
+								$('#loginError_home').show(500);
+								setTimeout(function(){ $('#loginError_home').hide(500); }, 3000);
 							}
 						}
-					}
-				);
+						
+					});
 			};
-			loginCheck('{{user.username}}','{{user.password}}', function(){ $('#loginError_home').hide(); });
+			// loginCheck('{{user.username}}','{{user.password}}', function(){ $('#loginError_home').hide(); });
 
 			$('#newUserRegButton_home').click(function(){
 		    	callUserReg('true');
@@ -126,11 +131,7 @@
 
 			$('#loginEnterButton_home').click(function(){
 				loginCheck($('#loginUserId_home').val(),
-							$('#loginPassword_home').val(),
-							function() {
-							  $('#loginError_home').show(500);
-							  setTimeout(function(){ $('#loginError_home').hide(500); }, 3000);
-							});
+							$('#loginPassword_home').val());
 			});
 
 		});

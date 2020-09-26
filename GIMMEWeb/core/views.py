@@ -11,7 +11,7 @@ from django.views.generic import View
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseServerError
 
 from django.contrib.auth.models import User
 
@@ -344,16 +344,17 @@ class Views(): #acts as a namespace
 		return render(request, 'home.html')
 
 	def loginCheck(request):
-		userId = request.POST.get('userId')
-		password = request.POST.get('password')
-		print('[INFO] login check performed on user with id - ' + str(userId) + ', password - '+str(password))
+		if request.method == "POST":
+			userId = request.POST.get('userId')
+			password = request.POST.get('password')
+			print('[INFO] login check performed on user with id - ' + str(userId) + ', password - '+str(password))
 
-		user = authenticate(request, username=userId, password=password)
-		if user is not None:
-			request.user = user
-			return Views.dash(request)
-		else:
-			return HttpResponseNotFound("userId not found")
+			user = authenticate(request, username=userId, password=password)
+			if user is not None:
+				request.user = user
+				return HttpResponse('ok')
+			else:
+				return HttpResponseServerError()
 
 
 	def logoutCheck(request):
@@ -385,6 +386,7 @@ class Views(): #acts as a namespace
 		if(not hasattr(request.user,'userprofile')):
 			return render(request,'home.html')
 		else:
+			print(dashSwitch.get(request.user.userprofile.role))
 			return render(request, dashSwitch.get(request.user.userprofile.role))
 
 	
