@@ -113,7 +113,7 @@
 					}
 				);
 			};
-			loginCheck('{{request.session.userId}}','{{request.session.password}}', function(){ $('#loginError_home').hide(); });
+			loginCheck('{{user.username}}','{{user.password}}', function(){ $('#loginError_home').hide(); });
 
 			$('#newUserRegButton_home').click(function(){
 		    	callUserReg('true');

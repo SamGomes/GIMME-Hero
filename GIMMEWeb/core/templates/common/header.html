@@ -17,10 +17,9 @@
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
       </a>
-
-     <div class="button" id="initServerButton_header"> Init Server</div>
-
     </div>
+
+    <div class="button" id="initServerButton_header"> Init Server</div>
 
     <div class="navbar-menu">
       <div class="navbar-start">
@@ -84,7 +83,7 @@
                 </div>
               </div>
               <div class="column">
-                <a href="{% url 'logout' %}"><button class="button is-link modal-button">Logout</button></a>
+                <a href="{% url 'logoutCheck' %}"><button class="button is-link modal-button">Logout</button></a>
               </div>
             </p>
           </div>
@@ -101,7 +100,7 @@
 <script type="text/javascript">
   $('#logo_header').click(function(){
       document.location.href = '/dash/';
-  })
+  });
   $(document).ready(function(){
     $('#newUserRegButton').click(function(){
       callUserReg(true);
@@ -112,9 +111,10 @@
   });
 
   $('#initServerButton_header').click(function(){
-    $.ajax({
-            type: 'POST',
-            url: '/initServer/'
-          });
+      console.log("here");
+      $.ajax({
+              type: 'POST',
+              url: '/initServer/'
+            });
   });
 </script>

@@ -13,7 +13,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseNotFound
 
-from GIMMEWeb.core.models import User
+from django.contrib.auth.models import User
+
+from GIMMEWeb.core.models import UserProfile
 from GIMMEWeb.core.models import Task
 from GIMMEWeb.core.models import ServerState
 
@@ -22,7 +24,8 @@ from django.views.decorators.csrf import csrf_protect
 from GIMMECore import *
 
 
-from django.contrib.auth import authenticate, logout
+from django.contrib.auth import authenticate
+from django.contrib.auth import logout
 
 
 intProfTemplate = InteractionsProfile({"K_cp": 0, "K_ea": 0, "K_i": 0, "K_mh": 0})
@@ -184,14 +187,14 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		player.save()
 
 	def getPlayer(self, userId):
-		return User.objects.get(userId = userId)
+		return UserProfile.objects.get(userId = userId)
 
 	def removePlayer(self, userId):
-		player = User.objects.get(userId = userId)
+		player = UserProfile.objects.get(userId = userId)
 		player.delete()
 
 	def setAndSavePlayerStateToGrid(self, userId, newState):
-		player = User.objects.get(userId = userId)
+		player = UserProfile.objects.get(userId = userId)
 
 		self.setPlayerCharacteristics(userId, newState.characteristics)
 		self.setPlayerProfile(userId, newState.profile)
@@ -209,7 +212,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		return serverStateModelBridge.getCurrSelectedUsers()
 
 	def getAllStoredUserIds(self):
-		allUsers = User.objects.all()
+		allUsers = UserProfile.objects.all()
 		allUsersIds = []
 		for player in allUsers:
 			if player.role=="student":
@@ -217,19 +220,19 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		return allUsersIds
 
 	def getPlayerName(self, userId):
-		player = User.objects.get(userId=userId)
+		player = User.objects.get(username=userId).userprofile
 		return player.fullName
 
 	
 	def getPlayerCurrProfile(self,  userId):
-		player = User.objects.get(userId=userId)
+		player = User.objects.get(username=userId).userprofile
 		# print(json.dumps(player, default= lambda o: o.__dict__, sort_keys=True))
 		profile = json.loads(player.currState)["profile"]
 		profile = InteractionsProfile(dimensions= profile["dimensions"])
 		return profile
 	
 	def getPlayerStateGrid(self, userId):
-		player = User.objects.get(userId=userId)
+		player = User.objects.get(username=userId).userprofile
 
 		playerStateGrid = json.loads(player.pastModelIncreasesGrid)
 		cells = [[]]
@@ -259,41 +262,41 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 			)
 
 	def getPlayerCurrCharacteristics(self, userId):
-		player = User.objects.get(userId=userId)
+		player = User.objects.get(username=userId).userprofile
 		characteristics = json.loads(player.currState)["characteristics"]
 		return PlayerCharacteristics(ability= float(characteristics["ability"]), engagement= float(characteristics["engagement"]))
 	
 	def getPlayerPersonalityEst(self, userId):
-		player = User.objects.get(userId=userId)
+		player = User.objects.get(username=userId).userprofile
 		personality = json.loads(player.personality)
 		personality = InteractionsProfile(dimensions= personality["dimensions"])
 		return personality
 
 	def getPlayerCurrState(self, userId):
-		player = User.objects.get(userId=userId)
+		player = User.objects.get(username=userId).userprofile
 		return PlayerState(profile = self.getPlayerCurrProfile(userId), characteristics = self.getPlayerCurrCharacteristics(userId), dist = json.loads(player.currState)["dist"])
 
 	def getPlayerFullName(self, userId):
-		player = User.objects.get(userId=userId)
+		player = User.objects.get(username=userId).userprofile
 		return player.fullName
 
 
 
 	def setPlayerPersonalityEst(self, userId, personality):
-		player = User.objects.get(userId=userId)
+		player = User.objects.get(username=userId).userprofile
 		player.personality = json.dumps(personality, default=lambda o: o.__dict__)
 		player.save()
 
 
 	def setPlayerCharacteristics(self, userId, characteristics):
-		player = User.objects.get(userId=userId)
+		player = User.objects.get(username=userId).userprofile
 		newState = self.getPlayerCurrState(userId)
 		newState.characteristics = characteristics
 		player.currState = json.dumps(newState, default=lambda o: o.__dict__)
 		player.save()
 
 	def setPlayerProfile(self, userId, profile):
-		player = User.objects.get(userId=userId)
+		player = User.objects.get(username=userId).userprofile
 		newState = self.getPlayerCurrState(userId)
 		newState.profile = profile
 		player.currState = json.dumps(newState, default=lambda o: o.__dict__)
@@ -342,22 +345,19 @@ class Views(): #acts as a namespace
 
 	def loginCheck(request):
 		userId = request.POST.get('userId')
-		email = request.POST.get('email')
 		password = request.POST.get('password')
-
 		print('[INFO] login check performed on user with id - ' + str(userId) + ', password - '+str(password))
 
-		breakpoint()
-		user = authenticate(request, userId=userId, password=password)
-		
+		user = authenticate(request, username=userId, password=password)
 		if user is not None:
-			return redirect("/dash")
+			request.user = user
+			return Views.dash(request)
 		else:
 			return HttpResponseNotFound("userId not found")
 
 
 	def logoutCheck(request):
-	    logout(request)
+		logout(request)
 
 	def userRegistration(request):
 		return render(request, 'userRegistration.html')
@@ -368,11 +368,11 @@ class Views(): #acts as a namespace
 		returned = {}
 		if(userId != None):
 			try:
-				returned["user"] = User.objects.get(userId=userId)
-				returned["storedUsers"] = User.objects.filter(userId__contains=userId)
+				returned["user"] = User.objects.get(username=userId).userprofile
+				returned["storedUsers"] = UserProfile.objects.filter(userId__contains=userId)
 			except ObjectDoesNotExist as e:
 				print("user does not exist!")
-				returned = {"user": False, "storedUsers": User.objects.filter(userId__contains=userId)}
+				returned = {"user": False, "storedUsers": User.objects.filter(username__contains=userId)}
 		return returned
 
 	def dash(request):
@@ -382,10 +382,10 @@ class Views(): #acts as a namespace
 			'designer': 'designer/dash.html',
 			None: 'home.html'
 		}
-		if(not hasattr(request.user, "role")):
-			return render(request, 'home.html')
+		if(not hasattr(request.user,'userprofile')):
+			return render(request,'home.html')
 		else:
-			return render(request, dashSwitch.get(request.user.role))
+			return render(request, dashSwitch.get(request.user.userprofile.role))
 
 	
 	def getRandomString(length):
@@ -400,7 +400,7 @@ class Views(): #acts as a namespace
 		if request.POST:
 			requestInfo = request.POST
 			
-			entry = User() 
+			entry = User()
 
 			userId = ""
 
@@ -413,18 +413,18 @@ class Views(): #acts as a namespace
 				lenOfIsReg = len(isReg["storedUsers"])
 
 
-			entry.userId = userId
-			requestInfo._mutable = True
-			requestInfo["userId"] = userId
-			requestInfo._mutable = False
+			entry.username = userId
+			# requestInfo._mutable = True
+			# requestInfo["userId"] = userId
+			# requestInfo._mutable = False
 
-			# entry.isAuthenticated = requestInfo["isAuthenticated"]
+
 			entry.email = requestInfo["email"]
-			entry.password = requestInfo["password"]
+			entry.set_password(requestInfo["password"])
 			entry.role = requestInfo["role"]
 			entry.age = requestInfo["age"]
 			entry.gender = requestInfo["gender"]
-			entry.preferences = requestInfo["preferences"]
+			entry.description = requestInfo["description"]
 			entry.fullName = requestInfo["fullName"]
 
 			entry.avatar = ""
@@ -442,11 +442,11 @@ class Views(): #acts as a namespace
 				), 
 			default=lambda o: o.__dict__, sort_keys=True)
 			entry.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
+			
 			try:
 				playerBridge.savePlayer(entry)
-
 				# add user to free users
-				if entry.role=="student":
+				if entry.userprofile.role=="student":
 					currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
 					currFreeUsers.append(userId)
 					serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
@@ -465,13 +465,10 @@ class Views(): #acts as a namespace
 			requestInfo = request.POST
 			
 
-			breakpoint()
-			print(json.dumps(requestInfo, default=lambda o: o.__dict__, sort_keys=True))
-
 			entry = playerBridge.getPlayer(requestInfo["userId"])
 
 
-			entry.userId = requestInfo["userId"]
+			entry.user.username = requestInfo["userId"]
 			entry.email = requestInfo["email"]
 			entry.password = requestInfo["password"]
 			entry.role = requestInfo["role"]
@@ -800,7 +797,7 @@ class Views(): #acts as a namespace
 					return HttpResponse('500')
 			else:
 				try:
-					User.objects.filter(userId=userId).update(**entry.__dict__)
+					UserProfile.objects.filter(userId=userId).update(**entry.__dict__)
 				except IntegrityError as e:
 					request.session['playerRegistrationError'] = e.__class__.__name__
 					return HttpResponse('500')
