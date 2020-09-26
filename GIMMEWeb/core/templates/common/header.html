@@ -47,7 +47,7 @@
 
 
 
-      {% if not request.session.userId %}
+      {% if not user.is_authenticated %}
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
@@ -64,19 +64,19 @@
         <div class="navbar-item center-left is-hoverable">
           <figure class="image navbar-item"  height=100px >
             <!-- sets placeholder if no image is found -->
-            <img class="is-rounded" style="max-height: 3.5rem" onError="this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';" src="../static/media/images/userAvatars/{{request.session.userId}}.png">
+            <img class="is-rounded" style="max-height: 3.5rem" src="{{user.avatar.url}}">
           </figure>
           <div class="navbar-dropdown is-right">
 
             <p class="navbar-item columns" >
               <div class="column">
-                Logged in as a <strong>{{request.session.role}}</strong> called <strong>{{request.session.fullName}}</strong>
+                Logged in as a <strong>{{user.role}}</strong> called <strong>{{user.fullName}}</strong>
               </div>
               <div class="column">
-                userId: <strong>{{request.session.userId}}</strong>
+                userId: <strong>{{user.userId}}</strong>
               </div>
               <div class="column">
-                email: <strong>{{request.session.email}}</strong>
+                email: <strong>{{user.email}}</strong>
               </div>
               <div class="column">
                 <div class="button is-link" id="updateUserRegButton">
@@ -100,18 +100,7 @@
 {% include 'common/general.html' %}
 <script type="text/javascript">
   $('#logo_header').click(function(){
-    $.ajax({
-            type: 'POST',
-            url: '/isLoggedIn/',
-            statusCode: {
-              500: function() {
-                document.location.href = '/home/';
-              },
-              200: function(){ 
-                document.location.href = '/dash/';
-            }
-        }
-    });
+      document.location.href = '/dash/';
   })
   $(document).ready(function(){
     $('#newUserRegButton').click(function(){

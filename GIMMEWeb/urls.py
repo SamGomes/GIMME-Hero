@@ -3,11 +3,12 @@ from django.urls import path, re_path
 from django.conf.urls import include, url
 from GIMMEWeb.core.views import Views
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     re_path(r'^$', Views.home, name=""),
     re_path(r'^home/$', Views.home, name="home"),
-    re_path(r'^logout/$', Views.logout, name="logout"),
-    re_path(r'^isLoggedIn/$', Views.isLoggedIn, name="isLoggedIn"),
 
     re_path(r'^initServer/$', Views.initServer, name="initServer"),
 
@@ -20,6 +21,7 @@ urlpatterns = [
     re_path(r'^taskUpdate/', Views.taskUpdate, name="taskUpdate"),
 
     re_path(r'^saveUserRegistration/$', Views.saveUserRegistration, name="saveUserRegistration"),
+    re_path(r'^updateUserRegistration/$', Views.updateUserRegistration, name="updateUserRegistration"),
     re_path(r'^removeUserRegistration/$', Views.removeUserRegistration, name="removeUserRegistration"),
 
     re_path(r'^saveTaskRegistration/$', Views.saveTaskRegistration, name="saveTaskRegistration"),
@@ -36,6 +38,8 @@ urlpatterns = [
     re_path(r'^removeSelectedTask/$', Views.removeSelectedTask, name="removeSelectedTask"),
 
     re_path(r'^loginCheck/$', Views.loginCheck, name="loginCheck"),
+    re_path(r'^logoutCheck/$', Views.logoutCheck, name="logoutCheck"),
+
     re_path(r'^startAdaptation/', Views.startAdaptation, name="startAdaptation"),
     re_path(r'^configAdaptation/', Views.configAdaptation, name="configAdaptation"),
 
@@ -47,5 +51,4 @@ urlpatterns = [
     re_path(r'^fetchSelectedUserStates/', Views.fetchSelectedUserStates, name="fetchSelectedUserStates"),
 ]
 
-# if settings.DEBUG:
-#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

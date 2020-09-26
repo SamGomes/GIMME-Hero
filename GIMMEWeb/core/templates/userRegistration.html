@@ -4,22 +4,6 @@
 <!DOCTYPE html>
 <html>
 	<body class="layout-default">
-		
-	{% if form.errors %}
-		{% for field in form %}
-			{% for error in field.errors %}
-				<div class="alert alert-danger">
-				<strong>{{ error|escape }}</strong>
-				</div>
-			{% endfor %}
-		{% endfor %}
-		{% for error in form.non_field_errors %}
-			<div class="alert alert-danger">
-			<strong>{{ error|escape }}</strong>
-			</div>
-		{% endfor %}
-	{% endif %}
-
 
 		<section class="section columns">
 			<div class="column"></div>
@@ -50,7 +34,6 @@
 						<label class="label">E-Mail*</label>
 						<p class="control has-icons-left">
 							<input class="input" type="text" placeholder="E-Mail" name="email">
-							<!-- <input class="input" type="email" placeholder="E-Mail" name="email"> -->
 							<span class="icon is-small is-left">
 								<i class="fas fa-lock"></i>
 							</span>
@@ -143,24 +126,8 @@
 		    $('#password_userRegistration').on('input',passCheck);
 		    $('#repPassword_userRegistration').on('input',passCheck);
 
-		    var file = $("#avatar_userRegistration").change(function(){
-			    if(this.files.length > 0)
-			    {
-			    	var reader = new FileReader();
-					reader.onload = function() {
-
-						var arrayBuffer = this.result,
-						array = new Uint8Array(arrayBuffer),
-						binaryString = String.fromCharCode.apply(null, array);
-
-			      		$("#avatarImg_userRegistration").attr('src', `data:image/png;base64,${binaryString}`);
-					}
-					reader.readAsArrayBuffer(this.files[0])
-
-			    }
-			});
-
 		    $('#submitButton_userRegistration').click(function(){
+
 			    console.log($('#form_userRegistration').serialize())
 			    // for(i=0; i<30; i++){
 			    	$.ajax({

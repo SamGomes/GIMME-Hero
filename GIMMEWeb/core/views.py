@@ -22,6 +22,9 @@ from django.views.decorators.csrf import csrf_protect
 from GIMMECore import *
 
 
+from django.contrib.auth import authenticate, logout
+
+
 intProfTemplate = InteractionsProfile({"K_cp": 0, "K_ea": 0, "K_i": 0, "K_mh": 0})
 
 
@@ -119,6 +122,9 @@ class CustomTaskModelBridge(TaskModelBridge):
 	def saveTask(self, task):
 		task.save()
 
+	def getTask(self, taskId):
+		return Task.objects.get(taskId = taskId)
+
 	def removeTask(self, taskId):
 		task = Task.objects.get(taskId=taskId)
 		task.delete()
@@ -174,11 +180,14 @@ taskBridge = CustomTaskModelBridge()
 
 class CustomPlayerModelBridge(PlayerModelBridge):
 	
-	def savePlayer(self, user):
+	def savePlayer(self, player):
 		player.save()
 
+	def getPlayer(self, userId):
+		return User.objects.get(userId = userId)
+
 	def removePlayer(self, userId):
-		player = User.objects.get(userId=userId)
+		player = User.objects.get(userId = userId)
 		player.delete()
 
 	def setAndSavePlayerStateToGrid(self, userId, newState):
@@ -338,31 +347,17 @@ class Views(): #acts as a namespace
 
 		print('[INFO] login check performed on user with id - ' + str(userId) + ', password - '+str(password))
 
-		if(not Views.isUserRegistered(userId)["user"]):
+		breakpoint()
+		user = authenticate(request, userId=userId, password=password)
+		
+		if user is not None:
+			return redirect("/dash")
+		else:
 			return HttpResponseNotFound("userId not found")
 
-		storedUser = User.objects.get(userId = userId)
 
-		# check if pass is right
-		if storedUser.password != password:
-			return HttpResponseNotFound("pass not found")
-		
-		request.session.flush()
-		userDict = storedUser.__dict__.copy()
-		userDict.pop('_state')
-		request.session.update(userDict)
-
-		request.session.save()
-
-		return redirect("/dash")
-
-	def logout(request):
-	    try:
-	        request.session.flush()
-	    except KeyError:
-	        pass
-	        return HttpResponse("You're already logged out.")
-	    return redirect("/home")
+	def logoutCheck(request):
+	    logout(request)
 
 	def userRegistration(request):
 		return render(request, 'userRegistration.html')
@@ -380,21 +375,18 @@ class Views(): #acts as a namespace
 				returned = {"user": False, "storedUsers": User.objects.filter(userId__contains=userId)}
 		return returned
 
-	def isLoggedIn(request):
-		if(request.session.get('userId') != None):
-			return HttpResponse('200')
-		else:
-			return HttpResponse('500')
-
 	def dash(request):
 		dashSwitch = {
-	        'student': 'student/dash.html',
-	        'professor': 'professor/dash.html',
-	        'designer': 'designer/dash.html',
-	        None: 'home.html'
-	    }
-		return render(request, dashSwitch.get(request.session.get("role")), request.session.__dict__)
-       
+			'student': 'student/dash.html',
+			'professor': 'professor/dash.html',
+			'designer': 'designer/dash.html',
+			None: 'home.html'
+		}
+		if(not hasattr(request.user, "role")):
+			return render(request, 'home.html')
+		else:
+			return render(request, dashSwitch.get(request.user.role))
+
 	
 	def getRandomString(length):
 		letters = string.ascii_lowercase
@@ -407,21 +399,19 @@ class Views(): #acts as a namespace
 	def saveUserRegistration(request):
 		if request.POST:
 			requestInfo = request.POST
-			isNewRegRequest = json.loads(request.session.get("isNewUserRegRequest"))
-
+			
 			entry = User() 
 
 			userId = ""
-			if(isNewRegRequest):
-				lenOfIsReg = 1
-				while(lenOfIsReg > 0):
-					userId = requestInfo["fullName"].replace(" ", "")
-					userId = userId + Views.getRandomString(10) #if userId exists in other regs, register userId1, userId2, etc.
 
-					isReg = Views.isUserRegistered(userId)
-					lenOfIsReg = len(isReg["storedUsers"])
-			else:
-				userId = requestInfo["userId"]
+			lenOfIsReg = 1
+			while(lenOfIsReg > 0):
+				userId = requestInfo["fullName"].replace(" ", "")
+				userId = userId + Views.getRandomString(10) #if userId exists in other regs, register userId1, userId2, etc.
+
+				isReg = Views.isUserRegistered(userId)
+				lenOfIsReg = len(isReg["storedUsers"])
+
 
 			entry.userId = userId
 			requestInfo._mutable = True
@@ -439,43 +429,68 @@ class Views(): #acts as a namespace
 
 			entry.avatar = ""
 
-			# Adaptation stuff
-			if(isNewRegRequest):
-				entry.currState = json.dumps(PlayerState(), default=lambda o: o.__dict__, sort_keys=True)
-				entry.pastModelIncreasesGrid = json.dumps(
-					PlayerStateGrid(
-						interactionsProfileTemplate = intProfTemplate.generateCopy().reset(), 
-						gridTrimAlg = QualitySortGridTrimAlg(
-						# gridTrimAlg = AgeSortGridTrimAlg(
-							maxNumModelElements = 30, #requestInfo["maxNumModelElements"]
-							qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5) #requestInfo["ability"]...
-							), 
-						numCells = 1 #requestInfo["numCells"]
-					), 
-				default=lambda o: o.__dict__, sort_keys=True)
-				entry.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
-				try:
-					playerBridge.savePlayer(entry)
+			entry.currState = json.dumps(PlayerState(), default=lambda o: o.__dict__, sort_keys=True)
+			entry.pastModelIncreasesGrid = json.dumps(
+				PlayerStateGrid(
+					interactionsProfileTemplate = intProfTemplate.generateCopy().reset(), 
+					gridTrimAlg = QualitySortGridTrimAlg(
+					# gridTrimAlg = AgeSortGridTrimAlg(
+						maxNumModelElements = 30, #requestInfo["maxNumModelElements"]
+						qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5) #requestInfo["ability"]...
+						), 
+					numCells = 1 #requestInfo["numCells"]
+				), 
+			default=lambda o: o.__dict__, sort_keys=True)
+			entry.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
+			try:
+				playerBridge.savePlayer(entry)
 
-					# add user to free users
-					if entry.role=="student":
-						currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
-						currFreeUsers.append(userId)
-						serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
+				# add user to free users
+				if entry.role=="student":
+					currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
+					currFreeUsers.append(userId)
+					serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
 
-				except IntegrityError as e:
-					request.session["playerRegistrationError"] = e.__class__.__name__
-					return HttpResponse('500')
+			except IntegrityError as e:
+				request.session["playerRegistrationError"] = e.__class__.__name__
+				return HttpResponse('500')
 
-			else:
-				try:
-					User.objects.filter(userId=userId).update(**entry.__dict__)
-				except IntegrityError as e:
-					request.session["playerRegistrationError"] = e.__class__.__name__
-					return HttpResponse('500')
+			if(request.session.get("userId") == None):
+				Views.loginCheck(request)
+			return HttpResponse('200')
+
+	@csrf_protect
+	def updateUserRegistration(request):
+		if request.POST:
+			requestInfo = request.POST
+			
+
+			breakpoint()
+			print(json.dumps(requestInfo, default=lambda o: o.__dict__, sort_keys=True))
+
+			entry = playerBridge.getPlayer(requestInfo["userId"])
 
 
-			Views.loginCheck(request)
+			entry.userId = requestInfo["userId"]
+			entry.email = requestInfo["email"]
+			entry.password = requestInfo["password"]
+			entry.role = requestInfo["role"]
+			entry.age = requestInfo["age"]
+			entry.gender = requestInfo["gender"]
+			entry.preferences = requestInfo["preferences"]
+			entry.fullName = requestInfo["fullName"]
+
+			entry.avatar = ""
+
+			try:
+				playerBridge.savePlayer(entry)
+			except IntegrityError as e:
+				request.session["playerRegistrationError"] = e.__class__.__name__
+				return HttpResponse('500')
+
+
+			if(request.session.get("userId") == entry.userId):
+				Views.loginCheck(request)
 			return HttpResponse('200')
 
 

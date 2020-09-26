@@ -404,7 +404,8 @@ crossorigin='anonymous'></script>
 			return !(JSON.stringify(obj1) === JSON.stringify(obj2));
 		};
 		var canComputeAdaptation = function(newServerState){
-			return currServerState!="error" && (currServerState=={} || (objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState) && newServerState!= undefined && newServerState.currAdaptationState!=undefined));
+			console.log(newServerState)
+			return currServerState != undefined && currServerState!="error" && (currServerState=={} || (objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState) && newServerState!= undefined));
 		}
 
 
