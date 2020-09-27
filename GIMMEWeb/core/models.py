@@ -3,6 +3,21 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 
+from multiselectfield import MultiSelectField
+
+
+
+ROLE = (('designer', 'designer'),
+       ('professor', 'professor'),
+       ('student', 'student'))
+
+
+GENDER = (('Male', 'Male'),
+        ('Female', 'Female'),
+        ('Other', 'Other'))
+
+
+
 class UserProfile(models.Model):
 
     user = models.OneToOneField(User, 
@@ -11,11 +26,11 @@ class UserProfile(models.Model):
 
     # email = models.CharField(max_length=255)
     # password = models.CharField(max_length=255)
-    role = models.CharField(max_length=255)
+    role = MultiSelectField(choices=ROLE, max_choices=1)
     
     fullName = models.CharField(max_length=255)
-    age = models.CharField(max_length=255)
-    gender = models.CharField(max_length=255)
+    age = models.IntegerField()
+    gender = MultiSelectField(choices=GENDER, max_choices=1)
     description = models.CharField(max_length=255)
 
 
@@ -27,27 +42,26 @@ class UserProfile(models.Model):
     avatar = models.ImageField(upload_to='images/userAvatars/')
 
 
-    def create_profile(sender, **kwargs):
-        if kwargs['created']:
-            args = kwargs['instance']
-            user_profile = UserProfile.objects.create(user = kwargs['instance'])
-            #     user = kwargs['instance'], 
-            #     role = args.role, 
-            #     fullName = args.fullName, 
-            #     age = args.age, 
-            #     gender = args.gender, 
-            #     description = args.description, 
-            #     currState = args.currState, 
-            #     pastModelIncreasesGrid = args.pastModelIncreasesGrid, 
-            #     personality = args.personality, 
-            #     avatar = args.avatar
-            # ) 
+    def __str__(self):
+        return self.user.username
 
-    post_save.connect(create_profile, sender=User)
+    # def create_profile(sender, **kwargs):
+    #     if kwargs['created']:
+    #         args = kwargs['instance']
+    #         user_profile = UserProfile.objects.create(
+    #             user = kwargs['instance'], 
+    #             role = args.role, 
+    #             fullName = args.fullName, 
+    #             age = args.age, 
+    #             gender = args.gender, 
+    #             description = args.description, 
+    #             currState = args.currState, 
+    #             pastModelIncreasesGrid = args.pastModelIncreasesGrid, 
+    #             personality = args.personality, 
+    #             avatar = args.avatar
+    #         ) 
 
-
-    # def __str__(self):
-    #     return self.userId
+    # post_save.connect(create_profile, sender=User)
 
 
 class Task(models.Model):

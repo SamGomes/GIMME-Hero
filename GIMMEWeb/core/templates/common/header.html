@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="{% static "css/site.css" %}">
 
   <nav class="navbar" role="navigation" aria-label="main navigation" style="background-color:#e5e5e5;">
-    <div class="navbar-brand"  id="logo_header">
+    <div class="navbar-brand"  id="logo_header" href = {% url '' %}>
       <a class="navbar-item">
         <img style="max-height: 3rem" src="{% static "media/images/GIMMELogo.png" %}">
       </a>
@@ -53,9 +53,6 @@
               <div class="button is-link" id="newUserRegButton">
                 <strong>Register</strong>
               </div>
-              <!-- <a class="button is-light" href="{% url 'home' %}">
-                Log In
-              </a> -->
             </div>
           </div>
         </div>
@@ -63,7 +60,7 @@
         <div class="navbar-item center-left is-hoverable">
           <figure class="image navbar-item"  height=100px >
             <!-- sets placeholder if no image is found -->
-            <img class="is-rounded" style="max-height: 3.5rem" src="{{user.avatar.url}}">
+            <img class="is-rounded" style="max-height: 3.5rem" onError="this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';" src="{{user.avatar.url}}">
           </figure>
           <div class="navbar-dropdown is-right">
 
@@ -72,10 +69,10 @@
                 Logged in as a <strong>{{user.role}}</strong> called <strong>{{user.fullName}}</strong>
               </div>
               <div class="column">
-                userId: <strong>{{user.username}}</strong>
+                Username: <strong>{{user.username}}</strong>
               </div>
               <div class="column">
-                email: <strong>{{user.email}}</strong>
+                Email: <strong>{{user.email}}</strong>
               </div>
               <div class="column">
                 <div class="button is-link" id="updateUserRegButton">
@@ -98,9 +95,6 @@
     crossorigin="anonymous"></script>
 {% include 'common/general.html' %}
 <script type="text/javascript">
-  $('#logo_header').click(function(){
-      document.location.href = '/dash/';
-  });
   $(document).ready(function(){
     $('#newUserRegButton').click(function(){
       callUserReg(true);

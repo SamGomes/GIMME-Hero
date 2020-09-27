@@ -28,7 +28,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
 from django.contrib import messages
 
-from GIMMEWeb.core.forms import CreateUserForm
+from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm 
 
 
 intProfTemplate = InteractionsProfile({"K_cp": 0, "K_ea": 0, "K_i": 0, "K_mh": 0})
@@ -361,7 +361,7 @@ class Views(): #acts as a namespace
 				return redirect('/dash')
 			else:
 				messages.info(request, 'Login failed! Credentials not recognized.')
-				return redirect('/')
+				return redirect('/home')
 
 
 	def logoutCheck(request):
@@ -370,11 +370,19 @@ class Views(): #acts as a namespace
 
 	def userRegistration(request):
 		form = CreateUserForm(request.POST)
-		if form.is_valid():
-			form.save()
+		profileForm = CreateUserProfileForm(request.POST)
+
+		if form.is_valid() and profileForm.is_valid():
+			user = form.save()
+			
+			profile = profileForm.save(commit = False)
+			profile.user = user
+
+			profile.save() 
+
 			return Views.loginCheck(request)
 
-		context = { 'form' : form }
+		context = { 'form' : form , 'profileForm': profileForm }
 		return render(request, 'userRegistration.html', context)
 
 	def userUpdate(request):
@@ -874,7 +882,7 @@ class Views(): #acts as a namespace
 
 		newSessionState['readyForNewActivity'] = serverStateModelBridge.isReadyForNewActivity()
 
-		if(request.session['role'] == 'professor'):
+		if(request.user.userprofile.role == 'professor'):
 			newSessionState['currAdaptationState'] = serverStateModelBridge.getCurrAdaptationState()
 
 		newSession = json.dumps(newSessionState, default=lambda o: o.__dict__, sort_keys=True)

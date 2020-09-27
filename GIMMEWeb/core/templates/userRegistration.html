@@ -13,16 +13,26 @@
 					<div id="error_userRegistration" class="section hero is-danger is-centered has-text-centered">
 						<label class="label subtitle is-4 is-white">Registry Fail! Errors: </label>
 						<p class="is-4 is-white">{{form.errors}} </p>
+						<p class="is-4 is-white">{{profileForm.errors}} </p>
 					</div>
 				{% endif %}
 
 
-				<form method="POST" action="" id="form_userRegistration">
+				<form method="POST" enctype="multipart/form-data" action="" id="form_userRegistration">
 					{% csrf_token %}
 
 					<div class="subtitle">Account Registration</div>
 					<p>* fields are mandatory</p>
 		
+
+
+					<div class="field requiredFormField">
+						<div class="label">{{profileForm.avatar.label}}*</div>
+						<p class="control has-icons-left">
+							{{profileForm.avatar}}
+						</p>
+					</div>
+
 					
 					<div class="field requiredFormField">
 						<div class="label">{{form.username.label}}*</div>
@@ -32,14 +42,11 @@
 					</div>
 
 
-
 					<div class="field requiredFormField">
-					  <label class="label">Role*</label>
-					  <div class="control" name="role">
-						<input type="radio" name="role" value="designer"> designer<br>
-						<input type="radio" name="role" value="professor"> professor<br>
-					    <input type="radio" name="role" value="student"> student
-					  </div>
+						<div class="label">{{profileForm.role.label}}*</div>
+						<p class="control has-icons-left">
+							{{profileForm.role}}
+						</p>
 					</div>
 
 					<div class="field requiredFormField">
@@ -64,42 +71,34 @@
 						</p>
 					</div>
 
-					
+					<div class="field requiredFormField">
+						<div class="label">{{profileForm.fullName.label}}*</div>
+						<p class="control has-icons-left">
+							{{profileForm.fullName}}
+						</p>
+					</div>
 
 					<div class="field requiredFormField">
-					  <label class="label">Full Name*</label>
-					  <div class="control">
-					    <input class="input" type="text" placeholder="Full Name" name="fullName">
-					  </div>
+						<div class="label">{{profileForm.age.label}}*</div>
+						<p type="number" class="control has-icons-left">
+							{{profileForm.age}}
+						</p>
 					</div>
-
 
 					<div class="field requiredFormField">
-					  <label class="label">Age*</label>
-					  <div class="control">
-					    <input class="input" type="number" placeholder="Age" name="age">
-					  </div>
+						<div class="label">{{profileForm.gender.label}}*</div>
+						<p class="control has-icons-left">
+							{{profileForm.gender}}
+						</p>
 					</div>
-
-
 
 					<div class="field requiredFormField">
-					  <label class="label">Gender*</label>
-					  <div class="control" name="gender">
-					    <input type="radio" name="gender" value="male"> Male<br>
-						<input type="radio" name="gender" value="female"> Female<br>
-						<input type="radio" name="gender" value="other"> Other 
-					  </div>
+						<div class="label">{{profileForm.description.label}}</div>
+						<p class="control has-icons-left">
+							{{profileForm.description}}
+						</p>
 					</div>
 
-
-
-					<div class="field">
-					  <label class="label">Description</label>
-					  <div class="control">
-					    <input class="input" type="text" placeholder="Tell us a little about yourself..." name="description">
-					  </div>
-					</div>
 
 					<div class="control">
 						<input class="button is-link" type="submit" name="Create User" value="Register">
@@ -118,47 +117,11 @@
 		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
 		crossorigin="anonymous"></script>
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
-	{% include 'common/CSRFTSetup.html' %}
 	{% include 'common/general.html' %}
 	<script>
-
 		$('#error_userRegistration').hide();
 		$('#error_userRegistration').show(500);
 		setTimeout(function(){ $('#error_userRegistration').hide(500); }, 5000);
-
-
-
-		// $(document).ready(function(){
-		// 	var passCheck = function(){
-		//     	$('#submitButton_userRegistration').attr('disabled', ($('#password_userRegistration').val().localeCompare($('#repPassword_userRegistration').val()) != 0) || ($('#password_userRegistration').val().length <= 0 || $('#repPassword_userRegistration').val().length <= 0));
-		//     };
-
-		//     passCheck();
-		//     $('#password_userRegistration').on('input',passCheck);
-		//     $('#repPassword_userRegistration').on('input',passCheck);
-
-		//     $('#submitButton_userRegistration').click(function(){
-
-		// 	    console.log($('#form_userRegistration').serialize())
-		// 	    // for(i=0; i<30; i++){
-		// 	    	$.ajax({
-		//                 type: 'POST',
-		//                 url: '/saveUserRegistration/',
-		//                 data: $('#form_userRegistration').serialize(),
-		//                 statusCode: {
-		// 					500: function() {
-		// 					  $('#error_userRegistration').show(500);
-		// 					  setTimeout(function(){ $('#error_userRegistration').hide(500); }, 3000);
-		// 					},
-		// 					200: function(){ 
-		// 						$('#error_userRegistration').hide();
-		// 						document.location.href = '/dash/';
-		// 					}
-		// 				}
-		// 		    });
-		// 	    // }
-		//     });
-		// });
 	</script>
 	<script src="{% static "js/formFunctionalities.js" %}"></script>
 </html>
