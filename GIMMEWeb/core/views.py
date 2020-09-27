@@ -358,15 +358,15 @@ class Views(): #acts as a namespace
 			user = authenticate(request, username=username, password=password)
 			if user is not None:
 				login(request, user)
-				return Views.dash(request)
+				return redirect('/dash')
 			else:
 				messages.info(request, 'Login failed! Credentials not recognized.')
-				return render(request, 'home.html')
+				return redirect('/')
 
 
 	def logoutCheck(request):
 		logout(request)
-		return render(request, '/home.html')
+		return redirect('/')
 
 	def userRegistration(request):
 		form = CreateUserForm(request.POST)
@@ -401,7 +401,7 @@ class Views(): #acts as a namespace
 		if(not request.user):
 			return render(request,'home.html')
 		else:
-			breakpoint()
+			# breakpoint()
 			print(dashSwitch.get(request.user.userprofile.role))
 			return render(request, 'professor/dash.html')
 			return render(request, dashSwitch.get(request.user.userprofile.role))
