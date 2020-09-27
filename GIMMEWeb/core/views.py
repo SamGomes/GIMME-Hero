@@ -369,14 +369,29 @@ class Views(): #acts as a namespace
 		return redirect('/')
 
 	def userRegistration(request):
+		breakpoint()
 		form = CreateUserForm(request.POST)
-		profileForm = CreateUserProfileForm(request.POST)
+		profileForm = CreateUserProfileForm(request.POST, request.FILES)
 
 		if form.is_valid() and profileForm.is_valid():
 			user = form.save()
 			
 			profile = profileForm.save(commit = False)
 			profile.user = user
+
+			profile.currState = json.dumps(PlayerState(), default=lambda o: o.__dict__, sort_keys=True)
+			profile.pastModelIncreasesGrid = json.dumps(
+				PlayerStateGrid(
+					interactionsProfileTemplate = intProfTemplate.generateCopy().reset(), 
+					gridTrimAlg = QualitySortGridTrimAlg(
+					# gridTrimAlg = AgeSortGridTrimAlg(
+						maxNumModelElements = 30, #requestInfo["maxNumModelElements"]
+						qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5) #requestInfo["ability"]...
+						), 
+					numCells = 1 #requestInfo["numCells"]
+				), 
+			default=lambda o: o.__dict__, sort_keys=True)
+			profile.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
 
 			profile.save() 
 
@@ -421,70 +436,7 @@ class Views(): #acts as a namespace
 		chars = letters + numbers
 		result_str = random.choice(numbers) + ''.join(random.choice(chars) for i in range(length))
 		return result_str
-		
-	@csrf_protect
-	def saveUserRegistration(request):
-		if request.POST:
-			requestInfo = request.POST
-			
-			entry = User()
-
-			username = ""
-
-			lenOfIsReg = 1
-			while(lenOfIsReg > 0):
-				username = requestInfo["fullName"].replace(" ", "")
-				username = username + Views.getRandomString(10) #if username exists in other regs, register username1, username2, etc.
-
-				isReg = Views.isUserRegistered(username)
-				lenOfIsReg = len(isReg["storedUsers"])
-
-
-			entry.username = username
-			# requestInfo._mutable = True
-			# requestInfo["username"] = username
-			# requestInfo._mutable = False
-
-
-			entry.email = requestInfo["email"]
-			entry.set_password(requestInfo["password"])
-			entry.role = requestInfo["role"]
-			entry.age = requestInfo["age"]
-			entry.gender = requestInfo["gender"]
-			entry.description = requestInfo["description"]
-			entry.fullName = requestInfo["fullName"]
-
-			entry.avatar = ""
-
-			entry.currState = json.dumps(PlayerState(), default=lambda o: o.__dict__, sort_keys=True)
-			entry.pastModelIncreasesGrid = json.dumps(
-				PlayerStateGrid(
-					interactionsProfileTemplate = intProfTemplate.generateCopy().reset(), 
-					gridTrimAlg = QualitySortGridTrimAlg(
-					# gridTrimAlg = AgeSortGridTrimAlg(
-						maxNumModelElements = 30, #requestInfo["maxNumModelElements"]
-						qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5) #requestInfo["ability"]...
-						), 
-					numCells = 1 #requestInfo["numCells"]
-				), 
-			default=lambda o: o.__dict__, sort_keys=True)
-			entry.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
-			
-			try:
-				playerBridge.savePlayer(entry)
-				# add user to free users
-				if entry.userprofile.role=="student":
-					currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
-					currFreeUsers.append(username)
-					serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
-
-			except IntegrityError as e:
-				request.session["playerRegistrationError"] = e.__class__.__name__
-				return HttpResponse('500')
-
-			if(request.session.get("username") == None):
-				Views.loginCheck(request)
-			return HttpResponse('200')
+	
 
 	@csrf_protect
 	def updateUserRegistration(request):

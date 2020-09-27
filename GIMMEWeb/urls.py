@@ -20,7 +20,6 @@ urlpatterns = [
     re_path(r'^taskRegistration/', Views.taskRegistration, name="taskRegistration"),
     re_path(r'^taskUpdate/', Views.taskUpdate, name="taskUpdate"),
 
-    re_path(r'^saveUserRegistration/$', Views.saveUserRegistration, name="saveUserRegistration"),
     re_path(r'^updateUserRegistration/$', Views.updateUserRegistration, name="updateUserRegistration"),
     re_path(r'^removeUserRegistration/$', Views.removeUserRegistration, name="removeUserRegistration"),
 

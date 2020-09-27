@@ -9,7 +9,7 @@
 			<div class="column"></div>
 			<div class="panel panel-block column">
 
-				{% if form.errors %}
+				{% if form.errors or profileForm.errors %}
 					<div id="error_userRegistration" class="section hero is-danger is-centered has-text-centered">
 						<label class="label subtitle is-4 is-white">Registry Fail! Errors: </label>
 						<p class="is-4 is-white">{{form.errors}} </p>
