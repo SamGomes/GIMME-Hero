@@ -9,18 +9,30 @@
 			<div class="column"></div>
 			<div class="panel panel-block column">
 
-				<div id="error_userRegistration" class="section hero is-danger is-centered has-text-centered">
-					<label class="label subtitle is-4 is-white">Registry Fail (Error {{request.session.userRegistrationError}})! Please check all fields.</label>
-				</div>
+				{% if form.errors %}
+					<div id="error_userRegistration" class="section hero is-danger is-centered has-text-centered">
+						<label class="label subtitle is-4 is-white">Registry Fail! Errors: </label>
+						<p class="is-4 is-white">{{form.errors}} </p>
+					</div>
+				{% endif %}
 
 
-				<form id="form_userRegistration">
-					{{ form }}
+				<form method="POST" action="" id="form_userRegistration">
 					{% csrf_token %}
 
 					<div class="subtitle">Account Registration</div>
 					<p>* fields are mandatory</p>
 		
+					
+					<div class="field requiredFormField">
+						<div class="label">{{form.username.label}}*</div>
+						<p class="control has-icons-left">
+							{{form.username}}
+						</p>
+					</div>
+
+
+
 					<div class="field requiredFormField">
 					  <label class="label">Role*</label>
 					  <div class="control" name="role">
@@ -31,34 +43,28 @@
 					</div>
 
 					<div class="field requiredFormField">
-						<label class="label">E-Mail*</label>
+						<div class="label">{{form.email.label}}*</div>
 						<p class="control has-icons-left">
-							<input class="input" type="text" placeholder="E-Mail" name="email">
-							<span class="icon is-small is-left">
-								<i class="fas fa-lock"></i>
-							</span>
+							{{form.email}}
+						</p>
+					</div>
+
+
+					<div class="field requiredFormField">
+						<div class="label">{{form.password1.label}}*</div>
+						<p class="control has-icons-left">
+							{{form.password1}}
 						</p>
 					</div>
 
 					<div class="field requiredFormField">
-						<label class="label">Password*</label>
+						<div class="label">{{form.password2.label}}*</div>
 						<p class="control has-icons-left">
-							<input class="input" type="password" placeholder="Password" name="password" id="password_userRegistration">
-							<span class="icon is-small is-left">
-								<i class="fas fa-lock"></i>
-							</span>
+							{{form.password2}}
 						</p>
 					</div>
 
-					<div class="field requiredFormField">
-						<label class="label">Repeat Password*</label>
-						<p class="control has-icons-left">
-							<input class="input" type="password" placeholder="Password" id="repPassword_userRegistration">
-							<span class="icon is-small is-left">
-								<i class="fas fa-lock"></i>
-							</span>
-						</p>
-					</div>
+					
 
 					<div class="field requiredFormField">
 					  <label class="label">Full Name*</label>
@@ -95,9 +101,8 @@
 					  </div>
 					</div>
 
-
 					<div class="control">
-						<input class="button is-link" value="Enter" id="submitButton_userRegistration">
+						<input class="button is-link" type="submit" name="Create User" value="Register">
 					</div>
 		
 
@@ -116,38 +121,44 @@
 	{% include 'common/CSRFTSetup.html' %}
 	{% include 'common/general.html' %}
 	<script>
-		$('#error_userRegistration').hide()
-		$(document).ready(function(){
-			var passCheck = function(){
-		    	$('#submitButton_userRegistration').attr('disabled', ($('#password_userRegistration').val().localeCompare($('#repPassword_userRegistration').val()) != 0) || ($('#password_userRegistration').val().length <= 0 || $('#repPassword_userRegistration').val().length <= 0));
-		    };
 
-		    passCheck();
-		    $('#password_userRegistration').on('input',passCheck);
-		    $('#repPassword_userRegistration').on('input',passCheck);
+		$('#error_userRegistration').hide();
+		$('#error_userRegistration').show(500);
+		setTimeout(function(){ $('#error_userRegistration').hide(500); }, 5000);
 
-		    $('#submitButton_userRegistration').click(function(){
 
-			    console.log($('#form_userRegistration').serialize())
-			    // for(i=0; i<30; i++){
-			    	$.ajax({
-		                type: 'POST',
-		                url: '/saveUserRegistration/',
-		                data: $('#form_userRegistration').serialize(),
-		                statusCode: {
-							500: function() {
-							  $('#error_userRegistration').show(500);
-							  setTimeout(function(){ $('#error_userRegistration').hide(500); }, 3000);
-							},
-							200: function(){ 
-								$('#error_userRegistration').hide();
-								document.location.href = '/dash/';
-							}
-						}
-				    });
-			    // }
-		    });
-		});
+
+		// $(document).ready(function(){
+		// 	var passCheck = function(){
+		//     	$('#submitButton_userRegistration').attr('disabled', ($('#password_userRegistration').val().localeCompare($('#repPassword_userRegistration').val()) != 0) || ($('#password_userRegistration').val().length <= 0 || $('#repPassword_userRegistration').val().length <= 0));
+		//     };
+
+		//     passCheck();
+		//     $('#password_userRegistration').on('input',passCheck);
+		//     $('#repPassword_userRegistration').on('input',passCheck);
+
+		//     $('#submitButton_userRegistration').click(function(){
+
+		// 	    console.log($('#form_userRegistration').serialize())
+		// 	    // for(i=0; i<30; i++){
+		// 	    	$.ajax({
+		//                 type: 'POST',
+		//                 url: '/saveUserRegistration/',
+		//                 data: $('#form_userRegistration').serialize(),
+		//                 statusCode: {
+		// 					500: function() {
+		// 					  $('#error_userRegistration').show(500);
+		// 					  setTimeout(function(){ $('#error_userRegistration').hide(500); }, 3000);
+		// 					},
+		// 					200: function(){ 
+		// 						$('#error_userRegistration').hide();
+		// 						document.location.href = '/dash/';
+		// 					}
+		// 				}
+		// 		    });
+		// 	    // }
+		//     });
+		// });
 	</script>
 	<script src="{% static "js/formFunctionalities.js" %}"></script>
 </html>

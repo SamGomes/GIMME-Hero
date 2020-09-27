@@ -30,18 +30,18 @@ class UserProfile(models.Model):
     def create_profile(sender, **kwargs):
         if kwargs['created']:
             args = kwargs['instance']
-            user_profile = UserProfile.objects.create(
-                user = kwargs['instance'], 
-                role = args.role, 
-                fullName = args.fullName, 
-                age = args.age, 
-                gender = args.gender, 
-                description = args.description, 
-                currState = args.currState, 
-                pastModelIncreasesGrid = args.pastModelIncreasesGrid, 
-                personality = args.personality, 
-                avatar = args.avatar
-            ) 
+            user_profile = UserProfile.objects.create(user = kwargs['instance'])
+            #     user = kwargs['instance'], 
+            #     role = args.role, 
+            #     fullName = args.fullName, 
+            #     age = args.age, 
+            #     gender = args.gender, 
+            #     description = args.description, 
+            #     currState = args.currState, 
+            #     pastModelIncreasesGrid = args.pastModelIncreasesGrid, 
+            #     personality = args.personality, 
+            #     avatar = args.avatar
+            # ) 
 
     post_save.connect(create_profile, sender=User)
 

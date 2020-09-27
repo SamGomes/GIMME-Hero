@@ -27,11 +27,13 @@
 				</div>
 				<div class='panel-block is-small'>
 					<div class='container'>
-						<form>
+						<form  method="POST" action="">
+							{% csrf_token %}
+
 							<div class='field'>
-							  <label class='label subtitle is-5'>User Id</label>
+							  <label class='label subtitle is-5'>Username</label>
 							  <div class='control'>
-							    <input id='loginUserId_home' class='input' type='text' placeholder='User Id' name='userId'>
+							    <input id='loginUsername_home' class='input' type='text' placeholder='Username' name='username'>
 							  </div>
 							</div>
 
@@ -46,15 +48,20 @@
 							</div>
 
 							<div class='control'>
-								<div id='loginError_home' class='section hero is-danger is-centered has-text-centered'>
-									<label class='label subtitle is-4 is-white'>Login failed! Credentials not recognized.</label>
-								</div>
+								{% if messages %}
+									<div id='loginError_home' class='section hero is-danger is-centered has-text-centered'>
+										{% for message in messages %}
+											<p id="messages">{{message}}</p>
+										{% endfor %}
+									</div>
+								{% endif %}
 
 								<div class='field'></div>
-								<p class='buttons'>
-									<a id='loginEnterButton_home' class='button is-medium is-link'>Enter</a>
-									<a id='loginCancelButton_home' class='button is-medium is-text'>Cancel</a>
-								</p>
+
+								<div class="control">
+									<input class="button is-link" type="submit" name="Log In" value="Log In">
+								</div>
+
 								<p class='buttons'>
 									<div class='field'></div>
 									<a class='button is-fullwidth'>
@@ -93,46 +100,16 @@
 	<script defer src='https://use.fontawesome.com/releases/v5.0.7/js/all.js'></script>
 	{% include 'common/general.html' %}
 	<script>
-		$('#loginError_home').hide()
+		
 		$(document).ready(function(){
+			$('#loginError_home').hide()
+			$('#loginError_home').show(500)
+			setTimeout(function(){ $('#loginError_home').hide(500); }, 5000);
 
-			var loginCheck = function(userId, password){
-				$.ajax({
-						url: '/loginCheck/', 
-						dataType: 'json', 
-						type: 'POST', 
-						data: {'userId': userId, 'password': password }, 
-						statusCode: {
-							200: 
-							function(response){ 
-								console.log("why?")
-								$('#loginError_home').hide();
-								document.location.href = '/dash/';
-							}, 
-							500: 
-							function(response){ 
-								$('#loginError_home').show(500);
-								setTimeout(function(){ $('#loginError_home').hide(500); }, 3000);
-							}
-						}
-						
-					});
-			};
-			// loginCheck('{{user.username}}','{{user.password}}', function(){ $('#loginError_home').hide(); });
-
+			
 			$('#newUserRegButton_home').click(function(){
 		    	callUserReg('true');
 		    });
-
-			$('#loginCancelButton_home').click(function(){
-				$('#loginUserId_home').val('');
-				$('#loginPassword_home').val('');
-			});
-
-			$('#loginEnterButton_home').click(function(){
-				loginCheck($('#loginUserId_home').val(),
-							$('#loginPassword_home').val());
-			});
 
 		});
 	</script>
