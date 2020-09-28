@@ -79,19 +79,19 @@
 					<div class="control">
 						<input class="button is-link" type="submit" name="Change Account" value="Change Account">
 					</div>
+				</form>
 
-					<div class="panel">
-						<div class="subtitle has-text-danger">
-							<h5>Danger Zone</h5>
-						</div>
-
-						<div class="field control">
-							<input type="submit" class="button is-danger" value="Remove Account" id="removeButton_userUpdate">
-						</div>
-
+				<div class="panel">
+					<div class="subtitle has-text-danger">
+						<h5>Danger Zone</h5>
 					</div>
 
-				</form>
+					<div class="field control">
+						<a class="button is-danger" id="removeAccountButton_userUpdate" href="{% url 'userDeletion' %}">Remove Account</a>
+					</div>
+
+				</div>
+
 			</div>
 			<div class="column"></div>		
 		</section>
@@ -110,5 +110,13 @@
 		$('#error_userUpdate').hide()
 		$('#error_userUpdate').show(500);
 		setTimeout(function(){ $('#error_userUpdate').hide(500); }, 5000);
+
+		// $('#removeAccountButton_userUpdate').click(function(){
+		// 	$.ajax({
+	 //            type: 'POST',
+	 //            url: '/userDeletion/',
+	 //            data: $('#form_userUpdate').serialize()
+		//     });
+		// });
 	</script>
 </html>

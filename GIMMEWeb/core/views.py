@@ -340,23 +340,22 @@ class Views(): #acts as a namespace
 
 	#global methods
 	def home(request):
-		return Views.loginCheck(request)
-
-	def loginCheck(request):
-		if request.method == "POST":
-			username = request.POST.get('username')
-			password = request.POST.get('password')
-			print('[INFO] login check performed on user with id - ' + str(username) + ', password - '+str(password))
-
-			user = authenticate(request, username=username, password=password)
-			if user is not None:
-				login(request, user)
-				return redirect('/dash')
-			else:
-				messages.info(request, 'Login failed! Credentials not recognized.')
-				return render(request, 'home.html')
+		Views.loginCheck(request)
+		if(request.user.is_authenticated):
+			return redirect('/dash')
 		else:
 			return render(request, 'home.html')
+
+	def loginCheck(request):
+		username = request.POST.get('username')
+		password = request.POST.get('password')
+		print('[INFO] login check performed on user with id - ' + str(username) + ', password - '+str(password))
+
+		user = authenticate(request, username=username, password=password)
+		if user is not None:
+			login(request, user)
+		else:
+			messages.info(request, 'Login failed! Credentials not recognized.')
 
 
 	def logoutCheck(request):
@@ -389,7 +388,12 @@ class Views(): #acts as a namespace
 				profile.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
 
 				profile.save() 
-				return Views.loginCheck(request)
+
+				login(request, user)
+				return redirect('/dash')
+			else:
+				context = { 'form' : form , 'profileForm': profileForm }
+				return render(request, 'userRegistration.html', context)
 
 		elif request.method == "GET":
 			form = CreateUserForm()
@@ -399,7 +403,6 @@ class Views(): #acts as a namespace
 			return render(request, 'userRegistration.html', context)
 
 	def userUpdate(request):
-		# breakpoint()
 		if request.method == "POST":
 			form = UpdateUserForm(request.POST, instance=request.user)
 			profileForm = UpdateUserProfileForm(request.POST, request.FILES, instance=request.user.userprofile)
@@ -417,32 +420,32 @@ class Views(): #acts as a namespace
 			return render(request, 'userUpdate.html',  context)
 
 	def userDeletion(request):
-		# breakpoint()
-		if request.method == "POST":
+		breakpoint()
+		if request.method == "GET":
+			username = request.user.username
 			try:
-				player = UserProfile.objects.get(username = username)
+				logout(request) #logout player before removing it
+				player = User.objects.get(username = username)
 				player.delete()
 
-				username = request.POST["username"]
-
-				currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
-				if username in currFreeUsers:
-					currFreeUsers.remove(username)
-					serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
-
-				currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers()
-				if username in currSelectedUsers:
-					currSelectedUsers.remove(username)
-					serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
-	    	
 			except User.DoesNotExist:
 				messages.info(request, 'Account not deleted! Username not found.')
-				return render(request, 'home.html')
-				# return redirect("/home")
+				return redirect("/userUpdate")
+
+			currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
+			if username in currFreeUsers:
+				currFreeUsers.remove(username)
+				serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
+
+			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers()
+			if username in currSelectedUsers:
+				currSelectedUsers.remove(username)
+				serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
+			return redirect("/home")
+
 
 		elif request.method == "GET":
-			return redirect("/dash")
-
+			return redirect('/userUpdate')
 
 	def isUserRegistered(username):
 		returned = {}
@@ -461,10 +464,7 @@ class Views(): #acts as a namespace
 			'professor': 'professor/dash.html',
 			'designer': 'designer/dash.html'
 		}
-		if(not request.user.is_authenticated):
-			return redirect("/home")
-		else:
-			return render(request, dashSwitch.get(str(request.user.userprofile.role)))
+		return render(request, dashSwitch.get(str(request.user.userprofile.role)))
 
 	
 	def getRandomString(length):
