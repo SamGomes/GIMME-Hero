@@ -28,7 +28,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
 from django.contrib import messages
 
-from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm 
+from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, UpdateUserForm, UpdateUserProfileForm 
 
 
 intProfTemplate = InteractionsProfile({"K_cp": 0, "K_ea": 0, "K_i": 0, "K_mh": 0})
@@ -186,15 +186,8 @@ taskBridge = CustomTaskModelBridge()
 
 class CustomPlayerModelBridge(PlayerModelBridge):
 	
-	def savePlayer(self, player):
-		player.save()
-
 	def getPlayer(self, username):
 		return UserProfile.objects.get(username = username)
-
-	def removePlayer(self, username):
-		player = UserProfile.objects.get(username = username)
-		player.delete()
 
 	def setAndSavePlayerStateToGrid(self, username, newState):
 		player = UserProfile.objects.get(username = username)
@@ -267,7 +260,8 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 	def getPlayerCurrCharacteristics(self, username):
 		player = User.objects.get(username=username).userprofile
 		characteristics = json.loads(player.currState)["characteristics"]
-		return PlayerCharacteristics(ability= float(characteristics["ability"]), engagement= float(characteristics["engagement"]))
+		return PlayerCharacteristics(ability= float(characteristics["ability"]), 
+			engagement= float(characteristics["engagement"]))
 	
 	def getPlayerPersonalityEst(self, username):
 		player = User.objects.get(username=username).userprofile
@@ -277,7 +271,9 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 	def getPlayerCurrState(self, username):
 		player = User.objects.get(username=username).userprofile
-		return PlayerState(profile = self.getPlayerCurrProfile(username), characteristics = self.getPlayerCurrCharacteristics(username), dist = json.loads(player.currState)["dist"])
+		return PlayerState(profile = self.getPlayerCurrProfile(username), 
+			characteristics = self.getPlayerCurrCharacteristics(username), 
+			dist = json.loads(player.currState)["dist"])
 
 	def getPlayerFullName(self, username):
 		player = User.objects.get(username=username).userprofile
@@ -344,10 +340,7 @@ class Views(): #acts as a namespace
 
 	#global methods
 	def home(request):
-		if request.method == "POST":
-			return Views.loginCheck(request)
-		else:
-			return render(request, 'home.html')
+		return Views.loginCheck(request)
 
 	def loginCheck(request):
 		if request.method == "POST":
@@ -361,47 +354,95 @@ class Views(): #acts as a namespace
 				return redirect('/dash')
 			else:
 				messages.info(request, 'Login failed! Credentials not recognized.')
-				return redirect('/home')
+				return render(request, 'home.html')
+		else:
+			return render(request, 'home.html')
 
 
 	def logoutCheck(request):
 		logout(request)
-		return redirect('/')
+		return redirect('/home')
 
 	def userRegistration(request):
-		breakpoint()
-		form = CreateUserForm(request.POST)
-		profileForm = CreateUserProfileForm(request.POST, request.FILES)
+		if request.method == "POST":
+			form = CreateUserForm(request.POST)
+			profileForm = CreateUserProfileForm(request.POST, request.FILES)
 
-		if form.is_valid() and profileForm.is_valid():
-			user = form.save()
-			
-			profile = profileForm.save(commit = False)
-			profile.user = user
+			if form.is_valid() and profileForm.is_valid():
+				user = form.save()
+				
+				profile = profileForm.save(commit = False)
+				profile.user = user
 
-			profile.currState = json.dumps(PlayerState(), default=lambda o: o.__dict__, sort_keys=True)
-			profile.pastModelIncreasesGrid = json.dumps(
-				PlayerStateGrid(
-					interactionsProfileTemplate = intProfTemplate.generateCopy().reset(), 
-					gridTrimAlg = QualitySortGridTrimAlg(
-					# gridTrimAlg = AgeSortGridTrimAlg(
-						maxNumModelElements = 30, #requestInfo["maxNumModelElements"]
-						qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5) #requestInfo["ability"]...
-						), 
-					numCells = 1 #requestInfo["numCells"]
-				), 
-			default=lambda o: o.__dict__, sort_keys=True)
-			profile.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
+				profile.currState = json.dumps(PlayerState(), default=lambda o: o.__dict__, sort_keys=True)
+				profile.pastModelIncreasesGrid = json.dumps(
+					PlayerStateGrid(
+						interactionsProfileTemplate = intProfTemplate.generateCopy().reset(), 
+						gridTrimAlg = QualitySortGridTrimAlg(
+						# gridTrimAlg = AgeSortGridTrimAlg(
+							maxNumModelElements = 30, #requestInfo["maxNumModelElements"]
+							qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5) #requestInfo["ability"]...
+							), 
+						numCells = 1 #requestInfo["numCells"]
+					), 
+				default=lambda o: o.__dict__, sort_keys=True)
+				profile.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
 
-			profile.save() 
+				profile.save() 
+				return Views.loginCheck(request)
 
-			return Views.loginCheck(request)
+		elif request.method == "GET":
+			form = CreateUserForm()
+			profileForm = CreateUserProfileForm()
 
-		context = { 'form' : form , 'profileForm': profileForm }
-		return render(request, 'userRegistration.html', context)
+			context = { 'form' : form , 'profileForm': profileForm }
+			return render(request, 'userRegistration.html', context)
 
 	def userUpdate(request):
-		return render(request, 'userUpdate.html')
+		# breakpoint()
+		if request.method == "POST":
+			form = UpdateUserForm(request.POST, instance=request.user)
+			profileForm = UpdateUserProfileForm(request.POST, request.FILES, instance=request.user.userprofile)
+
+			if form.is_valid() and profileForm.is_valid():
+				user = form.save()
+				profile = profileForm.save()
+				return redirect('/dash')
+
+		elif request.method == "GET":
+			form = UpdateUserForm(instance=request.user)
+			profileForm = UpdateUserProfileForm(instance=request.user.userprofile)
+
+			context = { 'form' : form , 'profileForm': profileForm }
+			return render(request, 'userUpdate.html',  context)
+
+	def userDeletion(request):
+		# breakpoint()
+		if request.method == "POST":
+			try:
+				player = UserProfile.objects.get(username = username)
+				player.delete()
+
+				username = request.POST["username"]
+
+				currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
+				if username in currFreeUsers:
+					currFreeUsers.remove(username)
+					serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
+
+				currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers()
+				if username in currSelectedUsers:
+					currSelectedUsers.remove(username)
+					serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
+	    	
+			except User.DoesNotExist:
+				messages.info(request, 'Account not deleted! Username not found.')
+				return render(request, 'home.html')
+				# return redirect("/home")
+
+		elif request.method == "GET":
+			return redirect("/dash")
+
 
 	def isUserRegistered(username):
 		returned = {}
@@ -418,16 +459,12 @@ class Views(): #acts as a namespace
 		dashSwitch = {
 			'student': 'student/dash.html',
 			'professor': 'professor/dash.html',
-			'designer': 'designer/dash.html',
-			'': 'home.html'
+			'designer': 'designer/dash.html'
 		}
-		if(not request.user):
-			return render(request,'home.html')
+		if(not request.user.is_authenticated):
+			return redirect("/home")
 		else:
-			# breakpoint()
-			print(dashSwitch.get(request.user.userprofile.role))
-			return render(request, 'professor/dash.html')
-			return render(request, dashSwitch.get(request.user.userprofile.role))
+			return render(request, dashSwitch.get(str(request.user.userprofile.role)))
 
 	
 	def getRandomString(length):
@@ -437,56 +474,7 @@ class Views(): #acts as a namespace
 		result_str = random.choice(numbers) + ''.join(random.choice(chars) for i in range(length))
 		return result_str
 	
-
-	@csrf_protect
-	def updateUserRegistration(request):
-		if request.POST:
-			requestInfo = request.POST
-			
-
-			entry = playerBridge.getPlayer(requestInfo["username"])
-
-
-			entry.user.username = requestInfo["username"]
-			entry.email = requestInfo["email"]
-			entry.password = requestInfo["password"]
-			entry.role = requestInfo["role"]
-			entry.age = requestInfo["age"]
-			entry.gender = requestInfo["gender"]
-			entry.preferences = requestInfo["preferences"]
-			entry.fullName = requestInfo["fullName"]
-
-			entry.avatar = ""
-
-			try:
-				playerBridge.savePlayer(entry)
-			except IntegrityError as e:
-				request.session["playerRegistrationError"] = e.__class__.__name__
-				return HttpResponseServerError()
-
-
-			if(request.session.get("username") == entry.username):
-				Views.loginCheck(request)
-			return HttpResponse('ok')
-
-
-	@csrf_protect
-	def removeUserRegistration(request):
-		username = request.POST["username"]
-
-		currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
-		if username in currFreeUsers:
-			currFreeUsers.remove(username)
-			serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
-
-		currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers()
-		if username in currSelectedUsers:
-			currSelectedUsers.remove(username)
-			serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
-
-		playerBridge.removePlayer(username)
-		return HttpResponse('ok')
-
+		
 
 
 	@csrf_protect

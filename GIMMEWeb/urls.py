@@ -16,12 +16,10 @@ urlpatterns = [
 
     re_path(r'^userRegistration/$', Views.userRegistration, name="userRegistration"),
     re_path(r'^userUpdate/$', Views.userUpdate, name="userUpdate"),
+    re_path(r'^userDeletion/$', Views.userDeletion, name="userDeletion"),
     
     re_path(r'^taskRegistration/', Views.taskRegistration, name="taskRegistration"),
     re_path(r'^taskUpdate/', Views.taskUpdate, name="taskUpdate"),
-
-    re_path(r'^updateUserRegistration/$', Views.updateUserRegistration, name="updateUserRegistration"),
-    re_path(r'^removeUserRegistration/$', Views.removeUserRegistration, name="removeUserRegistration"),
 
     re_path(r'^saveTaskRegistration/$', Views.saveTaskRegistration, name="saveTaskRegistration"),
     re_path(r'^removeTaskRegistration/$', Views.removeTaskRegistration, name="removeTaskRegistration"),

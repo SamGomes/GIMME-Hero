@@ -1,4 +1,7 @@
+import os
 import uuid
+from uuid import uuid4
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -20,12 +23,27 @@ GENDER = (('Male', 'Male'),
 
 class UserProfile(models.Model):
 
+    # included from 
+    # https://stackoverflow.com/questions/15140942/django-imagefield-change-file-name-on-upload
+    def pathAndRename(path):
+        def wrapper(instance, filename):
+            ext = filename.split('.')[-1]
+            # get filename
+            if instance.pk:
+                filename = '{}.{}'.format(instance.pk, ext)
+            else:
+                # set filename as random string
+                filename = '{}.{}'.format(uuid4().hex, ext)
+            # return the whole path to the file
+            return os.path.join(path, filename)
+        return wrapper
+
+
+        
     user = models.OneToOneField(User, 
         on_delete=models.CASCADE,
         primary_key=True)
 
-    # email = models.CharField(max_length=255)
-    # password = models.CharField(max_length=255)
     role = MultiSelectField(choices=ROLE, max_choices=1)
     
     fullName = models.CharField(max_length=255)
@@ -39,29 +57,13 @@ class UserProfile(models.Model):
     personality = models.CharField(max_length=255)
 
 
-    avatar = models.ImageField(upload_to='images/userAvatars/')
+    avatar = models.ImageField(upload_to=pathAndRename('images/userAvatars/'))
 
 
     def __str__(self):
         return self.user.username
 
-    # def create_profile(sender, **kwargs):
-    #     if kwargs['created']:
-    #         args = kwargs['instance']
-    #         user_profile = UserProfile.objects.create(
-    #             user = kwargs['instance'], 
-    #             role = args.role, 
-    #             fullName = args.fullName, 
-    #             age = args.age, 
-    #             gender = args.gender, 
-    #             description = args.description, 
-    #             currState = args.currState, 
-    #             pastModelIncreasesGrid = args.pastModelIncreasesGrid, 
-    #             personality = args.personality, 
-    #             avatar = args.avatar
-    #         ) 
 
-    # post_save.connect(create_profile, sender=User)
 
 
 class Task(models.Model):

@@ -7,8 +7,8 @@
   <link rel="stylesheet" href="{% static "css/site.css" %}">
 
   <nav class="navbar" role="navigation" aria-label="main navigation" style="background-color:#e5e5e5;">
-    <div class="navbar-brand"  id="logo_header" href = {% url '' %}>
-      <a class="navbar-item">
+    <div class="navbar-brand"  id="logo_header">
+      <a class="navbar-item" href = {% url 'dash' %}>
         <img style="max-height: 3rem" src="{% static "media/images/GIMMELogo.png" %}">
       </a>
 
@@ -58,15 +58,17 @@
         </div>
       {% else %}
         <div class="navbar-item center-left is-hoverable">
-          <figure class="image navbar-item"  height=100px >
-            <!-- sets placeholder if no image is found -->
-            <img class="is-rounded" style="max-height: 3.5rem" onError="this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';" src="{{user.avatar.url}}">
-          </figure>
-          <div class="navbar-dropdown is-right">
+          <div class="navbar-brand">
+            <figure class="image navbar-item">
+              <!-- sets placeholder if no image is found for some reason -->
+              <img class="is-rounded is-fullheight" style="max-width:3rem" onError="this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';" src="{{ user.userprofile.avatar.url }}">
+            </figure>
+          </div>
 
+          <div class="navbar-dropdown is-right">
             <p class="navbar-item columns" >
               <div class="column">
-                Logged in as a <strong>{{user.role}}</strong> called <strong>{{user.fullName}}</strong>
+                Logged in as a <strong>{{user.userprofile.role}}</strong> called <strong>{{user.userprofile.fullName}}</strong>
               </div>
               <div class="column">
                 Username: <strong>{{user.username}}</strong>
@@ -84,6 +86,7 @@
               </div>
             </p>
           </div>
+
         </div>
       {% endif %}
     </div>

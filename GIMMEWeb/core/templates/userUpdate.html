@@ -9,122 +9,75 @@
 			<div class="column"></div>
 			<div class="panel panel-block column">
 
-				<div id="error_userUpdate" class="section hero is-danger is-centered has-text-centered">
-					<label class="label subtitle is-4 is-white">Registry Fail (Error {{request.session.userRegistrationError}})! Please check all fields.</label>
-				</div>
+				{% if form.errors or profileForm.errors %}
+					<div id="error_userUpdate" class="section hero is-danger is-centered has-text-centered">
+						<label class="label subtitle is-4 is-white">Registry Fail! Errors: </label>
+						<p class="is-4 is-white">{{form.errors}} </p>
+						<p class="is-4 is-white">{{profileForm.errors}} </p>
+					</div>
+				{% endif %}
 
 
-				<form id="form_userUpdate">
-					{{ form }}
+				<form method="POST" enctype="multipart/form-data" action="" id="form_userUpdate">
 					{% csrf_token %}
 
-					<div class="subtitle">
-						Manage Account
-					</div>
-					<p>* fields are mandatory</p>
-
-					<div class="subtitle">
-						<h5>Change Account</h5>
-					</div>
-
-
-					<div class="file is-boxed">
-					  <label class="file-label">
-					    <input class="file-input" type="file" name="avatar" id="avatar_userUpdate">
-					    <span class="file-cta">
-					      <img id="avatarImg_userUpdate" class="is-rounded" style="max-height: 3.5rem" onError="this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';" src="../static/media/images/userAvatars/{{request.session.userId}}.png">
-					      <span class="file-label">
-					        Upload your Avatar
-					      </span>
-					    </span>
-					  </label>
-					</div>
+					<div class="subtitle">Manage Account</div>
+		
 
 					<div class="field requiredFormField">
-				  		<label class="label">UserId</label>
+						<div class="label">{{profileForm.avatar.label}}</div>
+						<p class="control has-icons-left" placeholder = "{{user.userprofile.avatar}}">
+							{{profileForm.avatar}}
+						</p>
+					</div>
+					
+
+					<div class="field requiredFormField">
+						<div class="label">{{form.email.label}}</div>
+						<p class="control has-icons-left" placeholder="{{user.email}}">
+							{{form.email}}
+						</p>
+					</div>
+
+
+					<div class="field requiredFormField">
+						<div class="label">{{form.password.label}}</div>
 						<p class="control has-icons-left">
-							<input class="input" type="text" value="{{request.session.userId}}" placeholder="{{request.session.userId}}" name="userId" disabled>
-							<span class="icon is-small is-left">
-								<i class="fas fa-lock"></i>
-							</span>
+							{{form.password}}
 						</p>
 					</div>
 
 					<div class="field requiredFormField">
-					  <label class="label">Role</label>
-					  <div class="control" name="role">
-						<input type="radio" name="role" value="{{request.session.role}}" checked=true disabled> {{request.session.role}}<br>
-					  </div>
-					</div>
-
-					<div class="field requiredFormField">
-						<label class="label">E-Mail</label>
+						<div class="label">{{profileForm.fullName.label}}</div>
 						<p class="control has-icons-left">
-							<input class="input" type="text" value="{{request.session.email}}" placeholder="{{request.session.email}}" name="email">
-							
-							<span class="icon is-small is-left">
-								<i class="fas fa-lock"></i>
-							</span>
+							{{profileForm.fullName}}
 						</p>
 					</div>
 
 					<div class="field requiredFormField">
-						<label class="label">Password</label>
-						<p class="control has-icons-left">
-							<input class="input" type="password" value="{{request.session.password}}" placeholder="{{request.session.password}}" name="password" id="password_userUpdate">
-							<span class="icon is-small is-left">
-								<i class="fas fa-lock"></i>
-							</span>
+						<div class="label">{{profileForm.age.label}}</div>
+						<p type="number" class="control has-icons-left">
+							{{profileForm.age}}
 						</p>
 					</div>
 
 					<div class="field requiredFormField">
-						<label class="label">Repeat Password*</label>
+						<div class="label">{{profileForm.gender.label}}</div>
 						<p class="control has-icons-left">
-							<input class="input" type="password" value="{{request.session.password}}" placeholder="{{request.session.password}}" id="repPassword_userUpdate">
-							<span class="icon is-small is-left">
-								<i class="fas fa-lock"></i>
-							</span>
+							{{profileForm.gender}}
 						</p>
 					</div>
 
 					<div class="field requiredFormField">
-					  <label class="label">Full Name</label>
-					  <div class="control">
-					    <input class="input" type="text" value="{{request.session.fullName}}" placeholder="{{request.session.fullName}}" name="fullName">
-					  </div>
+						<div class="label">{{profileForm.description.label}}</div>
+						<p class="control has-icons-left">
+							{{profileForm.description}}
+						</p>
 					</div>
 
 
-					<div class="field requiredFormField">
-					  <label class="label">Age</label>
-					  <div class="control">
-					    <input class="input" type="number" placeholder="{{request.session.age}}" value="{{request.session.age}}" name="age">
-					  </div>
-					</div>
-
-
-
-					<div class="field requiredFormField">
-					  <label class="label">Gender</label>
-					  <div class="control" name="gender">
-					    <input type="radio" name="gender" value="male"> Male<br>
-						<input type="radio" name="gender" value="female"> Female<br>
-						<input type="radio" name="gender" value="other"> Other 
-					  </div>
-					</div>
-
-
-
-					<div class="field">
-					  <label class="label">Description</label>
-					  <div class="control">
-					    <input class="input" type="text" value="{{request.session.preferences}}" placeholder="{{request.session.preferences}}" name="description">
-					  </div>
-					</div>
-
-					<div class="field control">
-						<input class="button is-link" value="Change Account" id="submitButton_userUpdate">
+					<div class="control">
+						<input class="button is-link" type="submit" name="Change Account" value="Change Account">
 					</div>
 
 					<div class="panel">
@@ -133,8 +86,9 @@
 						</div>
 
 						<div class="field control">
-							<input class="button is-danger" value="Remove Account" id="removeButton_userUpdate">
+							<input type="submit" class="button is-danger" value="Remove Account" id="removeButton_userUpdate">
 						</div>
+
 					</div>
 
 				</form>
@@ -154,61 +108,7 @@
 	<script src="{% static "js/formFunctionalities.js" %}"></script>
 	<script>
 		$('#error_userUpdate').hide()
-		$(document).ready(function(){
-			var passCheck = function(){
-		    	$('#submitButton_userUpdate').attr('disabled', ($('#password_userUpdate').val().localeCompare($('#repPassword_userUpdate').val()) != 0) || ($('#password_userUpdate').val().length <= 0 || $('#repPassword_userUpdate').val().length <= 0));
-		    };
-
-		    passCheck();
-		    $('#password_userUpdate').on('input',passCheck);
-		    $('#repPassword_userUpdate').on('input',passCheck);
-
-		    var currAvatarSource = undefined;
-		    var file = $("#avatar_userUpdate").change(function(){
-			    if(this.files.length > 0)
-			    {
-
-					document.querySelector('input[type="file"]').addEventListener('change', function() {
-						if (this.files && this.files[0]) {
-							var img = document.querySelector('img');  // $('img')[0]
-							img.src = URL.createObjectURL(this.files[0]); // set src to blob url
-							img.onload = imageIsLoaded;
-						}
-					});
-				    function imageIsLoaded() { 
-						$("#avatarImg_userUpdate").attr('src', this.src);
-						currAvatarSource = this.src;
-					}
-
-				}
-			});
-
-
-		    $('#submitButton_userUpdate').click(function(){
-		    	$("#form_userUpdate :input").prop("disabled", false); 
-		    	
-		    	// saveAs(new Blob(currAvatarSource, {type:"image/png"}),"../static/media/images/userAvatars/{{request.session.userId}}.png");
-
-		    	$('#form_userUpdate')["avatarPath"] = 
-		    	
-		    	$.ajax({
-	                type: 'POST',
-	                url: '/updateUserRegistration/',
-	                data: $('#form_userUpdate').serialize(),
-	                statusCode: {
-						500: function() {
-						  $('#error_userUpdate').show(500);
-						  setTimeout(function(){ $('#error_userUpdate').hide(500); }, 3000);
-						},
-						200: function(){ 
-							$('#error_userUpdate').hide();
-							document.location.href = '/dash/';
-						}
-					}
-			    });
-		    });
-
-
-		});
+		$('#error_userUpdate').show(500);
+		setTimeout(function(){ $('#error_userUpdate').hide(500); }, 5000);
 	</script>
 </html>
