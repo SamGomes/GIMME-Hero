@@ -207,28 +207,29 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 	def getAllPlayerIds(self): #allPlayers for adaptation
 		return serverStateModelBridge.getCurrSelectedUsers()
 
-	def getAllStoredUserIds(self):
-		allUsers = UserProfile.objects.all()
+	def getAllStoredStudentUsernames(self):
+		# breakpoint()
+		allUsers = User.objects.all()
 		allUsersIds = []
 		for player in allUsers:
-			if player.role=="student":
+			if "student" in player.userprofile.role:
 				allUsersIds.append(player.username)
 		return allUsersIds
 
 	def getPlayerName(self, username):
-		player = User.objects.get(username=username).userprofile
+		player = UserProfile.objects.get(username=username).userprofile
 		return player.fullName
 
 	
 	def getPlayerCurrProfile(self,  username):
-		player = User.objects.get(username=username).userprofile
+		player = UserProfile.objects.get(username=username)
 		# print(json.dumps(player, default= lambda o: o.__dict__, sort_keys=True))
 		profile = json.loads(player.currState)["profile"]
 		profile = InteractionsProfile(dimensions= profile["dimensions"])
 		return profile
 	
 	def getPlayerStateGrid(self, username):
-		player = User.objects.get(username=username).userprofile
+		player = UserProfile.objects.get(username=username)
 
 		playerStateGrid = json.loads(player.pastModelIncreasesGrid)
 		cells = [[]]
@@ -258,52 +259,50 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 			)
 
 	def getPlayerCurrCharacteristics(self, username):
-		player = User.objects.get(username=username).userprofile
+		player = UserProfile.objects.get(username=username)
 		characteristics = json.loads(player.currState)["characteristics"]
 		return PlayerCharacteristics(ability= float(characteristics["ability"]), 
 			engagement= float(characteristics["engagement"]))
 	
 	def getPlayerPersonalityEst(self, username):
-		player = User.objects.get(username=username).userprofile
+		player = UserProfile.objects.get(username=username)
 		personality = json.loads(player.personality)
 		personality = InteractionsProfile(dimensions= personality["dimensions"])
 		return personality
 
 	def getPlayerCurrState(self, username):
-		player = User.objects.get(username=username).userprofile
+		player = UserProfile.objects.get(username=username)
 		return PlayerState(profile = self.getPlayerCurrProfile(username), 
 			characteristics = self.getPlayerCurrCharacteristics(username), 
 			dist = json.loads(player.currState)["dist"])
 
 	def getPlayerFullName(self, username):
-		player = User.objects.get(username=username).userprofile
+		player = UserProfile.objects.get(username=username)
 		return player.fullName
 
 
 
 	def setPlayerPersonalityEst(self, username, personality):
-		player = User.objects.get(username=username).userprofile
+		player = UserProfile.objects.get(username=username)
 		player.personality = json.dumps(personality, default=lambda o: o.__dict__)
 		player.save()
 
 
 	def setPlayerCharacteristics(self, username, characteristics):
-		player = User.objects.get(username=username).userprofile
+		player = UserProfile.objects.get(username=username)
 		newState = self.getPlayerCurrState(username)
 		newState.characteristics = characteristics
 		player.currState = json.dumps(newState, default=lambda o: o.__dict__)
 		player.save()
 
 	def setPlayerProfile(self, username, profile):
-		player = User.objects.get(username=username).userprofile
+		player = UserProfile.objects.get(username=username)
 		newState = self.getPlayerCurrState(username)
 		newState.profile = profile
 		player.currState = json.dumps(newState, default=lambda o: o.__dict__)
 		player.save()
 
 playerBridge = CustomPlayerModelBridge()
-
-
 adaptation = Adaptation()
 # profileTemplate = serverStateModelBridge.getProfileTemplate()
 # for d in range(numInteractionDimensions):
@@ -333,7 +332,7 @@ class Views(): #acts as a namespace
 		serverStateModelBridge.setCurrAdaptationState([])
 		serverStateModelBridge.setReadyForNewActivity(False)
 		serverStateModelBridge.setCurrSelectedUsers([])
-		serverStateModelBridge.setCurrFreeUsers(playerBridge.getAllStoredUserIds())
+		serverStateModelBridge.setCurrFreeUsers(playerBridge.getAllStoredStudentUsernames())
 		serverStateModelBridge.setCurrSelectedTasks([])
 		serverStateModelBridge.setCurrFreeTasks(taskBridge.getAllStoredTaskIds())
 		return HttpResponse('ok')
@@ -389,7 +388,13 @@ class Views(): #acts as a namespace
 
 				profile.save() 
 
-				login(request, user)
+				if "student" in profile.role:
+					currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
+					currFreeUsers.append(user.username)
+					serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
+
+				if(not request.user.is_authenticated):
+					login(request, user)
 				return redirect('/dash')
 			else:
 				context = { 'form' : form , 'profileForm': profileForm }
@@ -479,13 +484,13 @@ class Views(): #acts as a namespace
 
 	@csrf_protect
 	def addAllUsersSelected(request): #reads (player) from args
-		serverStateModelBridge.setCurrSelectedUsers(playerBridge.getAllStoredUserIds())
+		serverStateModelBridge.setCurrSelectedUsers(playerBridge.getAllStoredStudentUsernames())
 		serverStateModelBridge.setCurrFreeUsers([])
 		return HttpResponse('ok')
 	@csrf_protect
 	def removeAllUsersSelected(request): #reads (player) from args
 		serverStateModelBridge.setCurrSelectedUsers([])
-		serverStateModelBridge.setCurrFreeUsers(playerBridge.getAllStoredUserIds())
+		serverStateModelBridge.setCurrFreeUsers(playerBridge.getAllStoredStudentUsernames())
 		return HttpResponse('ok')
 
 	@csrf_protect
