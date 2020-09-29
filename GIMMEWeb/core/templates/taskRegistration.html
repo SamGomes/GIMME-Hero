@@ -4,50 +4,34 @@
 <html>
 	<body class="layout-default">
 		
-		{% if form.errors %}
-			{% for field in form %}
-				{% for error in field.errors %}
-					<div class="alert alert-danger">
-					<strong>{{ error|escape }}</strong>
-					</div>
-				{% endfor %}
-			{% endfor %}
-			{% for error in form.non_field_errors %}
-				<div class="alert alert-danger">
-				<strong>{{ error|escape }}</strong>
-				</div>
-			{% endfor %}
-		{% endif %}
-
+		
 		<section class="section columns">
 			<div class="column"></div>
 			<div class="panel panel-block column">
-				<form action="{% url 'saveTaskRegistration' %}" id="form_taskRegistration" method="POST">
+				<form action="" enctype="multipart/form-data" id="form_taskRegistration" method="POST">
 					{% csrf_token %}
-					{{ form }}
 					
-					<div id="error_taskRegistration" class="section hero is-danger is-centered has-text-centered">
-						<label class="label subtitle is-4 is-white">Registry Fail (Error {{request.session.taskRegistrationError}})! Please check all fields.</label>
-					</div>
+					{% if form.errors %}
+						<div id="error_taskRegistration" class="section hero is-danger is-centered has-text-centered">
+							<label class="label subtitle is-4 is-white">Registry Fail! Errors: </label>
+							<p class="is-4 is-white">{{form.errors}} </p>
+							<p class="is-4 is-white">{{profileForm.errors}} </p>
+						</div>
+					{% endif %}
 
 					<div class="subtitle">Task Registration</div>
 					<p>* fields are mandatory</p>
 
+					{% for field in form %}
+						<div class="field">
+							<div class="label">{{field.label}}*</div>
+							<p class="control has-icons-left">
+								{{field}}
+							</p>
+						</div>
+					{% endfor %}
 
-					<div class="field requiredFormField">
-					  <label class="label">Title*</label>
-					  <div class="control">
-					    <input class="input" type="text" placeholder="Title" name="title">
-					  </div>
-					</div>
 
-
-					<div class="field requiredFormField">
-					  <label class="label">Description*</label>
-					  <div class="control box">
-					    <textarea class="input" type="text" placeholder="Description" name="description"></textarea>
-					  </div>
-					</div>
 
 					<div class="field requiredFormField">
 					  <label class="label">Interaction Profile*</label>
@@ -59,44 +43,26 @@
 					  </div>
 					</div>
 
-					Profile Importance
-					<input class='input' type='number' name="profileWeight" min='0' max='1' step="0.01" placeholder='0.5'>
+					
 
-					<div class="field requiredFormField">
-					  <label class="label">Minimum Required Ability*</label>
+					<!-- <div class="field requiredFormField">
+					  <label class="label">Profile Weight*</label>
 					  <div class="control">
-					    <input class="input" type="number" min='0' max='1' step="0.01" placeholder='0.5' name="minReqAbility">
+					    <input name="profileWeight" class="input" type="number" placeholder="0.5" step="0.01" name="">
 					  </div>
 					</div>
 
-					Ability Importance
-					<input class='input' type='number' name="difficultyWeight" min='0' max='1' step="0.01" placeholder='0.5'>
-
-
 					<div class="field requiredFormField">
-					  <label class="label">Duration*</label>
+					  <label class="label">Difficulty Weight*</label>
 					  <div class="control">
-					    <input class="input" type="date" placeholder="Duration" name="initDate">
-					    to
-					    <input class="input" type="date" placeholder="Duration" name="finalDate">
+					    <input name="difficultyWeight" class="input" type="number" placeholder="0.5" step="0.01" name="">
 					  </div>
-					</div>
-
-					<div class="file is-boxed">
-					  <label class="file-label">
-					    <input class="file-input" type="file" name="files">
-					    <span class="file-cta">
-					      <span class="file-label">
-					        Task Files
-					      </span>
-					    </span>
-					  </label>
-					</div>
+					</div> -->
 
 					<br></br>
 
 					<div class="control">
-						<input class="button is-link" value="Register Task" id="submitButton_taskRegistration">
+						<input type="submit" class="button is-link" value="Register Task" id="submitButton_taskRegistration">
 					</div>
 				</form>
 			</div>
@@ -112,29 +78,10 @@
 	{% include 'common/CSRFTSetup.html' %}
 	{% include 'common/general.html' %}
 	<script>
-		$('#error_taskRegistration').hide()
 		$(document).ready(function(){
-			
-		    $('#submitButton_taskRegistration').click(function(){
-			    console.log($('#form_taskRegistration').serialize())
-			    // for(i=0; i<30; i++){
-			    	$.ajax({
-		                type: 'POST',
-		                url: '/saveTaskRegistration/',
-		                data: $('#form_taskRegistration').serialize(),
-		                statusCode: {
-							500: function() {
-							  $('#error_taskRegistration').show(500);
-							  setTimeout(function(){ $('#error_userRegistration').hide(500); }, 3000);
-							},
-							200: function(){ 
-								$('#error_taskRegistration').hide();
-								document.location.href = '/dash/';
-							}
-						}
-				    });
-			    // }
-		    });
+			$('#error_taskRegistration').hide();
+			$('#error_taskRegistration').show(500);
+			setTimeout(function(){ $('#error_taskRegistration').hide(500); }, 5000);
 		});
 	</script>
 	<script src="{% static "js/formFunctionalities.js" %}"></script>

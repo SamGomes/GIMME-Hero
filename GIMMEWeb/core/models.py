@@ -8,6 +8,9 @@ from django.db.models.signals import post_save
 
 from multiselectfield import MultiSelectField
 
+from django.core.validators import MaxValueValidator, MinValueValidator
+
+from django import forms
 
 
 ROLE = (('designer', 'designer'),
@@ -20,11 +23,8 @@ GENDER = (('Male', 'Male'),
         ('Other', 'Other'))
 
 
+class ModelAuxMethods():
 
-class UserProfile(models.Model):
-
-    # included from 
-    # https://stackoverflow.com/questions/15140942/django-imagefield-change-file-name-on-upload
     def pathAndRename(path):
         def wrapper(instance, filename):
             ext = filename.split('.')[-1]
@@ -39,7 +39,11 @@ class UserProfile(models.Model):
         return wrapper
 
 
-        
+class UserProfile(models.Model):
+
+    # included from 
+    # https://stackoverflow.com/questions/15140942/django-imagefield-change-file-name-on-upload
+  
     user = models.OneToOneField(User, 
         on_delete=models.CASCADE,
         primary_key=True)
@@ -49,7 +53,7 @@ class UserProfile(models.Model):
     fullName = models.CharField(max_length=255)
     age = models.IntegerField()
     gender = MultiSelectField(choices=GENDER, max_choices=1)
-    description = models.CharField(max_length=255)
+    description = models.TextField(max_length=255)
 
 
     currState = models.CharField(max_length=255)
@@ -57,7 +61,7 @@ class UserProfile(models.Model):
     personality = models.CharField(max_length=255)
 
 
-    avatar = models.ImageField(upload_to=pathAndRename('images/userAvatars/'))
+    avatar = models.ImageField(upload_to=ModelAuxMethods.pathAndRename('images/userAvatars/'))
 
 
     def __str__(self):
@@ -67,24 +71,24 @@ class UserProfile(models.Model):
 
 
 class Task(models.Model):
-    taskId = models.CharField(primary_key=True, max_length=255)
+    taskId = models.AutoField(primary_key=True)
     
     creator = models.CharField(max_length=255)
     creationTime = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
-    description = models.CharField(max_length=255)
-    minReqAbility = models.CharField(max_length=255)
+    description = models.TextField(max_length=255)
+    minReqAbility = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
     profile = models.CharField(max_length=255)
     
-    profileWeight = models.CharField(max_length=255)
-    difficultyWeight = models.CharField(max_length=255)
+    profileWeight = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
+    difficultyWeight = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
 
 
-    initDate = models.CharField(max_length=255)
-    finalDate = models.CharField(max_length=255)
+    initDate = models.DateField()
+    finalDate = models.DateField()
 
 
-    filePaths = models.CharField(max_length=255)
+    files = models.FileField(upload_to=ModelAuxMethods.pathAndRename('taskFiles/'))
 
 
 class ServerState(models.Model):

@@ -119,9 +119,11 @@
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 	{% include 'common/general.html' %}
 	<script>
-		$('#error_userRegistration').hide();
-		$('#error_userRegistration').show(500);
-		setTimeout(function(){ $('#error_userRegistration').hide(500); }, 5000);
+		$(document).ready(function(){
+			$('#error_userRegistration').hide();
+			$('#error_userRegistration').show(500);
+			setTimeout(function(){ $('#error_userRegistration').hide(500); }, 5000);
+		});
 	</script>
 	<script src="{% static "js/formFunctionalities.js" %}"></script>
 </html>

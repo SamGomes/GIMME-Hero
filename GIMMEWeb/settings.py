@@ -13,7 +13,7 @@ SECRET_KEY = 'p+ah706u_0-zk@_jq&o#v6&u@)^w5#w&*r_re=usr@u9i-vh3d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS=["localhost","gimme-web.duckdns.org"]
+ALLOWED_HOSTS=["localhost","gimme-web.duckdns.org","gimme-web-secure.duckdns.org"]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 SESSION_SAVE_EVERY_REQUEST = True
