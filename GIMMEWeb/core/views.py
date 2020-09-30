@@ -429,11 +429,16 @@ class Views(): #acts as a namespace
 
 	
 	def userDeletion(request):
-		breakpoint()
 		if request.method == "GET":
-			username = request.user.username
+			canLogout = False
+			username = request.GET.get("usernameToDelete")
+			if(not username):
+				username = request.user.username
+				canLogout = True
+			
 			try:
-				logout(request) #logout player before removing it
+				if canLogout:
+					logout(request) #logout player before removing it
 				player = User.objects.get(username = username)
 				player.delete()
 
@@ -452,9 +457,6 @@ class Views(): #acts as a namespace
 				serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
 			return redirect("/home")
 
-
-		elif request.method == "GET":
-			return redirect('/userUpdate')
 
 	def isUserRegistered(username):
 		returned = {}
@@ -733,6 +735,32 @@ class Views(): #acts as a namespace
 		return render(request, 'taskUpdate.html')
 
 
+	
+	def taskDeletion(request):		
+		if request.method == "GET":
+			taskId = request.GET.get("taskIdToDelete")
+			try:
+				task = Task.objects.get(taskId = taskId)
+				task.delete()
+
+			except Task.DoesNotExist:
+				messages.info(request, 'Task not deleted! Id not found.')
+				return redirect("/taskUpdate")
+
+			currFreeTasks = serverStateModelBridge.getCurrFreeTasks()
+			if(taskId in currFreeTasks):
+				currFreeTasks.remove(taskId)
+				serverStateModelBridge.setCurrFreeTasks(currFreeTasks)
+
+			currSelectedTasks = serverStateModelBridge.getCurrSelectedTasks()
+			if(taskId in currSelectedTasks):
+				currSelectedTasks.remove(taskId)
+				serverStateModelBridge.setCurrSelectedTasks(currSelectedTasks)
+
+			return redirect("/dash")
+
+
+
 	def isTaskRegistered(taskId):
 		returned = {}
 		if(taskId != None):
@@ -745,91 +773,6 @@ class Views(): #acts as a namespace
 		return returned
 
 
-		
-	def saveTaskRegistration(request):
-		if request.POST:
-			requestInfo = request.POST
-			isNewRegRequest = json.loads(request.session.get('isNewTaskRegRequest'))
-
-			entry = Task() 
-
-			taskId = ''
-			
-			entry.creator = request.session.get('username')
-			# requestInfo._mutable = True
-			# requestInfo['taskId'] = taskId
-			# requestInfo._mutable = False
-
-			entry.creationTime = datetime.now()
-			entry.title = requestInfo['title']
-
-			if(isNewRegRequest):
-				lenOfIsReg = 1
-				while(lenOfIsReg > 0):
-					taskId = requestInfo['title'].replace(' ', '')
-					taskId = taskId + Views.getRandomString(10) #if username exists in other regs, register username1, username2, etc.
-
-					isReg = Views.isTaskRegistered(taskId)
-					lenOfIsReg = len(isReg['storedTasks'])
-			else:
-				taskId = requestInfo['taskId']
-
-			entry.taskId = taskId
-			entry.description = requestInfo['description']
-			entry.minReqAbility = requestInfo['minReqAbility']
-			entry.profile = json.dumps(InteractionsProfile(
-				{
-				 "K_cp": float(requestInfo['profileDim0']),
-				 "K_ea": float(requestInfo['profileDim1']),
-				 "K_i":  float(requestInfo['profileDim2']),
-				 "K_mh": float(requestInfo['profileDim3'])
-				 }
-			), default=lambda o: o.__dict__, sort_keys=True)
-			entry.profileWeight = requestInfo['profileWeight']
-			entry.difficultyWeight = requestInfo['difficultyWeight']
-
-			entry.filePaths = ''
-
-			# Adaptation stuff
-			if(isNewRegRequest):
-				try:
-					taskBridge.saveTask(entry)
-
-					# add task to free tasks
-					currFreeTasks = serverStateModelBridge.getCurrFreeTasks();
-					currFreeTasks.append(taskId)
-					serverStateModelBridge.setCurrFreeTasks(currFreeTasks)
-
-				except IntegrityError as e:
-					request.session['playerRegistrationError'] = e.__class__.__name__
-					return HttpResponse('500')
-			else:
-				try:
-					UserProfile.objects.filter(username=username).update(**entry.__dict__)
-				except IntegrityError as e:
-					request.session['playerRegistrationError'] = e.__class__.__name__
-					return HttpResponse('500')
-
-
-			return HttpResponse('200')
-
-
-	
-	def removeTaskRegistration(request):
-		taskId = request.POST["taskId"]
-
-		currFreeTasks = serverStateModelBridge.getCurrFreeTasks()
-		if(taskId in currFreeTasks):
-			currFreeTasks.remove(taskId)
-			serverStateModelBridge.setCurrFreeTasks(currFreeTasks)
-
-		currSelectedTasks = serverStateModelBridge.getCurrSelectedTasks()
-		if(taskId in currSelectedTasks):
-			currSelectedTasks.remove(taskId)
-			serverStateModelBridge.setCurrSelectedTasks(currSelectedTasks)
-
-		taskBridge.removeTask(taskId)
-		return HttpResponse('200')
 
 
 	# auxiliary methods

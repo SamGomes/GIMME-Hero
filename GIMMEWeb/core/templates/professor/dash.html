@@ -472,13 +472,9 @@ crossorigin='anonymous'></script>
 								},
 								function(){
 									$.ajax({
-										type: 'POST',
-										url: '/removeUserRegistration/',
-										data: {'username': $(this).parent().text()},
-										success:
-										function()
-										{
-										}
+										type: 'GET',
+										url: '/userDeletion/',
+										data: {'usernameToDelete': $(this).parent().text()}
 									});
 								});
 							var suTable = generateTableFromArray(
@@ -493,22 +489,18 @@ crossorigin='anonymous'></script>
 										{
 											$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-left').addClass('fa-arrow-circle-right');
 										}
+									});
 								},
 								function(){
 									callUserReg(true);
 								},
 								function(){
 									$.ajax({
-										type: 'POST',
-										url: '/removeUserRegistration/',
-										data: {'username': $(this).parent().text()},
-										success:
-										function()
-										{
-										}
+										type: 'GET',
+										url: '/userDeletion/',
+										data: {'usernameToDelete': $(this).parent().text()}
 									});
 								});
-							});
 							$('#freeUsersTable_professor_dash').empty();
 							$('#freeUsersTable_professor_dash').append(fuTable);
 
@@ -537,9 +529,9 @@ crossorigin='anonymous'></script>
 								},
 								function(){
 									$.ajax({
-										type: 'POST',
+										type: 'GET',
 										url: '/taskDeletion/',
-										data: {'taskId': $(this).parent().text()},
+										data: {'taskIdToDelete': $(this).parent().text()},
 										success:
 										function()
 										{
@@ -566,9 +558,9 @@ crossorigin='anonymous'></script>
 								},
 								function(){
 									$.ajax({
-										type: 'POST',
-										url: '/removeTaskRegistration/',
-										data: {'taskId': $(this).parent().text()},
+										type: 'GET',
+										url: '/taskDeletion/',
+										data: {'taskIdToDelete': $(this).parent().text()},
 										success:
 										function()
 										{

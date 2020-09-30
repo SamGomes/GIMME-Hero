@@ -20,9 +20,7 @@ urlpatterns = [
     
     re_path(r'^taskRegistration/', Views.taskRegistration, name="taskRegistration"),
     re_path(r'^taskUpdate/', Views.taskUpdate, name="taskUpdate"),
-
-    re_path(r'^saveTaskRegistration/$', Views.saveTaskRegistration, name="saveTaskRegistration"),
-    re_path(r'^removeTaskRegistration/$', Views.removeTaskRegistration, name="removeTaskRegistration"),
+    re_path(r'^taskDeletion/', Views.taskDeletion, name="taskDeletion"),
 
     re_path(r'^addAllUsersSelected/$', Views.addAllUsersSelected, name="addAllUsersSelected"),
     re_path(r'^removeAllUsersSelected/$', Views.removeAllUsersSelected, name="removeAllUsersSelected"),
