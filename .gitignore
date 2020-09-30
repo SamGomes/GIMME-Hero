@@ -1,7 +1,11 @@
 **/*.gif
 **/*.png
-*.pyc
+**/*.pyc
 
-*.csv
+**/*.csv
 
-*.sqlite3
+**/*.sqlite3
+
+certification/
+
+GIMMEWeb/core/templates/static/media/

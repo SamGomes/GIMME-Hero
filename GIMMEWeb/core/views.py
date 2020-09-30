@@ -28,7 +28,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
 from django.contrib import messages
 
-from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm 
+from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm
 
 
 intProfTemplate = InteractionsProfile({"K_cp": 0, "K_ea": 0, "K_i": 0, "K_mh": 0})
@@ -147,7 +147,6 @@ class CustomTaskModelBridge(TaskModelBridge):
 
 
 	def getTaskInteractionsProfile(self, taskId):
-		breakpoint()
 		task = Task.objects.get(taskId = taskId)
 		return InteractionsProfile(dimensions = json.loads(task.profile)["dimensions"])
 
@@ -412,8 +411,19 @@ class Views(): #acts as a namespace
 	
 	def userUpdate(request):
 		if request.method == "POST":
-			form = UpdateUserForm(request.POST, instance=request.user)
-			profileForm = UpdateUserProfileForm(request.POST, request.FILES, instance=request.user.userprofile)
+
+			instance = request.user
+			usernameToUpdate = request.GET.get('usernameToUpdate')
+			if(usernameToUpdate):
+				try:
+					instance = User.objects.get(username=usernameToUpdate)
+				except User.DoesNotExist:
+					messages.info(request, 'Account not updated! Username not found.')
+					return redirect("/userUpdate")
+
+
+			form = UpdateUserForm(request.POST, instance=instance)
+			profileForm = UpdateUserProfileForm(request.POST, request.FILES, instance=instance.userprofile)
 
 			if form.is_valid() and profileForm.is_valid():
 				user = form.save()
@@ -421,8 +431,18 @@ class Views(): #acts as a namespace
 				return redirect('/dash')
 
 		elif request.method == "GET":
-			form = UpdateUserForm(instance=request.user)
-			profileForm = UpdateUserProfileForm(instance=request.user.userprofile)
+
+			instance = request.user
+			usernameToUpdate = request.GET.get('usernameToUpdate')
+			if(usernameToUpdate):
+				try:
+					instance = User.objects.get(username=usernameToUpdate)
+				except User.DoesNotExist:
+					messages.info(request, 'Account not updated! Username not found.')
+					return redirect("/userUpdate")
+
+			form = UpdateUserForm(instance=instance)
+			profileForm = UpdateUserProfileForm(instance=instance.userprofile)
 
 			context = { 'form' : form , 'profileForm': profileForm }
 			return render(request, 'userUpdate.html',  context)
@@ -601,7 +621,7 @@ class Views(): #acts as a namespace
 	# professor methods
 	
 	def startAdaptation(request):
-		
+		# breakpoint()
 		# try:
 		currAdaptationState = adaptation.iterate()
 		# except ValueError:
@@ -700,7 +720,10 @@ class Views(): #acts as a namespace
 				requestInfo = request.POST
 				form = CreateTaskForm(requestInfo, request.FILES)
 				if form.is_valid():
-					form.profile = json.dumps(InteractionsProfile(
+					
+					task = form.save(commit = False)
+
+					task.profile = json.dumps(InteractionsProfile(
 						{
 						 "K_cp": float(requestInfo['profileDim0']),
 						 "K_ea": float(requestInfo['profileDim1']),
@@ -708,15 +731,12 @@ class Views(): #acts as a namespace
 						 "K_mh": float(requestInfo['profileDim3'])
 						 }
 					), default=lambda o: o.__dict__, sort_keys=True)
-					task = form.save()
 
-					# requestInfo._mutable = True
-					# requestInfo['taskId'] = task.taskId
-					# requestInfo._mutable = False
+					task.save()
 
 					# add task to free tasks
 					currFreeTasks = serverStateModelBridge.getCurrFreeTasks()
-					currFreeTasks.append(task.taskId)
+					currFreeTasks.append(str(task.taskId))
 					serverStateModelBridge.setCurrFreeTasks(currFreeTasks)
 
 					return redirect('/dash')
@@ -730,9 +750,37 @@ class Views(): #acts as a namespace
 				return render(request, 'taskRegistration.html', context)
 	
 	def taskUpdate(request):
-		if(request.session.get('role') != "professor"):
-			return HttpResponse('500')
+		# breakpoint()
 		return render(request, 'taskUpdate.html')
+		if request.method == "POST":
+			taskIdToUpdate = request.POST.get('taskIdToUpdate')
+			try:
+				instance = Task.objects.get(taskId=taskIdToUpdate)
+
+				form = UpdateUserForm(request.POST, instance=instance)
+				profileForm = UpdateUserProfileForm(request.POST, request.FILES, instance=instance.userprofile)
+
+				if form.is_valid():
+					form.save()
+					return redirect('/dash')
+
+			except Task.DoesNotExist:
+				messages.info(request, 'Task not updated! Id not found.')
+				return redirect("/taskUpdate")
+
+
+		elif request.method == "GET":
+			taskIdToUpdate = request.GET.get('taskIdToUpdate')
+			try:
+				instance = Task.objects.get(taskId=taskIdToUpdate)
+
+				form = UpdateTaskForm(instance=instance)
+				context = { 'form' : form }
+				return render(request, 'taskUpdate.html',  context)
+
+			except Task.DoesNotExist:
+				messages.info(request, 'Task not updated! Id not found.')
+				return redirect("/dash")
 
 
 	
@@ -745,7 +793,7 @@ class Views(): #acts as a namespace
 
 			except Task.DoesNotExist:
 				messages.info(request, 'Task not deleted! Id not found.')
-				return redirect("/taskUpdate")
+				return redirect("/dash")
 
 			currFreeTasks = serverStateModelBridge.getCurrFreeTasks()
 			if(taskId in currFreeTasks):
@@ -806,10 +854,9 @@ class Views(): #acts as a namespace
 
 		newSessionState['readyForNewActivity'] = serverStateModelBridge.isReadyForNewActivity()
 
-		if(request.user.userprofile.role == 'professor'):
+		if('professor' in request.user.userprofile.role):
 			newSessionState['currAdaptationState'] = serverStateModelBridge.getCurrAdaptationState()
 
 		newSession = json.dumps(newSessionState, default=lambda o: o.__dict__, sort_keys=True)
 
-		# print(newSessionState)
 		return HttpResponse(newSession)

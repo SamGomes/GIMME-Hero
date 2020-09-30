@@ -409,7 +409,7 @@ crossorigin='anonymous'></script>
 		}
 
 
-		var generateTableFromArray = function(canAdd, array, tagClass, buttonIconClass, moveElementCallback, addElementCallback, deleteElementCallback){
+		var generateTableFromArray = function(canAdd, array, tagClass, moveButtonIconClass, moveElementCallback, addElementCallback, deleteElementCallback, editElementCallback){
 			var table = $('<div>');
 			for(var i=0; i < array.length+1; i++){
 				
@@ -422,15 +422,21 @@ crossorigin='anonymous'></script>
 					deleteButton.append('<i class=\'fas fa-trash\'></i>').click(deleteElementCallback);
 					tag.append(deleteButton);
 					
-					var changeButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-					changeButton.append('<i class=\'fas '+buttonIconClass+'\'></i>').click(moveElementCallback);
-					tag.append(changeButton);
+
+					var editButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
+					editButton.append('<i class=\'fa fa-pencil\'></i>').click(editElementCallback);
+					tag.append(editButton);
+
+
+					var moveButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
+					moveButton.append('<i class=\'fas '+moveButtonIconClass+'\'></i>').click(moveElementCallback);
+					tag.append(moveButton);
 
 				}else{
-					var changeButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-					changeButton.append('<i class=\'fas fa-plus-circle\'></i>');
-      				changeButton.click(addElementCallback);
-					tag.append(changeButton);
+					var addButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
+					addButton.append('<i class=\'fas fa-plus-circle\'></i>');
+      				addButton.click(addElementCallback);
+					tag.append(addButton);
 				}
 				tag.addClass('tag');
 				tag.addClass(tagClass);
@@ -476,6 +482,13 @@ crossorigin='anonymous'></script>
 										url: '/userDeletion/',
 										data: {'usernameToDelete': $(this).parent().text()}
 									});
+								},
+								function(){
+									$.ajax({
+										type: 'GET',
+										url: '/userUpdate/',
+										data: {'usernameToUpdate': $(this).parent().text()}
+									});
 								});
 							var suTable = generateTableFromArray(
 								false, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
@@ -499,6 +512,13 @@ crossorigin='anonymous'></script>
 										type: 'GET',
 										url: '/userDeletion/',
 										data: {'usernameToDelete': $(this).parent().text()}
+									});
+								},
+								function(){
+									$.ajax({
+										type: 'GET',
+										url: '/userUpdate/',
+										data: {'usernameToUpdate': $(this).parent().text()}
 									});
 								});
 							$('#freeUsersTable_professor_dash').empty();
@@ -529,13 +549,14 @@ crossorigin='anonymous'></script>
 								},
 								function(){
 									$.ajax({
-										type: 'GET',
 										url: '/taskDeletion/',
-										data: {'taskIdToDelete': $(this).parent().text()},
-										success:
-										function()
-										{
-										}
+										data: {'taskIdToDelete': $(this).parent().text()}
+									});
+								},
+								function(){
+									$.ajax({
+										url: '/taskUpdate/',
+										data: {'taskIdToUpdate': $(this).parent().text()}
 									});
 								});
 
@@ -558,13 +579,14 @@ crossorigin='anonymous'></script>
 								},
 								function(){
 									$.ajax({
-										type: 'GET',
 										url: '/taskDeletion/',
-										data: {'taskIdToDelete': $(this).parent().text()},
-										success:
-										function()
-										{
-										}
+										data: {'taskIdToDelete': $(this).parent().text()}
+									});
+								},
+								function(){
+									$.ajax({
+										url: '/taskUpdate/',
+										data: {'taskIdToUpdate': $(this).parent().text()}
 									});
 								});
 
@@ -654,7 +676,6 @@ crossorigin='anonymous'></script>
 							'numBootstrapIterations': $('#numBootstrapIterationsId_professor_dash').val(),
 							'precomputeBootstrap': $('#precomputeBootstrapId_professor_dash').val()
 						};
-			// if(canComputeAdaptation()){
 				currAdaptationConfig = newAdaptationConfig;
 				$.ajax(
 					{
@@ -663,16 +684,11 @@ crossorigin='anonymous'></script>
 						dataType: 'json',
 						data: newAdaptationConfig,
 						complete: 
-						function (newServerState) {
-							currServerState.currAdaptationState = newServerState.currAdaptationState;
+						function () {
 							startAdaptation();
 						}
 					}
 				);
-			// }else{
-			// 	startAdaptation();
-			// }
-			
 		}
 
 		$('#loadAndStartAdaptation_professor_dash').click(function(){
