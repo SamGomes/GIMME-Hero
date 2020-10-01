@@ -410,6 +410,7 @@ class Views(): #acts as a namespace
 
 	
 	def userUpdate(request):
+		# breakpoint()
 		if request.method == "POST":
 
 			instance = request.user
@@ -429,6 +430,9 @@ class Views(): #acts as a namespace
 				user = form.save()
 				profile = profileForm.save()
 				return redirect('/dash')
+			else:
+				context = { 'form' : form , 'profileForm': profileForm }
+				return render(request, 'userUpdate.html',  context)
 
 		elif request.method == "GET":
 
@@ -439,7 +443,7 @@ class Views(): #acts as a namespace
 					instance = User.objects.get(username=usernameToUpdate)
 				except User.DoesNotExist:
 					messages.info(request, 'Account not updated! Username not found.')
-					return redirect("/userUpdate")
+					return redirect('/userUpdate')
 
 			form = UpdateUserForm(instance=instance)
 			profileForm = UpdateUserProfileForm(instance=instance.userprofile)
@@ -510,76 +514,85 @@ class Views(): #acts as a namespace
 
 	
 	def addAllUsersSelected(request): #reads (player) from args
-		serverStateModelBridge.setCurrSelectedUsers(playerBridge.getAllStoredStudentUsernames())
-		serverStateModelBridge.setCurrFreeUsers([])
-		return HttpResponse('ok')
+		if request.method == "POST":
+			serverStateModelBridge.setCurrSelectedUsers(playerBridge.getAllStoredStudentUsernames())
+			serverStateModelBridge.setCurrFreeUsers([])
+			return HttpResponse('ok')
 	
 	def removeAllUsersSelected(request): #reads (player) from args
-		serverStateModelBridge.setCurrSelectedUsers([])
-		serverStateModelBridge.setCurrFreeUsers(playerBridge.getAllStoredStudentUsernames())
-		return HttpResponse('ok')
+		if request.method == "POST":
+			serverStateModelBridge.setCurrSelectedUsers([])
+			serverStateModelBridge.setCurrFreeUsers(playerBridge.getAllStoredStudentUsernames())
+			return HttpResponse('ok')
 
 	
 	def addSelectedUser(request): #reads (player) from args
-		usernameToAdd = request.POST.get('username')
-		currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
-		currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
-		if not usernameToAdd in currSelectedUsers:
-			currSelectedUsers.append(usernameToAdd)
-			currFreeUsers.remove(usernameToAdd)
-		serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
-		serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
-		return HttpResponse('ok')
+		breakpoint()
+		if request.method == "POST":
+			usernameToAdd = request.POST.get('username')
+			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
+			currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
+			if not usernameToAdd in currSelectedUsers:
+				currSelectedUsers.append(usernameToAdd)
+				currFreeUsers.remove(usernameToAdd)
+			serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
+			serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
+			return HttpResponse('ok')
 
 	
 	def removeSelectedUser(request): #reads (player) from args
-		usernameToRemove = request.POST.get('username')
-		currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
-		currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
-		if usernameToRemove in currSelectedUsers:
-			currSelectedUsers.remove(usernameToRemove)
-			currFreeUsers.append(usernameToRemove)
-		serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
-		serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
-		return HttpResponse('ok')
+		if request.method == "POST":
+			usernameToRemove = request.POST.get('username')
+			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
+			currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
+			if usernameToRemove in currSelectedUsers:
+				currSelectedUsers.remove(usernameToRemove)
+				currFreeUsers.append(usernameToRemove)
+			serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
+			serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
+			return HttpResponse('ok')
 
 
 
 	
 	def addAllTasksSelected(request): #reads (player) from args
-		serverStateModelBridge.setCurrSelectedTasks(taskBridge.getAllStoredTaskIds())
-		serverStateModelBridge.setCurrFreeTasks([])
-		return HttpResponse('ok')
+		if request.method == "POST":
+			serverStateModelBridge.setCurrSelectedTasks(taskBridge.getAllStoredTaskIds())
+			serverStateModelBridge.setCurrFreeTasks([])
+			return HttpResponse('ok')
 
 	
 	def removeAllTasksSelected(request): #reads (player) from args
-		serverStateModelBridge.setCurrSelectedTasks([])
-		serverStateModelBridge.setCurrFreeTasks(taskBridge.getAllStoredTaskIds())
-		return HttpResponse('ok')
+		if request.method == "POST":
+			serverStateModelBridge.setCurrSelectedTasks([])
+			serverStateModelBridge.setCurrFreeTasks(taskBridge.getAllStoredTaskIds())
+			return HttpResponse('ok')
 
 	
 	def addSelectedTask(request): #reads (player) from args
-		taskToAdd = request.POST.get('taskId')
-		currSelectedTasks = serverStateModelBridge.getCurrSelectedTasks();
-		currFreeTasks = serverStateModelBridge.getCurrFreeTasks();
-		if not taskToAdd in currSelectedTasks:
-			currSelectedTasks.append(taskToAdd)
-			currFreeTasks.remove(taskToAdd)
-		serverStateModelBridge.setCurrSelectedTasks(currSelectedTasks)
-		serverStateModelBridge.setCurrFreeTasks(currFreeTasks)
-		return HttpResponse('ok')
+		if request.method == "POST":
+			taskToAdd = request.POST.get('taskId')
+			currSelectedTasks = serverStateModelBridge.getCurrSelectedTasks();
+			currFreeTasks = serverStateModelBridge.getCurrFreeTasks();
+			if not taskToAdd in currSelectedTasks:
+				currSelectedTasks.append(taskToAdd)
+				currFreeTasks.remove(taskToAdd)
+			serverStateModelBridge.setCurrSelectedTasks(currSelectedTasks)
+			serverStateModelBridge.setCurrFreeTasks(currFreeTasks)
+			return HttpResponse('ok')
 
 	
 	def removeSelectedTask(request): #reads (player) from args
-		TaskIdToRemove = request.POST.get('taskId')
-		currSelectedTasks = serverStateModelBridge.getCurrSelectedTasks();
-		currFreeTasks = serverStateModelBridge.getCurrFreeTasks();
-		if TaskIdToRemove in currSelectedTasks:
-			currSelectedTasks.remove(TaskIdToRemove)
-			currFreeTasks.append(TaskIdToRemove)
-		serverStateModelBridge.setCurrSelectedTasks(currSelectedTasks)
-		serverStateModelBridge.setCurrFreeTasks(currFreeTasks)
-		return HttpResponse('ok')
+		if request.method == "POST":
+			TaskIdToRemove = request.POST.get('taskId')
+			currSelectedTasks = serverStateModelBridge.getCurrSelectedTasks();
+			currFreeTasks = serverStateModelBridge.getCurrFreeTasks();
+			if TaskIdToRemove in currSelectedTasks:
+				currSelectedTasks.remove(TaskIdToRemove)
+				currFreeTasks.append(TaskIdToRemove)
+			serverStateModelBridge.setCurrSelectedTasks(currSelectedTasks)
+			serverStateModelBridge.setCurrFreeTasks(currFreeTasks)
+			return HttpResponse('ok')
 
 
 
@@ -750,8 +763,7 @@ class Views(): #acts as a namespace
 				return render(request, 'taskRegistration.html', context)
 	
 	def taskUpdate(request):
-		# breakpoint()
-		return render(request, 'taskUpdate.html')
+		breakpoint()
 		if request.method == "POST":
 			taskIdToUpdate = request.POST.get('taskIdToUpdate')
 			try:
@@ -772,7 +784,7 @@ class Views(): #acts as a namespace
 		elif request.method == "GET":
 			taskIdToUpdate = request.GET.get('taskIdToUpdate')
 			try:
-				instance = Task.objects.get(taskId=taskIdToUpdate)
+				instance = Task.objects.get(taskId=int(taskIdToUpdate))
 
 				form = UpdateTaskForm(instance=instance)
 				context = { 'form' : form }

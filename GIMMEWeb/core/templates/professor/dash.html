@@ -409,7 +409,7 @@ crossorigin='anonymous'></script>
 		}
 
 
-		var generateTableFromArray = function(canAdd, array, tagClass, moveButtonIconClass, moveElementCallback, addElementCallback, deleteElementCallback, editElementCallback){
+		var generateTableFromArray = function(canAdd, array, tagClass, moveButtonIconClass, moveElementUrl, moveElementArg, addElementURL, addElementArg, deleteElementUrl, deleteElementArg, editElementUrl, editElementArg){
 			var table = $('<div>');
 			for(var i=0; i < array.length+1; i++){
 				
@@ -419,23 +419,31 @@ crossorigin='anonymous'></script>
 				}
 				if(i<array.length){
 					var deleteButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-					deleteButton.append('<i class=\'fas fa-trash\'></i>').click(deleteElementCallback);
+					deleteButton.append('<form method="GET" action=\''+deleteElementUrl+'\'>{% csrf_token %}<input type="hidden" name="'+deleteElementArg+'" value=\''+array[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fas fa-trash\'></i></button></form>');
 					tag.append(deleteButton);
 					
 
 					var editButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-					editButton.append('<i class=\'fa fa-pencil\'></i>').click(editElementCallback);
+					editButton.append('<form method="GET" action=\''+editElementUrl+'\'>{% csrf_token %}<input type="hidden" name="'+editElementArg+'" value=\''+array[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fa fa-pencil\'></i></button></form>');
 					tag.append(editButton);
 
 
 					var moveButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-					moveButton.append('<i class=\'fas '+moveButtonIconClass+'\'></i>').click(moveElementCallback);
+					moveButton.append('<i class=\'fas '+moveButtonIconClass+'\'></i>');
+					data = {};
+					data[moveElementArg] = array[i];
+					moveButton.click(function() {
+					    $.ajax({
+					        url: moveElementUrl,
+					        type: 'POST',
+					        data: data            
+					    });
+					})
 					tag.append(moveButton);
 
 				}else{
 					var addButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-					addButton.append('<i class=\'fas fa-plus-circle\'></i>');
-      				addButton.click(addElementCallback);
+					addButton.append('<form method="POST" action=\''+addElementURL+'\'>{% csrf_token %}<input type="hidden" name="'+addElementArg+'" value=\''+array[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fas fa-plus-circle\'></i></button></form>');
 					tag.append(addButton);
 				}
 				tag.addClass('tag');
@@ -460,67 +468,19 @@ crossorigin='anonymous'></script>
 							var currSelectedUsers = newServerState.currSelectedUsers;
 							var currFreeUsers = newServerState.currFreeUsers;
 							var fuTable = generateTableFromArray(
-								true, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
-								function(){
-									$.ajax({
-										type: 'POST',
-										url: '/addSelectedUser/',
-										data: {'username': $(this).parent().text()},
-										success:
-										function()
-										{
-											$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-right').addClass('fa-arrow-circle-left');
-										}
-									});
-								},
-								function(){
-									callUserReg(true);
-								},
-								function(){
-									$.ajax({
-										type: 'GET',
-										url: '/userDeletion/',
-										data: {'usernameToDelete': $(this).parent().text()}
-									});
-								},
-								function(){
-									$.ajax({
-										type: 'GET',
-										url: '/userUpdate/',
-										data: {'usernameToUpdate': $(this).parent().text()}
-									});
-								});
+									true, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
+									'{% url 'addSelectedUser' %}', 'username',
+									'{% url 'userRegistration' %}', 'username',
+									'{% url 'userDeletion' %}','usernameToDelete',
+									'{% url 'userUpdate' %}','usernameToUpdate'
+								);
 							var suTable = generateTableFromArray(
-								false, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
-								function(){
-									$.ajax({
-										type: 'POST',
-										url: '/removeSelectedUser/',
-										data: {'username': $(this).parent().text()},
-										success: 
-										function()
-										{
-											$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-left').addClass('fa-arrow-circle-right');
-										}
-									});
-								},
-								function(){
-									callUserReg(true);
-								},
-								function(){
-									$.ajax({
-										type: 'GET',
-										url: '/userDeletion/',
-										data: {'usernameToDelete': $(this).parent().text()}
-									});
-								},
-								function(){
-									$.ajax({
-										type: 'GET',
-										url: '/userUpdate/',
-										data: {'usernameToUpdate': $(this).parent().text()}
-									});
-								});
+									false, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
+									'{% url 'removeSelectedUser' %}', 'username',
+									'{% url 'userRegistration' %}', 'username',
+									'{% url 'userDeletion' %}','usernameToDelete',
+									'{% url 'userUpdate' %}','usernameToUpdate'
+								);
 							$('#freeUsersTable_professor_dash').empty();
 							$('#freeUsersTable_professor_dash').append(fuTable);
 
@@ -532,63 +492,19 @@ crossorigin='anonymous'></script>
 
 							ftTable = generateTableFromArray(
 								true, currFreeTasks, 'is-danger', 'fa-arrow-circle-right', 
-								function(){
-									$.ajax({
-										type: 'POST',
-										url: '/addSelectedTask/',
-										data: {'taskId': $(this).parent().text()},
-										success:
-										function()
-										{
-											$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-right').addClass('fa-arrow-circle-left');
-										}
-									});
-								},
-								function(){
-									callTaskReg(true);
-								},
-								function(){
-									$.ajax({
-										url: '/taskDeletion/',
-										data: {'taskIdToDelete': $(this).parent().text()}
-									});
-								},
-								function(){
-									$.ajax({
-										url: '/taskUpdate/',
-										data: {'taskIdToUpdate': $(this).parent().text()}
-									});
-								});
+								'{% url 'addSelectedTask' %}', 'taskId',
+								'{% url 'taskRegistration' %}', 'taskId',
+								'{% url 'taskDeletion' %}','taskIdToDelete',
+								'{% url 'taskUpdate' %}','taskIdToUpdate'
+							);
 
 							stTable = generateTableFromArray(
 								false, currSelectedTasks, 'is-danger', 'fa-arrow-circle-left', 
-								function(){
-									$.ajax({
-										type: 'POST',
-										url: '/removeSelectedTask/',
-										data: {'taskId': $(this).parent().text()},
-										success: 
-										function()
-										{
-											$(this).find('.fa-arrow-circle-right').removeClass('fa-arrow-circle-left').addClass('fa-arrow-circle-right');
-										}
-									});
-								},
-								function(){
-									callTaskReg(true);
-								},
-								function(){
-									$.ajax({
-										url: '/taskDeletion/',
-										data: {'taskIdToDelete': $(this).parent().text()}
-									});
-								},
-								function(){
-									$.ajax({
-										url: '/taskUpdate/',
-										data: {'taskIdToUpdate': $(this).parent().text()}
-									});
-								});
+								'{% url 'removeSelectedTask' %}', 'taskId',
+								'{% url 'taskRegistration' %}', 'taskId',
+								'{% url 'taskDeletion' %}','taskIdToDelete',
+								'{% url 'taskUpdate' %}','taskIdToUpdate'
+							);
 
 							$('#freeTasksTable_professor_dash').empty();
 							$('#freeTasksTable_professor_dash').append(ftTable);
