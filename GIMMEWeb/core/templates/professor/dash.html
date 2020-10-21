@@ -404,7 +404,7 @@ crossorigin='anonymous'></script>
 			return !(JSON.stringify(obj1) === JSON.stringify(obj2));
 		};
 		var canComputeAdaptation = function(newServerState){
-			console.log(newServerState)
+			// console.log(newServerState)
 			return currServerState != undefined && currServerState!="error" && (currServerState=={} || (objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState) && newServerState!= undefined));
 		}
 
@@ -430,9 +430,9 @@ crossorigin='anonymous'></script>
 
 					var moveButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
 					moveButton.append('<i class=\'fas '+moveButtonIconClass+'\'></i>');
-					data = {};
-					data[moveElementArg] = array[i];
 					moveButton.click(function() {
+						var data = {};
+						data[moveElementArg] = $(this)[0].parentElement.textContent;
 					    $.ajax({
 					        url: moveElementUrl,
 					        type: 'POST',
@@ -617,6 +617,7 @@ crossorigin='anonymous'></script>
 		$('#addAllUsers_professor_dash').click(function(){
 			$.ajax(
 			{
+				type: 'POST',
 				url: '/addAllUsersSelected/'
 			}
 			);
@@ -624,6 +625,8 @@ crossorigin='anonymous'></script>
 		$('#clearAllUsers_professor_dash').click(function(){
 			$.ajax(
 			{
+
+				type: 'POST',
 				url: '/removeAllUsersSelected/'
 			}
 			);
@@ -631,6 +634,8 @@ crossorigin='anonymous'></script>
 		$('#addAllTasks_professor_dash').click(function(){
 			$.ajax(
 			{
+
+				type: 'POST',
 				url: '/addAllTasksSelected/'
 			}
 			);
@@ -638,6 +643,7 @@ crossorigin='anonymous'></script>
 		$('#clearAllTasks_professor_dash').click(function(){
 			$.ajax(
 			{
+				type: 'POST',
 				url: '/removeAllTasksSelected/'
 			}
 			);

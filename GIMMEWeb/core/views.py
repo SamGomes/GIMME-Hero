@@ -527,7 +527,7 @@ class Views(): #acts as a namespace
 
 	
 	def addSelectedUser(request): #reads (player) from args
-		breakpoint()
+		# breakpoint()
 		if request.method == "POST":
 			usernameToAdd = request.POST.get('username')
 			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
