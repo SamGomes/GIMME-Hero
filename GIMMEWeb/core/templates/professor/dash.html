@@ -286,18 +286,21 @@
 						<div class='column is-full'>
 							<p>Bootstrap</p>
 						</div>
-						<div class='column is-half'>
-							<label class='field control-label' for='textinput'>Number of Bootstrap Iterations</label>  
-							<div class='field control'>
-								<input id='numBootstrapIterationsId_professor_dash' class='input' type='number' min='20' max='100' placeholder='20'>
-							</div>
-						</div>
+						
 						<div class='column is-half'>
 							<label class='checkbox'>
 							  <input id='precomputeBootstrapId_professor_dash' type='checkbox'>
 							  	Pre-Compute Bootstrap
 							</label>
 						</div>
+
+						<div class='column is-half'>
+							<label class='field control-label' for='textinput'>Number of Bootstrap Iterations</label>  
+							<div class='field control'>
+								<input id='numBootstrapIterationsId_professor_dash' class='input' type='number' min='20' max='100' placeholder='20'>
+							</div>
+						</div>
+						
 					</div>
 				</div>
 
@@ -305,12 +308,12 @@
 					<div class='columns is-multiline is-mobile'>
 						<div class='column is-half is-centered'>
 							<a>
-								<div class='button is-large' type='submit' id='loadAndStartAdaptation_professor_dash'>Load Setup and Compute New Adaptation</div>
+								<button class='button is-large has-tooltip-top' type='submit' id='loadAndStartAdaptation_professor_dash' data-tooltip='Loads the parameterization above and using that information, computes a new adaptation state.' >Load Setup and Compute New Adaptation</button>
 							</a>
 						</div>
 						<div class='column is-half is-centered'>
 							<a>
-								<div class='button is-large' type='submit' id='forceStartAdaptation_professor_dash'>Force Start Adaptation</div>
+								<button class='button is-large has-tooltip-top' type='submit' id='forceStartAdaptation_professor_dash' data-tooltip='Forces an adaptation call, without changing the current parameterization.'>Force Start Adaptation</button>
 							</a>
 						</div>
 					</div>
@@ -344,7 +347,7 @@
 						<div class='column is-one-third is-centered' id='groupsPlot_professor_dash'></div>
 						<div class='column is-one-third'></div>
 
-						<div class='button is-large' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plot</div>
+						<button class='button is-large has-tooltip-top' type='submit' id='rebuildPlot_professor_dash' data-tooltip='Rebuilds the plot, without computing a new adaptation state.'>Rebuild Plot</button>
 					</div>
 				</div>
 			</div>
@@ -409,50 +412,51 @@ crossorigin='anonymous'></script>
 		}
 
 
-		var generateTableFromArray = function(canAdd, array, tagClass, moveButtonIconClass, moveElementUrl, moveElementArg, addElementURL, addElementArg, deleteElementUrl, deleteElementArg, editElementUrl, editElementArg){
-			var table = $('<div>');
-			for(var i=0; i < array.length+1; i++){
-				
-				var tag = $('<span class="button">').text(array[i]);
-				if(!canAdd && i == array.length){
-					return table;
-				}
-				if(i<array.length){
-					var deleteButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-					deleteButton.append('<form method="GET" action=\''+deleteElementUrl+'\'>{% csrf_token %}<input type="hidden" name="'+deleteElementArg+'" value=\''+array[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fas fa-trash\'></i></button></form>');
-					tag.append(deleteButton);
-					
 
-					var editButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-					editButton.append('<form method="GET" action=\''+editElementUrl+'\'>{% csrf_token %}<input type="hidden" name="'+editElementArg+'" value=\''+array[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fa fa-pencil\'></i></button></form>');
-					tag.append(editButton);
+		var generateDashTableFromArray = function(canAdd, array, tagClass, moveButtonIconClass, moveElementUrl, moveElementArg, addElementURL, addElementArg, deleteElementUrl, deleteElementArg, editElementUrl, editElementArg){
+		    var table = $('<div>');
+		    for(var i=0; i < array.length+1; i++){
+		        
+		        var tag = $('<span class="button">').text(array[i]);
+		        if(!canAdd && i == array.length){
+		            return table;
+		        }
+		        if(i<array.length){
+		            var deleteButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
+		            deleteButton.append('<form method="GET" action=\''+deleteElementUrl+'\'>{% csrf_token %}<input type="hidden" name="'+deleteElementArg+'" value=\''+array[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fas fa-trash\'></i></button></form>');
+		            tag.append(deleteButton);
+		            
+
+		            var editButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
+		            editButton.append('<form method="GET" action=\''+editElementUrl+'\'>{% csrf_token %}<input type="hidden" name="'+editElementArg+'" value=\''+array[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fa fa-pencil\'></i></button></form>');
+		            tag.append(editButton);
 
 
-					var moveButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-					moveButton.append('<i class=\'fas '+moveButtonIconClass+'\'></i>');
-					moveButton.click(function() {
-						var data = {};
-						data[moveElementArg] = $(this)[0].parentElement.textContent;
-					    $.ajax({
-					        url: moveElementUrl,
-					        type: 'POST',
-					        data: data            
-					    });
-					})
-					tag.append(moveButton);
+		            var moveButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
+		            moveButton.append('<i class=\'fas '+moveButtonIconClass+'\'></i>');
+		            moveButton.click(function() {
+		                var data = {};
+		                data[moveElementArg] = $(this)[0].parentElement.textContent;
+		                $.ajax({
+		                    url: moveElementUrl,
+		                    type: 'POST',
+		                    data: data            
+		                });
+		            })
+		            tag.append(moveButton);
 
-				}else{
-					var addButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-					addButton.append('<form method="POST" action=\''+addElementURL+'\'>{% csrf_token %}<input type="hidden" name="'+addElementArg+'" value=\''+array[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fas fa-plus-circle\'></i></button></form>');
-					tag.append(addButton);
-				}
-				tag.addClass('tag');
-				tag.addClass(tagClass);
-				tag.addClass('is-medium');
-				tag.addClass('is-rounded');
-				table.append(tag);
-			}
-			return table;
+		        }else{
+		            var addButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
+		            addButton.append('<form method="POST" action=\''+addElementURL+'\'>{% csrf_token %}<input type="hidden" name="'+addElementArg+'" value=\''+array[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fas fa-plus-circle\'></i></button></form>');
+		            tag.append(addButton);
+		        }
+		        tag.addClass('tag');
+		        tag.addClass(tagClass);
+		        tag.addClass('is-medium');
+		        tag.addClass('is-rounded');
+		        table.append(tag);
+		    }
+		    return table;
 		};
 
 
@@ -467,14 +471,14 @@ crossorigin='anonymous'></script>
 						function (newServerState) {							
 							var currSelectedUsers = newServerState.currSelectedUsers;
 							var currFreeUsers = newServerState.currFreeUsers;
-							var fuTable = generateTableFromArray(
+							var fuTable = generateDashTableFromArray(
 									true, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
 									'{% url 'addSelectedUser' %}', 'username',
 									'{% url 'userRegistration' %}', 'username',
 									'{% url 'userDeletion' %}','usernameToDelete',
 									'{% url 'userUpdate' %}','usernameToUpdate'
 								);
-							var suTable = generateTableFromArray(
+							var suTable = generateDashTableFromArray(
 									false, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
 									'{% url 'removeSelectedUser' %}', 'username',
 									'{% url 'userRegistration' %}', 'username',
@@ -490,7 +494,7 @@ crossorigin='anonymous'></script>
 							var currFreeTasks = newServerState.currFreeTasks;
 							var currSelectedTasks = newServerState.currSelectedTasks;
 
-							ftTable = generateTableFromArray(
+							ftTable = generateDashTableFromArray(
 								true, currFreeTasks, 'is-danger', 'fa-arrow-circle-right', 
 								'{% url 'addSelectedTask' %}', 'taskId',
 								'{% url 'taskRegistration' %}', 'taskId',
@@ -498,7 +502,7 @@ crossorigin='anonymous'></script>
 								'{% url 'taskUpdate' %}','taskIdToUpdate'
 							);
 
-							stTable = generateTableFromArray(
+							stTable = generateDashTableFromArray(
 								false, currSelectedTasks, 'is-danger', 'fa-arrow-circle-left', 
 								'{% url 'removeSelectedTask' %}', 'taskId',
 								'{% url 'taskRegistration' %}', 'taskId',
@@ -589,8 +593,9 @@ crossorigin='anonymous'></script>
 							'qualityWeightsAb': $('#qualityWeightsAbId_professor_dash').val(),
 							'qualityWeightsEng': $('#qualityWeightsEngId_professor_dash').val(),
 							'playerWindow': $('#playerWindowId_professor_dash').val(),
-							'numBootstrapIterations': $('#numBootstrapIterationsId_professor_dash').val(),
-							'precomputeBootstrap': $('#precomputeBootstrapId_professor_dash').val()
+
+							'isBootstrapped': $('#precomputeBootstrapId_professor_dash').prop("checked"),
+							'numBootstrapIterations': $('#numBootstrapIterationsId_professor_dash').val()
 						};
 				currAdaptationConfig = newAdaptationConfig;
 				$.ajax(

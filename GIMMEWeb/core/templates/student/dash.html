@@ -18,6 +18,7 @@
 		</div>
 		
 		<div id="dashboard">
+
 			<section class="section danger" id="Current Activity Info">
 				<div class="panel animated zoomIn">
 					<div class="panel-heading">
@@ -30,22 +31,40 @@
 							</div>
 						</div>
 					</div>
-					<div class="panel-block">
-						<div>Current Group:<div>
-						<div class="table-container column is-full-width">
-							<div class="table" id="currentGroupTable"></div>
-						</div>	
-						<div>Current Tasks:<div>
-						<div class="table-container column is-full-width">
-							<div class="table" id="currentTasksTable"></div>
+					<div class='panel-block'>
+						
+					</div>
+					<div class='panel-block'>
+						<button class="button is-link" id="readyForNewActivityButton" >Register Activity Results</button>
+					</div>
+				</div>
+			</section>
+
+			<section class="section danger" id="Current Class Info">
+				<div class="panel animated zoomIn">
+					<div class="panel-heading">
+						<div class="columns is-vcentered">
+							<div class="column">
+								<p>Current Class Info</p>
+							</div>
+							<div class="is-pulled-left">
+								<div class='button minimizerButton'></div>
+							</div>
 						</div>
-						<div>Selected Students:<div>
-						<div class="table-container column is-full-width">
-							<div class="table" id="selectedRoomTable"></div>
+					</div>
+					<div class='panel-block'>
+						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
+							<div class='subtitle is-5' style='color:gray'>Available Students</div>
+							<div class='table-container'>
+								<div class='table' id='freeUsersTable_student_dash'></div>
+							</div>
 						</div>
-						<a>
-							<button class="button is-link" id="readyForNewActivityButton" >Ready for new Activity</button>
-						</a>
+						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
+							<div class='subtitle is-4' style='color:gray'>Selected Students</div>
+							<div class='table-container column is-full'>
+								<div class='table' id='selectedUsersTable_student_dash'></div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</section>
@@ -65,7 +84,7 @@
 					<div class="panel-block">
 						<div class="colums">
 	  						<div class="column is-one-third"></div>
-	  						<div class="column is-one-third is-centered" id="learningStatePlot"></div>
+	  						<div class="column is-one-third is-centered" id="student_learningStatePlot"></div>
 	  						<div class="column is-one-third"></div>
 						</div>
 					</div>
@@ -87,7 +106,7 @@
 					<div class="panel-block">
 						<div class="columns">
 	  						<div class="column is-one-third"></div>
-	  						<div class="column is-one-third is-centered" id="interactionsProfilePlot"></div>
+	  						<div class="column is-one-third is-centered" id="student_interactionsProfilePlot"></div>
 	  						<div class="column is-one-third"></div>
 						</div>
 					</div>
@@ -103,7 +122,6 @@
 		crossorigin="anonymous"></script>
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 	<script src="https://d3js.org/d3.v5.js"></script>
-	{% include 'common/CSRFTSetup.html' %}
 	<script src="{% static "js/plots.js" %}"></script>
 	<script>
 		$(document).ready(function(){
@@ -111,72 +129,72 @@
 			var myStateGrid = undefined;
 			var myCharacteristics = undefined;
 
-			var fetchServerData = function(){
-				$.ajax(
-					{
-						url: '/fetchServerState/',
-						dataType: "json",
-						success: 
-							function (newServerState) {
-								var currSelectedUsers = newServerState.currSelectedUsers;
-								
-								var table = $('<table>');
-							    row = $('<tr>').append($('<th>').text('userId'));
-								table.append(row);
-								
-								for(var i=0; i < currSelectedUsers.length; i++){
-								    row = $('<tr>').append($('<td>').text(currSelectedUsers[i]));
-									table.append(row);
-								}
-								$('#selectedRoomTable').empty();
-								$('#selectedRoomTable').append(table);
+			var currServerState = {};
+			
+		
 
-								if(newServerState.readyForNewActivity){
-									$("#readyForNewActivityButton").removeClass("is-loading");
-									$($("#readyForNewActivityButton").parent()).attr("href","{% url 'startActivity' %}");
-									$("#readyForNewActivityButton").html("Start Activity")
-								}else{
-									$("#readyForNewActivityButton").html("Ready for new Activity")
-									$("#readyForNewActivityButton").attr("href","");
-								}
-							}
-					}
-				);
-				$.ajax(
-					{
-						url: '/fetchPlayerState/',
-						dataType: "json",
-						success: 
-							function (newServerState) {
-								if(myStateGrid == undefined){
-									myStateGrid = newServerState.myStateGrid;
-									buildInteractionsProfilePlot("interactionsProfilePlot", myStateGrid.cells);
-								}
-								if(myCharacteristics == undefined){
-									myCharacteristics = newServerState.myCharacteristics;
-									var attributes = Object.keys(myCharacteristics) 
-									var values = Object.values(myCharacteristics)
-									var parsedCharacteristics = []
-									for(i=0; i < attributes.length; i++){
-										parsedCharacteristics.push({"name": attributes[i], "value": values[i]})
-									} 
-									buildStatePlot("learningStatePlot", parsedCharacteristics);
-								}
-							}
-					}
-				);
+			var generateDashTableFromArray = function(canAdd, array, tagClass){
+			    var table = $('<div>');
+			    for(var i=0; i < array.length; i++){
+			        
+			        var tag = $('<span class="button">').text(array[i]);
+			        if(!canAdd && i == array.length){
+			            return table;
+			        }
+			        tag.addClass('tag');
+			        tag.addClass(tagClass);
+			        tag.addClass('is-medium');
+			        tag.addClass('is-rounded');
+			        table.append(tag);
+			    }
+			    return table;
 			};
 
-			$("#readyForNewActivityButton").click(function(){
-				$("#readyForNewActivityButton").addClass("is-loading");
-				$.ajax({
-					  type: 'POST',
-					  url: '/removeSelectedPlayer/',
-					  data: {'userId': + '{{request.session.userId}}'}
-				});
-			})
+
+			var fetchServerData = function(){
+				$.ajax(
+				{
+					url: '/fetchServerState/',
+						// authentication: getCookie('csrftoken'),
+						dataType: 'json',
+						success: 
+						function (newServerState) {							
+							var currSelectedUsers = newServerState.currSelectedUsers;
+							var currFreeUsers = newServerState.currFreeUsers;
+							var fuTable = generateDashTableFromArray(
+									true, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
+									'{% url 'addSelectedUser' %}', 'username',
+									'{% url 'userRegistration' %}', 'username',
+									'{% url 'userDeletion' %}','usernameToDelete',
+									'{% url 'userUpdate' %}','usernameToUpdate'
+								);
+							var suTable = generateDashTableFromArray(
+									false, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
+									'{% url 'removeSelectedUser' %}', 'username',
+									'{% url 'userRegistration' %}', 'username',
+									'{% url 'userDeletion' %}','usernameToDelete',
+									'{% url 'userUpdate' %}','usernameToUpdate'
+								);
+							$('#freeUsersTable_student_dash').empty();
+							$('#freeUsersTable_student_dash').append(fuTable);
+
+							$('#selectedUsersTable_student_dash').empty();
+							$('#selectedUsersTable_student_dash').append(suTable);
+
+
+							if(currSelectedUsers.length>0){
+								currServerState = newServerState;
+							}
+						}
+					});
+			};
+
 			fetchServerData();
 			setInterval(fetchServerData, 500);
+
+
+			$("#student_learningStatePlot").text("aaaaaaaaa");//{{user.userprofile.characteristics}});
+			$("#student_interactionsProfilePlot").text({{user.userprofile.profile}});
 
 		});
 	</script>

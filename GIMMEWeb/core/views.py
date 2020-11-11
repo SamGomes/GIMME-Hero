@@ -720,6 +720,11 @@ class Views(): #acts as a namespace
 		selectedGenAlg = selectedGenAlgSwitcher.get(request.POST["selectedGenAlgId"], defaultConfigsAlg)
 
 		adaptation.init(playerBridge, taskBridge, configsGenAlg = selectedGenAlg, name="GIMME")
+
+		# breakpoint()
+		if(request.POST["isBootstrapped"]=="true"):
+			adaptation.executeBootstrap(int(request.POST["numBootstrapIterations"]))
+
 		return HttpResponse('ok')
 
 
@@ -763,7 +768,6 @@ class Views(): #acts as a namespace
 				return render(request, 'taskRegistration.html', context)
 	
 	def taskUpdate(request):
-		breakpoint()
 		if request.method == "POST":
 			taskIdToUpdate = request.POST.get('taskIdToUpdate')
 			try:
