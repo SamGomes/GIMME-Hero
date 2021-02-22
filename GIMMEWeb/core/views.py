@@ -876,3 +876,20 @@ class Views(): #acts as a namespace
 		newSession = json.dumps(newSessionState, default=lambda o: o.__dict__, sort_keys=True)
 
 		return HttpResponse(newSession)
+
+
+	def fetchTaskFromId(request):
+		print(request.POST)
+		taskId = request.POST["taskId"]
+
+		if not taskId in serverStateModelBridge.getCurrSelectedTasks():
+			return HttpResponse({})
+		task = taskBridge.getTask(taskId)
+
+		returnedTask = {}
+		returnedTask["title"] = task.title
+		returnedTask["description"] = task.description
+		returnedTask["files"] = str(task.files)
+
+		returnedTask = json.dumps(returnedTask, default=lambda o: o.__dict__, sort_keys=True)
+		return HttpResponse(returnedTask)

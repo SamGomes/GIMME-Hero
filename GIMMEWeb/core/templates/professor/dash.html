@@ -143,7 +143,7 @@
 										</span>
 									</button>
 								</div>
-								<div class='dropdown-menu' id='dropdown-menu3_professor_dash' role='menu'>
+								<div class='dropdown-menu' id='dropdown-menu3_professor_dash' role='menu' style="height:35em; overflow-y:scroll">
 									<div class='dropdown-content'>
 										<a class='dropdown-item is-active'>
 											Random
@@ -168,6 +168,35 @@
 												<label class='column is-4 control-label' for='textinput'>Temperature Decay</label>  
 												<div class='control'>
 													<input id='temperatureDecay_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.5'>
+												</div>
+											</div>
+										</a>
+										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
+											Evolutionary
+											<div class='form-group'>
+												<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
+												<div class='control'>
+													<input id='numberOfConfigChoicesId_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
+												</div>
+
+												<label class='column is-4 control-label' for='textinput'>Fitness Weights</label>  
+												<div class='control'>
+													<input id='temperatureDecay_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.5'>
+												</div>
+												
+												<label class='column is-4 control-label' for='textinput'>Mutation Prob</label>  
+												<div class='control'>
+													<input id='temperatureDecay_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.2'>
+												</div>
+
+												<label class='column is-4 control-label' for='textinput'>Num Mutations</label>  
+												<div class='control'>
+													<input id='temperatureDecay_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='4'>
+												</div>
+
+												<label class='column is-4 control-label' for='textinput'>Num Fit Survivors (Elitism)</label>  
+												<div class='control'>
+													<input id='temperatureDecay_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='20'>
 												</div>
 											</div>
 										</a>
@@ -408,7 +437,7 @@ crossorigin='anonymous'></script>
 		};
 		var canComputeAdaptation = function(newServerState){
 			// console.log(newServerState)
-			return currServerState != undefined && currServerState!="error" && (currServerState=={} || (objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState) && newServerState!= undefined));
+			return currServerState != undefined && currServerState!="error" && (jQuery.isEmptyObject(currServerState) || (objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState) && newServerState!= undefined));
 		}
 
 

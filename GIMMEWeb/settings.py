@@ -95,6 +95,7 @@ USE_L10N = True
 USE_TZ = True
 
 CSRF_COOKIE_SECURE = True
+CSRF_USE_SESSIONS = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'

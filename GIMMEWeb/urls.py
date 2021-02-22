@@ -44,6 +44,8 @@ urlpatterns = [
     
     re_path(r'^fetchServerState/', Views.fetchServerState, name="fetchServerState"),
     re_path(r'^fetchSelectedUserStates/', Views.fetchSelectedUserStates, name="fetchSelectedUserStates"),
+
+    re_path(r'^fetchTaskFromId/', Views.fetchTaskFromId, name="fetchTaskFromId")
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -11,3 +11,5 @@ certification/
 GIMMEWeb/core/templates/static/media/
 
 *.jpg
+
+.idea/

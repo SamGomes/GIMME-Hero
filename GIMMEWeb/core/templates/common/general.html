@@ -120,7 +120,7 @@ var parseUnformattedString = function(attributeStr){
     return attributeStr.replace(/&quot;/g,"\"").replace(/&#39;/g,"\"")
 }
 
-var parseSessionAttribute = function(attributeStr){
+var unformattedStringToObj = function(attributeStr){
     return JSON.parse(parseUnformattedString(attributeStr))
 }
 

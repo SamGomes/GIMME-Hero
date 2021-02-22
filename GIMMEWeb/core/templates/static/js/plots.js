@@ -71,10 +71,10 @@ var buildInteractionsProfilePlot = function(canvasId, data){
 var buildStatePlot = function(canvasId, data){
 
     var margin = {
-        top: 15,
-        right: 25,
+        top: 30,
+        right: 30,
         bottom: 15,
-        left: 60
+        left: 150
     };
 
     var width = 960 - margin.left - margin.right;
@@ -93,8 +93,9 @@ var buildStatePlot = function(canvasId, data){
     var y = d3.scaleBand()
         .range([0, height])
         .domain(data.map(function(d) {
+            console.log(d);
             return d.name;
-        }))
+        }));
 
     var xAxis = d3.axisTop(x)
         .tickSize(0);
@@ -123,16 +124,18 @@ var buildStatePlot = function(canvasId, data){
 
     var gy = svg.append('g')
         .attr('class', 'y axis')
-        .call(yAxis)
+        .call(yAxis)        
+        .style("font-size","20px");
+
+
     var gy = svg.append('g')
         .attr('class', 'x axis')
         .call(xAxis)
+        .style("font-size","20px");
 }
 
 
 var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
-    
-
 
     // from http://bl.ocks.org/mbostock/7555321
     var wrap = function (text, width) {
@@ -226,7 +229,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     var canvas = svg;
     var canvasContainer = canvas.node().parentNode.parentNode.parentNode;
 
-    aspect = 2.0 / 0.5;
+    aspect = 2.0 / 0.8;
 
     resizeCanvas(canvas);
 
@@ -250,11 +253,12 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             // }
         });
 
+    console.log(data);
     for (i=0; i<data.groups.length; i++){
         var group = data.groups[i]
         var avgCharacteristics = data.avgCharacteristics[i]
         var profile = data.profiles[i]
-        var adaptedTaskId = data.adaptedTaskIds[i]
+        var adaptedTaskId = data.adaptedTaskId
         var groupCenterOfMass = {'x': 100 + Math.random()*(canvasContainer.getBoundingClientRect().width - 300), 'y': 100 + Math.random()*(canvasContainer.getBoundingClientRect().height - 300)};
 
         groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'profile': profile, 'adaptedTaskId': adaptedTaskId, 'centerOfMass': groupCenterOfMass});
@@ -490,8 +494,6 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
 
 
-
-
     var simulation = d3.forceSimulation();
     var resetSim = function(){
         simulation.nodes(userNodes)
@@ -600,9 +602,59 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             resetSim();
         });
 
-    groupIndicators.call(dragDrop);
-    
-
-
-
+    groupIndicators.call(dragDrop);    
 }
+
+var buildScatterInteractionPlot  = function(canvasId, data){
+    //originally from https://www.d3-graph-gallery.com/graph/scatter_basic.html
+
+    // set the dimensions and margins of the graph
+    var margin = {top: 10, right: 30, bottom: 30, left: 60},
+        width = 460 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    // append the svg object to the body of the page
+    svg = d3.select('#'+canvasId)
+      .append('svg')
+        .attr('width', width + margin.left + margin.right)
+        .attr('height', height + margin.top + margin.bottom)
+      .append('g')
+        .attr('transform',
+              'translate(' + margin.left + ',' + margin.top + ')');
+    
+    svg.style('background', 'url(\'../media/images/plots/interactionSpaceBckgrd.png\')');
+
+
+    // Add X axis
+    var x = d3.scaleLinear()
+        .domain([-3, 3])
+        .range([ 0, width ]);
+        svg.append('g')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x))
+        .style('font-size','20px');
+
+
+    // Add Y axis
+    var y = d3.scaleLinear()
+        .domain([-3, 3])
+        .range([ height, 0]);
+        svg.append('g')
+        .call(d3.axisLeft(y))
+        .style('font-size','20px');
+
+    // Add dots
+    svg.append('g')
+        .selectAll('dot')
+        .data(data)
+        .enter()
+        .append('circle')
+        .attr('cx', function (d) { return x(d.focus); } )
+        .attr('cy', function (d) { return y(d.valence); } )
+        .attr('r', 5)
+        .style('fill', 'black')
+
+    
+}
+
+
