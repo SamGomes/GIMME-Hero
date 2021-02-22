@@ -93,7 +93,6 @@ var buildStatePlot = function(canvasId, data){
     var y = d3.scaleBand()
         .range([0, height])
         .domain(data.map(function(d) {
-            console.log(d);
             return d.name;
         }));
 
@@ -609,20 +608,22 @@ var buildScatterInteractionPlot  = function(canvasId, data){
     //originally from https://www.d3-graph-gallery.com/graph/scatter_basic.html
 
     // set the dimensions and margins of the graph
-    var margin = {top: 10, right: 30, bottom: 30, left: 60},
-        width = 460 - margin.left - margin.right,
-        height = 400 - margin.top - margin.bottom;
+    var margin = {top: 50, right: 50, bottom: 50, left: 50},
+        width = 600 - margin.left - margin.right,
+        height = 600 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
     svg = d3.select('#'+canvasId)
       .append('svg')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
+        .style('background', 'url("../media/images/plots/interactionSpaceBckgrd.png") no-repeat')
+        .style('background-size', '90%')
+        .style('background-position', 'center')
       .append('g')
         .attr('transform',
               'translate(' + margin.left + ',' + margin.top + ')');
     
-    svg.style('background', 'url(\'../media/images/plots/interactionSpaceBckgrd.png\')');
 
 
     // Add X axis
@@ -631,7 +632,7 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .range([ 0, width ]);
         svg.append('g')
         .attr('transform', 'translate(0,' + height + ')')
-        .call(d3.axisBottom(x))
+        .call(d3.axisBottom(x).ticks(5, "f"))
         .style('font-size','20px');
 
 
@@ -640,7 +641,7 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .domain([-3, 3])
         .range([ height, 0]);
         svg.append('g')
-        .call(d3.axisLeft(y))
+        .call(d3.axisLeft(y).ticks(5, "f"))
         .style('font-size','20px');
 
     // Add dots
@@ -651,8 +652,10 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .append('circle')
         .attr('cx', function (d) { return x(d.focus); } )
         .attr('cy', function (d) { return y(d.valence); } )
-        .attr('r', 5)
-        .style('fill', 'black')
+        .attr('r', 10)
+        .style('fill', '#50C2E3')
+        .style('stroke', 'black')
+        .style('stroker-width', '5');
 
     
 }
