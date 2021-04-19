@@ -396,9 +396,30 @@ crossorigin='anonymous'></script>
 <script src='https://unpkg.com/d3-force-attract@latest'></script>
 <script src='https://unpkg.com/d3-force-cluster@latest'></script>
 <script src='{% static 'js/plots.js' %}'></script>
-{% include 'common/CSRFTSetup.html' %}
+{% csrf_token %}
 <script>
 	$(document).ready(function(){
+		
+		// CSRF protection setup 
+		// (from: 
+		// https://docs.djangoproject.com/en/dev/ref/csrf/
+		// and https://stackoverflow.com/questions/54835849/django-how-to-send-csrf-token-with-ajax
+		// )
+		csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+		function csrfSafeMethod(method) {
+    		// these HTTP methods do not require CSRF protection
+		    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+		}
+		$.ajaxSetup({
+		    beforeSend: function(xhr, settings) {
+		        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+		            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+		        }
+		    }
+		});
+
+
+
 
 		$("#adaptationError_professor_dash").hide();
 
@@ -490,11 +511,11 @@ crossorigin='anonymous'></script>
 
 
 
+
 		var fetchServerData = function(){
 			$.ajax(
 			{
 				url: '/fetchServerState/',
-						// authentication: getCookie('csrftoken'),
 						dataType: 'json',
 						success: 
 						function (newServerState) {							
@@ -570,6 +591,7 @@ crossorigin='anonymous'></script>
 								function(selectedUsersStates)
 								{
 									currServerState.selectedUsersStates = JSON.parse(selectedUsersStates);
+									console.log(currServerState);
 									buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.selectedUsersStates);
 								}
 							});

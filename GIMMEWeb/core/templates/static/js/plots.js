@@ -136,6 +136,7 @@ var buildStatePlot = function(canvasId, data){
 
 var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
+    console.log(data)
     // from http://bl.ocks.org/mbostock/7555321
     var wrap = function (text, width) {
         text.each(function () {
@@ -257,7 +258,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         var group = data.groups[i]
         var avgCharacteristics = data.avgCharacteristics[i]
         var profile = data.profiles[i]
-        var adaptedTaskId = data.adaptedTaskId
+        var adaptedTaskId = data.adaptedTaskIds[i]
         var groupCenterOfMass = {'x': 100 + Math.random()*(canvasContainer.getBoundingClientRect().width - 300), 'y': 100 + Math.random()*(canvasContainer.getBoundingClientRect().height - 300)};
 
         groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'profile': profile, 'adaptedTaskId': adaptedTaskId, 'centerOfMass': groupCenterOfMass});
@@ -348,7 +349,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
 
     var getJSONLength = function(json){
-        if(typeof json == "string"){
+        if(typeof json == "string"|| json == undefined){
             return 0;
         }
         var keys = Object.keys(json);
@@ -366,7 +367,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     var htmlFromJSON = function(json, fatherElem, currX, currY){
         
-        if(typeof json == "string" || typeof json == "number"){
+        if(typeof json == "string" || typeof json == "number" || json == undefined){
             return;
         }
 
@@ -449,6 +450,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         }
         json = { 'group Id': node.groupId, 'characteristics': node.characteristics, 
         'profile': node.profile, 'adaptedTaskId': node.adaptedTaskId == -1 ? '<No computed task>' : node.adaptedTaskId };
+        console.log(json)
         var currTooltip = d3.select(groupInfoTooltips._groups[0][node.groupId]);
         htmlFromJSON(json, currTooltip, 0, 0);
     });

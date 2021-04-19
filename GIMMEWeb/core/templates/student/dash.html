@@ -141,7 +141,24 @@
 	<script>
 		$(document).ready(function(){
 
-			var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+			// CSRF protection setup 
+			// (from: 
+			// https://docs.djangoproject.com/en/dev/ref/csrf/
+			// and https://stackoverflow.com/questions/54835849/django-how-to-send-csrf-token-with-ajax
+			// )
+			csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+			function csrfSafeMethod(method) {
+	    		// these HTTP methods do not require CSRF protection
+			    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+			}
+			$.ajaxSetup({
+			    beforeSend: function(xhr, settings) {
+			        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+			            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			        }
+			    }
+			});
+
 
 			var myStateGrid = undefined;
 			var myCharacteristics = undefined;
@@ -216,7 +233,6 @@
 							{
 								url: '/fetchTaskFromId/',
 								type: 'POST',
-								headers: {'X-CSRFToken': csrftoken},
 								dataType: 'json',
 								data: {'taskId': adaptedTaskId },
 								complete: 
