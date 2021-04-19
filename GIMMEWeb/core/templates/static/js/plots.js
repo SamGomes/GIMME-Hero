@@ -261,7 +261,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         var adaptedTaskId = data.adaptedTaskIds[i]
         var groupCenterOfMass = {'x': 100 + Math.random()*(canvasContainer.getBoundingClientRect().width - 300), 'y': 100 + Math.random()*(canvasContainer.getBoundingClientRect().height - 300)};
 
-        groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'profile': profile, 'adaptedTaskId': adaptedTaskId, 'centerOfMass': groupCenterOfMass});
+        // groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'profile': profile, 'adaptedTaskId': adaptedTaskId, 'centerOfMass': groupCenterOfMass});
+        groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'adaptedTaskId': adaptedTaskId, 'centerOfMass': groupCenterOfMass});
         
         for(var j=0;j<group.length; j++){
             //TODO: add user characteristics
@@ -434,7 +435,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         .attr('rx', '15px')
         // .attr('ry', '35px')
         .attr('width', 650)
-        .attr('height', 650)
+        .attr('height', 480)
         .attr('fill', function(node){
                                 var baseColor = colors[node.groupId].split('#')[1];
                                 transparency = 200;
