@@ -116,6 +116,11 @@
 					</div>
 				</div>
 				<div class='panel-block' style='display: block;'>
+
+					<div id='adaptationError_professor_dash' class='section hero is-danger is-centered has-text-centered'>
+						<label class='label subtitle is-4 is-white'>Adaptation Error! Tip: verify if enough players are selected.</label>
+					</div>
+
 					<div class='columns is-multiline is-mobile'>
 						<div class='column is-full'>
 							<p>Algorithms</p>
@@ -347,11 +352,6 @@
 						</div>
 					</div>
 
-					<div id='adaptationError_professor_dash' class='section hero is-danger is-centered has-text-centered'>
-						<label class='label subtitle is-4 is-white'>Adaptation Error! Tip: verify if enough players are selected.</label>
-					</div>
-					
-
 				</div>
 			</div>
 		</section>
@@ -359,6 +359,8 @@
 
 
 		<section class='section'>
+			
+			
 			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
 					<div class='columns is-vcentered'>
@@ -372,6 +374,12 @@
 				</div>
 				<div class='panel-block'>
 					<div class='colums'>
+						
+						<div id='adaptationIssues_professor_dash' class='section hero is-warning is-centered has-text-centered'>
+							<label class='label subtitle is-4 is-white'>Adaptation Issues Found: </label>
+							<label id='adaptationIssuesText_professor_dash'></label>
+						</div>
+						
 						<div class='column is-one-third'></div>
 						<div class='column is-one-third is-centered' id='groupsPlot_professor_dash'></div>
 						<div class='column is-one-third'></div>
@@ -422,6 +430,8 @@ crossorigin='anonymous'></script>
 
 
 		$("#adaptationError_professor_dash").hide();
+		$("#adaptationIssues_professor_dash").hide();
+		$("#adaptationIssuesText_professor_dash").html('');
 
 		var currServerState = {};
 		var currAdaptationConfig = {
@@ -616,7 +626,8 @@ crossorigin='anonymous'></script>
 
 						$('#groupsPlot_professor_dash').empty();
 						if(newServerState.responseText.localeCompare("error")==0){
-							$("#adaptationError_professor_dash").show();
+							$('#adaptationError_professor_dash').show(500);
+							setTimeout(function(){ $('#adaptationError_professor_dash').hide(500); }, 5000);
 							currServerState = "error";
 							return;
 						}
@@ -710,6 +721,10 @@ crossorigin='anonymous'></script>
 
 		$('#rebuildPlot_professor_dash').click(function(){
 			$('#groupsPlot_professor_dash').empty();
+			
+			$("#adaptationIssues_professor_dash").hide();
+			$("#adaptationIssuesText_professor_dash").html('');
+			
 			if(currServerState.currAdaptationState != undefined && currServerState.currAdaptationState.groups != undefined){
 				buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.selectedUsersStates);
 			}

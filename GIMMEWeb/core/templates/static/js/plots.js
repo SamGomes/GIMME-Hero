@@ -447,7 +447,9 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     groupInfoTooltips.each(function(node){ 
         if(node.adaptedTaskId == -1){
-            alert('Could not compute task for group '+node.groupId+'... Maybe no tasks are available?')
+            $('#adaptationIssuesText_professor_dash').html($('#adaptationIssuesText_professor_dash').html() + ('<br></br>Could not compute task for group '+node.groupId+'... Maybe no tasks are available?'));
+            $('#adaptationIssues_professor_dash').show(500);
+            setTimeout(function(){ $('#adaptationIssues_professor_dash').hide(500); }, 10000);
         }
         json = { 'group Id': node.groupId, 'characteristics': node.characteristics, 
         'profile': node.profile, 'adaptedTaskId': node.adaptedTaskId == -1 ? '<No computed task>' : node.adaptedTaskId };

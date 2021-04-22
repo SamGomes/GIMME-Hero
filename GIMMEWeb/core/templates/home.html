@@ -29,7 +29,6 @@
 					<div class='container'>
 						<form  method="POST" action="">
 							{% csrf_token %}
-
 							<div class='field'>
 							  <label class='label subtitle is-5'>Username</label>
 							  <div class='control'>
@@ -102,6 +101,7 @@
 	<script>
 		
 		$(document).ready(function(){
+			
 			$('#loginError_home').hide()
 			$('#loginError_home').show(500)
 			setTimeout(function(){ $('#loginError_home').hide(500); }, 5000);

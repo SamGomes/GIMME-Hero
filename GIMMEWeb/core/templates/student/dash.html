@@ -24,7 +24,7 @@
 					<div class="panel-heading">
 						<div class="columns is-vcentered">
 							<div class="column">
-								<p>Current Class Info</p>
+								<p>Your Group</p>
 							</div>
 							<div class="is-pulled-left">
 								<div class='button minimizerButton'></div>
@@ -32,16 +32,15 @@
 						</div>
 					</div>
 					<div class='panel-block'>
-						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
+						<!-- <div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
 							<div class='subtitle is-5' style='color:gray'>Available Students</div>
 							<div class='table-container'>
 								<div class='table' id='freeUsersTable_student_dash'></div>
 							</div>
-						</div>
-						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
-							<div class='subtitle is-4' style='color:gray'>Selected Students</div>
+						</div> -->
+						<div class='column is-offset-1' style='padding:2em;'>
 							<div class='table-container column is-full'>
-								<div class='table' id='selectedUsersTable_student_dash'></div>
+								<div class='table' id='yourgrouptable_student_dash'></div>
 							</div>
 						</div>
 					</div>
@@ -53,7 +52,7 @@
 					<div class="panel-heading">
 						<div class="columns is-vcentered">
 							<div class="column">
-								<p>Current Activity Info</p>
+								<p>Current Activity</p>
 							</div>
 							<div class="is-pulled-left">
 								<div class='button minimizerButton'>
@@ -62,17 +61,17 @@
 						</div>
 					</div>
 					<div class='panel-block'  id="student_currentActivityInfo">
-						<label class='column is-5'>
+						<label class='column is-3'>
 							<p class='has-text-weight-bold'>Task Title:</p> 
 							<p id='student_currentActivityInfo_taskTitle'></p>
 						</label>
 
-						<label class='column is-5'>
+						<label class='column is-6'>
 							<p class='has-text-weight-bold'>Task Description:</p> 
 							<p id='student_currentActivityInfo_taskDesc'></p>
 						</label>
 
-						<label class='column is-5'>
+						<label class='column is-3'>
 							<p class='has-text-weight-bold'>Task Files:</p> 
 							<a id='student_currentActivityInfo_taskFiles' download></a>
 						</label>
@@ -137,152 +136,112 @@
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 	<script src="https://d3js.org/d3.v5.js"></script>
 	<script src="{% static "js/plots.js" %}"></script>
-	{% csrf_token %}
 	<script>
-		$(document).ready(function(){
+		$(document).ready(
+			function(){
 
-			// CSRF protection setup 
-			// (from: 
-			// https://docs.djangoproject.com/en/dev/ref/csrf/
-			// and https://stackoverflow.com/questions/54835849/django-how-to-send-csrf-token-with-ajax
-			// )
-			csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-			function csrfSafeMethod(method) {
-	    		// these HTTP methods do not require CSRF protection
-			    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-			}
-			$.ajaxSetup({
-			    beforeSend: function(xhr, settings) {
-			        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-			            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-			        }
-			    }
-			});
-
-
-			var myStateGrid = undefined;
-			var myCharacteristics = undefined;
-
-			var currServerState = {};
-			
-		
-
-			var generateDashTableFromArray = function(canAdd, array, tagClass){
-			    var table = $('<div>');
-			    for(var i=0; i < array.length; i++){
-			        
-			        var tag = $('<span class="button">').text(array[i]);
-			        if(!canAdd && i == array.length){
-			            return table;
-			        }
-			        tag.addClass('tag');
-			        tag.addClass(tagClass);
-			        tag.addClass('is-medium');
-			        tag.addClass('is-rounded');
-			        table.append(tag);
-			    }
-			    return table;
-			};
-
-		var objChanged = function(obj1, obj2){
-			return !(JSON.stringify(obj1) === JSON.stringify(obj2));
-		};
-		var changesDetected = function(newServerState){
-			// console.log(currServerState)
-			// console.log(newServerState)
-			return currServerState != undefined && currServerState != "error" && (jQuery.isEmptyObject(currServerState) || (objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState) && newServerState != undefined));
-		}
-		var fetchServerData = function(){
-			$.ajax(
-			{
-				url: '/fetchServerState/',
-					// authentication: getCookie('csrftoken'),
-					dataType: 'json',
-					success: 
-					function (newServerState) {							
-						var currSelectedUsers = newServerState.currSelectedUsers;
-						var currFreeUsers = newServerState.currFreeUsers;
-						var fuTable = generateDashTableFromArray(
-								true, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
-								'{% url 'addSelectedUser' %}', 'username',
-								'{% url 'userRegistration' %}', 'username',
-								'{% url 'userDeletion' %}','usernameToDelete',
-								'{% url 'userUpdate' %}','usernameToUpdate'
-							);
-						var suTable = generateDashTableFromArray(
-								false, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
-								'{% url 'removeSelectedUser' %}', 'username',
-								'{% url 'userRegistration' %}', 'username',
-								'{% url 'userDeletion' %}','usernameToDelete',
-								'{% url 'userUpdate' %}','usernameToUpdate'
-							);
-						$('#freeUsersTable_student_dash').empty();
-						$('#freeUsersTable_student_dash').append(fuTable);
-
-						$('#selectedUsersTable_student_dash').empty();
-						$('#selectedUsersTable_student_dash').append(suTable);
-
-						if(currSelectedUsers.length>0 && changesDetected(newServerState)){
-							currServerState = newServerState;
-							
-
-							// var currPreferencesEst = unformattedStringToObj("{{user.personality}}");
-							var currState = unformattedStringToObj('{{user.userprofile.currState}}');
-							var adaptedTaskId = 13; //currState.adaptedTaskId;
-							$.ajax(
-							{
-								url: '/fetchTaskFromId/',
-								type: 'POST',
-								dataType: 'json',
-								data: {'taskId': adaptedTaskId },
-								complete: 
-								function (res) {
-										console.log(res);
-										var taskRes = res.responseText;
-										if(taskRes == 0){
-											$('#student_currentActivityInfo_taskTitle').text("-");
-											$("#student_currentActivityInfo_taskDesc").text("-");
-											$("#student_currentActivityInfo_taskFiles").text("-");
-											$("#student_learningStatePlot").text("-");
-											// $("#student_interactionsProfilePlot").text("-");	
-										}else{
-											// console.log(taskRes);
-											task = unformattedStringToObj(taskRes)
-											$('#student_currentActivityInfo_taskTitle').text(task.title);
-											$("#student_currentActivityInfo_taskDesc").text(task.description);
-											$("#student_currentActivityInfo_taskFiles").text(task.files);
-											$("#student_currentActivityInfo_taskFiles").attr('href','../media/'+task.files);
-											// $("#student_interactionsProfilePlot").text(task.profile);	
-										}	
-								}
-							});
-
-							buildStatePlot('student_learningStatePlot', 
-								[
-									{ "name": "ability" , "value": "0.6" }, //currState.characteristics.ability },
-									{ "name": "engagement" , "value": "0.4"} //currState.characteristics.engagement }
-								]
-							);
-
-							buildScatterInteractionPlot('student_interactionsProfilePlot', 
-								[
-									// { "focus": -2.0 , "valence": 2.0 , "timestamp": 5 },
-									// { "focus": 1.2 , "valence": -2.4 , "timestamp": 2 },
-									// { "focus": 1.7 , "valence": 1.2 , "timestamp": 1 },
-									// { "focus": 2.3 , "valence": 2.5 , "timestamp": 4 },
-									// { "focus": -1.5 , "valence": -2.1 , "timestamp": 8 },
-									{ "focus": -2.1 , "valence": 0.5 , "timestamp": 9 }
-								]
-							);
-						}
-					}
+				// CSRF protection setup 
+				// (from: 
+				// https://docs.djangoproject.com/en/dev/ref/csrf/
+				// and https://stackoverflow.com/questions/54835849/django-how-to-send-csrf-token-with-ajax
+				// )
+				csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+				function csrfSafeMethod(method) {
+		    		// these HTTP methods do not require CSRF protection
+				    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+				}
+				$.ajaxSetup({
+				    beforeSend: function(xhr, settings) {
+				        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+				            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+				        }
+				    }
 				});
-			};
-
-			fetchServerData();
-			setInterval(fetchServerData, 500);
 
 
-		});
+				var myStateGrid = undefined;
+				var myCharacteristics = undefined;
+
+				
+
+				var generateDashTableFromArray = function(canAdd, array, tagClass){
+				    var table = $('<div>');
+				    for(var i=0; i < array.length; i++){
+				        
+				        var tag = $('<span class="button">').text(array[i]);
+				        if(!canAdd && i == array.length){
+				            return table;
+				        }
+				        tag.addClass('tag');
+				        tag.addClass(tagClass);
+				        tag.addClass('is-medium');
+				        tag.addClass('is-rounded');
+				        table.append(tag);
+				    }
+				    return table;
+				};
+
+				var fetchGroupInfo = function(){
+					$.ajax(
+					{
+						url: '/fetchGroupInfo/',
+						dataType: 'json',
+						data: {'username': {{user.userprofile.fullName}} },
+						complete: 
+							function (currGroupInfo) {		
+							
+								var ygTable = generateDashTableFromArray(
+									true, currGroupUsers, 'is-info'
+								);
+								$('#yourgrouptable_student_dash').empty();
+								$('#yourgrouptable_student_dash').append(ygTable);
+
+								var adaptedTaskId = 14; //currState.adaptedTaskId;
+								
+								console.log(res);
+								var taskRes = res.responseText;
+								if(taskRes == 0){
+									$('#student_currentActivityInfo_taskTitle').text("-");
+									$("#student_currentActivityInfo_taskDesc").text("-");
+									$("#student_currentActivityInfo_taskFiles").text("-");
+									$("#student_learningStatePlot").text("-");
+									// $("#student_interactionsProfilePlot").text("-");	
+								}else{
+									// console.log(taskRes);
+									task = unformattedStringToObj(taskRes)
+									$('#student_currentActivityInfo_taskTitle').text(task.title);
+									$("#student_currentActivityInfo_taskDesc").text(task.description);
+									$("#student_currentActivityInfo_taskFiles").text(task.files);
+									$("#student_currentActivityInfo_taskFiles").attr('href','../media/'+task.files);
+									// $("#student_interactionsProfilePlot").text(task.profile);	
+								}	
+									
+								
+
+								buildStatePlot('student_learningStatePlot', 
+									[
+										{ "name": "ability" , "value": "0.6" }, //currState.characteristics.ability },
+										{ "name": "engagement" , "value": "0.4"} //currState.characteristics.engagement }
+									]
+								);
+
+								buildScatterInteractionPlot('student_interactionsProfilePlot', 
+									[
+										// { "focus": -2.0 , "valence": 2.0 , "timestamp": 5 },
+										// { "focus": 1.2 , "valence": -2.4 , "timestamp": 2 },
+										// { "focus": 1.7 , "valence": 1.2 , "timestamp": 1 },
+										// { "focus": 2.3 , "valence": 2.5 , "timestamp": 4 },
+										// { "focus": -1.5 , "valence": -2.1 , "timestamp": 8 },
+										{ "focus": -2.1 , "valence": 0.5 , "timestamp": 9 }
+									]
+								);
+							}
+					});
+
+					// fetchServerData();
+					// setInterval(fetchServerData, 500);
+				};
+			}
+		);
 	</script>
 </html>

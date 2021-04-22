@@ -31,7 +31,7 @@ from django.contrib import messages
 from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm
 
 
-intProfTemplate = InteractionsProfile({"K_cp": 0, "K_ea": 0, "K_i": 0, "K_mh": 0})
+intProfTemplate = InteractionsProfile({"Valence": 0, "Focus": 0})
 
 
 class ServerStateModelBridge():
@@ -635,11 +635,11 @@ class Views(): #acts as a namespace
 	
 	def startAdaptation(request):
 		# breakpoint()
-		# try:
-		currAdaptationState = adaptation.iterate()
-		# except ValueError:
-		# 	print("ValueError error!")
-		# 	return HttpResponse('error')
+		try:
+			currAdaptationState = adaptation.iterate()
+		except ValueError:
+			print("ValueError error!")
+			return HttpResponse('error')
 			
 		serverStateModelBridge.setCurrAdaptationState(currAdaptationState)
 		serverStateModelBridge.setReadyForNewActivity(True)
@@ -743,10 +743,8 @@ class Views(): #acts as a namespace
 
 					task.profile = json.dumps(InteractionsProfile(
 						{
-						 "K_cp": float(requestInfo['profileDim0']),
-						 "K_ea": float(requestInfo['profileDim1']),
-						 "K_i":  float(requestInfo['profileDim2']),
-						 "K_mh": float(requestInfo['profileDim3'])
+						 "Valence": float(requestInfo['profileDim0']),
+						 "Focus": float(requestInfo['profileDim1'])
 						 }
 					), default=lambda o: o.__dict__, sort_keys=True)
 
@@ -893,3 +891,21 @@ class Views(): #acts as a namespace
 
 		returnedTask = json.dumps(returnedTask, default=lambda o: o.__dict__, sort_keys=True)
 		return HttpResponse(returnedTask)
+
+
+	def fetchGroupInfo(request):
+		print(request.POST)
+		username = request.POST["username"]
+
+		if not username in serverStateModelBridge.getAllStoredStudentUsernames():
+			return HttpResponse({})
+		userState = PlayerModelBridge.getPlayerCurrState(username)
+		breakpoint()
+
+		# returnedState = {}
+		# returnedState["title"] = userState.groupId
+		# returnedState["description"] = task.description
+		# returnedState["files"] = str(task.files)
+
+		# returnedTask = json.dumps(returnedTask, default=lambda o: o.__dict__, sort_keys=True)
+		# return HttpResponse(returnedTask)
