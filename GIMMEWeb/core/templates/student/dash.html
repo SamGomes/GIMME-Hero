@@ -2,36 +2,36 @@
 {% include "common/header.html" %}
 <!DOCTYPE html>
 <html>
-	<body class="layout-default">
-		
-		<div id="welcomeBanner">
-			<section class="hero main_hero is-fullheight">
-				<div class="hero-body">
-					<div class="has-text-centered; slider-content animated zoomIn">
-						<div>
-							<p class="title is-1 main-text">Welcome to GIMME-Web, {{request.session.userId}}</p>
-							<p class="subtitle is-4 main-text">A sophisticated Group Interactions Management Tool</p>
+<body class="layout-default">
+
+	<div id="welcomeBanner">
+		<section class="hero main_hero is-fullheight">
+			<div class="hero-body">
+				<div class="has-text-centered; slider-content animated zoomIn">
+					<div>
+						<p class="title is-1 main-text">Welcome to GIMME-Web, {{request.session.userId}}</p>
+						<p class="subtitle is-4 main-text">A sophisticated Group Interactions Management Tool</p>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+
+	<div id="dashboard">
+
+		<section class="section danger" id="student_currentClassInfo">
+			<div class="panel animated zoomIn">
+				<div class="panel-heading">
+					<div class="columns is-vcentered">
+						<div class="column">
+							<p>Your Group</p>
+						</div>
+						<div class="is-pulled-left">
+							<div class='button minimizerButton'></div>
 						</div>
 					</div>
 				</div>
-			</section>
-		</div>
-		
-		<div id="dashboard">
-
-			<section class="section danger" id="student_currentClassInfo">
-				<div class="panel animated zoomIn">
-					<div class="panel-heading">
-						<div class="columns is-vcentered">
-							<div class="column">
-								<p>Your Group</p>
-							</div>
-							<div class="is-pulled-left">
-								<div class='button minimizerButton'></div>
-							</div>
-						</div>
-					</div>
-					<div class='panel-block'>
+				<div class='panel-block'>
 						<!-- <div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
 							<div class='subtitle is-5' style='color:gray'>Available Students</div>
 							<div class='table-container'>
@@ -99,9 +99,9 @@
 						</div>
 					</div>
 					<div class="panel-block">
-	  						<div class="column is-one-quarter"></div>
-	  						<div class="column is-one-third is-centered" id="student_learningStatePlot"></div>
-	  						<div class="column is-one-third"></div>
+						<div class="column is-one-quarter"></div>
+						<div class="column is-one-third is-centered" id="student_learningStatePlot"></div>
+						<div class="column is-one-third"></div>
 					</div>
 				</div>
 			</section>
@@ -119,129 +119,141 @@
 						</div>
 					</div>
 					<div class="panel-block">
-	  						<div class="column is-one-third"></div>
-	  						<div class="column is-one-third is-centered" id="student_interactionsProfilePlot"></div>
-	  						<div class="column is-one-third"></div>
+						<div class="column is-one-third"></div>
+						<div class="column is-one-third is-centered" id="student_interactionsProfilePlot"></div>
+						<div class="column is-one-third"></div>
 					</div>
 				</div>
 			</section>
+			{% csrf_token %}
 
-			<!-- <input class="button is-large" type="reset" value="Journey"> -->
 		</div>
 	</body>
 	<script
-		src="https://code.jquery.com/jquery-3.2.1.min.js"
-		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-		crossorigin="anonymous"></script>
+	src="https://code.jquery.com/jquery-3.2.1.min.js"
+	integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+	crossorigin="anonymous"></script>
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 	<script src="https://d3js.org/d3.v5.js"></script>
 	<script src="{% static "js/plots.js" %}"></script>
 	<script>
-		$(document).ready(
-			function(){
+	$(document).ready(
+		function(){
 
-				// CSRF protection setup 
-				// (from: 
-				// https://docs.djangoproject.com/en/dev/ref/csrf/
-				// and https://stackoverflow.com/questions/54835849/django-how-to-send-csrf-token-with-ajax
-				// )
-				csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-				function csrfSafeMethod(method) {
-		    		// these HTTP methods do not require CSRF protection
-				    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-				}
-				$.ajaxSetup({
-				    beforeSend: function(xhr, settings) {
-				        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-				            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-				        }
-				    }
-				});
+			// CSRF protection setup 
+			// (from: 
+			// https://docs.djangoproject.com/en/dev/ref/csrf/
+			// and https://stackoverflow.com/questions/54835849/django-how-to-send-csrf-token-with-ajax
+			// )
+			csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+			function csrfSafeMethod(method) {
+	    		// these HTTP methods do not require CSRF protection
+	    		return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+	    	}
+	    	$.ajaxSetup({
+	    		beforeSend: function(xhr, settings) {
+	    			if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+	    				xhr.setRequestHeader("X-CSRFToken", csrftoken);
+	    			}
+	    		}
+	    	});
 
 
-				var myStateGrid = undefined;
-				var myCharacteristics = undefined;
+	    	var myStateGrid = undefined;
+	    	var myCharacteristics = undefined;
 
+
+
+	    	var generateDashTableFromArray = function(canAdd, array, tagClass){
+	    		var table = $('<div>');
+	    		for(var i=0; i < array.length; i++){
+
+	    			var tag = $('<span class="button">').text(array[i]);
+	    			if(!canAdd && i == array.length){
+	    				return table;
+	    			}
+	    			tag.addClass('tag');
+	    			tag.addClass(tagClass);
+	    			tag.addClass('is-medium');
+	    			tag.addClass('is-rounded');
+	    			table.append(tag);
+	    		}
+	    		return table;
+	    	};
+
+	    	var updateData = function(){
 				
+				var currState =  unformattedStringToObj("{{user.userprofile.currState}}");
+				console.log(currState);
+	    		
+	   //  		$.ajax(
+	   //  		{
+	   //  			url: '/fetchGroupInfo/',
+	   //  			dataType: 'json',
+	   //  			data: {'username': "{{user.username}}" },
+	   //  			complete: 
+	   //  			function (currGroupInfo) {		
 
-				var generateDashTableFromArray = function(canAdd, array, tagClass){
-				    var table = $('<div>');
-				    for(var i=0; i < array.length; i++){
-				        
-				        var tag = $('<span class="button">').text(array[i]);
-				        if(!canAdd && i == array.length){
-				            return table;
-				        }
-				        tag.addClass('tag');
-				        tag.addClass(tagClass);
-				        tag.addClass('is-medium');
-				        tag.addClass('is-rounded');
-				        table.append(tag);
-				    }
-				    return table;
-				};
+	   //  				var ygTable = generateDashTableFromArray(
+	   //  					true, [], 'is-info'
+	   //  					);
+	   //  				$('#yourgrouptable_student_dash').empty();
+	   //  				$('#yourgrouptable_student_dash').append(ygTable);
+				// 	}
+				// });
 
-				var fetchGroupInfo = function(){
-					$.ajax(
-					{
-						url: '/fetchGroupInfo/',
-						dataType: 'json',
-						data: {'username': {{user.userprofile.fullName}} },
-						complete: 
-							function (currGroupInfo) {		
+				$.ajax(
+	    		{
+	    			url: '/fetchTaskFromId/',
+	    			dataType: 'json',
+	    			data: {'taskId': 'hsaguiasgfuisa' },
+	    			success: 
+	    			function (res) {	
+
+	    				var taskRes = res.responseText;
+	    				if(taskRes == 0){
+	    					$('#student_currentActivityInfo_taskTitle').text("-");
+	    					$("#student_currentActivityInfo_taskDesc").text("-");
+	    					$("#student_currentActivityInfo_taskFiles").text("-");
+	    					$("#student_learningStatePlot").text("-");
+								// $("#student_interactionsProfilePlot").text("-");	
+						}else{
+							task = unformattedStringToObj(taskRes)
+							$('#student_currentActivityInfo_taskTitle').text(task.taskId);
+							$("#student_currentActivityInfo_taskDesc").text(task.description);
+							$("#student_currentActivityInfo_taskFiles").text(task.files);
+							$("#student_currentActivityInfo_taskFiles").attr('href','../media/'+task.files);
+							// $("#student_interactionsProfilePlot").text(task.profile);	
+						}
+					}
+				});	
+
 							
-								var ygTable = generateDashTableFromArray(
-									true, currGroupUsers, 'is-info'
-								);
-								$('#yourgrouptable_student_dash').empty();
-								$('#yourgrouptable_student_dash').append(ygTable);
 
-								var adaptedTaskId = 14; //currState.adaptedTaskId;
-								
-								console.log(res);
-								var taskRes = res.responseText;
-								if(taskRes == 0){
-									$('#student_currentActivityInfo_taskTitle').text("-");
-									$("#student_currentActivityInfo_taskDesc").text("-");
-									$("#student_currentActivityInfo_taskFiles").text("-");
-									$("#student_learningStatePlot").text("-");
-									// $("#student_interactionsProfilePlot").text("-");	
-								}else{
-									// console.log(taskRes);
-									task = unformattedStringToObj(taskRes)
-									$('#student_currentActivityInfo_taskTitle').text(task.title);
-									$("#student_currentActivityInfo_taskDesc").text(task.description);
-									$("#student_currentActivityInfo_taskFiles").text(task.files);
-									$("#student_currentActivityInfo_taskFiles").attr('href','../media/'+task.files);
-									// $("#student_interactionsProfilePlot").text(task.profile);	
-								}	
-									
-								
+				// buildStatePlot('student_learningStatePlot', 
+				// 	[
+				// 		{ "name": "ability" , "value": currState.characteristics.ability },
+				// 		{ "name": "engagement" , "value": currState.characteristics.engagement }
+				// 	]
+				// );
 
-								buildStatePlot('student_learningStatePlot', 
-									[
-										{ "name": "ability" , "value": "0.6" }, //currState.characteristics.ability },
-										{ "name": "engagement" , "value": "0.4"} //currState.characteristics.engagement }
-									]
-								);
+				// buildScatterInteractionPlot('student_interactionsProfilePlot', 
+				// 	[
+				// 		// { "focus": -2.0 , "valence": 2.0 , "timestamp": 5 },
+				// 		// { "focus": 1.2 , "valence": -2.4 , "timestamp": 2 },
+				// 		// { "focus": 1.7 , "valence": 1.2 , "timestamp": 1 },
+				// 		// { "focus": 2.3 , "valence": 2.5 , "timestamp": 4 },
+				// 		// { "focus": -1.5 , "valence": -2.1 , "timestamp": 8 },
+				// 		{ "focus": -2.1 , "valence": 0.5 , "timestamp": 9 }
+				// 	]
+				// );
 
-								buildScatterInteractionPlot('student_interactionsProfilePlot', 
-									[
-										// { "focus": -2.0 , "valence": 2.0 , "timestamp": 5 },
-										// { "focus": 1.2 , "valence": -2.4 , "timestamp": 2 },
-										// { "focus": 1.7 , "valence": 1.2 , "timestamp": 1 },
-										// { "focus": 2.3 , "valence": 2.5 , "timestamp": 4 },
-										// { "focus": -1.5 , "valence": -2.1 , "timestamp": 8 },
-										{ "focus": -2.1 , "valence": 0.5 , "timestamp": 9 }
-									]
-								);
-							}
-					});
-
-					// fetchServerData();
-					// setInterval(fetchServerData, 500);
-				};
 			}
-		);
+
+			updateData();
+			// setInterval(updateData, 500);
+		}
+	);
+		
 	</script>
-</html>
+	</html>

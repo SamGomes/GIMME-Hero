@@ -891,6 +891,8 @@ class Views(): #acts as a namespace
 
 
 	def fetchTaskFromId(request):
+		breakpoint();
+		
 		taskId = request.POST["taskId"]
 
 		if not taskId in taskBridge.getAllStoredTaskIds():
@@ -914,7 +916,7 @@ class Views(): #acts as a namespace
 		if not username in serverStateModelBridge.getAllStoredStudentUsernames():
 			return HttpResponse({})
 		userState = PlayerModelBridge.getPlayerCurrState(username)
-		breakpoint()
+		# breakpoint()
 
 		# returnedState = {}
 		# returnedState["title"] = userState.groupId
