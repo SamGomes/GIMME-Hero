@@ -11,7 +11,7 @@ from django.views.generic import View
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseServerError
+from django.http import HttpRequest, HttpResponse, HttpResponseServerError
 
 from django.contrib.auth.models import User
 
@@ -136,9 +136,6 @@ class CustomTaskModelBridge(TaskModelBridge):
 		task.delete()
 
 	def getAllTaskIds(self):
-		return serverStateModelBridge.getCurrSelectedTasks()
-	
-	def getAllStoredTaskIds(self):
 		allTasks = Task.objects.all()
 		allTasksIds = []
 		for task in allTasks:
@@ -863,8 +860,24 @@ class Views(): #acts as a namespace
 		newSessionState['currSelectedUsers'] = serverStateModelBridge.getCurrSelectedUsers()
 		newSessionState['currFreeUsers'] = serverStateModelBridge.getCurrFreeUsers()
 
-		newSessionState['currSelectedTasks'] = serverStateModelBridge.getCurrSelectedTasks()
-		newSessionState['currFreeTasks'] = serverStateModelBridge.getCurrFreeTasks()
+		currSelectedTasks = []
+		currFreeTasks = []
+
+		taskObject = HttpRequest()
+		
+		currSelectedTasksIds = serverStateModelBridge.getCurrSelectedTasks()
+		for taskId in currSelectedTasksIds:
+			taskObject.POST = {'taskId': taskId}
+			currSelectedTasks.append(Views.fetchTaskFromId(taskObject).content.decode('utf-8'))
+
+		currFreeTasksIds = serverStateModelBridge.getCurrFreeTasks()
+		for taskId in currFreeTasksIds:
+			taskObject.POST = {'taskId': taskId}
+			currFreeTasks.append(Views.fetchTaskFromId(taskObject).content.decode('utf-8'))
+
+
+		newSessionState['currSelectedTasks'] = currSelectedTasks
+		newSessionState['currFreeTasks'] = currFreeTasks
 
 		newSessionState['readyForNewActivity'] = serverStateModelBridge.isReadyForNewActivity()
 
@@ -877,10 +890,9 @@ class Views(): #acts as a namespace
 
 
 	def fetchTaskFromId(request):
-		print(request.POST)
 		taskId = request.POST["taskId"]
 
-		if not taskId in serverStateModelBridge.getCurrSelectedTasks():
+		if not taskId in taskBridge.getAllTaskIds():
 			return HttpResponse({})
 		task = taskBridge.getTask(taskId)
 
@@ -888,6 +900,7 @@ class Views(): #acts as a namespace
 		returnedTask["title"] = task.title
 		returnedTask["description"] = task.description
 		returnedTask["files"] = str(task.files)
+
 
 		returnedTask = json.dumps(returnedTask, default=lambda o: o.__dict__, sort_keys=True)
 		return HttpResponse(returnedTask)

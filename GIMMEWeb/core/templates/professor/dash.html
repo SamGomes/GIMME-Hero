@@ -488,7 +488,7 @@ crossorigin='anonymous'></script>
 		            
 
 		            var editButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-		            editButton.append('<form method="GET" action=\''+editElementUrl+'\'>{% csrf_token %}<input type="hidden" name="'+editElementArg+'" value=\''+array[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fa fa-pencil\'></i></button></form>');
+		            editButton.append('<form method="GET" action=\''+editElementUrl+'\'><input type="hidden" name="'+editElementArg+'" value=\''+array[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fa fa-pencil\'></i></button></form>');
 		            tag.append(editButton);
 
 
@@ -554,8 +554,20 @@ crossorigin='anonymous'></script>
 							var currFreeTasks = newServerState.currFreeTasks;
 							var currSelectedTasks = newServerState.currSelectedTasks;
 
+							console.log(currFreeTasks);
+
+							var currFreeTaskNames = [];
+							var currSelectedTaskNames = [];
+
+							for (i=0; i< currSelectedTasks.length(); i++){
+								currFreeTaskNames[i] = currFreeTasks[i].title;
+							}
+							for (i=0; i< currSelectedTasks.length(); i++){
+								currSelectedTaskNames[i] = currSelectedTasks[i].title;
+							}
+
 							ftTable = generateDashTableFromArray(
-								true, currFreeTasks, 'is-danger', 'fa-arrow-circle-right', 
+								true, currFreeTaskNames, 'is-danger', 'fa-arrow-circle-right', 
 								'{% url 'addSelectedTask' %}', 'taskId',
 								'{% url 'taskRegistration' %}', 'taskId',
 								'{% url 'taskDeletion' %}','taskIdToDelete',
@@ -563,7 +575,7 @@ crossorigin='anonymous'></script>
 							);
 
 							stTable = generateDashTableFromArray(
-								false, currSelectedTasks, 'is-danger', 'fa-arrow-circle-left', 
+								false, currSelectedTaskNames, 'is-danger', 'fa-arrow-circle-left', 
 								'{% url 'removeSelectedTask' %}', 'taskId',
 								'{% url 'taskRegistration' %}', 'taskId',
 								'{% url 'taskDeletion' %}','taskIdToDelete',
