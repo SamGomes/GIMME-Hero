@@ -473,22 +473,22 @@ crossorigin='anonymous'></script>
 
 
 
-		var generateDashTableFromArray = function(canAdd, array, tagClass, moveButtonIconClass, moveElementUrl, moveElementArg, addElementURL, addElementArg, deleteElementUrl, deleteElementArg, editElementUrl, editElementArg){
+		var generateDashTableFromArray = function(canAdd, idArray, nameArray, tagClass, moveButtonIconClass, moveElementUrl, moveElementArg, addElementURL, addElementArg, deleteElementUrl, deleteElementArg, editElementUrl, editElementArg){
 		    var table = $('<div>');
-		    for(var i=0; i < array.length+1; i++){
+		    for(var i=0; i < idArray.length+1; i++){
 		        
-		        var tag = $('<span class="button">').text(array[i]);
-		        if(!canAdd && i == array.length){
+		        var tag = $('<span class="button">').text(nameArray[i]);
+		        if(!canAdd && i == idArray.length){
 		            return table;
 		        }
-		        if(i<array.length){
+		        if(i<idArray.length){
 		            var deleteButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-		            deleteButton.append('<form method="GET" action=\''+deleteElementUrl+'\'>{% csrf_token %}<input type="hidden" name="'+deleteElementArg+'" value=\''+array[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fas fa-trash\'></i></button></form>');
+		            deleteButton.append('<form method="GET" action=\''+deleteElementUrl+'\'>{% csrf_token %}<input type="hidden" name="'+deleteElementArg+'" value=\''+idArray[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fas fa-trash\'></i></button></form>');
 		            tag.append(deleteButton);
 		            
 
 		            var editButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-		            editButton.append('<form method="GET" action=\''+editElementUrl+'\'><input type="hidden" name="'+editElementArg+'" value=\''+array[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fa fa-pencil\'></i></button></form>');
+		            editButton.append('<form method="GET" action=\''+editElementUrl+'\'><input type="hidden" name="'+editElementArg+'" value=\''+idArray[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fa fa-pencil\'></i></button></form>');
 		            tag.append(editButton);
 
 
@@ -496,7 +496,7 @@ crossorigin='anonymous'></script>
 		            moveButton.append('<i class=\'fas '+moveButtonIconClass+'\'></i>');
 		            moveButton.click(function() {
 		                var data = {};
-		                data[moveElementArg] = $(this)[0].parentElement.textContent;
+		                data[moveElementArg] = $($(this)[0].parentElement).attr("elemID");
 		                $.ajax({
 		                    url: moveElementUrl,
 		                    type: 'POST',
@@ -507,9 +507,10 @@ crossorigin='anonymous'></script>
 
 		        }else{
 		            var addButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-		            addButton.append('<form method="POST" action=\''+addElementURL+'\'>{% csrf_token %}<input type="hidden" name="'+addElementArg+'" value=\''+array[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fas fa-plus-circle\'></i></button></form>');
+		            addButton.append('<form method="POST" action=\''+addElementURL+'\'><input type="hidden" name="'+addElementArg+'" value=\''+idArray[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fas fa-plus-circle\'></i></button></form>');
 		            tag.append(addButton);
 		        }
+		        tag.attr("elemID",idArray[i]);
 		        tag.addClass('tag');
 		        tag.addClass(tagClass);
 		        tag.addClass('is-medium');
@@ -532,14 +533,14 @@ crossorigin='anonymous'></script>
 							var currSelectedUsers = newServerState.currSelectedUsers;
 							var currFreeUsers = newServerState.currFreeUsers;
 							var fuTable = generateDashTableFromArray(
-									true, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
+									true, currFreeUsers, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
 									'{% url 'addSelectedUser' %}', 'username',
 									'{% url 'userRegistration' %}', 'username',
 									'{% url 'userDeletion' %}','usernameToDelete',
 									'{% url 'userUpdate' %}','usernameToUpdate'
 								);
 							var suTable = generateDashTableFromArray(
-									false, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
+									false, currSelectedUsers, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
 									'{% url 'removeSelectedUser' %}', 'username',
 									'{% url 'userRegistration' %}', 'username',
 									'{% url 'userDeletion' %}','usernameToDelete',
@@ -554,20 +555,27 @@ crossorigin='anonymous'></script>
 							var currFreeTasks = newServerState.currFreeTasks;
 							var currSelectedTasks = newServerState.currSelectedTasks;
 
-							console.log(currFreeTasks);
 
 							var currFreeTaskNames = [];
 							var currSelectedTaskNames = [];
 
-							for (i=0; i< currSelectedTasks.length(); i++){
-								currFreeTaskNames[i] = currFreeTasks[i].title;
+							var currFreeTaskIds = [];
+							var currSelectedTaskIds = [];
+
+							// console.log(currFreeTasks);
+							for (i=0; i< currFreeTasks.length; i++){
+								currTask = unformattedStringToObj(currFreeTasks[i]);
+								currFreeTaskNames[i] = currTask.title;
+								currFreeTaskIds[i] = currTask.id;
 							}
-							for (i=0; i< currSelectedTasks.length(); i++){
-								currSelectedTaskNames[i] = currSelectedTasks[i].title;
+							for (i=0; i< currSelectedTasks.length; i++){
+								currTask = unformattedStringToObj(currSelectedTasks[i]);
+								currSelectedTaskNames[i] = currTask.title;
+								currSelectedTaskIds[i] = currTask.id;
 							}
 
 							ftTable = generateDashTableFromArray(
-								true, currFreeTaskNames, 'is-danger', 'fa-arrow-circle-right', 
+								true, currFreeTaskIds, currFreeTaskNames, 'is-danger', 'fa-arrow-circle-right', 
 								'{% url 'addSelectedTask' %}', 'taskId',
 								'{% url 'taskRegistration' %}', 'taskId',
 								'{% url 'taskDeletion' %}','taskIdToDelete',
@@ -575,7 +583,7 @@ crossorigin='anonymous'></script>
 							);
 
 							stTable = generateDashTableFromArray(
-								false, currSelectedTaskNames, 'is-danger', 'fa-arrow-circle-left', 
+								false, currSelectedTaskIds, currSelectedTaskNames, 'is-danger', 'fa-arrow-circle-left', 
 								'{% url 'removeSelectedTask' %}', 'taskId',
 								'{% url 'taskRegistration' %}', 'taskId',
 								'{% url 'taskDeletion' %}','taskIdToDelete',

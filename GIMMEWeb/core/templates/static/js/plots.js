@@ -452,7 +452,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             setTimeout(function(){ $('#adaptationIssues_professor_dash').hide(500); }, 10000);
         }
         json = { 'group Id': node.groupId, 'characteristics': node.characteristics, 
-        'profile': node.profile, 'adaptedTaskId': node.adaptedTaskId == -1 ? '<No computed task>' : node.adaptedTaskId };
+        'adaptedTaskId': node.adaptedTaskId == -1 ? '<No computed task>' : node.adaptedTaskId };
         console.log(json)
         var currTooltip = d3.select(groupInfoTooltips._groups[0][node.groupId]);
         htmlFromJSON(json, currTooltip, 0, 0);

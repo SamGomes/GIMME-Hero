@@ -331,7 +331,7 @@ class Views(): #acts as a namespace
 		serverStateModelBridge.setCurrSelectedUsers([])
 		serverStateModelBridge.setCurrFreeUsers(playerBridge.getAllStoredStudentUsernames())
 		serverStateModelBridge.setCurrSelectedTasks([])
-		serverStateModelBridge.setCurrFreeTasks(taskBridge.getAllStoredTaskIds())
+		serverStateModelBridge.setCurrFreeTasks(taskBridge.getAllTaskIds())
 		return HttpResponse('ok')
 
 	#global methods
@@ -554,7 +554,7 @@ class Views(): #acts as a namespace
 	
 	def addAllTasksSelected(request): #reads (player) from args
 		if request.method == "POST":
-			serverStateModelBridge.setCurrSelectedTasks(taskBridge.getAllStoredTaskIds())
+			serverStateModelBridge.setCurrSelectedTasks(taskBridge.getAllTaskIds())
 			serverStateModelBridge.setCurrFreeTasks([])
 			return HttpResponse('ok')
 
@@ -562,7 +562,7 @@ class Views(): #acts as a namespace
 	def removeAllTasksSelected(request): #reads (player) from args
 		if request.method == "POST":
 			serverStateModelBridge.setCurrSelectedTasks([])
-			serverStateModelBridge.setCurrFreeTasks(taskBridge.getAllStoredTaskIds())
+			serverStateModelBridge.setCurrFreeTasks(taskBridge.getAllTaskIds())
 			return HttpResponse('ok')
 
 	
@@ -594,7 +594,6 @@ class Views(): #acts as a namespace
 
 
 	# student methods
-	
 	def startActivity(request):
 		# remove from selected and move to occupied list
 		currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
@@ -897,6 +896,7 @@ class Views(): #acts as a namespace
 		task = taskBridge.getTask(taskId)
 
 		returnedTask = {}
+		returnedTask["id"] = taskId
 		returnedTask["title"] = task.title
 		returnedTask["description"] = task.description
 		returnedTask["files"] = str(task.files)
