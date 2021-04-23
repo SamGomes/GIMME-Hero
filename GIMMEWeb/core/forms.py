@@ -36,7 +36,7 @@ widget=forms.NumberInput(attrs={'id': 'form_homework', 'step': "0.01"}))
 	
 	class Meta:
 		model = Task
-		exclude = ['taskId', 'creator', 'creationTime', 'profile'] 
+		exclude = ['creator', 'creationTime', 'profile'] 
 
 
 

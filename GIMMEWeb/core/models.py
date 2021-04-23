@@ -71,11 +71,10 @@ class UserProfile(models.Model):
 
 
 class Task(models.Model):
-    taskId = models.AutoField(primary_key=True)
-    
+    taskId = models.CharField(max_length=255,primary_key=True)
+
     creator = models.CharField(max_length=255)
     creationTime = models.CharField(max_length=255)
-    title = models.CharField(max_length=255)
     description = models.TextField(max_length=255)
     minReqAbility = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
     profile = models.CharField(max_length=255)
@@ -90,6 +89,9 @@ class Task(models.Model):
 
     files = models.FileField(upload_to=ModelAuxMethods.pathAndRename('taskFiles/'))
 
+
+    def __str__(self):
+        return self.taskId
 
 class ServerState(models.Model):
     currAdaptationState = models.CharField(max_length=255, default="[]")

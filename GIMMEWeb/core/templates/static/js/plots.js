@@ -136,7 +136,10 @@ var buildStatePlot = function(canvasId, data){
 
 var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
-    console.log(data)
+
+    $("#adaptationIssues_professor_dash").hide();
+    $("#adaptationIssuesText_professor_dash").html('');
+
     // from http://bl.ocks.org/mbostock/7555321
     var wrap = function (text, width) {
         text.each(function () {
@@ -253,7 +256,6 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             // }
         });
 
-    console.log(data);
     for (i=0; i<data.groups.length; i++){
         var group = data.groups[i]
         var avgCharacteristics = data.avgCharacteristics[i]
@@ -453,7 +455,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         }
         json = { 'group Id': node.groupId, 'characteristics': node.characteristics, 
         'adaptedTaskId': node.adaptedTaskId == -1 ? '<No computed task>' : node.adaptedTaskId };
-        console.log(json)
+
         var currTooltip = d3.select(groupInfoTooltips._groups[0][node.groupId]);
         htmlFromJSON(json, currTooltip, 0, 0);
     });

@@ -35,13 +35,13 @@
 						</div>
 					</div>
 					<div class='panel-block'>
-						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
+						<div class='column is-offset-1 dash-cell-box'>
 							<div class='subtitle is-5' style='color:gray'>Available Students</div>
 							<div class='table-container'>
 								<div class='table' id='freeUsersTable_professor_dash'></div>
 							</div>
 						</div>
-						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
+						<div class='column is-offset-1 dash-cell-box'>
 							<div class='subtitle is-4' style='color:gray'>Selected Students</div>
 							<div class='table-container column is-full'>
 								<div class='table' id='selectedUsersTable_professor_dash'></div>
@@ -75,14 +75,14 @@
 						</div>
 					</div>
 					<div class='panel-block'>
-						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
+						<div class='column is-offset-1 dash-cell-box'>
 							<div class='subtitle is-5' style='color:gray' >Available Tasks</div>
 							<div class='table-container'>
 								<div class='table' id='freeTasksTable_professor_dash'>
 								</div>
 							</div>
 						</div>
-						<div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
+						<div class='column is-offset-1 dash-cell-box'>
 							<div class='subtitle is-4' style='color:gray'>Selected Tasks</div>
 							<div class='table-container column is-full'>
 								<div class='table' id='selectedTasksTable_professor_dash'></div>
@@ -389,7 +389,7 @@
 				</div>
 			</div>
 		</section>
-
+		{% csrf_token %}
 
 
 	</div>
@@ -404,7 +404,6 @@ crossorigin='anonymous'></script>
 <script src='https://unpkg.com/d3-force-attract@latest'></script>
 <script src='https://unpkg.com/d3-force-cluster@latest'></script>
 <script src='{% static 'js/plots.js' %}'></script>
-{% csrf_token %}
 <script>
 	$(document).ready(function(){
 		
@@ -507,7 +506,7 @@ crossorigin='anonymous'></script>
 
 		        }else{
 		            var addButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-		            addButton.append('<form method="POST" action=\''+addElementURL+'\'><input type="hidden" name="'+addElementArg+'" value=\''+idArray[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fas fa-plus-circle\'></i></button></form>');
+		            addButton.append('<form method="POST" action=\''+addElementURL+'\'>{% csrf_token %}<input type="hidden" name="'+addElementArg+'" value=\''+idArray[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fas fa-plus-circle\'></i></button></form>');
 		            tag.append(addButton);
 		        }
 		        tag.attr("elemID",idArray[i]);
@@ -556,26 +555,21 @@ crossorigin='anonymous'></script>
 							var currSelectedTasks = newServerState.currSelectedTasks;
 
 
-							var currFreeTaskNames = [];
-							var currSelectedTaskNames = [];
-
 							var currFreeTaskIds = [];
 							var currSelectedTaskIds = [];
 
 							// console.log(currFreeTasks);
 							for (i=0; i< currFreeTasks.length; i++){
 								currTask = unformattedStringToObj(currFreeTasks[i]);
-								currFreeTaskNames[i] = currTask.title;
-								currFreeTaskIds[i] = currTask.id;
+								currFreeTaskIds[i] = currTask.taskId;
 							}
 							for (i=0; i< currSelectedTasks.length; i++){
 								currTask = unformattedStringToObj(currSelectedTasks[i]);
-								currSelectedTaskNames[i] = currTask.title;
-								currSelectedTaskIds[i] = currTask.id;
+								currSelectedTaskIds[i] = currTask.taskId;
 							}
 
 							ftTable = generateDashTableFromArray(
-								true, currFreeTaskIds, currFreeTaskNames, 'is-danger', 'fa-arrow-circle-right', 
+								true, currFreeTaskIds, currFreeTaskIds, 'is-danger', 'fa-arrow-circle-right', 
 								'{% url 'addSelectedTask' %}', 'taskId',
 								'{% url 'taskRegistration' %}', 'taskId',
 								'{% url 'taskDeletion' %}','taskIdToDelete',
@@ -583,7 +577,7 @@ crossorigin='anonymous'></script>
 							);
 
 							stTable = generateDashTableFromArray(
-								false, currSelectedTaskIds, currSelectedTaskNames, 'is-danger', 'fa-arrow-circle-left', 
+								false, currSelectedTaskIds, currSelectedTaskIds, 'is-danger', 'fa-arrow-circle-left', 
 								'{% url 'removeSelectedTask' %}', 'taskId',
 								'{% url 'taskRegistration' %}', 'taskId',
 								'{% url 'taskDeletion' %}','taskIdToDelete',
@@ -621,7 +615,7 @@ crossorigin='anonymous'></script>
 								function(selectedUsersStates)
 								{
 									currServerState.selectedUsersStates = JSON.parse(selectedUsersStates);
-									console.log(currServerState);
+									// console.log(currServerState);
 									buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.selectedUsersStates);
 								}
 							});
@@ -741,10 +735,6 @@ crossorigin='anonymous'></script>
 
 		$('#rebuildPlot_professor_dash').click(function(){
 			$('#groupsPlot_professor_dash').empty();
-			
-			$("#adaptationIssues_professor_dash").hide();
-			$("#adaptationIssuesText_professor_dash").html('');
-			
 			if(currServerState.currAdaptationState != undefined && currServerState.currAdaptationState.groups != undefined){
 				buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.selectedUsersStates);
 			}

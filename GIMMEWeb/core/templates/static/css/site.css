@@ -82,3 +82,12 @@ body {
   color: #131444;
   font-weight: bold;
 }
+
+
+.dash-cell-box{
+  padding:2em; 
+  border-color:gray; 
+  border-style:solid; 
+  border-radius: 2em; 
+  border-width: 0.5em;
+}

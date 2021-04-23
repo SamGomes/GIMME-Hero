@@ -135,13 +135,15 @@ class CustomTaskModelBridge(TaskModelBridge):
 		task = Task.objects.get(taskId=taskId)
 		task.delete()
 
-	def getAllTaskIds(self):
+	def getAllTaskIds(self): #all tasks for adaptation
+		return serverStateModelBridge.getCurrSelectedTasks()
+
+	def getAllStoredTaskIds(self):
 		allTasks = Task.objects.all()
 		allTasksIds = []
 		for task in allTasks:
 			allTasksIds.append(str(task.taskId))
 		return allTasksIds
-
 
 	def getTaskInteractionsProfile(self, taskId):
 		task = Task.objects.get(taskId = taskId)
@@ -331,7 +333,7 @@ class Views(): #acts as a namespace
 		serverStateModelBridge.setCurrSelectedUsers([])
 		serverStateModelBridge.setCurrFreeUsers(playerBridge.getAllStoredStudentUsernames())
 		serverStateModelBridge.setCurrSelectedTasks([])
-		serverStateModelBridge.setCurrFreeTasks(taskBridge.getAllTaskIds())
+		serverStateModelBridge.setCurrFreeTasks(taskBridge.getAllStoredTaskIds())
 		return HttpResponse('ok')
 
 	#global methods
@@ -554,7 +556,7 @@ class Views(): #acts as a namespace
 	
 	def addAllTasksSelected(request): #reads (player) from args
 		if request.method == "POST":
-			serverStateModelBridge.setCurrSelectedTasks(taskBridge.getAllTaskIds())
+			serverStateModelBridge.setCurrSelectedTasks(taskBridge.getAllStoredTaskIds())
 			serverStateModelBridge.setCurrFreeTasks([])
 			return HttpResponse('ok')
 
@@ -562,7 +564,7 @@ class Views(): #acts as a namespace
 	def removeAllTasksSelected(request): #reads (player) from args
 		if request.method == "POST":
 			serverStateModelBridge.setCurrSelectedTasks([])
-			serverStateModelBridge.setCurrFreeTasks(taskBridge.getAllTaskIds())
+			serverStateModelBridge.setCurrFreeTasks(taskBridge.getAllStoredTaskIds())
 			return HttpResponse('ok')
 
 	
@@ -782,7 +784,7 @@ class Views(): #acts as a namespace
 		elif request.method == "GET":
 			taskIdToUpdate = request.GET.get('taskIdToUpdate')
 			try:
-				instance = Task.objects.get(taskId=int(taskIdToUpdate))
+				instance = Task.objects.get(taskId=taskIdToUpdate)
 
 				form = UpdateTaskForm(instance=instance)
 				context = { 'form' : form }
@@ -891,13 +893,12 @@ class Views(): #acts as a namespace
 	def fetchTaskFromId(request):
 		taskId = request.POST["taskId"]
 
-		if not taskId in taskBridge.getAllTaskIds():
+		if not taskId in taskBridge.getAllStoredTaskIds():
 			return HttpResponse({})
 		task = taskBridge.getTask(taskId)
 
 		returnedTask = {}
-		returnedTask["id"] = taskId
-		returnedTask["title"] = task.title
+		returnedTask["taskId"] = taskId
 		returnedTask["description"] = task.description
 		returnedTask["files"] = str(task.files)
 
