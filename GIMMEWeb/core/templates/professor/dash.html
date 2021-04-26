@@ -393,16 +393,15 @@
 
 
 	</div>
-	<!-- {% include 'common/footer.html' %} -->
+	{% include 'common/footer.html' %}
 </body>
 <script
 src='https://code.jquery.com/jquery-3.2.1.min.js'
 integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='
 crossorigin='anonymous'></script>
-<script defer src='https://use.fontawesome.com/releases/v5.0.7/js/all.js'></script>
-<script src='https://d3js.org/d3.v5.js'></script>
-<script src='https://unpkg.com/d3-force-attract@latest'></script>
-<script src='https://unpkg.com/d3-force-cluster@latest'></script>
+<script src="https://kit.fontawesome.com/cdbfc7205f.js" crossorigin="anonymous"></script>
+<script src='https://d3js.org/d3.v5.js' crossorigin='anonymous'></script>
+<script src='https://unpkg.com/d3-force-attract@latest' crossorigin='anonymous'></script>
 <script src='{% static 'js/plots.js' %}'></script>
 <script>
 	$(document).ready(function(){
@@ -487,7 +486,7 @@ crossorigin='anonymous'></script>
 		            
 
 		            var editButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; border-color:transparent;'>");
-		            editButton.append('<form method="GET" action=\''+editElementUrl+'\'><input type="hidden" name="'+editElementArg+'" value=\''+idArray[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fa fa-pencil\'></i></button></form>');
+		            editButton.append('<form method="GET" action=\''+editElementUrl+'\'><input type="hidden" name="'+editElementArg+'" value=\''+idArray[i]+'\'></input><button type="submit" style="border: none; background-color: transparent; color:white"><i class=\'fas fa-user-edit\'></i></button></form>');
 		            tag.append(editButton);
 
 
@@ -596,11 +595,11 @@ crossorigin='anonymous'></script>
 
 							currServerState = newServerState;
 
-							var selectedUsersStates = {}
-							for(var i=0; i<currSelectedUsers; i++){
-								currUserId = currSelectedUsers[i];
-								selectedUsersStates[currUserId] = fetchUserStateCallBack(currUserId)
-							}
+							// var studentsStates = {}
+							// for(var i=0; i<currSelectedUsers; i++){
+							// 	currUserId = currSelectedUsers[i];
+							// 	studentsStates[currUserId] = fetchUserStateCallBack(currUserId)
+							// }
 							
 							if(newServerState.readyForNewActivity=='true'){
 								$('#readyForNewActivityButton_professor_dash').removeClass('is-loading');
@@ -610,13 +609,12 @@ crossorigin='anonymous'></script>
 
 							$.ajax({
 								type: 'POST',
-								url: '/fetchSelectedUserStates/',
+								url: '/fetchStudentStates/',
 								success: 
-								function(selectedUsersStates)
+								function(studentsStates)
 								{
-									currServerState.selectedUsersStates = JSON.parse(selectedUsersStates);
-									// console.log(currServerState);
-									buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.selectedUsersStates);
+									currServerState.studentsStates = JSON.parse(studentsStates);
+									buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
 								}
 							});
 						}
@@ -736,7 +734,7 @@ crossorigin='anonymous'></script>
 		$('#rebuildPlot_professor_dash').click(function(){
 			$('#groupsPlot_professor_dash').empty();
 			if(currServerState.currAdaptationState != undefined && currServerState.currAdaptationState.groups != undefined){
-				buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.selectedUsersStates);
+				buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
 			}
 		})
 	});

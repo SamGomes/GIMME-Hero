@@ -85,7 +85,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 # AUTH_USER_MODEL = 'GIMMEWeb.core_user'
-
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'

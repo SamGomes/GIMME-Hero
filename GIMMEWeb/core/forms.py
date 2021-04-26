@@ -55,7 +55,6 @@ class UpdateUserProfileForm(ModelForm):
 
 
 
-
 class UpdateTaskForm(ModelForm):
 	initDate = forms.DateField(widget=DateInput)
 	finalDate = forms.DateField(widget=DateInput)
@@ -69,3 +68,5 @@ widget=forms.NumberInput(attrs={'id': 'form_homework', 'step': "0.01"}))
 	class Meta:
 		model = Task
 		exclude = ['taskId', 'creator', 'creationTime', 'profile'] 
+
+

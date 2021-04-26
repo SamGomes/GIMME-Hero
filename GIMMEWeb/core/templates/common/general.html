@@ -22,7 +22,7 @@ $(document).ready(function(){
         dropdownItem.addClass("is-active");
         //update that dropdown text
         $($($(dropdownItem.parent().parent().parent().children()[0]).children()[0]).children()[0]).text(dropdownItem.text().split('\n')[1].replace(/\W/g, ""));
-    }
+    };
 
     var dropdownItems = $(".dropdown-item");
     for (var i=0; i< dropdownItems.length; i++){
@@ -87,7 +87,7 @@ $(document).ready(function(){
         allModals.forEach(function (el) {
             el.classList.remove('is-active');
         });
-    }
+    };
 
     // general animations and element functionalities
     $("#dashboard").hide();

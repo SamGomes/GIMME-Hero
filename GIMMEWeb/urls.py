@@ -43,10 +43,13 @@ urlpatterns = [
 
     
     re_path(r'^fetchServerState/', Views.fetchServerState, name="fetchServerState"),
-    re_path(r'^fetchSelectedUserStates/', Views.fetchSelectedUserStates, name="fetchSelectedUserStates"),
+    re_path(r'^fetchStudentStates/', Views.fetchStudentStates, name="fetchStudentStates"),
 
     re_path(r'^fetchTaskFromId/', Views.fetchTaskFromId, name="fetchTaskFromId"),
-    re_path(r'^fetchGroupInfo/', Views.fetchGroupInfo, name="fetchGroupInfo")
+    re_path(r'^fetchGroupFromId/', Views.fetchGroupFromId, name="fetchGroupFromId"),
+
+    re_path(r'^fetchUserState/', Views.fetchUserState, name="fetchUserState"),
+    re_path(r'^uploadTaskResults/', Views.uploadTaskResults, name="uploadTaskResults")
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -78,7 +78,7 @@ var buildStatePlot = function(canvasId, data){
     };
 
     var width = 960 - margin.left - margin.right;
-    var height = 500 - margin.top - margin.bottom;
+    var height = 100 - margin.top - margin.bottom;
 
     var svg = d3.select('#'+canvasId).append('svg')
         .attr('width', width + margin.left + margin.right)
@@ -96,8 +96,8 @@ var buildStatePlot = function(canvasId, data){
             return d.name;
         }));
 
-    var xAxis = d3.axisTop(x)
-        .tickSize(0);
+    var xAxis = d3.axisBottom(x).tickValues([]);
+        // .tickSize(0);
 
     var yAxis = d3.axisLeft(y)
         .tickSize(0);
@@ -127,7 +127,7 @@ var buildStatePlot = function(canvasId, data){
         .style("font-size","20px");
 
 
-    var gy = svg.append('g')
+    var gx = svg.append('g')
         .attr('class', 'x axis')
         .call(xAxis)
         .style("font-size","20px");

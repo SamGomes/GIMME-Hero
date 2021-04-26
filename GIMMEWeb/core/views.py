@@ -836,92 +836,139 @@ class Views(): #acts as a namespace
 
 
 	# auxiliary methods
-	
-	def fetchSelectedUserStates(request):
-		selectedUserIds = serverStateModelBridge.getCurrSelectedUsers()
+	def fetchStudentStates(request):
+		if request.method == "POST":
+			selectedUserIds = playerBridge.getAllStoredStudentUsernames()
 
-		userStates = {}
-		for username in selectedUserIds:
-			userState = {}
+			userInfoRequest = HttpRequest()
+			userInfoRequest.method = "POST"
+			userStates = {}
+			for username in selectedUserIds:
+				userInfoRequest.POST = {'username': username}
+				userInfo = Views.fetchStudentInfo(userInfoRequest)#.content.decode('utf-8')
+				userStates[username] = userInfo
+
+			userStates = json.dumps(userStates, default=lambda o: o.__dict__, sort_keys=True)
+			return HttpResponse(userStates)
+		return HttpResponse('error')
+
+
+
+	def fetchStudentInfo(request):
+		# if request.method == "POST":
+			username = request.POST["username"]
+
+			userInfo = {}
 			# userState["myStateGrid"] = playerBridge.getPlayerStateGrid(username)
-			userState["fullName"] = playerBridge.getPlayerFullName(username)
-			userState["characteristics"] = playerBridge.getPlayerCurrCharacteristics(username)
-			userState["personalityEst"] = playerBridge.getPlayerPersonalityEst(username)
+			userInfo["fullName"] = playerBridge.getPlayerFullName(username)
+			userInfo["characteristics"] = playerBridge.getPlayerCurrCharacteristics(username)
+			userInfo["personalityEst"] = playerBridge.getPlayerPersonalityEst(username)
+			userInfo["stateGrid"] = playerBridge.getPlayerStateGrid(username)
 
-			userStates[username] = userState
-
-
-		userStates = json.dumps(userStates, default=lambda o: o.__dict__, sort_keys=True)
-		return HttpResponse(userStates)
-
+			# userInfo = json.dumps(userInfo, default=lambda o: o.__dict__, sort_keys=True)
+			# return HttpResponse(userInfo)
+			return userInfo
+		# return HttpResponse('error')
 	
+
+
+
 	def fetchServerState(request):
-		newSessionState = {}
-		
-		newSessionState['currSelectedUsers'] = serverStateModelBridge.getCurrSelectedUsers()
-		newSessionState['currFreeUsers'] = serverStateModelBridge.getCurrFreeUsers()
+		if request.method == "GET":
+			newSessionState = {}
+			
+			newSessionState['currSelectedUsers'] = serverStateModelBridge.getCurrSelectedUsers()
+			newSessionState['currFreeUsers'] = serverStateModelBridge.getCurrFreeUsers()
 
-		currSelectedTasks = []
-		currFreeTasks = []
+			currSelectedTasks = []
+			currFreeTasks = []
 
-		taskObject = HttpRequest()
-		
-		currSelectedTasksIds = serverStateModelBridge.getCurrSelectedTasks()
-		for taskId in currSelectedTasksIds:
-			taskObject.POST = {'taskId': taskId}
-			currSelectedTasks.append(Views.fetchTaskFromId(taskObject).content.decode('utf-8'))
+			taskObject = HttpRequest()
+			taskObject.method = "POST"
+			
+			currSelectedTasksIds = serverStateModelBridge.getCurrSelectedTasks()
+			for taskId in currSelectedTasksIds:
+				taskObject.POST = {'taskId': taskId}
+				currSelectedTasks.append(Views.fetchTaskFromId(taskObject).content.decode('utf-8'))
 
-		currFreeTasksIds = serverStateModelBridge.getCurrFreeTasks()
-		for taskId in currFreeTasksIds:
-			taskObject.POST = {'taskId': taskId}
-			currFreeTasks.append(Views.fetchTaskFromId(taskObject).content.decode('utf-8'))
+			currFreeTasksIds = serverStateModelBridge.getCurrFreeTasks()
+			for taskId in currFreeTasksIds:
+				taskObject.POST = {'taskId': taskId}
+				currFreeTasks.append(Views.fetchTaskFromId(taskObject).content.decode('utf-8'))
 
 
-		newSessionState['currSelectedTasks'] = currSelectedTasks
-		newSessionState['currFreeTasks'] = currFreeTasks
+			newSessionState['currSelectedTasks'] = currSelectedTasks
+			newSessionState['currFreeTasks'] = currFreeTasks
 
-		newSessionState['readyForNewActivity'] = serverStateModelBridge.isReadyForNewActivity()
+			newSessionState['readyForNewActivity'] = serverStateModelBridge.isReadyForNewActivity()
 
-		if('professor' in request.user.userprofile.role):
-			newSessionState['currAdaptationState'] = serverStateModelBridge.getCurrAdaptationState()
+			if('professor' in request.user.userprofile.role):
+				newSessionState['currAdaptationState'] = serverStateModelBridge.getCurrAdaptationState()
 
-		newSession = json.dumps(newSessionState, default=lambda o: o.__dict__, sort_keys=True)
+			newSession = json.dumps(newSessionState, default=lambda o: o.__dict__, sort_keys=True)
 
-		return HttpResponse(newSession)
+			return HttpResponse(newSession)
+		return HttpResponse('error')
 
 
 	def fetchTaskFromId(request):
-		breakpoint();
-		
-		taskId = request.POST["taskId"]
+		if request.method == "POST":
+			taskId = request.POST["taskId"]
 
-		if not taskId in taskBridge.getAllStoredTaskIds():
-			return HttpResponse({})
-		task = taskBridge.getTask(taskId)
+			if not taskId in taskBridge.getAllStoredTaskIds():
+				return HttpResponse({})
+			task = taskBridge.getTask(taskId)
 
-		returnedTask = {}
-		returnedTask["taskId"] = taskId
-		returnedTask["description"] = task.description
-		returnedTask["files"] = str(task.files)
-
-
-		returnedTask = json.dumps(returnedTask, default=lambda o: o.__dict__, sort_keys=True)
-		return HttpResponse(returnedTask)
+			returnedTask = {}
+			returnedTask["taskId"] = taskId
+			returnedTask["description"] = task.description
+			returnedTask["files"] = str(task.files)
 
 
-	def fetchGroupInfo(request):
-		print(request.POST)
-		username = request.POST["username"]
+			returnedTask = json.dumps(returnedTask, default=lambda o: o.__dict__, sort_keys=True)
+			return HttpResponse(returnedTask)
+		return HttpResponse('error')
 
-		if not username in serverStateModelBridge.getAllStoredStudentUsernames():
-			return HttpResponse({})
-		userState = PlayerModelBridge.getPlayerCurrState(username)
+	def fetchGroupFromId(request):
+		if request.method == "POST":
+			# breakpoint();
+			groupId = int(request.POST["groupId"])
+
+			allGroups = serverStateModelBridge.getCurrAdaptationState()['groups'];
+
+			if groupId < 0 or groupId > len(allGroups):
+				return HttpResponse({})
+
+			group = allGroups[groupId];
+			returnedGroup = {}
+			returnedGroup["group"] = group
+
+
+			returnedGroup = json.dumps(returnedGroup, default=lambda o: o.__dict__, sort_keys=True)
+			return HttpResponse(returnedGroup)
+		return HttpResponse('error')
+
+	def fetchUserState(request):
 		# breakpoint()
+		if request.method == "POST":
+			username = request.POST["username"]
 
-		# returnedState = {}
-		# returnedState["title"] = userState.groupId
-		# returnedState["description"] = task.description
-		# returnedState["files"] = str(task.files)
+			returnedState = {}
+			returnedState['currState'] = playerBridge.getPlayerCurrState(username)
+			returnedState['grid'] = playerBridge.getPlayerStateGrid(username)
+			return HttpResponse(json.dumps(returnedState, 
+				default=lambda o: o.__dict__, sort_keys=True))
+		return HttpResponse('error')
 
-		# returnedTask = json.dumps(returnedTask, default=lambda o: o.__dict__, sort_keys=True)
-		# return HttpResponse(returnedTask)
+	def uploadTaskResults(request):
+		if request.method == "POST":
+			username = request.POST["username"]
+			characteristicsDelta = json.loads(request.POST['characteristicsDelta'])
+
+			characteristics = playerBridge.getPlayerCurrCharacteristics(username)
+			characteristics.ability += characteristicsDelta['abilityInc']
+			characteristics.engagement += characteristicsDelta['engagementInc']
+			playerBridge.setPlayerCharacteristics(username, characteristics)
+			return HttpResponse('ok')
+		return HttpResponse('error')
+				
