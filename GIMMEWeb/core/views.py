@@ -739,12 +739,10 @@ class Views(): #acts as a namespace
 		    "StochasticHillclimber": selectedGenAlgSwitcherStochasticHillclimber(request),
 		    "SimulatedAnnealing": selectedGenAlgSwitcherSimulatedAnnealing(request)
 		} 
-		# breakpoint()
 		selectedGenAlg = selectedGenAlgSwitcher.get(request.POST["selectedGenAlgId"], defaultConfigsAlg)
 
 		adaptation.init(playerBridge, taskBridge, configsGenAlg = selectedGenAlg, name="GIMME")
 
-		# breakpoint()
 		if(request.POST["isBootstrapped"]=="true"):
 			adaptation.bootstrap(int(request.POST["numBootstrapIterations"]))
 

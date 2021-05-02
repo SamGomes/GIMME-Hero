@@ -184,10 +184,9 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     }
 
 
-    var generateGroupColor = function(avgCharacteristics) {
-        var focus = avgCharacteristics.profile.dimensions.Focus;
-        var valence = avgCharacteristics.profile.dimensions.Valence;
-        
+    var generateGroupColor = function(profile) {
+        var focus = profile.dimensions.Focus;
+        var valence = profile.dimensions.Valence;
 
         if (focus >= 0 && focus < 0.33){
             if (valence >= 0 && valence < 0.33){
@@ -307,7 +306,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         var groupCenterOfMass = {'x': 100 + Math.random()*(canvasContainer.getBoundingClientRect().width - 300), 'y': 100 + Math.random()*(canvasContainer.getBoundingClientRect().height - 300)};
 
         // groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'profile': profile, 'adaptedTaskId': adaptedTaskId, 'centerOfMass': groupCenterOfMass});
-        groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'tasks': tasks, 'centerOfMass': groupCenterOfMass});
+        groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics, 'profile': profile, 'tasks': tasks, 'centerOfMass': groupCenterOfMass});
         
         for(var j=0;j<group.length; j++){
             //TODO: add user characteristics
@@ -316,7 +315,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             userNodes.push({'plotIndex': currPlotIndex++, 'userId': userId, 'userState': userState, 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
             // userNodes.push({'userId': userId, 'userState': fetchPlayerStateCallback(userId), 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
         }
-        colors[i] = generateGroupColor(avgCharacteristics);
+        colors[i] = generateGroupColor(profile);
     } 
 
     
@@ -496,8 +495,9 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             $('#adaptationIssues_professor_dash').show(500);
             setTimeout(function(){ $('#adaptationIssues_professor_dash').hide(500); }, 10000);
         }
-        json = { 'group Id': node.groupId, 'characteristics': node.characteristics, 
-        'task': node.tasks == -1 ? '<No computed task>' : node.tasks };
+        json = $.extend( {}, node); //performs a shallow copy
+        json.tasks = node.tasks == -1 ? '<No computed tasks>' : json.tasks;
+        delete json.centerOfMass;
 
         var currTooltip = d3.select(groupInfoTooltips._groups[0][node.groupId]);
         htmlFromJSON(json, currTooltip, 0, 0);
