@@ -183,6 +183,49 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         return color;
     }
 
+
+    var generateGroupColor = function(avgCharacteristics) {
+        var focus = avgCharacteristics.profile.dimensions.Focus;
+        var valence = avgCharacteristics.profile.dimensions.Valence;
+        
+
+        if (focus >= 0 && focus < 0.33){
+            if (valence >= 0 && valence < 0.33){
+                return "#dd6c02"
+            }
+            else if (valence >= 0.33 && valence < 0.66){
+                return "#ddb502"
+            }
+            else if (valence >= 0.66 && valence <= 1.0){
+                return "#b5dd02"
+            }
+        }
+        else if (focus >= 0.33 && focus < 0.66){
+            if (valence >= 0 && valence < 0.33){
+                return "#dd1402"
+            }
+            else if (valence >= 0.33 && valence < 0.66){
+                return "#a3a1a1"
+            }
+            else if (valence >= 0.66 && valence <= 1.0){
+                return "#19c151"
+            }
+        }
+        else if (focus >= 0.66 && focus <= 1.0){
+            if (valence >= 0 && valence < 0.33){
+                return "#89150b"
+            }
+            else if (valence >= 0.33 && valence < 0.66){
+                return "#cd7dce"
+            }
+            else if (valence >= 0.66 && valence <= 1.0){
+                return "#7724d6"
+            }
+        }
+        return "#a3a1a1"
+    }
+    
+
     // from: https://stackoverflow.com/questions/35969656/how-can-i-generate-the-opposite-color-according-to-current-color
     var invertColor = function(hex, isBW) {
         if (hex.indexOf('#') === 0) {
@@ -260,11 +303,11 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         var group = data.groups[i]
         var avgCharacteristics = data.avgCharacteristics[i]
         var profile = data.profiles[i]
-        var adaptedTaskId = data.adaptedTaskIds[i]
+        var tasks = data.tasks[i]
         var groupCenterOfMass = {'x': 100 + Math.random()*(canvasContainer.getBoundingClientRect().width - 300), 'y': 100 + Math.random()*(canvasContainer.getBoundingClientRect().height - 300)};
 
         // groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'profile': profile, 'adaptedTaskId': adaptedTaskId, 'centerOfMass': groupCenterOfMass});
-        groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'adaptedTaskId': adaptedTaskId, 'centerOfMass': groupCenterOfMass});
+        groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'tasks': tasks, 'centerOfMass': groupCenterOfMass});
         
         for(var j=0;j<group.length; j++){
             //TODO: add user characteristics
@@ -273,7 +316,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             userNodes.push({'plotIndex': currPlotIndex++, 'userId': userId, 'userState': userState, 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
             // userNodes.push({'userId': userId, 'userState': fetchPlayerStateCallback(userId), 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
         }
-        colors[i] = getRandomColor();
+        colors[i] = generateGroupColor(avgCharacteristics);
     } 
 
     
@@ -315,7 +358,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     var generatePlayerColor = function(node){
         var userChar = node.userState.characteristics;
         var baseColor = colors[node.groupId].split('#')[1];
-        var transparency = 50 + Math.round(175*(1 - sqrDistBetweenVectors(node.groupCharacteristics, userChar)/2));
+        var transparency = 5 + Math.round(200*(1 - sqrDistBetweenVectors(node.groupCharacteristics, userChar)/2));
         return '#' +  baseColor + transparency.toString(16);
     }
 
@@ -448,13 +491,13 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     
 
     groupInfoTooltips.each(function(node){ 
-        if(node.adaptedTaskId == -1){
+        if(node.tasks == -1){
             $('#adaptationIssuesText_professor_dash').html($('#adaptationIssuesText_professor_dash').html() + ('<br></br>Could not compute task for group '+node.groupId+'... Maybe no tasks are available?'));
             $('#adaptationIssues_professor_dash').show(500);
             setTimeout(function(){ $('#adaptationIssues_professor_dash').hide(500); }, 10000);
         }
         json = { 'group Id': node.groupId, 'characteristics': node.characteristics, 
-        'adaptedTaskId': node.adaptedTaskId == -1 ? '<No computed task>' : node.adaptedTaskId };
+        'task': node.tasks == -1 ? '<No computed task>' : node.tasks };
 
         var currTooltip = d3.select(groupInfoTooltips._groups[0][node.groupId]);
         htmlFromJSON(json, currTooltip, 0, 0);
@@ -490,6 +533,9 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     
     userInfoTooltips.each(function(node){
         var currTooltip = d3.select(userInfoTooltips._groups[0][node.plotIndex]);
+        delete node.userState.group
+        delete node.userState.tasks
+        delete node.userState.stateGrid
         htmlFromJSON({'userId': node.userId, 'userState': node.userState}, currTooltip, 0, 0);
     })
 

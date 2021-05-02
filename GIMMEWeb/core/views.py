@@ -226,6 +226,16 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		profile = json.loads(playerInfo.currState)["profile"]
 		profile = InteractionsProfile(dimensions= profile["dimensions"])
 		return profile
+
+	def getPlayerCurrGroup(self,  username):
+		playerInfo = User.objects.get(username=username).userprofile
+		group = json.loads(playerInfo.currState)["group"]
+		return group
+
+	def getPlayerCurrTasks(self,  username):
+		playerInfo = User.objects.get(username=username).userprofile
+		tasks = json.loads(playerInfo.currState)["tasks"]
+		return tasks
 	
 	def getPlayerStateGrid(self, username):
 		playerInfo = User.objects.get(username=username).userprofile
@@ -300,6 +310,21 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		newState.profile = profile
 		playerInfo.currState = json.dumps(newState, default=lambda o: o.__dict__)
 		playerInfo.save()
+
+	def setPlayerGroup(self, username, group):
+		playerInfo = User.objects.get(username=username).userprofile
+		newState = self.getPlayerCurrState(username)
+		newState.group = group
+		playerInfo.currState = json.dumps(newState, default=lambda o: o.__dict__)
+		playerInfo.save()
+
+	def setPlayerTasks(self, username, tasks):
+		playerInfo = User.objects.get(username=username).userprofile
+		newState = self.getPlayerCurrState(username)
+		newState.tasks = tasks
+		playerInfo.currState = json.dumps(newState, default=lambda o: o.__dict__)
+		playerInfo.save()
+
 
 playerBridge = CustomPlayerModelBridge()
 adaptation = Adaptation()
@@ -721,7 +746,7 @@ class Views(): #acts as a namespace
 
 		# breakpoint()
 		if(request.POST["isBootstrapped"]=="true"):
-			adaptation.executeBootstrap(int(request.POST["numBootstrapIterations"]))
+			adaptation.bootstrap(int(request.POST["numBootstrapIterations"]))
 
 		return HttpResponse('ok')
 
@@ -863,6 +888,8 @@ class Views(): #acts as a namespace
 			userInfo["fullName"] = playerBridge.getPlayerFullName(username)
 			userInfo["characteristics"] = playerBridge.getPlayerCurrCharacteristics(username)
 			userInfo["personalityEst"] = playerBridge.getPlayerPersonalityEst(username)
+			userInfo["group"] = playerBridge.getPlayerCurrGroup(username)
+			userInfo["tasks"] = playerBridge.getPlayerCurrTasks(username)
 			userInfo["stateGrid"] = playerBridge.getPlayerStateGrid(username)
 
 			# userInfo = json.dumps(userInfo, default=lambda o: o.__dict__, sort_keys=True)
