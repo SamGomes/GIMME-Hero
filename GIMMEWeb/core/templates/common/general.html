@@ -102,6 +102,7 @@ $(document).ready(function(){
     $(".minimizerButton").click(function(){
         $(this).empty();
         var content = $(this).parent().parent().parent().parent().find(".panel-block");
+        console.log(content);
     	if(content.is(":hidden")){
             $(this).append("<i class=\"fa fa-window-minimize\"></i>");
             content.show(350);
@@ -140,10 +141,4 @@ var callTaskReg = function(isNewTaskRegRequest){
         document.location.href = '/taskUpdate/';
     }
 }
-
-
-
-
-
-
 </script>
