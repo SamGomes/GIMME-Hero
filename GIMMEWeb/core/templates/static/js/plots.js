@@ -224,6 +224,19 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         return "#a3a1a1"
     }
     
+    var generatePlayerColor = function(node){
+        // var userChar = node.userState.profile;
+        // var baseColor = colors[node.groupId];
+        // color = Color(baseColor);
+        // var hsl = {
+        //     h: color.h(),
+        //     s: color.s(),
+        //     l: Math.round(30+50*sqrDistBetweenVectors(node.groupCharacteristics, userChar))
+        // };
+        // color = Color( hsl );
+        return generateGroupColor(node.userState.personalityEst);
+    }
+
 
     // from: https://stackoverflow.com/questions/35969656/how-can-i-generate-the-opposite-color-according-to-current-color
     var invertColor = function(hex, isBW) {
@@ -352,13 +365,6 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     var clamp = function(num, min, max) {
       return num <= min ? min : num >= max ? max : num;
-    }
-
-    var generatePlayerColor = function(node){
-        var userChar = node.userState.characteristics;
-        var baseColor = colors[node.groupId].split('#')[1];
-        var transparency = 5 + Math.round(200*(1 - sqrDistBetweenVectors(node.groupCharacteristics, userChar)/2));
-        return '#' +  baseColor + transparency.toString(16);
     }
 
     var nodeElements =

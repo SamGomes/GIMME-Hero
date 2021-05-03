@@ -100,18 +100,34 @@ $(document).ready(function(){
 
     $(".minimizerButton").append("<i class=\"fa fa-window-minimize\"></i>").parent().parent().parent().parent().find(".panel-block").show();
     $(".minimizerButton").click(function(){
-        $(this).empty();
-        var content = $(this).parent().parent().parent().parent().find(".panel-block");
-        console.log(content);
-    	if(content.is(":hidden")){
-            $(this).append("<i class=\"fa fa-window-minimize\"></i>");
-            content.show(350);
-        }else{
-            $(this).append("<i class=\"fa fa-window-maximize\"></i>");
-            content.hide(350);
-        }
+        toggleTab($(this),350);
     });
 });
+
+
+var toggleTab = function(tab, time){
+    tab.empty();
+    var content = tab.parent().parent().parent().parent().find(".panel-block");
+    if(content.is(":hidden")){
+        tab.append("<i class=\"fa fa-window-minimize\"></i>");
+        content.show(time);
+    }else{
+        tab.append("<i class=\"fa fa-window-maximize\"></i>");
+        content.hide(time);
+    }
+}
+var showTab = function(tab, time){
+    var content = tab.parent().parent().parent().parent().find(".panel-block");
+    tab.empty();
+    tab.append("<i class=\"fa fa-window-minimize\"></i>");
+    content.show(time);
+}
+var hideTab = function(tab, time){
+    var content = tab.parent().parent().parent().parent().find(".panel-block");
+    tab.empty();
+    tab.append("<i class=\"fa fa-window-maximize\"></i>");
+    content.hide(time);
+}
 
 var getAll = function(selector) {
     return Array.prototype.slice.call(document.querySelectorAll(selector), 0);

@@ -35,13 +35,13 @@
 					</div>
 				</div>
 				<div class='panel-block'>
-					<div class='column is-offset-1 dash-cell-box'>
-						<div class='subtitle is-5' style='color:gray'>Available Students</div>
+					<div class='column is-offset-1 dash-cell-box' >
+						<div class='subtitle is-5' style='color:gray'>Free Students</div>
 						<div class='table-container'>
 							<div class='table' id='freeUsersTable_professor_dash'></div>
 						</div>
 					</div>
-					<div class='column is-offset-1 dash-cell-box'>
+					<div class='column is-offset-1 dash-cell-box has-tooltip-arrow' data-tooltip='These are the students, selected from all available students, to be considered for the next group management iteration.'>
 						<div class='subtitle is-4' style='color:gray'>Selected Students</div>
 						<div class='table-container column is-full'>
 							<div class='table' id='selectedUsersTable_professor_dash'></div>
@@ -76,13 +76,13 @@
 				</div>
 				<div class='panel-block'>
 					<div class='column is-offset-1 dash-cell-box'>
-						<div class='subtitle is-5' style='color:gray' >Available Tasks</div>
+						<div class='subtitle is-5' style='color:gray' >Free Tasks</div>
 						<div class='table-container'>
 							<div class='table' id='freeTasksTable_professor_dash'>
 							</div>
 						</div>
 					</div>
-					<div class='column is-offset-1 dash-cell-box'>
+					<div class='column is-offset-1 dash-cell-box has-tooltip-arrow' data-tooltip='These are the tasks, selected from all available tasks, to be considered for the next group management iteration.'>
 						<div class='subtitle is-4' style='color:gray'>Selected Tasks</div>
 						<div class='table-container column is-full'>
 							<div class='table' id='selectedTasksTable_professor_dash'></div>
@@ -110,14 +110,14 @@
 						<div class='column'>
 							<p>Adaptation Setup</p>
 						</div>
-						<div class='is-pulled-left'>
+						<!-- <div class='is-pulled-left'>
 							<button class='button has-tooltip' id='toggleAdditionalConfigs_professor_dash' data-tooltip="Toggles additional algorithm selectors.">
 								<i class="fa fa-bar-chart" aria-hidden="true"></i>
 							</button>
 						</div>
 						<div class='is-pulled-left'>
 							<p> </p>
-						</div>
+						</div> -->
 						<div class='is-pulled-left'>
 							<div class='button minimizerButton'></div>
 						</div>
@@ -160,12 +160,12 @@
 
 
 				<div class='panel-block' style='display: block;'>
-					<div class='columns is-multiline is-mobile'>
+					<div class='columns is-multiline is-mobile has-tooltip-arrow' data-tooltip="Sets the amount of stored past states, for when taking a decision about a student's group. This will only take effect whenever player states are updated.">
 						<div class='column is-full'>
 							<p>Students</p>
 						</div>
 						<div class='column is-half is-centered'>
-							<label class='field control-label' for='textinput' data-tooltip='This will only take effect whenever player states are updated'>Students Past Models Window</label>  
+							<label class='field control-label' for='textinput'>Students Past Models Window</label>  
 							<div class='field control'>
 								<input id='playerWindowId_professor_dash' class='input' type='number' min='1' max='100' placeholder='10'>
 							</div>
@@ -174,7 +174,7 @@
 				</div>
 
 				<div class='panel-block' style='display: block;'>
-					<div class='columns is-multiline is-mobile' data-tooltip='This configuration is optional'>
+					<div class='columns is-multiline is-mobile  has-tooltip-arrow' data-tooltip='This feature is optional, and still does not function as it should.'>
 						<div class='column is-full'>
 							<p>Bootstrap</p>
 						</div>
@@ -201,7 +201,7 @@
 
 
 		<section class='section'>
-			<div class='panel animated zoomIn' id='algorithmsSection_professor_dash'>
+			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
 					<div class='columns is-vcentered'>
 						<div class='column'>
@@ -211,18 +211,13 @@
 							<p> </p>
 						</div>
 						<div class='is-pulled-left'>
-							<div class='button minimizerButton'></div>
+							<button class='button minimizerButton' id='additionalAdaptMinimizerButton_professor_dash'></button>
 						</div>
 					</div>
 				</div>
 		
 				<!-- starts hidden -->
-				<div class='panel-block' style='display: block;'>
-
-					<div id='adaptationError_professor_dash' class='section hero is-danger is-centered has-text-centered'>
-						<label class='label subtitle is-4 is-white'>Adaptation Error! Tip: verify if enough players are selected.</label>
-					</div>
-
+				<div class='panel-block' id='additionalAlgorithmsSection_1_professor_dash' style='display: block;'>
 					<div class='columns is-multiline is-mobile'>
 						<div class='column is-full'>
 							<p>Algorithms</p>
@@ -348,7 +343,7 @@
 					</div>
 				</div>
 
-				<div class='panel-block' style='display: block;'>
+				<div class='panel-block' id='additionalAlgorithmsSection_2_professor_dash' style='display: block;'>
 					<div class='columns is-multiline is-mobile'>
 						<div class='column is-full'>
 							<p>Quality Weights</p>
@@ -387,9 +382,35 @@
 						</div>
 					</div>
 				</div>
+				
+
+				<div class='panel-block' style='display: block;'>
+					<div class='columns is-multiline is-mobile'>
+						<div class='column is-one-third has-text-centered has-tooltip-top has-tooltip-arrow'  data-tooltip='Rebuilds the plot, without computing a new adaptation state.'>
+							<button class='button is-large' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plots</button>
+						</div>
+						<div class='column is-one-third has-text-centered has-tooltip-top has-tooltip-arrow' data-tooltip='Loads the parameterization above computes a new adaptation state, iff the configuration changed.' >
+							<a>
+								<button class='button is-large' type='submit' id='loadAndStartAdaptation_professor_dash' >Load Setup and Compute New Adaptation</button>
+							</a>
+						</div>
+						<div class='column is-one-third has-text-centered  has-tooltip-top has-tooltip-arrow'  data-tooltip='Forces an adaptation call, even when no parameterization changes occur.'>
+							<a>
+								<button class='button is-large' type='submit' id='forceStartAdaptation_professor_dash'>Force Start Adaptation</button>
+							</a>
+						</div>
+					</div>
+				</div>
+
+
 				<div class='panel-block'>
 					<div class='colums'>
+						<p>Group Organization</p>
 						
+						<div id='adaptationError_professor_dash' class='section hero is-danger is-centered has-text-centered'>
+							<label class='label subtitle is-4 is-white'>Adaptation Error! Tip: verify if enough players are selected. 
+							Maintaining old state...</label>
+						</div>
 						<div id='adaptationIssues_professor_dash' class='section hero is-warning is-centered has-text-centered'>
 							<label class='label subtitle is-4 is-white'>Adaptation Issues Found: </label>
 							<label id='adaptationIssuesText_professor_dash'></label>
@@ -400,26 +421,19 @@
 						<div class='column is-one-third'></div>
 
 					</div>
+				</div>
 
-					<div class='panel-block' style='display: block;'>
-						<div class='columns is-multiline is-mobile'>
-							<div class='column is-one-third is-centered'>
-								<button class='button is-large has-tooltip-top' type='submit' id='rebuildPlot_professor_dash' data-tooltip='Rebuilds the plot, without computing a new adaptation state.'>Rebuild Plot</button>
-							</div>
-							<div class='column is-one-third is-centered'>
-								<a>
-									<button class='button is-large has-tooltip-top' type='submit' id='loadAndStartAdaptation_professor_dash' data-tooltip='Loads the parameterization above and using that information, computes a new adaptation state.' >Load Setup and Compute New Adaptation</button>
-								</a>
-							</div>
-							<div class='column is-one-third is-centered'>
-								<a>
-									<button class='button is-large has-tooltip-top' type='submit' id='forceStartAdaptation_professor_dash' data-tooltip='Forces an adaptation call, without changing the current parameterization.'>Force Start Adaptation</button>
-								</a>
-							</div>
-						</div>
+				<div class='panel-block' style='display: block;'>
+					<div class='column is-full'>
+						<p>Overall Preferences Distribution</p>
 					</div>
 				</div>
 
+				<div class='panel-block' style='display: block;'>
+					<div class='column is-full'>
+						<p>Overall Ability/ Engagement Distribution</p>
+					</div>
+				</div>
 			</div>
 		</section>
 		{% csrf_token %}
@@ -435,11 +449,11 @@ crossorigin='anonymous'></script>
 <script src="https://kit.fontawesome.com/cdbfc7205f.js" crossorigin="anonymous"></script>
 <script src='https://d3js.org/d3.v5.js' crossorigin='anonymous'></script>
 <script src='https://unpkg.com/d3-force-attract@latest' crossorigin='anonymous'></script>
-<!-- <script src='{% static 'js/color.js' %}' -->
-        <!-- crossorigin='anonymous'></script> -->
+<!-- <script src='{% static 'js/color.js' %}' crossorigin='anonymous'></script> -->
 <script src='{% static 'js/plots.js' %}'></script>
 
 <script>
+
 	$(document).ready(function(){
 		
 		// CSRF protection setup 
@@ -501,8 +515,8 @@ crossorigin='anonymous'></script>
 			return !(JSON.stringify(obj1) === JSON.stringify(obj2));
 		};
 		var canComputeAdaptation = function(newServerState){
-			// console.log(newServerState)
-			return currServerState != undefined && currServerState!="error" && (jQuery.isEmptyObject(currServerState) || (objChanged(currServerState.currAdaptationState, newServerState.currAdaptationState) && newServerState!= undefined));
+			newServerState.studentsStates = currServerState.studentsStates
+			return objChanged(currServerState, newServerState);
 		}
 
 
@@ -550,6 +564,8 @@ crossorigin='anonymous'></script>
 		        tag.addClass('is-medium');
 		        tag.addClass('is-rounded');
 		        table.append(tag);
+		        console.log('here')
+		        tag.show(135);
 		    }
 		    return table;
 		};
@@ -563,7 +579,12 @@ crossorigin='anonymous'></script>
 				url: '/fetchServerState/',
 						dataType: 'json',
 						success: 
-						function (newServerState) {							
+						function (newServerState) {	
+							
+							if(!canComputeAdaptation(newServerState)){
+								return;
+							}
+
 							var currSelectedUsers = newServerState.currSelectedUsers;
 							var currFreeUsers = newServerState.currFreeUsers;
 							var fuTable = generateDashTableFromArray(
@@ -625,9 +646,6 @@ crossorigin='anonymous'></script>
 							$('#selectedTasksTable_professor_dash').empty();
 							$('#selectedTasksTable_professor_dash').append(stTable);
 
-							if(!canComputeAdaptation(newServerState)){
-								return;
-							}
 
 							currServerState = newServerState;
 
@@ -671,6 +689,7 @@ crossorigin='anonymous'></script>
 					complete:
 					function(newServerState){
 						$('#loadAndStartAdaptation_professor_dash').removeClass("is-loading");
+						$('#forceStartAdaptation_professor_dash').removeClass("is-loading");
 
 						$('#groupsPlot_professor_dash').empty();
 						if(newServerState.responseText.localeCompare("error")==0){
@@ -722,7 +741,13 @@ crossorigin='anonymous'></script>
 				);
 		}
 
-		
+
+
+		// this tab starts hidden
+		var additionalTab = $('#additionalAdaptMinimizerButton_professor_dash');
+		$('#additionalAlgorithmsSection_1_professor_dash').hide(0);
+		$('#additionalAlgorithmsSection_2_professor_dash').hide(0);
+		additionalTab.empty().append("<i class=\"fa fa-window-maximize\"></i>");
 
 
 		$('#loadAndStartAdaptation_professor_dash').click(function(){
@@ -730,6 +755,7 @@ crossorigin='anonymous'></script>
 			loadAndStartAdaptation();
 		})
 		$('#forceStartAdaptation_professor_dash').click(function(){
+			$('#forceStartAdaptation_professor_dash').addClass("is-loading");
 			startAdaptation();
 		})
 		$('#addAllUsers_professor_dash').click(function(){
@@ -777,5 +803,8 @@ crossorigin='anonymous'></script>
 			}
 		})
 	});
+	
+
+
 </script>
 </html>

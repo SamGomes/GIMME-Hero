@@ -44,7 +44,7 @@
       </a>
     </div>
 
-    <div class="button" id="initServerButton_header"> Init Server</div>
+    {% if debug %}<div class="button" id="initServerButton_header"> Init Server</div>{% endif %}
 
     <div class="navbar-menu">
       <div class="navbar-start">
@@ -75,7 +75,7 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
-              <div class="button is-link" id="newUserRegButton">
+              <div class="button is-info" id="newUserRegButton">
                 <strong>Register</strong>
               </div>
             </div>
@@ -102,12 +102,12 @@
                 Email: <strong>{{user.email}}</strong>
               </div>
               <div class="column">
-                <div class="button is-link" id="updateUserRegButton">
+                <div class="button is-info" id="updateUserRegButton">
                   <strong>Manage Account</strong>
                 </div>
               </div>
               <div class="column">
-                <a href="{% url 'logoutCheck' %}"><button class="button is-link modal-button">Logout</button></a>
+                <a href="{% url 'logoutCheck' %}"><button class="button is-info modal-button">Logout</button></a>
               </div>
             </p>
           </div>
