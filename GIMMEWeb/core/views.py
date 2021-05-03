@@ -234,6 +234,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 	def getPlayerCurrTasks(self,  username):
 		playerInfo = User.objects.get(username=username).userprofile
+		print(json.loads(playerInfo.currState))
 		tasks = json.loads(playerInfo.currState)["tasks"]
 		return tasks
 	
@@ -868,7 +869,7 @@ class Views(): #acts as a namespace
 			userStates = {}
 			for username in selectedUserIds:
 				userInfoRequest.POST = {'username': username}
-				userInfo = Views.fetchStudentInfo(userInfoRequest)#.content.decode('utf-8')
+				userInfo = Views.fetchStudentInfo(userInfoRequest).content.decode('utf-8')
 				userStates[username] = userInfo
 
 			userStates = json.dumps(userStates, default=lambda o: o.__dict__, sort_keys=True)
@@ -878,7 +879,7 @@ class Views(): #acts as a namespace
 
 
 	def fetchStudentInfo(request):
-		# if request.method == "POST":
+		if request.method == "POST":
 			username = request.POST["username"]
 
 			userInfo = {}
@@ -890,10 +891,10 @@ class Views(): #acts as a namespace
 			userInfo["tasks"] = playerBridge.getPlayerCurrTasks(username)
 			userInfo["stateGrid"] = playerBridge.getPlayerStateGrid(username)
 
-			# userInfo = json.dumps(userInfo, default=lambda o: o.__dict__, sort_keys=True)
-			# return HttpResponse(userInfo)
-			return userInfo
-		# return HttpResponse('error')
+			userInfo = json.dumps(userInfo, default=lambda o: o.__dict__, sort_keys=True)
+			return HttpResponse(userInfo)
+			# return userInfo
+		return HttpResponse('error')
 	
 
 
@@ -912,14 +913,16 @@ class Views(): #acts as a namespace
 			taskObject.method = "POST"
 			
 			currSelectedTasksIds = serverStateModelBridge.getCurrSelectedTasks()
-			for taskId in currSelectedTasksIds:
-				taskObject.POST = {'taskId': taskId}
-				currSelectedTasks.append(Views.fetchTaskFromId(taskObject).content.decode('utf-8'))
+			taskObject.POST = {'tasks': currSelectedTasksIds}
+			currSelectedTasks = Views.fetchTasksFromId(taskObject).content.decode('utf-8')
+
+
+			taskObject = HttpRequest()
+			taskObject.method = "POST"
 
 			currFreeTasksIds = serverStateModelBridge.getCurrFreeTasks()
-			for taskId in currFreeTasksIds:
-				taskObject.POST = {'taskId': taskId}
-				currFreeTasks.append(Views.fetchTaskFromId(taskObject).content.decode('utf-8'))
+			taskObject.POST = {'tasks': currFreeTasksIds}
+			currFreeTasks = Views.fetchTasksFromId(taskObject).content.decode('utf-8')
 
 
 			newSessionState['currSelectedTasks'] = currSelectedTasks
@@ -936,22 +939,26 @@ class Views(): #acts as a namespace
 		return HttpResponse('error')
 
 
-	def fetchTaskFromId(request):
+	def fetchTasksFromId(request):
 		if request.method == "POST":
-			taskId = request.POST["taskId"]
+			tasks = request.POST["tasks"]
+			# breakpoint()
 
-			if not taskId in taskBridge.getAllStoredTaskIds():
-				return HttpResponse({})
-			task = taskBridge.getTask(taskId)
+			returnedTasks = []
+			for taskId in tasks:
+				if not taskId in taskBridge.getAllStoredTaskIds():
+					return HttpResponse('error')
 
-			returnedTask = {}
-			returnedTask["taskId"] = taskId
-			returnedTask["description"] = task.description
-			returnedTask["files"] = str(task.files)
+				task = taskBridge.getTask(taskId)
+				returnedTask = {}
+				returnedTask["taskId"] = taskId
+				returnedTask["description"] = task.description
+				returnedTask["files"] = str(task.files)
+				returnedTasks.append(returnedTask)
 
 
-			returnedTask = json.dumps(returnedTask, default=lambda o: o.__dict__, sort_keys=True)
-			return HttpResponse(returnedTask)
+			returnedTasks = json.dumps(returnedTasks, default=lambda o: o.__dict__, sort_keys=True)
+			return HttpResponse(returnedTasks)
 		return HttpResponse('error')
 
 	def fetchGroupFromId(request):

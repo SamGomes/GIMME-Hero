@@ -313,7 +313,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     for (i=0; i<data.groups.length; i++){
         var group = data.groups[i]
-        var avgCharacteristics = data.avgCharacteristics[i]
+        var avgCharacteristics = $.extend( {}, data.avgCharacteristics[i])
+        delete avgCharacteristics.profile
         var profile = data.profiles[i]
         var tasks = data.tasks[i]
         var groupCenterOfMass = {'x': 100 + Math.random()*(canvasContainer.getBoundingClientRect().width - 300), 'y': 100 + Math.random()*(canvasContainer.getBoundingClientRect().height - 300)};
@@ -325,7 +326,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             //TODO: add user characteristics
             var userId = group[j];
             userState = selectedUsersStates[userId];
-            userNodes.push({'plotIndex': currPlotIndex++, 'userId': userId, 'userState': userState, 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
+            userNodes.push({'plotIndex': currPlotIndex++, 'userId': userId, 'userState': unformattedStringToObj(userState), 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
             // userNodes.push({'userId': userId, 'userState': fetchPlayerStateCallback(userId), 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
         }
         colors[i] = generateGroupColor(profile);

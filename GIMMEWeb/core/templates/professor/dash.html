@@ -607,21 +607,18 @@ crossorigin='anonymous'></script>
 							$('#selectedUsersTable_professor_dash').empty();
 							$('#selectedUsersTable_professor_dash').append(suTable);
 
-							var currFreeTasks = newServerState.currFreeTasks;
-							var currSelectedTasks = newServerState.currSelectedTasks;
+							var currFreeTasks = unformattedStringToObj(newServerState.currFreeTasks);
+							var currSelectedTasks = unformattedStringToObj(newServerState.currSelectedTasks);
 
 
 							var currFreeTaskIds = [];
 							var currSelectedTaskIds = [];
 
-							// console.log(currFreeTasks);
 							for (i=0; i< currFreeTasks.length; i++){
-								currTask = unformattedStringToObj(currFreeTasks[i]);
-								currFreeTaskIds[i] = currTask.taskId;
+								currFreeTaskIds[i] = currFreeTasks[i].taskId;
 							}
 							for (i=0; i< currSelectedTasks.length; i++){
-								currTask = unformattedStringToObj(currSelectedTasks[i]);
-								currSelectedTaskIds[i] = currTask.taskId;
+								currSelectedTaskIds[i] = currSelectedTasks[i].taskId;
 							}
 
 							ftTable = generateDashTableFromArray(
@@ -667,6 +664,7 @@ crossorigin='anonymous'></script>
 								success: 
 								function(studentsStates)
 								{
+									$('#groupsPlot_professor_dash').empty();
 									currServerState.studentsStates = JSON.parse(studentsStates);
 									buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
 								}
@@ -726,19 +724,19 @@ crossorigin='anonymous'></script>
 							'isBootstrapped': $('#precomputeBootstrapId_professor_dash').prop("checked"),
 							'numBootstrapIterations': $('#numBootstrapIterationsId_professor_dash').val()
 						};
-				currAdaptationConfig = newAdaptationConfig;
-				$.ajax(
-					{
-						url: '/configAdaptation/',
-						type: 'POST',
-						dataType: 'json',
-						data: newAdaptationConfig,
-						complete: 
-						function () {
-							startAdaptation();
-						}
+			currAdaptationConfig = newAdaptationConfig;
+			$.ajax(
+				{
+					url: '/configAdaptation/',
+					type: 'POST',
+					dataType: 'json',
+					data: newAdaptationConfig,
+					complete: 
+					function () {
+						startAdaptation();
 					}
-				);
+				}
+			);
 		}
 
 

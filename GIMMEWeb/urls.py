@@ -44,8 +44,9 @@ urlpatterns = [
     
     re_path(r'^fetchServerState/', Views.fetchServerState, name="fetchServerState"),
     re_path(r'^fetchStudentStates/', Views.fetchStudentStates, name="fetchStudentStates"),
+    re_path(r'^fetchStudentInfo/', Views.fetchStudentInfo, name="fetchStudentInfo"),
 
-    re_path(r'^fetchTaskFromId/', Views.fetchTaskFromId, name="fetchTaskFromId"),
+    re_path(r'^fetchTasksFromId/', Views.fetchTasksFromId, name="fetchTasksFromId"),
     re_path(r'^fetchGroupFromId/', Views.fetchGroupFromId, name="fetchGroupFromId"),
 
     re_path(r'^fetchUserState/', Views.fetchUserState, name="fetchUserState"),
