@@ -234,7 +234,6 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 	def getPlayerCurrTasks(self,  username):
 		playerInfo = User.objects.get(username=username).userprofile
-		print(json.loads(playerInfo.currState))
 		tasks = json.loads(playerInfo.currState)["tasks"]
 		return tasks
 	
@@ -282,15 +281,24 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 	def getPlayerCurrState(self, username):
 		playerInfo = User.objects.get(username=username).userprofile
+		currState = json.loads(playerInfo.currState)
 		return PlayerState(profile = self.getPlayerCurrProfile(username), 
 			characteristics = self.getPlayerCurrCharacteristics(username), 
-			dist = json.loads(playerInfo.currState)["dist"])
+			dist = currState["dist"],
+			quality = currState["quality"],
+			group = currState["group"],
+			tasks = currState["tasks"])
 
 	def getPlayerFullName(self, username):
 		playerInfo = User.objects.get(username=username).userprofile
 		return playerInfo.fullName
 
 
+	def resetPlayerCurrState(self, username):
+		playerInfo = User.objects.get(username=username).userprofile
+		newState = PlayerState()
+		playerInfo.currState = json.dumps(newState, default=lambda o: o.__dict__)
+		playerInfo.save()
 
 	def setPlayerPersonalityEst(self, username, personality):
 		playerInfo = User.objects.get(username=username).userprofile
@@ -360,6 +368,10 @@ class Views(): #acts as a namespace
 		serverStateModelBridge.setCurrFreeUsers(playerBridge.getAllStoredStudentUsernames())
 		serverStateModelBridge.setCurrSelectedTasks([])
 		serverStateModelBridge.setCurrFreeTasks(taskBridge.getAllStoredTaskIds())
+
+		for player in playerBridge.getAllStoredStudentUsernames():
+			playerBridge.resetPlayerCurrState(player)
+
 		return HttpResponse('ok')
 
 	#global methods
