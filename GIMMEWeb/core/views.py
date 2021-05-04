@@ -447,7 +447,6 @@ class Views(): #acts as a namespace
 
 	
 	def userUpdate(request):
-		# breakpoint()
 		if request.method == "POST":
 
 			instance = request.user
@@ -924,8 +923,10 @@ class Views(): #acts as a namespace
 			taskObject = HttpRequest()
 			taskObject.method = "POST"
 			
+			# breakpoint()
+
 			currSelectedTasksIds = serverStateModelBridge.getCurrSelectedTasks()
-			taskObject.POST = {'tasks': currSelectedTasksIds}
+			taskObject.POST = {'tasks': str(currSelectedTasksIds)[1:][:-1].replace(' ','').replace('\'','')}
 			currSelectedTasks = Views.fetchTasksFromId(taskObject).content.decode('utf-8')
 
 
@@ -933,10 +934,11 @@ class Views(): #acts as a namespace
 			taskObject.method = "POST"
 
 			currFreeTasksIds = serverStateModelBridge.getCurrFreeTasks()
-			taskObject.POST = {'tasks': currFreeTasksIds}
+			taskObject.POST = {'tasks': str(currFreeTasksIds)[1:][:-1].replace(' ','').replace('\'','')}
 			currFreeTasks = Views.fetchTasksFromId(taskObject).content.decode('utf-8')
 
-
+			print(currSelectedTasks)
+			print(currFreeTasks)
 			newSessionState['currSelectedTasks'] = currSelectedTasks
 			newSessionState['currFreeTasks'] = currFreeTasks
 
@@ -954,8 +956,10 @@ class Views(): #acts as a namespace
 	def fetchTasksFromId(request):
 		if request.method == "POST":
 			tasks = request.POST["tasks"]
-			# breakpoint()
-
+			if tasks == '':
+				tasks = []
+			else:
+				tasks = tasks.split(',')
 			returnedTasks = []
 			for taskId in tasks:
 				if not taskId in taskBridge.getAllStoredTaskIds():

@@ -202,15 +202,16 @@
 						$('#yourgrouptable_student_dash').append(ygTable);
 
 
-						console.log(myInfo);
+						// console.log(myInfo);
 						$.ajax(
 			    		{
 			    			url: '/fetchTasksFromId/',
 		            		type: 'POST',
 			    			dataType: 'json',
-			    			data: {'tasks': ''+myInfo.tasks.toString() },
+			    			data: {'tasks': myInfo.tasks.toString()},
 			    			success: 
 			    			function (tasks) {
+			    				console.log(tasks);
 			    				if(tasks.length==0){
 			    					$('#student_currentActivityInfo_taskTitle').text("-");
 			    					$("#student_currentActivityInfo_taskDesc").text("-");
@@ -227,6 +228,7 @@
 							},
 							error:
 			    			function (tasks) {
+			    				console.log(tasks);
 		    					$('#student_currentActivityInfo_taskTitle').text("-");
 		    					$("#student_currentActivityInfo_taskDesc").text("-");
 		    					$("#student_currentActivityInfo_taskFiles").text("-");
