@@ -937,8 +937,6 @@ class Views(): #acts as a namespace
 			taskObject.POST = {'tasks': str(currFreeTasksIds)[1:][:-1].replace(' ','').replace('\'','')}
 			currFreeTasks = Views.fetchTasksFromId(taskObject).content.decode('utf-8')
 
-			print(currSelectedTasks)
-			print(currFreeTasks)
 			newSessionState['currSelectedTasks'] = currSelectedTasks
 			newSessionState['currFreeTasks'] = currFreeTasks
 

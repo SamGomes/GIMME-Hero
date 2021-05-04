@@ -427,11 +427,17 @@
 					<div class='column is-full'>
 						<p>Overall Preferences Distribution</p>
 					</div>
+					<div class="column is-one-third"></div>
+					<div class="column is-one-third is-centered" id="professor_interactionsProfilePlot"></div>
+					<div class="column is-one-third"></div>
 				</div>
 
 				<div class='panel-block' style='display: block;'>
 					<div class='column is-full'>
 						<p>Overall Ability/ Engagement Distribution</p>
+						<div class="column is-one-quarter"></div>
+						<div class="column is-one-third is-centered" id="professor_learningStatePlot"></div>
+						<div class="column is-one-third"></div>
 					</div>
 				</div>
 			</div>
@@ -667,8 +673,32 @@ crossorigin='anonymous'></script>
 									$('#groupsPlot_professor_dash').empty();
 									currServerState.studentsStates = JSON.parse(studentsStates);
 									buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
+									studentsStates = Object.values(currServerState.studentsStates);
+
+
+									$('#professor_interactionsProfilePlot').empty()
+									$('#professor_learningStatePlot').empty()
+									var interactionDatapoints = [];
+									var avgChars = [0,0];
+									for(var i=0; i<studentsStates.length; i++){
+										var currState = JSON.parse(studentsStates[i]);
+										// console.log(currState)
+										interactionDatapoints[i] = { "Full Name": currState.fullName,"focus": currState.personalityEst.dimensions.Focus*6-3, "valence": currState.personalityEst.dimensions.Valence*6-3 , "timestamp": 1 }
+										
+										avgChars[0] += currState.characteristics.ability/studentsStates.length;
+										avgChars[1] += currState.characteristics.engagement/studentsStates.length;
+									}
+									buildScatterInteractionPlot('professor_interactionsProfilePlot', interactionDatapoints);
+									buildStatePlot('professor_learningStatePlot', 
+										[
+											{ "name": "Ability" , "value": avgChars[0] },
+											{ "name": "Engagement" , "value": avgChars[1] }
+										]
+									);
 								}
 							});
+
+
 						}
 
 					}

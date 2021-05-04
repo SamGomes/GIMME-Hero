@@ -202,7 +202,6 @@
 						$('#yourgrouptable_student_dash').append(ygTable);
 
 
-						// console.log(myInfo);
 						$.ajax(
 			    		{
 			    			url: '/fetchTasksFromId/',
@@ -211,12 +210,10 @@
 			    			data: {'tasks': myInfo.tasks.toString()},
 			    			success: 
 			    			function (tasks) {
-			    				console.log(tasks);
 			    				if(tasks.length==0){
 			    					$('#student_currentActivityInfo_taskTitle').text("-");
 			    					$("#student_currentActivityInfo_taskDesc").text("-");
 			    					$("#student_currentActivityInfo_taskFiles").text("-");
-			    					$("#student_learningStatePlot").text("-");
 			    				}else{
 				    				var task = tasks[0];
 									$('#student_currentActivityInfo_taskTitle').text(task.taskId);
@@ -228,14 +225,11 @@
 							},
 							error:
 			    			function (tasks) {
-			    				console.log(tasks);
 		    					$('#student_currentActivityInfo_taskTitle').text("-");
 		    					$("#student_currentActivityInfo_taskDesc").text("-");
 		    					$("#student_currentActivityInfo_taskFiles").text("-");
-		    					$("#student_learningStatePlot").text("-");
 			    			}
 						});	
-
 									
 						$('#student_learningStatePlot').empty()
 						buildStatePlot('student_learningStatePlot', 

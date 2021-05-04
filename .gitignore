@@ -13,3 +13,5 @@ GIMMEWeb/core/templates/static/media/
 *.jpg
 
 .idea/
+
+\.well-known/pki-validation/2751765F6747B076F8C6B95852899661\.txt
