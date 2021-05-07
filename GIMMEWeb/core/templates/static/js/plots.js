@@ -301,14 +301,6 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     d3.select(window)
         .on("resize", function() {
             resizeCanvas(canvas);
-            // for (i=0; i<data.groups.length; i++){
-            //     var group = data.groups[i]  
-            //     var groupCenterOfMass = {'x': 100 + Math.random()*(canvasContainer.getBoundingClientRect().width - 300), 'y': 100 + Math.random()*(canvasContainer.getBoundingClientRect().height - 300)};
-            //     groupIndicatorNodes[i]['centerOfMass'] = groupCenterOfMass;
-            //     for(var j=0;j<group.length; j++){
-            //         userNodes[j]['centerOfMass'] = groupCenterOfMass;
-            //     }
-            // }
         });
 
     for (i=0; i<data.groups.length; i++){
@@ -545,6 +537,12 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         delete node.userState.stateGrid
         htmlFromJSON({'userId': node.userId, 'userState': node.userState}, currTooltip, 0, 0);
     })
+
+
+    // nodeElements.on('click', function(d){ 
+    //     var elem = d3.select(userInfoTooltips._groups[0][d.plotIndex]); 
+    //     d3.select(d).style('stroke-width','3em');
+    //     elem.style('visibility') == 'visible'? elem.style('visibility', 'hidden') : elem.style('visibility', 'visible');});
 
     nodeElements.on('mouseover', function(d){ d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'visible');})
         .on('mouseout', function(d){ d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'hidden');});        

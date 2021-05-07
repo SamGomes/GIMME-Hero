@@ -1,32 +1,32 @@
 {% load static %}
-{% include "common/header.html" %}
+{% include 'common/header.html' %}
 <!DOCTYPE html>
 <html>
-<body class="layout-default">
+<body class='layout-default'>
 
-	<div id="welcomeBanner">
-		<section class="hero main_hero is-fullheight">
-			<div class="hero-body">
-				<div class="has-text-centered; slider-content animated zoomIn">
+	<div id='welcomeBanner'>
+		<section class='hero main_hero is-fullheight'>
+			<div class='hero-body'>
+				<div class='has-text-centered; slider-content animated zoomIn'>
 					<div>
-						<p class="title is-1 main-text">Welcome to GIMME-Web, {{request.session.userId}}</p>
-						<p class="subtitle is-4 main-text">A sophisticated Group Interactions Management Tool</p>
+						<p class='title is-1 main-text'>Welcome to GIMME-Web, {{request.session.userId}}</p>
+						<p class='subtitle is-4 main-text'>A sophisticated Group Interactions Management Tool</p>
 					</div>
 				</div>
 			</div>
 		</section>
 	</div>
 
-	<div id="dashboard">
+	<div id='dashboard'>
 
-		<section class="section danger" id="student_currentClassInfo">
-			<div class="panel animated zoomIn">
-				<div class="panel-heading">
-					<div class="columns is-vcentered">
-						<div class="column">
+		<section class='section danger' id='student_currentClassInfo'>
+			<div class='panel animated zoomIn'>
+				<div class='panel-heading'>
+					<div class='columns is-vcentered'>
+						<div class='column'>
 							<p>Your Group</p>
 						</div>
-						<div class="is-pulled-left">
+						<div class='is-pulled-left'>
 							<div class='button minimizerButton'></div>
 						</div>
 					</div>
@@ -47,20 +47,20 @@
 				</div>
 			</section>
 
-			<section class="section danger">
-				<div class="panel animated zoomIn">
-					<div class="panel-heading">
-						<div class="columns is-vcentered">
-							<div class="column">
+			<section class='section danger'>
+				<div class='panel animated zoomIn'>
+					<div class='panel-heading'>
+						<div class='columns is-vcentered'>
+							<div class='column'>
 								<p>Current Activity</p>
 							</div>
-							<div class="is-pulled-left">
+							<div class='is-pulled-left'>
 								<div class='button minimizerButton'>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class='panel-block'  id="student_currentActivityInfo">
+					<div class='panel-block'  id='student_currentActivityInfo'>
 						<label class='column is-3'>
 							<p class='has-text-weight-bold'>Task Title:</p> 
 							<p id='student_currentActivityInfo_taskTitle'></p>
@@ -77,52 +77,52 @@
 						</label>
 					</div>
 
-					<div class='panel-block'  id="student_currentActivityInfo">
+					<div class='panel-block'  id='student_currentActivityInfo'>
 						<label class='column is-3'>
 							<p class='has-text-weight-bold'>Submit your Task Results:</p>
-							<input class="control has-icons-left button" type="file" id="student_results_file" name="filename">
-							<button class="button is-info" id="student_apply_results">Apply Changes</button>
+							<input class='control has-icons-left button' type='file' id='student_results_file' name='filename'>
+							<button class='button is-info' id='student_apply_results'>Apply Changes</button>
 						</label>
 					</div>
 				</div>
 			</section>
 
-			<section class="section">
-				<div class="panel animated zoomIn">
-					<div class="panel-heading">
-						<div class="columns is-vcentered">
-							<div class="column">
+			<section class='section'>
+				<div class='panel animated zoomIn'>
+					<div class='panel-heading'>
+						<div class='columns is-vcentered'>
+							<div class='column'>
 								<p>Your Learning State</p>
 							</div>
-							<div class="is-pulled-left">
+							<div class='is-pulled-left'>
 								<div class='button minimizerButton'></div>
 							</div>
 						</div>
 					</div>
-					<div class="panel-block">
-						<div class="column is-one-quarter"></div>
-						<div class="column is-one-third is-centered" id="student_learningStatePlot"></div>
-						<div class="column is-one-third"></div>
+					<div class='panel-block'>
+						<div class='column is-one-quarter'></div>
+						<div class='column is-one-third is-centered' id='student_learningStatePlot'></div>
+						<div class='column is-one-third'></div>
 					</div>
 				</div>
 			</section>
 
-			<section class="section">
-				<div class="panel animated zoomIn">
-					<div class="panel-heading">
-						<div class="columns is-vcentered">
-							<div class="column">
+			<section class='section'>
+				<div class='panel animated zoomIn'>
+					<div class='panel-heading'>
+						<div class='columns is-vcentered'>
+							<div class='column'>
 								<p>Your Interactions Preference</p>
 							</div>
-							<div class="is-pulled-left">
+							<div class='is-pulled-left'>
 								<div class='button minimizerButton'></div>
 							</div>
 						</div>
 					</div>
-					<div class="panel-block">
-						<div class="column is-one-third"></div>
-						<div class="column is-one-third is-centered" id="student_interactionsProfilePlot"></div>
-						<div class="column is-one-third"></div>
+					<div class='panel-block'>
+						<div class='column is-one-third'></div>
+						<div class='column is-one-third is-centered' id='student_interactionsProfilePlot'></div>
+						<div class='column is-one-third'></div>
 					</div>
 				</div>
 			</section>
@@ -133,12 +133,12 @@
 	{% include 'common/footer.html' %} 
 
 	<script
-	src="https://code.jquery.com/jquery-3.2.1.min.js"
-	integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-	crossorigin="anonymous"></script>
-	<script src="https://kit.fontawesome.com/cdbfc7205f.js" crossorigin="anonymous"></script>
-	<script src="https://d3js.org/d3.v5.js"></script>
-	<script src="{% static "js/plots.js" %}"></script>
+	src='https://code.jquery.com/jquery-3.2.1.min.js'
+	integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='
+	crossorigin='anonymous'></script>
+	<script src='https://kit.fontawesome.com/cdbfc7205f.js' crossorigin='anonymous'></script>
+	<script src='https://d3js.org/d3.v5.js'></script>
+	<script src='{% static 'js/plots.js' %}'></script>
 	<script>
 	$(document).ready(
 		function(){
@@ -156,7 +156,7 @@
 	    	$.ajaxSetup({
 	    		beforeSend: function(xhr, settings) {
 	    			if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-	    				xhr.setRequestHeader("X-CSRFToken", csrftoken);
+	    				xhr.setRequestHeader('X-CSRFToken', csrftoken);
 	    			}
 	    		}
 	    	});
@@ -170,7 +170,7 @@
 	    		var table = $('<div>');
 	    		for(var i=0; i < array.length; i++){
 
-	    			var tag = $('<span class="button">').text(array[i]);
+	    			var tag = $('<span class=\'button\'>').text(array[i]);
 	    			if(!canAdd && i == array.length){
 	    				return table;
 	    			}
@@ -211,43 +211,43 @@
 			    			success: 
 			    			function (tasks) {
 			    				if(tasks.length==0){
-			    					$('#student_currentActivityInfo_taskTitle').text("-");
-			    					$("#student_currentActivityInfo_taskDesc").text("-");
-			    					$("#student_currentActivityInfo_taskFiles").text("-");
+			    					$('#student_currentActivityInfo_taskTitle').text('-');
+			    					$('#student_currentActivityInfo_taskDesc').text('-');
+			    					$('#student_currentActivityInfo_taskFiles').text('-');
 			    				}else{
 				    				var task = tasks[0];
 									$('#student_currentActivityInfo_taskTitle').text(task.taskId);
-									$("#student_currentActivityInfo_taskDesc").text(task.description);
-									$("#student_currentActivityInfo_taskFiles").text(task.files);
-									$("#student_currentActivityInfo_taskFiles").attr('href','../media/'+task.files);
-									// $("#student_interactionsProfilePlot").text(task.profile);	
+									$('#student_currentActivityInfo_taskDesc').text(task.description);
+									$('#student_currentActivityInfo_taskFiles').text(task.files);
+									$('#student_currentActivityInfo_taskFiles').attr('href','../media/'+task.files);
+									// $('#student_interactionsProfilePlot').text(task.profile);	
 			    				}
 							},
 							error:
 			    			function (tasks) {
-		    					$('#student_currentActivityInfo_taskTitle').text("-");
-		    					$("#student_currentActivityInfo_taskDesc").text("-");
-		    					$("#student_currentActivityInfo_taskFiles").text("-");
+		    					$('#student_currentActivityInfo_taskTitle').text('-');
+		    					$('#student_currentActivityInfo_taskDesc').text('-');
+		    					$('#student_currentActivityInfo_taskFiles').text('-');
 			    			}
 						});	
 									
 						$('#student_learningStatePlot').empty()
 						buildStatePlot('student_learningStatePlot', 
 							[
-								{ "name": "Ability" , "value": myInfo.characteristics.ability },
-								{ "name": "Engagement" , "value": myInfo.characteristics.engagement }
+								{ 'name': 'Ability' , 'value': myInfo.characteristics.ability },
+								{ 'name': 'Engagement' , 'value': myInfo.characteristics.engagement }
 							]
 						);
 
 						$('#student_interactionsProfilePlot').empty()
 						buildScatterInteractionPlot('student_interactionsProfilePlot', 
 							[
-								// { "focus": -2.0 , "valence": 2.0 , "timestamp": 5 },
-								// { "focus": 1.2 , "valence": -2.4 , "timestamp": 2 },
-								// { "focus": 1.7 , "valence": 1.2 , "timestamp": 1 },
-								// { "focus": 2.3 , "valence": 2.5 , "timestamp": 4 },
-								// { "focus": -1.5 , "valence": -2.1 , "timestamp": 8 },
-								{ "focus": -2.1 , "valence": 0.5 , "timestamp": 9 }
+								// { 'focus': -2.0 , 'valence': 2.0 , 'timestamp': 5 },
+								// { 'focus': 1.2 , 'valence': -2.4 , 'timestamp': 2 },
+								// { 'focus': 1.7 , 'valence': 1.2 , 'timestamp': 1 },
+								// { 'focus': 2.3 , 'valence': 2.5 , 'timestamp': 4 },
+								// { 'focus': -1.5 , 'valence': -2.1 , 'timestamp': 8 },
+								{ 'focus': -2.1 , 'valence': 0.5 , 'timestamp': 9 }
 							]
 						);
 
@@ -270,18 +270,19 @@
 
 			var responseFileLoaded = function(){
 				newUserCharacteristicsDelta = resFr.result
+				console.log(resFr);
 			}
 
 			//inspired by https://stackoverflow.com/questions/12281775/get-data-from-file-input-in-jquery
 			$('#student_results_file').change(function() {
 				if (!this) {
-					alert("Couldn't find any uploaded file.");
+					alert('Couldn\'t find any uploaded file.');
 				}
 				else if (!this.files) {
-					alert("This browser doesn't seem to support this functionality.");
+					alert('This browser doesn\'t seem to support this functionality.');
 				}
 				else if (!this.files[0]) {
-					alert("Please select a file before clicking 'Apply Changes'");               
+					alert('Please select a file before clicking "Apply Changes"');               
 				}
 				else {
 					var file = this.files[0];
@@ -289,16 +290,16 @@
 					resFr.readAsText(file);
 				}
 			});
-			
+
 			$('#student_apply_results').click(function() {
 				$.ajax(
 					{
 						url: '/uploadTaskResults/',
 						type: 'POST',
-						data: {"username": "{{user.username}}", "characteristicsDelta": newUserCharacteristicsDelta},
+						data: {'username': '{{user.username}}', 'characteristicsDelta': newUserCharacteristicsDelta},
 						success: 
 						function (res) {
-							console.log("aa")
+							console.log('aa')
 							updateData();
 						}
 					}

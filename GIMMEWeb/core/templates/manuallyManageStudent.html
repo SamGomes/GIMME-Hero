@@ -1,0 +1,70 @@
+{% load static %}
+{% include "common/header.html" %}  
+
+<!DOCTYPE html>
+<html>
+	<body class="layout-default">
+
+		<section class="section columns">
+			<div class='panel-block'  id="manuallyManageStudent_currentActivityInfo">
+				<label class='column is-3'>
+					<p class='has-text-weight-bold'>Overwrite "{{request.GET.usernameToUpdate}}" Task Results:</p>
+					<input class="control has-icons-left" type="text" id="manuallyManageStudent_results_ability" placeholder="Acquired Ability">
+					<input class="control has-icons-left" type="text" id="manuallyManageStudent_results_engagement" placeholder="Aqcuired Engagement">
+					<!-- <input class="control has-icons-left button" type="text" id="student_results_file" name="filename"> -->
+					<button class="button is-info" id="manuallyManageStudent_apply_results">Apply Changes</button>
+				</label>
+			</div>
+		</section>
+		{% csrf_token %}
+
+
+
+	</body>
+	<script
+		src="https://code.jquery.com/jquery-3.2.1.min.js"
+		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+		crossorigin="anonymous"></script>
+	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+	{% include 'common/general.html' %}
+	<script>
+
+		$(document).ready(function(){
+			
+			// CSRF protection setup 
+			// (from: 
+			// https://docs.djangoproject.com/en/dev/ref/csrf/
+			// and https://stackoverflow.com/questions/54835849/django-how-to-send-csrf-token-with-ajax
+			// )
+			csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+			function csrfSafeMethod(method) {
+	    		// these HTTP methods do not require CSRF protection
+			    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+			}
+			$.ajaxSetup({
+			    beforeSend: function(xhr, settings) {
+			        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+			            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			        }
+			    }
+			});
+
+
+			$('#manuallyManageStudent_apply_results').click(function() {
+				var characteristicsDelta = '{"abilityInc": '+$('#manuallyManageStudent_results_ability').val() +', "engagementInc": '+$('#manuallyManageStudent_results_engagement').val() +'}';
+				$.ajax(
+					{
+						url: '/uploadTaskResults/',
+						type: 'POST',
+						data: {'username': '{{request.GET.usernameToUpdate}}', 'characteristicsDelta': characteristicsDelta },
+						success: 
+						function (res) {
+							window.location = '{% url 'dash' %}';
+						}
+					}
+				);
+			});
+		});
+
+	</script>
+</html>

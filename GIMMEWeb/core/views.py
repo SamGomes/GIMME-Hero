@@ -1017,4 +1017,9 @@ class Views(): #acts as a namespace
 			playerBridge.setPlayerCharacteristics(username, characteristics)
 			return HttpResponse('ok')
 		return HttpResponse('error')
+
+	def manuallyManageStudent(request):
+		if request.method == "GET":
+			return render(request, "manuallyManageStudent.html")
+			
 				

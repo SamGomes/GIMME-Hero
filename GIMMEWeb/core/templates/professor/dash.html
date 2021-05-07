@@ -59,6 +59,8 @@
 						<div class='button' type='submit' id='clearAllUsers_professor_dash'>Deselect all</div>
 					</div>
 				</div>
+
+			
 			</div>
 		</section>
 
@@ -384,29 +386,31 @@
 				</div>
 				
 
-				<div class='panel-block' style='display: block;'>
-					<div class='columns is-multiline is-mobile'>
-						<div class='column is-one-third has-text-centered has-tooltip-top has-tooltip-arrow'  data-tooltip='Rebuilds the plot, without computing a new adaptation state.'>
-							<button class='button is-large' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plots</button>
-						</div>
-						<div class='column is-one-third has-text-centered has-tooltip-top has-tooltip-arrow' data-tooltip='Loads the parameterization above computes a new adaptation state, iff the configuration changed.' >
-							<a>
-								<button class='button is-large' type='submit' id='loadAndStartAdaptation_professor_dash' >Load Setup and Compute New Adaptation</button>
-							</a>
-						</div>
-						<div class='column is-one-third has-text-centered  has-tooltip-top has-tooltip-arrow'  data-tooltip='Forces an adaptation call, even when no parameterization changes occur.'>
-							<a>
-								<button class='button is-large' type='submit' id='forceStartAdaptation_professor_dash'>Force Start Adaptation</button>
-							</a>
-						</div>
-					</div>
-				</div>
 
 
 				<div class='panel-block'>
 					<div class='colums'>
 						<p>Group Organization</p>
 						
+
+						<div class='columns is-multiline is-mobile'>
+							<div class='column is-one-third has-text-centered has-tooltip-top has-tooltip-arrow'  data-tooltip='Rebuilds the plot, without computing a new adaptation state.'>
+								<button class='button is-large' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plots</button>
+							</div>
+							<div class='column is-one-third has-text-centered has-tooltip-top has-tooltip-arrow' data-tooltip='Loads the parameterization above computes a new adaptation state, iff the configuration changed.' >
+								<a>
+									<button class='button is-large' type='submit' id='loadAndStartAdaptation_professor_dash' >Load Setup and Compute New Adaptation</button>
+								</a>
+							</div>
+							<div class='column is-one-third has-text-centered  has-tooltip-top has-tooltip-arrow'  data-tooltip='Forces an adaptation call, even when no parameterization changes occur.'>
+								<a>
+									<button class='button is-large' type='submit' id='forceStartAdaptation_professor_dash'>Force Start Adaptation</button>
+								</a>
+							</div>
+						</div>
+
+
+
 						<div id='adaptationError_professor_dash' class='section hero is-danger is-centered has-text-centered'>
 							<label class='label subtitle is-4 is-white'>Adaptation Error! Tip: verify if enough players are selected. 
 							Maintaining old state...</label>
@@ -531,47 +535,60 @@ crossorigin='anonymous'></script>
 		    var table = $('<div>');
 		    for(var i=0; i < idArray.length+1; i++){
 		        
-		        var tag = $("<span class='context-menu' style='margin:0.1em'>").text(nameArray[i]);
+		        var tag = undefined;
 		        if(!canAdd && i == idArray.length){
 		            return table;
 		        }
 		        if(i<idArray.length){
-		            var deleteButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; margin:0.5em;'>");
-		            deleteButton.append('<form method=\'GET\' action=\''+deleteElementUrl+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+deleteElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash pointer\'></i></button></form>');
-		            tag.append(deleteButton);
-		            
+		        	tag = $("<span class='context-menu' style='margin:0.1em'>").text(nameArray[i]);
+		        
+		        	if(deleteElementUrl!=""){
+			            var deleteButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; margin:0.5em;'>");
+			            deleteButton.append('<form method=\'GET\' action=\''+deleteElementUrl+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+deleteElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash pointer\'></i></button></form>');
+			            tag.append(deleteButton);
+		            }
 
-		            var editButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; margin:0.5em;'>");
-		            editButton.append('<form method=\'GET\' action=\''+editElementUrl+'\'><input type=\'hidden\' name=\''+editElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-user-edit pointer\'></i></button></form>');
-		            tag.append(editButton);
+		        	if(editElementUrl!=""){
+			            var editButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; margin:0.5em;'>");
+			            editButton.append('<form method=\'GET\' action=\''+editElementUrl+'\'><input type=\'hidden\' name=\''+editElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-user-edit pointer\'></i></button></form>');
+			            tag.append(editButton);
+					}
 
-
-		            var moveButton = $("<div class='button is-rounded is-small pointer' style='color:white; background-color:transparent; margin:0.5em;'>");
-		            moveButton.append("<i class='fas "+moveButtonIconClass+" pointer'></i>");
-		            moveButton.click(function() {
-		                var data = {};
-		                data[moveElementArg] = $($(this)[0].parentElement).attr("elemID");
-		                $.ajax({
-		                    url: moveElementUrl,
-		                    type: 'POST',
-		                    data: data            
-		                });
-		            })
-		            tag.append(moveButton);
+		        	if(moveElementUrl!=""){
+			            var moveButton = $("<div class='button is-rounded is-small pointer' style='color:white; background-color:transparent; margin:0.5em;'>");
+			            moveButton.append("<i class='fas "+moveButtonIconClass+" pointer'></i>");
+			            moveButton.click(function() {
+			                var data = {};
+			                data[moveElementArg] = $($(this)[0].parentElement).attr("elemID");
+			                $.ajax({
+			                    url: moveElementUrl,
+			                    type: 'POST',
+			                    data: data            
+			                });
+			            })
+			            tag.append(moveButton);
+					}
 
 		        }else{
-		            var addButton = $("<div class='button is-rounded is-small pointer' style='color:white; background-color:transparent; margin:0.5em;'>");
-		            addButton.append('<form method="POST" action=\''+addElementURL+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+addElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-plus-circle\'></i></button></form>');
-		            tag.append(addButton);
+		        	if(addElementURL!=""){
+		        		var addButton = $("<div class='button is-rounded is-small pointer' style='color:white; background-color:transparent; margin:0.5em;'>");
+			            addButton.append('<form method="POST" action=\''+addElementURL+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+addElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-plus-circle\'></i></button></form>');
+		        	
+		        		tag = $("<span class='context-menu' style='margin:0.1em'>").text(nameArray[i]);
+			            tag.append(addButton);
+		        	}
 		        }
-		        tag.attr("elemID",idArray[i]);
-		        tag.addClass('tag');
-		        tag.addClass(tagClass);
-		        tag.addClass('is-medium');
-		        tag.addClass('is-rounded');
-		        table.append(tag);
-		        console.log('here')
-		        tag.show(135);
+
+		        if(tag != undefined){
+			        tag.attr('elemID', idArray[i]);
+			        tag.addClass('tag');
+			        tag.addClass(tagClass);
+			        tag.addClass('is-medium');
+			        tag.addClass('is-rounded');
+			        table.append(tag);
+			        console.log('here')
+			        tag.show(135);
+			    }
 		    }
 		    return table;
 		};
@@ -596,16 +613,16 @@ crossorigin='anonymous'></script>
 							var fuTable = generateDashTableFromArray(
 									true, currFreeUsers, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
 									'{% url 'addSelectedUser' %}', 'username',
-									'{% url 'userRegistration' %}', 'username',
-									'{% url 'userDeletion' %}','usernameToDelete',
-									'{% url 'userUpdate' %}','usernameToUpdate'
+									'', 'username',
+									'','usernameToDelete',
+									'{% url 'manuallyManageStudent' %}','usernameToUpdate'
 								);
 							var suTable = generateDashTableFromArray(
 									false, currSelectedUsers, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
 									'{% url 'removeSelectedUser' %}', 'username',
-									'{% url 'userRegistration' %}', 'username',
-									'{% url 'userDeletion' %}','usernameToDelete',
-									'{% url 'userUpdate' %}','usernameToUpdate'
+									'', 'username',
+									'','usernameToDelete',
+									'{% url 'manuallyManageStudent' %}','usernameToUpdate'
 								);
 							$('#freeUsersTable_professor_dash').empty();
 							$('#freeUsersTable_professor_dash').append(fuTable);
