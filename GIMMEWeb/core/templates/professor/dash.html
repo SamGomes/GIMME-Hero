@@ -540,17 +540,17 @@ crossorigin='anonymous'></script>
 		            return table;
 		        }
 		        if(i<idArray.length){
-		        	tag = $("<span class='context-menu' style='margin:0.1em'>").text(nameArray[i]);
+		        	tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'>").text(nameArray[i]);
 		        
 		        	if(deleteElementUrl!=""){
-			            var deleteButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; margin:0.5em;'>");
+			            var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete This Task'>");
 			            deleteButton.append('<form method=\'GET\' action=\''+deleteElementUrl+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+deleteElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash pointer\'></i></button></form>');
 			            tag.append(deleteButton);
 		            }
 
 		        	if(editElementUrl!=""){
-			            var editButton = $("<div class='button is-rounded is-small' style='color:white; background-color:transparent; margin:0.5em;'>");
-			            editButton.append('<form method=\'GET\' action=\''+editElementUrl+'\'><input type=\'hidden\' name=\''+editElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-user-edit pointer\'></i></button></form>');
+			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually Edit State'>");
+			            editButton.append('<form method=\'GET\' action=\''+editElementUrl+'\'><input type=\'hidden\' name=\''+editElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-edit pointer\'></i></button></form>');
 			            tag.append(editButton);
 					}
 
@@ -571,10 +571,10 @@ crossorigin='anonymous'></script>
 
 		        }else{
 		        	if(addElementURL!=""){
-		        		var addButton = $("<div class='button is-rounded is-small pointer' style='color:white; background-color:transparent; margin:0.5em;'>");
+		        		var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Add New Task'>");
 			            addButton.append('<form method="POST" action=\''+addElementURL+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+addElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-plus-circle\'></i></button></form>');
 		        	
-		        		tag = $("<span class='context-menu' style='margin:0.1em'>").text(nameArray[i]);
+		        		tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'>").text(nameArray[i]);
 			            tag.append(addButton);
 		        	}
 		        }
@@ -606,6 +606,17 @@ crossorigin='anonymous'></script>
 							
 							if(!canComputeAdaptation(newServerState)){
 								return;
+							}
+
+							readyForNewActivity = newServerState.readyForNewActivity;
+							if(readyForNewActivity==true){
+								$('#forceStartAdaptation_professor_dash').removeClass("is-loading");
+								$('#loadAndStartAdaptation_professor_dash').removeClass('is-loading');
+								$('#rebuildPlot_professor_dash').removeClass("is-loading");
+							}else{
+								$('#rebuildPlot_professor_dash').addClass("is-loading");
+								$('#forceStartAdaptation_professor_dash').addClass("is-loading");
+								$('#loadAndStartAdaptation_professor_dash').addClass("is-loading");
 							}
 
 							var currSelectedUsers = newServerState.currSelectedUsers;
@@ -675,10 +686,7 @@ crossorigin='anonymous'></script>
 							// 	studentsStates[currUserId] = fetchUserStateCallBack(currUserId)
 							// }
 							
-							if(newServerState.readyForNewActivity=='true'){
-								$('#readyForNewActivityButton_professor_dash').removeClass('is-loading');
-								$('#readyForNewActivityButton_professor_dash').html('Start Activity');
-							}
+							
 							
 
 							$.ajax({
@@ -689,29 +697,7 @@ crossorigin='anonymous'></script>
 								{
 									$('#groupsPlot_professor_dash').empty();
 									currServerState.studentsStates = JSON.parse(studentsStates);
-									buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
-									studentsStates = Object.values(currServerState.studentsStates);
-
-
-									$('#professor_interactionsProfilePlot').empty()
-									$('#professor_learningStatePlot').empty()
-									var interactionDatapoints = [];
-									var avgChars = [0,0];
-									for(var i=0; i<studentsStates.length; i++){
-										var currState = JSON.parse(studentsStates[i]);
-										// console.log(currState)
-										interactionDatapoints[i] = { "Full Name": currState.fullName,"focus": currState.personalityEst.dimensions.Focus*6-3, "valence": currState.personalityEst.dimensions.Valence*6-3 , "timestamp": 1 }
-										
-										avgChars[0] += currState.characteristics.ability/studentsStates.length;
-										avgChars[1] += currState.characteristics.engagement/studentsStates.length;
-									}
-									buildScatterInteractionPlot('professor_interactionsProfilePlot', interactionDatapoints);
-									buildStatePlot('professor_learningStatePlot', 
-										[
-											{ "name": "Ability" , "value": avgChars[0] },
-											{ "name": "Engagement" , "value": avgChars[1] }
-										]
-									);
+									buildPlots(currServerState);
 								}
 							});
 
@@ -726,6 +712,32 @@ crossorigin='anonymous'></script>
 		setInterval(fetchServerData, 500);
 
 
+		var buildPlots = function(currServerState){
+			buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
+			studentsStates = Object.values(currServerState.studentsStates);
+
+
+			$('#professor_interactionsProfilePlot').empty()
+			$('#professor_learningStatePlot').empty()
+			var interactionDatapoints = [];
+			var avgChars = [0,0];
+			for(var i=0; i<studentsStates.length; i++){
+				var currState = JSON.parse(studentsStates[i]);
+				// console.log(currState)
+				interactionDatapoints[i] = { "Full Name": currState.fullName,"focus": currState.personalityEst.dimensions.Focus*6-3, "valence": currState.personalityEst.dimensions.Valence*6-3 , "timestamp": 1 }
+				
+				avgChars[0] += currState.characteristics.ability/studentsStates.length;
+				avgChars[1] += currState.characteristics.engagement/studentsStates.length;
+			}
+			buildScatterInteractionPlot('professor_interactionsProfilePlot', interactionDatapoints);
+			buildStatePlot('professor_learningStatePlot', 
+				[
+					{ "name": "Ability" , "value": avgChars[0] },
+					{ "name": "Engagement" , "value": avgChars[1] }
+				]
+			);
+		}
+
 		var startAdaptation = function(){
 			$.ajax(
 				{
@@ -733,8 +745,8 @@ crossorigin='anonymous'></script>
 					dataType: 'json',
 					complete:
 					function(newServerState){
-						$('#loadAndStartAdaptation_professor_dash').removeClass("is-loading");
-						$('#forceStartAdaptation_professor_dash').removeClass("is-loading");
+						// $('#loadAndStartAdaptation_professor_dash').removeClass("is-loading");
+						// $('#forceStartAdaptation_professor_dash').removeClass("is-loading");
 
 						$('#groupsPlot_professor_dash').empty();
 						if(newServerState.responseText.localeCompare("error")==0){

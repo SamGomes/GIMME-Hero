@@ -653,9 +653,6 @@ class Views(): #acts as a namespace
 		
 		currFreeUsers.remove(request.session.get("username"))
 		serverStateModelBridge.setcurrFreeUsers(currFreeUsers)
-		
-		if len(currSelectedUsers) == 0 and len(currSelectedUsers) == 0:
-			serverStateModelBridge.setReadyForNewActivity(False)
 
 		if request.POST:
 			username = request.session.get("username")
@@ -670,10 +667,12 @@ class Views(): #acts as a namespace
 	
 	def startAdaptation(request):
 		# breakpoint()
+		serverStateModelBridge.setReadyForNewActivity(False)
 		try:
 			currAdaptationState = adaptation.iterate()
 		except ValueError:
-			print("ValueError error!")
+			print("Iteration call returned ValueError error!")
+			serverStateModelBridge.setReadyForNewActivity(True)
 			return HttpResponse('error')
 			
 		serverStateModelBridge.setCurrAdaptationState(currAdaptationState)
