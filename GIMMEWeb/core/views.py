@@ -682,8 +682,7 @@ class Views(): #acts as a namespace
 
 	
 	def configAdaptation(request):
-		# breakpoint()
-
+		
 		# print(json.dumps(request.POST, default=lambda o: o.__dict__, sort_keys=True))
 		selectedRegAlg = {}		
 		def selectedRegAlgSwitcherKNN(request):

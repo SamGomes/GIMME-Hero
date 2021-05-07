@@ -35,16 +35,16 @@
 					</div>
 				</div>
 				<div class='panel-block'>
-					<div class='column is-offset-1 dash-cell-box' >
-						<div class='subtitle is-5' style='color:gray'>Free Students</div>
+					<div class='column is-offset-1 dash-cell-box'>
+						<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the students, selected from all available students, to be considered for the next group management iteration.'>Free Students</div>
 						<div class='table-container'>
-							<div class='table' id='freeUsersTable_professor_dash'></div>
+							<div class='table' style='margin:2em;' id='freeUsersTable_professor_dash'></div>
 						</div>
 					</div>
-					<div class='column is-offset-1 dash-cell-box has-tooltip-arrow' data-tooltip='These are the students, selected from all available students, to be considered for the next group management iteration.'>
-						<div class='subtitle is-4' style='color:gray'>Selected Students</div>
+					<div class='column is-offset-1 dash-cell-box'>
+						<div class='subtitle is-4 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the students, selected from all available students, to be considered for the next group management iteration.'>Selected Students</div>
 						<div class='table-container column is-full'>
-							<div class='table' id='selectedUsersTable_professor_dash'></div>
+							<div class='table' style='margin:2em;' id='selectedUsersTable_professor_dash'></div>
 						</div>
 					</div>
 				</div>
@@ -78,16 +78,16 @@
 				</div>
 				<div class='panel-block'>
 					<div class='column is-offset-1 dash-cell-box'>
-						<div class='subtitle is-5' style='color:gray' >Free Tasks</div>
+						<div class='subtitle is-5' style='color:gray;' >Free Tasks</div>
 						<div class='table-container'>
-							<div class='table' id='freeTasksTable_professor_dash'>
+							<div class='table' style='margin:2em;' id='freeTasksTable_professor_dash'>
 							</div>
 						</div>
 					</div>
-					<div class='column is-offset-1 dash-cell-box has-tooltip-arrow' data-tooltip='These are the tasks, selected from all available tasks, to be considered for the next group management iteration.'>
-						<div class='subtitle is-4' style='color:gray'>Selected Tasks</div>
+					<div class='column is-offset-1 dash-cell-box'>
+						<div class='subtitle is-4 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the tasks, selected from all available tasks, to be considered for the next group management iteration.'>Selected Tasks</div>
 						<div class='table-container column is-full'>
-							<div class='table' id='selectedTasksTable_professor_dash'></div>
+							<div class='table' style='margin:2em;' id='selectedTasksTable_professor_dash'></div>
 						</div>
 					</div>
 				</div>
@@ -393,7 +393,7 @@
 						<p>Group Organization</p>
 						
 
-						<div class='columns is-multiline is-mobile'>
+						<div class='columns is-multiline'>
 							<div class='column is-one-third has-text-centered has-tooltip-top has-tooltip-arrow'  data-tooltip='Rebuilds the plot, without computing a new adaptation state.'>
 								<button class='button is-large' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plots</button>
 							</div>
@@ -420,9 +420,7 @@
 							<label id='adaptationIssuesText_professor_dash'></label>
 						</div>
 						
-						<div class='column is-one-third'></div>
-						<div class='column is-one-third is-centered' id='groupsPlot_professor_dash'></div>
-						<div class='column is-one-third'></div>
+						<div class='column is-centered' style='width:100%' id='groupsPlot_professor_dash'></div>
 
 					</div>
 				</div>
