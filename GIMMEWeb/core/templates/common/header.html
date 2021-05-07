@@ -1,14 +1,39 @@
 {% load static %}
 <header>
+
+  <!-- favicon stuff -->
+  <link rel="apple-touch-icon" sizes="57x57" src="{% static "media/images/apple-icon-57x57.png" %}>
+  <link rel="apple-touch-icon" sizes="60x60" src="{% static "media/images/apple-icon-60x60.png" %}>
+  <link rel="apple-touch-icon" sizes="72x72" src="{% static "media/images/apple-icon-72x72.png" %}>
+  <link rel="apple-touch-icon" sizes="76x76" src="{% static "media/images/apple-icon-76x76.png" %}>
+  <link rel="apple-touch-icon" sizes="114x114" src="{% static "media/images/apple-icon-114x114.png" %}>
+  <link rel="apple-touch-icon" sizes="120x120" src="{% static "media/images/apple-icon-120x120.png" %}>
+  <link rel="apple-touch-icon" sizes="144x144" src="{% static "media/images/apple-icon-144x144.png" %}>
+  <link rel="apple-touch-icon" sizes="152x152" src="{% static "media/images/apple-icon-152x152.png" %}>
+  <link rel="apple-touch-icon" sizes="180x180" src="{% static "media/images/apple-icon-180x180.png" %}>
+  <link rel="icon" type="image/png" sizes="192x192"  src="{% static "/android-icon-192x192.png" %}>
+  <link rel="icon" type="image/png" sizes="32x32" src="{% static "media/images/favicon-32x32.png" %}>
+  <link rel="icon" type="image/png" sizes="96x96" src="{% static "media/images/favicon-96x96.png" %}>
+  <link rel="icon" type="image/png" sizes="16x16" src="{% static "media/images/favicon-16x16.png" %}>
+  <link rel="manifest" src="{% static "media/images/manifest.json" %}>
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" src="{% static "media/images/ms-icon-144x144.png" %}>
+  <meta name="theme-color" content="#ffffff">
+
+
+
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/assets/owl.carousel.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.1.20/jquery.fancybox.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@creativebulma/bulma-tooltip@1.2.0/dist/bulma-tooltip.min.css"/>
   <link rel="stylesheet" href="{% static "css/site.css" %}">
+
 
   <nav class="navbar" role="navigation" aria-label="main navigation" style="background-color:#e5e5e5;">
     <div class="navbar-brand"  id="logo_header">
-      <a class="navbar-item">
+      <a class="navbar-item" href = {% url 'home' %}>
         <img style="max-height: 3rem" src="{% static "media/images/GIMMELogo.png" %}">
       </a>
 
@@ -17,10 +42,9 @@
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
       </a>
-
-     <div class="button" id="initServerButton_header"> Init Server</div>
-
     </div>
+
+    {% if debug %}<div class="button" id="initServerButton_header"> Init Server</div>{% endif %}
 
     <div class="navbar-menu">
       <div class="navbar-start">
@@ -38,6 +62,10 @@
               GIMME API wiki
             </a>
             <hr class="navbar-divider">
+            <a class="navbar-item" href="https://github.com/SamGomes/GIMME-Web" target="_blank">
+              GIMME-Web repo
+            </a>
+            <hr class="navbar-divider">
             <a class="navbar-item">
               Report an issue
             </a>
@@ -47,47 +75,47 @@
 
 
 
-      {% if not request.session.userId %}
+      {% if not user.is_authenticated %}
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
-              <div class="button is-link" id="newUserRegButton">
+              <div class="button is-info" id="newUserRegButton">
                 <strong>Register</strong>
               </div>
-              <!-- <a class="button is-light" href="{% url 'home' %}">
-                Log In
-              </a> -->
             </div>
           </div>
         </div>
       {% else %}
         <div class="navbar-item center-left is-hoverable">
-          <figure class="image navbar-item"  height=100px >
-            <!-- sets placeholder if no image is found -->
-            <img class="is-rounded" style="max-height: 3.5rem" onError="this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';" src="../static/media/images/userAvatars/{{request.session.userId}}.png">
-          </figure>
-          <div class="navbar-dropdown is-right">
+          <div class="navbar-brand">
+            <figure class="image navbar-item">
+              <!-- sets placeholder if no image is found for some reason -->
+              <img class="is-rounded is-fullheight" style="max-width:3rem" onError="this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';" src="{{ user.userprofile.avatar.url }}">
+            </figure>
+          </div>
 
+          <div class="navbar-dropdown is-right">
             <p class="navbar-item columns" >
               <div class="column">
-                Logged in as a <strong>{{request.session.role}}</strong> called <strong>{{request.session.fullName}}</strong>
+                Logged in as a <strong>{{user.userprofile.role}}</strong> called <strong>{{user.userprofile.fullName}}</strong>
               </div>
               <div class="column">
-                userId: <strong>{{request.session.userId}}</strong>
+                Username: <strong>{{user.username}}</strong>
               </div>
               <div class="column">
-                email: <strong>{{request.session.email}}</strong>
+                Email: <strong>{{user.email}}</strong>
               </div>
               <div class="column">
-                <div class="button is-link" id="updateUserRegButton">
+                <div class="button is-info" id="updateUserRegButton">
                   <strong>Manage Account</strong>
                 </div>
               </div>
               <div class="column">
-                <a href="{% url 'logout' %}"><button class="button is-link modal-button">Logout</button></a>
+                <a href="{% url 'logoutCheck' %}"><button class="button is-info modal-button">Logout</button></a>
               </div>
             </p>
           </div>
+
         </div>
       {% endif %}
     </div>
@@ -99,33 +127,39 @@
     crossorigin="anonymous"></script>
 {% include 'common/general.html' %}
 <script type="text/javascript">
-  $('#logo_header').click(function(){
-    $.ajax({
-            type: 'POST',
-            url: '/isLoggedIn/',
-            statusCode: {
-              500: function() {
-                document.location.href = '/home/';
-              },
-              200: function(){ 
-                document.location.href = '/dash/';
+  $(document).ready(function(){
+
+    // CSRF protection setup 
+    // (from: 
+    // https://docs.djangoproject.com/en/dev/ref/csrf/
+    // and https://stackoverflow.com/questions/54835849/django-how-to-send-csrf-token-with-ajax
+    // )
+    csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
         }
     });
-  })
-  $(document).ready(function(){
+
     $('#newUserRegButton').click(function(){
-      callUserReg('true');
+      callUserReg(true);
     });
     $('#updateUserRegButton').click(function(){
-      callUserReg('false');
+      callUserReg(false);
     });
   });
 
   $('#initServerButton_header').click(function(){
-    $.ajax({
-            type: 'POST',
-            url: '/initServer/'
-          });
+      console.log("here");
+      $.ajax({
+              type: 'POST',
+              url: '/initServer/'
+            });
   });
 </script>

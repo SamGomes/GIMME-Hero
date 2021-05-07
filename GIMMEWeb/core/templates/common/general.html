@@ -1,6 +1,4 @@
-﻿{% include 'common/CSRFTSetup.html' %}
-
-<script type="text/javascript">
+﻿<script type="text/javascript">
 $(document).ready(function(){
     // bulma dropdowns setup
     var dropdowns = $(".dropdown");
@@ -24,7 +22,7 @@ $(document).ready(function(){
         dropdownItem.addClass("is-active");
         //update that dropdown text
         $($($(dropdownItem.parent().parent().parent().children()[0]).children()[0]).children()[0]).text(dropdownItem.text().split('\n')[1].replace(/\W/g, ""));
-    }
+    };
 
     var dropdownItems = $(".dropdown-item");
     for (var i=0; i< dropdownItems.length; i++){
@@ -89,7 +87,7 @@ $(document).ready(function(){
         allModals.forEach(function (el) {
             el.classList.remove('is-active');
         });
-    }
+    };
 
     // general animations and element functionalities
     $("#dashboard").hide();
@@ -102,17 +100,34 @@ $(document).ready(function(){
 
     $(".minimizerButton").append("<i class=\"fa fa-window-minimize\"></i>").parent().parent().parent().parent().find(".panel-block").show();
     $(".minimizerButton").click(function(){
-        $(this).empty();
-        var content = $(this).parent().parent().parent().parent().find(".panel-block");
-    	if(content.is(":hidden")){
-            $(this).append("<i class=\"fa fa-window-minimize\"></i>");
-            content.show(350);
-        }else{
-            $(this).append("<i class=\"fa fa-window-maximize\"></i>");
-            content.hide(350);
-        }
+        toggleTab($(this),350);
     });
 });
+
+
+var toggleTab = function(tab, time){
+    tab.empty();
+    var content = tab.parent().parent().parent().parent().find(".panel-block");
+    if(content.is(":hidden")){
+        tab.append("<i class=\"fa fa-window-minimize\"></i>");
+        content.show(time);
+    }else{
+        tab.append("<i class=\"fa fa-window-maximize\"></i>");
+        content.hide(time);
+    }
+}
+var showTab = function(tab, time){
+    var content = tab.parent().parent().parent().parent().find(".panel-block");
+    tab.empty();
+    tab.append("<i class=\"fa fa-window-minimize\"></i>");
+    content.show(time);
+}
+var hideTab = function(tab, time){
+    var content = tab.parent().parent().parent().parent().find(".panel-block");
+    tab.empty();
+    tab.append("<i class=\"fa fa-window-maximize\"></i>");
+    content.hide(time);
+}
 
 var getAll = function(selector) {
     return Array.prototype.slice.call(document.querySelectorAll(selector), 0);
@@ -122,35 +137,24 @@ var parseUnformattedString = function(attributeStr){
     return attributeStr.replace(/&quot;/g,"\"").replace(/&#39;/g,"\"")
 }
 
-var parseSessionAttribute = function(attributeStr){
+var unformattedStringToObj = function(attributeStr){
     return JSON.parse(parseUnformattedString(attributeStr))
 }
 
 
 var callUserReg = function(isNewUserRegRequest){
-    $.ajax({
-                type: 'POST',
-                url: '/updateUserRegMode/',
-                data: { 'isNewUserRegRequest': isNewUserRegRequest },
-                success:
-                function()
-                {
-                    document.location.href = '/userRegistration/';
-                }
-    });
+    if(isNewUserRegRequest){
+        document.location.href = '/userRegistration/';
+    }else{
+        document.location.href = '/userUpdate/';
+    }
 }
 
 var callTaskReg = function(isNewTaskRegRequest){
-    $.ajax({
-                type: 'POST',
-                url: '/updateTaskRegMode/',
-                data: { 'isNewTaskRegRequest': isNewTaskRegRequest },
-                success:
-                function()
-                {
-                    document.location.href = '/taskRegistration/';
-                }
-    });
+    if(isNewTaskRegRequest){
+        document.location.href = '/taskRegistration/';
+    }else{
+        document.location.href = '/taskUpdate/';
+    }
 }
-
 </script>

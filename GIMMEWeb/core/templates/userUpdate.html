@@ -10,7 +10,7 @@
 			<div class="panel panel-block column">
 
 				{% if form.errors or profileForm.errors %}
-					<div id="error_userRegistration" class="section hero is-danger is-centered has-text-centered">
+					<div id="error_userUpdate" class="section hero is-danger is-centered has-text-centered">
 						<label class="label subtitle is-4 is-white">Registry Fail! Errors: </label>
 						<p class="is-4 is-white">{{form.errors}} </p>
 						<p class="is-4 is-white">{{profileForm.errors}} </p>
@@ -18,75 +18,51 @@
 				{% endif %}
 
 
-				<form method="POST" enctype="multipart/form-data" action="" id="form_userRegistration">
+				<form method="POST" enctype="multipart/form-data" action="" id="form_userUpdate">
 					{% csrf_token %}
 
-					<div class="subtitle">Account Registration</div>
-					<p>* fields are mandatory</p>
+					<div class="subtitle">Manage Account</div>
 		
 
-
 					<div class="field requiredFormField">
-						<div class="label">{{profileForm.avatar.label}}*</div>
-						<p class="control has-icons-left">
+						<div class="label">{{profileForm.avatar.label}}</div>
+						<p class="control has-icons-left" placeholder = "{{user.userprofile.avatar}}">
 							{{profileForm.avatar}}
 						</p>
 					</div>
-
 					
-					<div class="field requiredFormField">
-						<div class="label">{{form.username.label}}*</div>
-						<p class="control has-icons-left">
-							{{form.username}}
-						</p>
-					</div>
-
 
 					<div class="field requiredFormField">
-						<div class="label">{{profileForm.role.label}}*</div>
-						<p class="control has-icons-left">
-							{{profileForm.role}}
-						</p>
-					</div>
-
-					<div class="field requiredFormField">
-						<div class="label">{{form.email.label}}*</div>
-						<p class="control has-icons-left">
+						<div class="label">{{form.email.label}}</div>
+						<p class="control has-icons-left" placeholder="{{user.email}}">
 							{{form.email}}
 						</p>
 					</div>
 
 
 					<div class="field requiredFormField">
-						<div class="label">{{form.password1.label}}*</div>
+						<div class="label">{{form.password.label}}</div>
 						<p class="control has-icons-left">
-							{{form.password1}}
+							{{form.password}}
 						</p>
 					</div>
 
 					<div class="field requiredFormField">
-						<div class="label">{{form.password2.label}}*</div>
-						<p class="control has-icons-left">
-							{{form.password2}}
-						</p>
-					</div>
-
-					<div class="field requiredFormField">
-						<div class="label">{{profileForm.fullName.label}}*</div>
+						<div class="label">{{profileForm.fullName.label}}</div>
 						<p class="control has-icons-left">
 							{{profileForm.fullName}}
 						</p>
 					</div>
 
 					<div class="field requiredFormField">
-						<div class="label">{{profileForm.age.label}}*</div>
+						<div class="label">{{profileForm.age.label}}</div>
 						<p type="number" class="control has-icons-left">
 							{{profileForm.age}}
 						</p>
 					</div>
 
 					<div class="field requiredFormField">
-						<div class="label">{{profileForm.gender.label}}*</div>
+						<div class="label">{{profileForm.gender.label}}</div>
 						<p class="control has-icons-left">
 							{{profileForm.gender}}
 						</p>
@@ -101,11 +77,21 @@
 
 
 					<div class="control">
-						<input class="button is-info" type="submit" name="Create User" value="Register">
+						<input class="button is-info" type="submit" name="Change Account" value="Change Account">
 					</div>
-		
-
 				</form>
+
+				<div class="panel">
+					<div class="subtitle has-text-danger">
+						<h5>Danger Zone</h5>
+					</div>
+
+					<div class="field control">
+						<a class="button is-danger" id="removeAccountButton_userUpdate" href="{% url 'userDeletion' %}">Remove Account</a>
+					</div>
+
+				</div>
+
 			</div>
 			<div class="column"></div>		
 		</section>
@@ -117,13 +103,20 @@
 		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
 		crossorigin="anonymous"></script>
 	<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+	{% include 'common/CSRFTSetup.html' %}
 	{% include 'common/general.html' %}
-	<script>
-		$(document).ready(function(){
-			$('#error_userRegistration').hide();
-			$('#error_userRegistration').show(500);
-			setTimeout(function(){ $('#error_userRegistration').hide(500); }, 5000);
-		});
-	</script>
 	<script src="{% static "js/formFunctionalities.js" %}"></script>
+	<script>
+		$('#error_userUpdate').hide()
+		$('#error_userUpdate').show(500);
+		setTimeout(function(){ $('#error_userUpdate').hide(500); }, 5000);
+
+		// $('#removeAccountButton_userUpdate').click(function(){
+		// 	$.ajax({
+	 //            type: 'GET',
+	 //            url: '/userDeletion/',
+	 //            data: {'usernameToDelete': user.username}
+		//     });
+		// });
+	</script>
 </html>

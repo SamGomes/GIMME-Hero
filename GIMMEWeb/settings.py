@@ -13,7 +13,11 @@ SECRET_KEY = 'p+ah706u_0-zk@_jq&o#v6&u@)^w5#w&*r_re=usr@u9i-vh3d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS=["localhost","gimme-web.duckdns.org"]
+ALLOWED_HOSTS=["localhost","146.193.226.22","gimme-web.duckdns.org","gimme-web-secure.duckdns.org"]
+
+INTERNAL_IPS = (
+    '127.0.0.1',
+)
 
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 SESSION_SAVE_EVERY_REQUEST = True
@@ -26,6 +30,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+
+    'multiselectfield',
 
     'GIMMEWeb.core'
 ]
@@ -81,7 +88,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
+# AUTH_USER_MODEL = 'GIMMEWeb.core_user'
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
@@ -91,10 +99,13 @@ USE_L10N = True
 USE_TZ = True
 
 CSRF_COOKIE_SECURE = True
+CSRF_USE_SESSIONS = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'GIMMEWeb/core/templates/static/') ]
 
-MEDIA_ROOT = '/static/media/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'GIMMEWeb/core/templates/static/media/')

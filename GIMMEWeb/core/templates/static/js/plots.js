@@ -71,14 +71,14 @@ var buildInteractionsProfilePlot = function(canvasId, data){
 var buildStatePlot = function(canvasId, data){
 
     var margin = {
-        top: 15,
-        right: 25,
+        top: 30,
+        right: 30,
         bottom: 15,
-        left: 60
+        left: 150
     };
 
     var width = 960 - margin.left - margin.right;
-    var height = 500 - margin.top - margin.bottom;
+    var height = 100 - margin.top - margin.bottom;
 
     var svg = d3.select('#'+canvasId).append('svg')
         .attr('width', width + margin.left + margin.right)
@@ -94,10 +94,10 @@ var buildStatePlot = function(canvasId, data){
         .range([0, height])
         .domain(data.map(function(d) {
             return d.name;
-        }))
+        }));
 
-    var xAxis = d3.axisTop(x)
-        .tickSize(0);
+    var xAxis = d3.axisBottom(x).tickValues([]);
+        // .tickSize(0);
 
     var yAxis = d3.axisLeft(y)
         .tickSize(0);
@@ -123,17 +123,25 @@ var buildStatePlot = function(canvasId, data){
 
     var gy = svg.append('g')
         .attr('class', 'y axis')
-        .call(yAxis)
-    var gy = svg.append('g')
+        .call(yAxis)        
+        .style("font-size","20px");
+
+
+    var gx = svg.append('g')
         .attr('class', 'x axis')
         .call(xAxis)
+        .style("font-size","20px");
 }
 
 
 var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
-    
+
+
+    $("#adaptationIssues_professor_dash").hide();
+    $("#adaptationIssuesText_professor_dash").html('');
+
     // from http://bl.ocks.org/mbostock/7555321
-    function wrap(text, width) {
+    var wrap = function (text, width) {
         text.each(function () {
             var text = d3.select(this),
                 words = text.text().split(/\s+/).reverse(),
@@ -166,7 +174,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         });
     }
 
-    function getRandomColor() {
+    var getRandomColor = function() {
         var letters = '0123456789ABCDEF';
         var color = '#';
         for (var i = 0; i < 6; i++) {
@@ -175,8 +183,63 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         return color;
     }
 
+
+    var generateGroupColor = function(profile) {
+        var focus = profile.dimensions.Focus;
+        var valence = profile.dimensions.Valence;
+
+        if (focus >= 0 && focus < 0.33){
+            if (valence >= 0 && valence < 0.33){
+                return "#dd6c02"
+            }
+            else if (valence >= 0.33 && valence < 0.66){
+                return "#ddb502"
+            }
+            else if (valence >= 0.66 && valence <= 1.0){
+                return "#b5dd02"
+            }
+        }
+        else if (focus >= 0.33 && focus < 0.66){
+            if (valence >= 0 && valence < 0.33){
+                return "#dd1402"
+            }
+            else if (valence >= 0.33 && valence < 0.66){
+                return "#a3a1a1"
+            }
+            else if (valence >= 0.66 && valence <= 1.0){
+                return "#19c151"
+            }
+        }
+        else if (focus >= 0.66 && focus <= 1.0){
+            if (valence >= 0 && valence < 0.33){
+                return "#89150b"
+            }
+            else if (valence >= 0.33 && valence < 0.66){
+                return "#cd7dce"
+            }
+            else if (valence >= 0.66 && valence <= 1.0){
+                return "#7724d6"
+            }
+        }
+        return "#a3a1a1"
+    }
+    
+    var generatePlayerColor = function(node){
+        // var userChar = node.userState.profile;
+        // var baseColor = colors[node.groupId];
+        // color = Color(baseColor);
+        // var hsl = {
+        //     h: color.h(),
+        //     s: color.s(),
+        //     l: Math.round(30+50*sqrDistBetweenVectors(node.groupCharacteristics, userChar))
+        // };
+        // color = Color( hsl );
+        return generateGroupColor(node.userState.personalityEst);
+    }
+
+
     // from: https://stackoverflow.com/questions/35969656/how-can-i-generate-the-opposite-color-according-to-current-color
-    function invertColor(hex, isBW) {
+    var invertColor = function(hex, isBW) {
         if (hex.indexOf('#') === 0) {
             hex = hex.slice(1);
         }
@@ -203,21 +266,31 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         // pad each with zeros and return
         return "#" + padZero(r) + padZero(g) + padZero(b);
     }
-    function padZero(str, len) {
+    var padZero = function(str, len) {
         len = len || 2;
         var zeros = new Array(len).join('0');
         return (zeros + str).slice(-len);
     }
 
-    function sqrDistBetweenVectors(vec1, vec2){
+    var sqrDistBetweenVectors = function(vec1, vec2){
         return (Math.pow(vec1.ability - vec2.ability, 2) + Math.pow(vec1.engagement - vec2.engagement, 2));
     }
 
-    const width = 2000;
-    const height = 900;
-    svg = d3.select('#'+canvasId).append('svg')
-      .attr('width', width)
-      .attr('height', height);
+    var resizeCanvas = function(canvas){
+        var targetWidth = canvasContainer.getBoundingClientRect().width-50;
+        canvas.attr("width", targetWidth);
+        canvas.attr("height", targetWidth/aspect);
+    }
+
+    svg = d3.select('#'+canvasId).append('svg');
+
+    var canvas = svg;
+    var canvasContainer = canvas.node().parentNode.parentNode.parentNode;
+
+    aspect = 2.0 / 0.8;
+
+    resizeCanvas(canvas);
+
 
     var userNodes = [];
     var groupIndicatorNodes = [];
@@ -225,23 +298,30 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     var currPlotIndex = 0;
  
+    d3.select(window)
+        .on("resize", function() {
+            resizeCanvas(canvas);
+        });
+
     for (i=0; i<data.groups.length; i++){
         var group = data.groups[i]
-        var avgCharacteristics = data.avgCharacteristics[i]
+        var avgCharacteristics = $.extend( {}, data.avgCharacteristics[i])
+        delete avgCharacteristics.profile
         var profile = data.profiles[i]
-        var adaptedTaskId = data.adaptedTaskIds[i]
-        var groupCenterOfMass = {'x': 100 + Math.random()*(width - 300), 'y': 100 + Math.random()*(height - 300)};
+        var tasks = data.tasks[i]
+        var groupCenterOfMass = {'x': 100 + Math.random()*(canvasContainer.getBoundingClientRect().width - 300), 'y': 100 + Math.random()*(canvasContainer.getBoundingClientRect().height - 300)};
 
-        groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'profile': profile, 'adaptedTaskId': adaptedTaskId, 'centerOfMass': groupCenterOfMass});
+        // groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'profile': profile, 'adaptedTaskId': adaptedTaskId, 'centerOfMass': groupCenterOfMass});
+        groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics, 'profile': profile, 'tasks': tasks, 'centerOfMass': groupCenterOfMass});
         
         for(var j=0;j<group.length; j++){
             //TODO: add user characteristics
             var userId = group[j];
             userState = selectedUsersStates[userId];
-            userNodes.push({'plotIndex': currPlotIndex++, 'userId': userId, 'userState': userState, 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
+            userNodes.push({'plotIndex': currPlotIndex++, 'userId': userId, 'userState': unformattedStringToObj(userState), 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
             // userNodes.push({'userId': userId, 'userState': fetchPlayerStateCallback(userId), 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
         }
-        colors[i] = getRandomColor();
+        colors[i] = generateGroupColor(profile);
     } 
 
     
@@ -276,15 +356,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
 
 
-    function clamp(num, min, max) {
+    var clamp = function(num, min, max) {
       return num <= min ? min : num >= max ? max : num;
-    }
-
-    var generatePlayerColor = function(node){
-        var userChar = node.userState.characteristics;
-        var baseColor = colors[node.groupId].split('#')[1];
-        var transparency = 50 + Math.round(175*(1 - sqrDistBetweenVectors(node.groupCharacteristics, userChar)/2));
-        return '#' +  baseColor + transparency.toString(16);
     }
 
     var nodeElements =
@@ -320,7 +393,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
 
     var getJSONLength = function(json){
-        if(typeof json == "string"){
+        if(typeof json == "string"|| json == undefined){
             return 0;
         }
         var keys = Object.keys(json);
@@ -338,7 +411,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     var htmlFromJSON = function(json, fatherElem, currX, currY){
         
-        if(typeof json == "string" || typeof json == "number"){
+        if(typeof json == "string" || typeof json == "number" || json == undefined){
             return;
         }
 
@@ -371,7 +444,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
                 fatherElem
                 .append('rect')
-                .attr('x', x + 140)
+                .attr('x', x + 160)
                 .attr('y', y)
                 .attr('width', 260)
                 .attr('height', 30)
@@ -380,7 +453,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
                 fatherElem
                 .append('text')
-                .attr('x', x + 150)
+                .attr('x', x + 170)
                 .attr('y', y + 20)
                 .attr('font-size', 20)
                 .attr('font-family', 'Calibri,sans-serif')
@@ -404,8 +477,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         .attr('y', 4)
         .attr('rx', '15px')
         // .attr('ry', '35px')
-        .attr('width', 600)
-        .attr('height', 650)
+        .attr('width', 650)
+        .attr('height', 480)
         .attr('fill', function(node){
                                 var baseColor = colors[node.groupId].split('#')[1];
                                 transparency = 200;
@@ -416,11 +489,15 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     
 
     groupInfoTooltips.each(function(node){ 
-        if(node.adaptedTaskId == -1){
-            alert('Could not compute task for group '+node.groupId+'... Maybe no tasks are available?')
+        if(node.tasks == -1){
+            $('#adaptationIssuesText_professor_dash').html($('#adaptationIssuesText_professor_dash').html() + ('<br></br>Could not compute task for group '+node.groupId+'... Maybe no tasks are available?'));
+            $('#adaptationIssues_professor_dash').show(500);
+            setTimeout(function(){ $('#adaptationIssues_professor_dash').hide(500); }, 10000);
         }
-        json = { 'group Id': node.groupId, 'characteristics': node.characteristics, 
-        'profile': node.profile, 'adaptedTaskId': node.adaptedTaskId == -1 ? '<No computed task>' : node.adaptedTaskId };
+        json = $.extend( {}, node); //performs a shallow copy
+        json.tasks = node.tasks == -1 ? '<No computed tasks>' : json.tasks;
+        delete json.centerOfMass;
+
         var currTooltip = d3.select(groupInfoTooltips._groups[0][node.groupId]);
         htmlFromJSON(json, currTooltip, 0, 0);
     });
@@ -455,15 +532,22 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     
     userInfoTooltips.each(function(node){
         var currTooltip = d3.select(userInfoTooltips._groups[0][node.plotIndex]);
+        delete node.userState.group
+        delete node.userState.tasks
+        delete node.userState.stateGrid
         htmlFromJSON({'userId': node.userId, 'userState': node.userState}, currTooltip, 0, 0);
     })
+
+
+    // nodeElements.on('click', function(d){ 
+    //     var elem = d3.select(userInfoTooltips._groups[0][d.plotIndex]); 
+    //     d3.select(d).style('stroke-width','3em');
+    //     elem.style('visibility') == 'visible'? elem.style('visibility', 'hidden') : elem.style('visibility', 'visible');});
 
     nodeElements.on('mouseover', function(d){ d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'visible');})
         .on('mouseout', function(d){ d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'hidden');});        
 
         
-
-
 
 
 
@@ -575,9 +659,63 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             resetSim();
         });
 
-    groupIndicators.call(dragDrop);
+    groupIndicators.call(dragDrop);    
+}
+
+var buildScatterInteractionPlot  = function(canvasId, data){
+    //originally from https://www.d3-graph-gallery.com/graph/scatter_basic.html
+
+    // set the dimensions and margins of the graph
+    var margin = {top: 50, right: 50, bottom: 50, left: 50},
+        width = 600 - margin.left - margin.right,
+        height = 600 - margin.top - margin.bottom;
+
+    // append the svg object to the body of the page
+    svg = d3.select('#'+canvasId)
+      .append('svg')
+        .attr('width', width + margin.left + margin.right)
+        .attr('height', height + margin.top + margin.bottom)
+        .style('background', 'url("../media/images/plots/interactionSpaceBckgrd.png") no-repeat')
+        .style('background-size', '90%')
+        .style('background-position', 'center')
+      .append('g')
+        .attr('transform',
+              'translate(' + margin.left + ',' + margin.top + ')');
     
 
 
+    // Add X axis
+    var x = d3.scaleLinear()
+        .domain([-3, 3])
+        .range([ 0, width ]);
+        svg.append('g')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x).ticks(5, "f"))
+        .style('font-size','20px');
 
+
+    // Add Y axis
+    var y = d3.scaleLinear()
+        .domain([-3, 3])
+        .range([ height, 0]);
+        svg.append('g')
+        .call(d3.axisLeft(y).ticks(5, "f"))
+        .style('font-size','20px');
+
+    // Add dots
+    svg.append('g')
+        .selectAll('dot')
+        .data(data)
+        .enter()
+        .append('circle')
+        .attr('cx', function (d) { return x(d.focus); } )
+        .attr('cy', function (d) { return y(d.valence); } )
+        .attr('r', 10)
+        .style('fill', '#50C2E3')
+        .style('stroke', 'black')
+        .style('stroker-width', '5');
+
+    
 }
+
+

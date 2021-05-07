@@ -1,0 +1,69 @@
+{% load static %}
+{% include "common/header.html" %}  
+<!DOCTYPE html>
+<html>
+<body class="layout-default">
+	
+	
+	<section class="section columns">
+		<div class="column"></div>
+		<div class="panel panel-block column">
+			<form action="" enctype="multipart/form-data" id="form_taskUpdate" method="POST">
+				{% csrf_token %}
+				
+				{% if form.errors %}
+				<div id="error_taskUpdate" class="section hero is-danger is-centered has-text-centered">
+					<label class="label subtitle is-4 is-white">Registry Fail! Errors: </label>
+					<p class="is-4 is-white">{{form.errors}} </p>
+					<p class="is-4 is-white">{{profileForm.errors}} </p>
+				</div>
+				{% endif %}
+
+				<div class="subtitle">Task Registration</div>
+				<p>* fields are mandatory</p>
+
+				{% for field in form %}
+				<div class="field">
+					<div class="label">{{field.label}}*</div>
+					<p class="control has-icons-left">
+						{{field}}
+					</p>
+				</div>
+				{% endfor %}
+
+
+
+				<div class="field requiredFormField">
+					<label class="label">Interaction Profile*</label>
+					<div class="control">
+						<input name="profileDim0" class="input" type="number" placeholder="0.25" step="0.01" name="">
+						<input name="profileDim1" class="input" type="number" placeholder="0.25" step="0.01" name="">
+					</div>
+				</div>
+
+				<br></br>
+
+				<div class="control">
+					<input type="submit" class="button is-info" value="Register Task" id="submitButton_taskUpdate">
+				</div>
+			</form>
+		</div>
+		<div class="column"></div>		
+	</section>
+
+</body>
+<script
+src="https://code.jquery.com/jquery-3.2.1.min.js"
+integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+crossorigin="anonymous"></script>
+<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+{% include 'common/general.html' %}
+<script>
+	$(document).ready(function(){
+		$('#error_taskUpdate').hide();
+		$('#error_taskUpdate').show(500);
+		setTimeout(function(){ $('#error_taskUpdate').hide(500); }, 5000);
+	});
+</script>
+<script src="{% static "js/formFunctionalities.js" %}"></script>
+</html>
