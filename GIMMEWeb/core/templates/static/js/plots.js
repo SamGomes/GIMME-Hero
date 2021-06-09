@@ -186,39 +186,39 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     var generateGroupColor = function(profile) {
         var focus = profile.dimensions.Focus;
-        var valence = profile.dimensions.Valence;
+        var challenge = profile.dimensions.Challenge;
 
         if (focus >= 0 && focus < 0.33){
-            if (valence >= 0 && valence < 0.33){
-                return "#dd6c02"
+            if (challenge >= 0 && challenge < 0.33){
+                return "#b5dd02"
             }
-            else if (valence >= 0.33 && valence < 0.66){
+            else if (challenge >= 0.33 && challenge < 0.66){
                 return "#ddb502"
             }
-            else if (valence >= 0.66 && valence <= 1.0){
-                return "#b5dd02"
+            else if (challenge >= 0.66 && challenge <= 1.0){
+                return "#dd6c02"
             }
         }
         else if (focus >= 0.33 && focus < 0.66){
-            if (valence >= 0 && valence < 0.33){
+            if (challenge >= 0 && challenge < 0.33){
                 return "#dd1402"
             }
-            else if (valence >= 0.33 && valence < 0.66){
+            else if (challenge >= 0.33 && challenge < 0.66){
                 return "#a3a1a1"
             }
-            else if (valence >= 0.66 && valence <= 1.0){
+            else if (challenge >= 0.66 && challenge <= 1.0){
                 return "#19c151"
             }
         }
         else if (focus >= 0.66 && focus <= 1.0){
-            if (valence >= 0 && valence < 0.33){
-                return "#89150b"
+            if (challenge >= 0 && challenge < 0.33){
+                return "#7724d6"
             }
-            else if (valence >= 0.33 && valence < 0.66){
+            else if (challenge >= 0.33 && challenge < 0.66){
                 return "#cd7dce"
             }
-            else if (valence >= 0.66 && valence <= 1.0){
-                return "#7724d6"
+            else if (challenge >= 0.66 && challenge <= 1.0){
+                return "#89150b"
             }
         }
         return "#a3a1a1"
@@ -709,7 +709,7 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .enter()
         .append('circle')
         .attr('cx', function (d) { return x(d.focus); } )
-        .attr('cy', function (d) { return y(d.valence); } )
+        .attr('cy', function (d) { return y(d.challenge); } )
         .attr('r', 10)
         .style('fill', '#50C2E3')
         .style('stroke', 'black')

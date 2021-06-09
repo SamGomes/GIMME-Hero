@@ -31,7 +31,7 @@ from django.contrib import messages
 from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm
 
 
-intProfTemplate = InteractionsProfile({"Valence": 0, "Focus": 0})
+intProfTemplate = InteractionsProfile({"Challenge": 0, "Focus": 0})
 
 
 class ServerStateModelBridge():
@@ -363,7 +363,7 @@ class Views(): #acts as a namespace
 
 	def initServer(request):
 		serverStateModelBridge.setCurrAdaptationState([])
-		serverStateModelBridge.setReadyForNewActivity(False)
+		serverStateModelBridge.setReadyForNewActivity(True)
 		serverStateModelBridge.setCurrSelectedUsers([])
 		serverStateModelBridge.setCurrFreeUsers(playerBridge.getAllStoredStudentUsernames())
 		serverStateModelBridge.setCurrSelectedTasks([])
@@ -670,8 +670,10 @@ class Views(): #acts as a namespace
 		serverStateModelBridge.setReadyForNewActivity(False)
 		try:
 			currAdaptationState = adaptation.iterate()
-		except ValueError:
-			print("Iteration call returned ValueError error!")
+		except (Exception, ArithmeticError, ValueError) as e:
+			template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+			message = template.format(type(e).__name__, e.args)
+			print(message)
 			serverStateModelBridge.setReadyForNewActivity(True)
 			return HttpResponse('error')
 			
@@ -774,7 +776,7 @@ class Views(): #acts as a namespace
 
 					task.profile = json.dumps(InteractionsProfile(
 						{
-						 "Valence": float(requestInfo['profileDim0']),
+						 "Challenge": float(requestInfo['profileDim0']),
 						 "Focus": float(requestInfo['profileDim1'])
 						 }
 					), default=lambda o: o.__dict__, sort_keys=True)
