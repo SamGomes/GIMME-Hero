@@ -90,6 +90,11 @@ var buildStatePlot = function(canvasId, data){
         .range([0, width])
         .domain([0,1]);
 
+        // data.map(function(d) {
+        //     console.log(d)
+        //     return d.value;
+        // })
+
     var y = d3.scaleBand()
         .range([0, height])
         .domain(data.map(function(d) {
@@ -234,7 +239,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         //     l: Math.round(30+50*sqrDistBetweenVectors(node.groupCharacteristics, userChar))
         // };
         // color = Color( hsl );
-        return generateGroupColor(node.userState.personalityEst);
+        return generateGroupColor(node.userState.preferencesEst);
     }
 
 
@@ -277,7 +282,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     }
 
     var resizeCanvas = function(canvas){
-        var targetWidth = canvasContainer.getBoundingClientRect().width-50;
+        var targetWidth = canvasContainer.getBoundingClientRect().width - 50;
         canvas.attr("width", targetWidth);
         canvas.attr("height", targetWidth/aspect);
     }
@@ -311,7 +316,6 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         var tasks = data.tasks[i]
         var groupCenterOfMass = {'x': 100 + Math.random()*(canvasContainer.getBoundingClientRect().width - 300), 'y': 100 + Math.random()*(canvasContainer.getBoundingClientRect().height - 300)};
 
-        // groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics,  'profile': profile, 'adaptedTaskId': adaptedTaskId, 'centerOfMass': groupCenterOfMass});
         groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics, 'profile': profile, 'tasks': tasks, 'centerOfMass': groupCenterOfMass});
         
         for(var j=0;j<group.length; j++){
@@ -319,7 +323,6 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             var userId = group[j];
             userState = selectedUsersStates[userId];
             userNodes.push({'plotIndex': currPlotIndex++, 'userId': userId, 'userState': unformattedStringToObj(userState), 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
-            // userNodes.push({'userId': userId, 'userState': fetchPlayerStateCallback(userId), 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
         }
         colors[i] = generateGroupColor(profile);
     } 
@@ -488,18 +491,49 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         .attr('stroke', 'black');
     
 
-    groupInfoTooltips.each(function(node){ 
-        if(node.tasks == -1){
+    groupInfoTooltips.each(function(originalNode){ 
+
+        var currTooltip = d3.select(groupInfoTooltips._groups[0][originalNode.groupId]);
+        if(originalNode.tasks == -1){
             $('#adaptationIssuesText_professor_dash').html($('#adaptationIssuesText_professor_dash').html() + ('<br></br>Could not compute task for group '+node.groupId+'... Maybe no tasks are available?'));
             $('#adaptationIssues_professor_dash').show(500);
             setTimeout(function(){ $('#adaptationIssues_professor_dash').hide(500); }, 10000);
         }
-        json = $.extend( {}, node); //performs a shallow copy
-        json.tasks = node.tasks == -1 ? '<No computed tasks>' : json.tasks;
-        delete json.centerOfMass;
+        node = $.extend({}, originalNode); //performs a shallow copy
+        node.tasks = originalNode.tasks == -1 ? '<No computed tasks>' : originalNode.tasks;
 
-        var currTooltip = d3.select(groupInfoTooltips._groups[0][node.groupId]);
-        htmlFromJSON(json, currTooltip, 0, 0);
+
+        //change displayed attributes to be more friendly and easy to read
+        characteristics = $.extend({}, originalNode.characteristics);
+        dimensions = $.extend({}, originalNode.profile.dimensions);
+        // characteristics = node.characteristics;
+        // dimensions = node.profile.dimensions;
+
+        cKeys = Object.keys(characteristics);
+        dKeys = Object.keys(dimensions);
+        for (i=0; i<cKeys.length; i++){
+            key = cKeys[i];
+            currC = characteristics[key]; 
+            characteristics[key] = Number((currC).toFixed(2));
+        }
+        for (i=0; i<dKeys.length; i++){
+            key = dKeys[i];
+            currD = dimensions[key]; 
+            dimensions[key] = Number((currD).toFixed(2));
+        }
+
+        node["Characteristics"] = characteristics;
+        node["Profile"] = dimensions;
+
+        //delete undisplayed attributes
+        delete node.profile;
+        delete node.characteristics;
+        delete node.centerOfMass;
+
+
+
+
+        htmlFromJSON(node, currTooltip, 0, 0);
     });
 
 
@@ -532,9 +566,37 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     
     userInfoTooltips.each(function(node){
         var currTooltip = d3.select(userInfoTooltips._groups[0][node.plotIndex]);
-        delete node.userState.group
-        delete node.userState.tasks
-        delete node.userState.stateGrid
+        
+        //change displayed attributes to be more friendly and easy to read
+        characteristics = node.userState.characteristics;
+        dimensions = node.userState.preferencesEst.dimensions;
+
+        cKeys = Object.keys(characteristics);
+        dKeys = Object.keys(dimensions);
+        for (i=0; i<cKeys.length; i++){
+            key = cKeys[i];
+            currC = characteristics[key]; 
+            characteristics[key] = Number((currC).toFixed(2));
+        }
+        for (i=0; i<dKeys.length; i++){
+            key = dKeys[i];
+            currD = dimensions[key]; 
+            dimensions[key] = Number((currD).toFixed(2));
+        }
+
+        node.userState["Student Name"] = node.userState.fullName;
+        node.userState["Characteristics"] = characteristics;
+        node.userState["Preferences Est"] = dimensions;
+
+        //delete undisplayed attributes
+        delete node.userState.group;
+        delete node.userState.tasks;
+        delete node.userState.statesDataFrame;
+        delete node.userState.preferencesEst.dimensionality;
+        delete node.userState.preferencesEst
+        delete node.userState.fullName
+        delete node.userState.characteristics
+
         htmlFromJSON({'userId': node.userId, 'userState': node.userState}, currTooltip, 0, 0);
     })
 
@@ -591,10 +653,6 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
             groupInfoTooltips
                 .attr('transform', node => 'translate('+node.centerOfMass.x+' '+node.centerOfMass.y+')');
-
-            // textElements
-            //     .attr('x', node => node.x)
-            //     .attr('y', node => node.y);
 
             userInfoTooltips
                 .attr('transform', node => 'translate('+node.x+' '+node.y+')');

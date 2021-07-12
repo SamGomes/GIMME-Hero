@@ -722,7 +722,7 @@ crossorigin='anonymous'></script>
 			for(var i=0; i<studentsStates.length; i++){
 				var currState = JSON.parse(studentsStates[i]);
 				// console.log(currState)
-				interactionDatapoints[i] = { "Full Name": currState.fullName,"focus": currState.personalityEst.dimensions.Focus*6-3, "challenge": currState.personalityEst.dimensions.Challenge*6-3 , "timestamp": 1 }
+				interactionDatapoints[i] = { "Full Name": currState.fullName,"focus": currState.preferencesEst.dimensions.Focus*6-3, "challenge": currState.preferencesEst.dimensions.Challenge*6-3 , "timestamp": 1 }
 				
 				avgChars[0] += currState.characteristics.ability/studentsStates.length;
 				avgChars[1] += currState.characteristics.engagement/studentsStates.length;

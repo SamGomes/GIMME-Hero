@@ -32,7 +32,10 @@ from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTas
 
 
 intProfTemplate = InteractionsProfile({"Challenge": 0, "Focus": 0})
-
+trimAlgTemplate = ProximitySortPlayerDataTrimAlg(
+				maxNumModelElements = 10, 
+				epsilon = 0.05
+			) 
 
 class ServerStateModelBridge():
 
@@ -196,8 +199,9 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 		playerStateGrid = self.getPlayerStateGrid(username)
 		playerStateGrid.pushToGrid(newState)
-		playerInfo.pastModelIncreasesGrid = json.dumps(playerStateGrid, default=lambda o: o.__dict__)
+		playerInfo.pastModelIncreasesDataFrame = json.dumps(playerStateGrid, default=lambda o: o.__dict__)
 		playerInfo.save()
+
 
 	def resetPlayer(self, username):
 		return 0
@@ -237,35 +241,33 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		tasks = json.loads(playerInfo.currState)["tasks"]
 		return tasks
 	
-	def getPlayerStateGrid(self, username):
+	def getPlayerStatesDataFrame(self, username):
 		playerInfo = User.objects.get(username=username).userprofile
+		pastModelIncreasesDataFrame = json.loads(playerInfo.pastModelIncreasesDataFrame)
 
-		playerStateGrid = json.loads(playerInfo.pastModelIncreasesGrid)
-		cells = [[]]
-		for cell in playerStateGrid["cells"]:
-			newCell = []
-			for state in cell:
-				characteristics = state["characteristics"]
-				characteristics = PlayerCharacteristics(ability= float(characteristics["ability"]), engagement= float(characteristics["engagement"]))
+		states = []
+		for state in pastModelIncreasesDataFrame["states"]:
+			characteristics = state["characteristics"]
+			characteristics = PlayerCharacteristics(ability= float(characteristics["ability"]), engagement= float(characteristics["engagement"]))
 
-				profile = state["profile"]
-				profile = InteractionsProfile(dimensions= profile["dimensions"])
-				
-				newCell.append(PlayerState(profile = profile, characteristics = characteristics, dist=state["dist"]))
-			cells.append(newCell)
+			profile = state["profile"]
+			profile = InteractionsProfile(dimensions= profile["dimensions"])
+			
+			newCell.append(PlayerState(profile = profile, characteristics = characteristics, dist=state["dist"], quality=state["quality"]))
+			states.append(newCell)
 
-		gridTrimAlg = json.loads(json.dumps(playerStateGrid["gridTrimAlg"]))
-		# print(gridTrimAlg)
-		return	PlayerStateGrid(
-			cells = cells,
+		trimAlg = json.loads(json.dumps(pastModelIncreasesDataFrame["trimAlg"]))
+		# print(trimAlg)
+		sdf = PlayerStatesDataFrame(
+			states = states,
 			interactionsProfileTemplate = intProfTemplate.generateCopy().reset(), 
-			gridTrimAlg = QualitySortGridTrimAlg(
-			# gridTrimAlg = AgeSortGridTrimAlg(
-				maxNumModelElements = int(gridTrimAlg["maxNumModelElements"]), 
-				qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5)
-				), 
-			numCells = int(playerStateGrid["numCells"])
+			trimAlg = ProximitySortPlayerDataTrimAlg(
+				maxNumModelElements = int(trimAlg["maxNumModelElements"]), 
+				epsilon = float(trimAlg["epsilon"])
+				)
 			)
+		return sdf
+
 
 	def getPlayerCurrCharacteristics(self, username):
 		playerInfo = User.objects.get(username=username).userprofile
@@ -273,11 +275,11 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		return PlayerCharacteristics(ability= float(characteristics["ability"]), 
 			engagement= float(characteristics["engagement"]))
 	
-	def getPlayerPersonalityEst(self, username):
+	def getPlayerPreferencesEst(self, username):
 		playerInfo = User.objects.get(username=username).userprofile
-		personality = json.loads(playerInfo.personality)
-		personality = InteractionsProfile(dimensions= personality["dimensions"])
-		return personality
+		preferences = json.loads(playerInfo.preferences)
+		preferences = InteractionsProfile(dimensions= preferences["dimensions"])
+		return preferences
 
 	def getPlayerCurrState(self, username):
 		playerInfo = User.objects.get(username=username).userprofile
@@ -300,9 +302,9 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		playerInfo.currState = json.dumps(newState, default=lambda o: o.__dict__)
 		playerInfo.save()
 
-	def setPlayerPersonalityEst(self, username, personality):
+	def setPlayerPreferencesEst(self, username, preferences):
 		playerInfo = User.objects.get(username=username).userprofile
-		playerInfo.personality = json.dumps(personality, default=lambda o: o.__dict__)
+		playerInfo.preferences = json.dumps(preferences, default=lambda o: o.__dict__)
 		playerInfo.save()
 
 
@@ -346,7 +348,7 @@ defaultConfigsAlg = StochasticHillclimberConfigsGen(
 	playerModelBridge = playerBridge, 
 	interactionsProfileTemplate = intProfTemplate.generateCopy(), 
 	regAlg = KNNRegression(playerBridge, 5), 
-	persEstAlg = ExplorationPersonalityEstAlg(
+	persEstAlg = ExplorationPreferencesEstAlg(
 		playerModelBridge = playerBridge, 
 		interactionsProfileTemplate = intProfTemplate.generateCopy(), 
 		regAlg = KNNRegression(playerBridge, 5),
@@ -411,18 +413,13 @@ class Views(): #acts as a namespace
 				profile.user = user
 
 				profile.currState = json.dumps(PlayerState(), default=lambda o: o.__dict__, sort_keys=True)
-				profile.pastModelIncreasesGrid = json.dumps(
-					PlayerStateGrid(
+				profile.pastModelIncreasesDataFrame = json.dumps(
+					PlayerStatesDataFrame(
 						interactionsProfileTemplate = intProfTemplate.generateCopy().reset(), 
-						gridTrimAlg = QualitySortGridTrimAlg(
-						# gridTrimAlg = AgeSortGridTrimAlg(
-							maxNumModelElements = 30, #requestInfo["maxNumModelElements"]
-							qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5) #requestInfo["ability"]...
-							), 
-						numCells = 1 #requestInfo["numCells"]
+						trimAlg = trimAlgTemplate
 					), 
 				default=lambda o: o.__dict__, sort_keys=True)
-				profile.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
+				profile.preferences = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
 
 				profile.save() 
 
@@ -705,7 +702,7 @@ class Views(): #acts as a namespace
 							playerModelBridge = playerBridge, 
 							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
 							regAlg = selectedRegAlg, 
-							persEstAlg = ExplorationPersonalityEstAlg(
+							persEstAlg = ExplorationPreferencesEstAlg(
 								playerModelBridge = playerBridge, 
 								interactionsProfileTemplate = intProfTemplate.generateCopy(), 
 								regAlg = selectedRegAlg,
@@ -723,7 +720,7 @@ class Views(): #acts as a namespace
 							playerModelBridge = playerBridge, 
 							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
 							regAlg = selectedRegAlg, 
-							persEstAlg = ExplorationPersonalityEstAlg(
+							persEstAlg = ExplorationPreferencesEstAlg(
 								playerModelBridge = playerBridge, 
 								interactionsProfileTemplate = intProfTemplate.generateCopy(), 
 								regAlg = selectedRegAlg,
@@ -897,10 +894,10 @@ class Views(): #acts as a namespace
 			# userState["myStateGrid"] = playerBridge.getPlayerStateGrid(username)
 			userInfo["fullName"] = playerBridge.getPlayerFullName(username)
 			userInfo["characteristics"] = playerBridge.getPlayerCurrCharacteristics(username)
-			userInfo["personalityEst"] = playerBridge.getPlayerPersonalityEst(username)
+			userInfo["preferencesEst"] = playerBridge.getPlayerPreferencesEst(username)
 			userInfo["group"] = playerBridge.getPlayerCurrGroup(username)
 			userInfo["tasks"] = playerBridge.getPlayerCurrTasks(username)
-			userInfo["stateGrid"] = playerBridge.getPlayerStateGrid(username)
+			userInfo["statesDataFrame"] = playerBridge.getPlayerStatesDataFrame(username)
 
 			userInfo = json.dumps(userInfo, default=lambda o: o.__dict__, sort_keys=True)
 			return HttpResponse(userInfo)
@@ -923,8 +920,7 @@ class Views(): #acts as a namespace
 			taskObject = HttpRequest()
 			taskObject.method = "POST"
 			
-			# breakpoint()
-
+			
 			currSelectedTasksIds = serverStateModelBridge.getCurrSelectedTasks()
 			taskObject.POST = {'tasks': str(currSelectedTasksIds)[1:][:-1].replace(' ','').replace('\'','')}
 			currSelectedTasks = Views.fetchTasksFromId(taskObject).content.decode('utf-8')
@@ -942,6 +938,7 @@ class Views(): #acts as a namespace
 
 			newSessionState['readyForNewActivity'] = serverStateModelBridge.isReadyForNewActivity()
 
+			# breakpoint()
 			if('professor' in request.user.userprofile.role):
 				newSessionState['currAdaptationState'] = serverStateModelBridge.getCurrAdaptationState()
 
