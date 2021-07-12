@@ -71,9 +71,9 @@ var buildInteractionsProfilePlot = function(canvasId, data){
 var buildStatePlot = function(canvasId, data){
 
     var margin = {
-        top: 30,
+        top: 20,
         right: 30,
-        bottom: 15,
+        bottom: 30,
         left: 150
     };
 
@@ -86,14 +86,10 @@ var buildStatePlot = function(canvasId, data){
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
+    var maxValue = Math.max(data[0].value, data[1].value);
     var x = d3.scaleLinear()
         .range([0, width])
-        .domain([0,1]);
-
-        // data.map(function(d) {
-        //     console.log(d)
-        //     return d.value;
-        // })
+        .domain([0, maxValue + 0.5]);
 
     var y = d3.scaleBand()
         .range([0, height])
@@ -101,8 +97,8 @@ var buildStatePlot = function(canvasId, data){
             return d.name;
         }));
 
-    var xAxis = d3.axisBottom(x).tickValues([]);
-        // .tickSize(0);
+    var xAxis = d3.axisBottom(x)
+        .tickSize(maxValue / 5.0);
 
     var yAxis = d3.axisLeft(y)
         .tickSize(0);
@@ -135,6 +131,7 @@ var buildStatePlot = function(canvasId, data){
     var gx = svg.append('g')
         .attr('class', 'x axis')
         .call(xAxis)
+        .attr('transform', 'translate(0,' + height + ')')
         .style("font-size","20px");
 }
 

@@ -920,7 +920,7 @@ class Views(): #acts as a namespace
 			taskObject = HttpRequest()
 			taskObject.method = "POST"
 			
-			
+
 			currSelectedTasksIds = serverStateModelBridge.getCurrSelectedTasks()
 			taskObject.POST = {'tasks': str(currSelectedTasksIds)[1:][:-1].replace(' ','').replace('\'','')}
 			currSelectedTasks = Views.fetchTasksFromId(taskObject).content.decode('utf-8')
