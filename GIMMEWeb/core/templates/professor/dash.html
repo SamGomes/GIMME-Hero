@@ -253,7 +253,7 @@
 											Random
 										</a>
 										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
-											StochasticHillclimber
+											Pure Random Search
 											<div class='form-group'>
 												<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
 												<div class='control'>
@@ -262,7 +262,7 @@
 											</div>
 										</a>
 										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
-											SimulatedAnnealing
+											Annealed Pure Random Search
 											<div class='form-group'>
 												<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
 												<div class='control'>
@@ -276,7 +276,7 @@
 											</div>
 										</a>
 										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
-											Evolutionary
+											Evolutionary Search
 											<div class='form-group'>
 												<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
 												<div class='control'>
@@ -395,9 +395,9 @@
 
 						<div class='columns is-multiline'>
 							<div class='column is-one-third has-text-centered has-tooltip-top has-tooltip-arrow'  data-tooltip='Rebuilds the plot, without computing a new adaptation state.'>
-								<button class='button is-large' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plots</button>
+								<button class='button is-large' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plot</button>
 							</div>
-							<div class='column is-one-third has-text-centered has-tooltip-top has-tooltip-arrow' data-tooltip='Loads the parameterization above computes a new adaptation state, iff the configuration changed.' >
+							<div class='column is-one-third has-text-centered has-tooltip-top has-tooltip-arrow' data-tooltip='Loads the parameterization above iff the configuration changed, and computes a new adaptation state.' >
 								<a>
 									<button class='button is-large' type='submit' id='loadAndStartAdaptation_professor_dash' >Load Setup and Compute New Adaptation</button>
 								</a>
@@ -608,13 +608,13 @@ crossorigin='anonymous'></script>
 
 							readyForNewActivity = newServerState.readyForNewActivity;
 							if(readyForNewActivity==true){
-								$('#forceStartAdaptation_professor_dash').removeClass("is-loading");
+								$('#forceStartAdaptation_professor_dash').removeClass('is-loading');
 								$('#loadAndStartAdaptation_professor_dash').removeClass('is-loading');
-								$('#rebuildPlot_professor_dash').removeClass("is-loading");
+								$('#rebuildPlot_professor_dash').removeClass('is-loading');
 							}else{
-								$('#rebuildPlot_professor_dash').addClass("is-loading");
-								$('#forceStartAdaptation_professor_dash').addClass("is-loading");
-								$('#loadAndStartAdaptation_professor_dash').addClass("is-loading");
+								$('#rebuildPlot_professor_dash').addClass('is-loading');
+								$('#forceStartAdaptation_professor_dash').addClass('is-loading');
+								$('#loadAndStartAdaptation_professor_dash').addClass('is-loading');
 							}
 
 							var currSelectedUsers = newServerState.currSelectedUsers;
