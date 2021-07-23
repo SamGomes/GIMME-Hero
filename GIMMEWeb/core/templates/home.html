@@ -30,16 +30,16 @@
 						<form  method="POST" action="">
 							{% csrf_token %}
 							<div class='field'>
-							  <label class='label subtitle is-5'></label>
+							  <label class='label subtitle is-5'>Username:</label>
 							  <div class='control'>
-							    <input id='loginUsername_home' class='input' type='text' placeholder='' name='username'>
+							    <input id='loginUsername_home' class='input' type='text' name='username'>
 							  </div>
 							</div>
 
 							<div class='field'>
-								<label class='label subtitle is-5'></label>
+								<label class='label subtitle is-5'>Password:</label>
 								<p class='control has-icons-left'>
-									<input id='loginPassword_home' class='input' type='password' placeholder='' name='password'>
+									<input id='loginPassword_home' class='input' type='password' name='password'>
 									<span class='icon is-small is-left'>
 										<i class='fas fa-lock'></i>
 									</span>
