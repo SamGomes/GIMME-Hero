@@ -389,6 +389,10 @@ class Views(): #acts as a namespace
 		password = request.POST.get('password')
 		print('[INFO] login check performed on user with id - ' + str(username) + ', password - '+str(password))
 
+		# breakpoint()
+		if(username is None):
+			return
+
 		user = authenticate(request, username=username, password=password)
 		if user is not None:
 			login(request, user)
