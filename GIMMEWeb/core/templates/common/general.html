@@ -21,7 +21,7 @@ $(document).ready(function(){
         }
         dropdownItem.addClass("is-active");
         //update that dropdown text
-        $($($(dropdownItem.parent().parent().parent().children()[0]).children()[0]).children()[0]).text(dropdownItem.text().split('\n')[1].replace(/\W/g, ""));
+        $($($(dropdownItem.parent().parent().parent().children()[0]).children()[0]).children()[0]).text(dropdownItem.text().split('\n')[1].replaceAll('\t',''));
     };
 
     var dropdownItems = $(".dropdown-item");
@@ -138,7 +138,7 @@ var parseUnformattedString = function(attributeStr){
 }
 
 var unformattedStringToObj = function(attributeStr){
-    console.log(attributeStr);
+    // console.log(attributeStr);
     return JSON.parse(parseUnformattedString(attributeStr))
 }
 

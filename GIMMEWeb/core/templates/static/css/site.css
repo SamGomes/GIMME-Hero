@@ -130,3 +130,11 @@ body {
 .wait {cursor: wait;}
 .zoom-in {cursor: zoom-in;}
 .zoom-out {cursor: zoom-out;}
+
+.dropdown-menu {
+  z-index: 1000;
+}
+
+.dropdown-item {
+  z-index: 1000;
+}

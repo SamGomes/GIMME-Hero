@@ -344,20 +344,10 @@ adaptation = Adaptation()
 # 	profileTemplate.dimensions['dim_'+str(d)] = 0.0
 
 
-defaultConfigsAlg = PureRandomSearchConfigsGen(
-	playerModelBridge = playerBridge, 
-	interactionsProfileTemplate = intProfTemplate.generateCopy(), 
-	regAlg = KNNRegression(playerBridge, 5), 
-	persEstAlg = ExplorationPreferencesEstAlg(
-		playerModelBridge = playerBridge, 
-		interactionsProfileTemplate = intProfTemplate.generateCopy(), 
-		regAlg = KNNRegression(playerBridge, 5),
-		numTestedPlayerProfiles = 100, 
-		qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5)), 
-	numberOfConfigChoices = 300, 
-	preferredNumberOfPlayersPerGroup = 5, 
-	qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5)
-)
+defaultConfigsAlg = RandomConfigsGen(
+				playerModelBridge = playerBridge, 
+				interactionsProfileTemplate = intProfTemplate.generateCopy(),
+				preferredNumberOfPlayersPerGroup = 4)
 adaptation.init(playerBridge, taskBridge, configsGenAlg = defaultConfigsAlg, name='GIMME')
 
 
@@ -683,10 +673,11 @@ class Views(): #acts as a namespace
 		return Views.fetchServerState(request)
 
 
-	
 	def configAdaptation(request):
 		
-		# print(json.dumps(request.POST, default=lambda o: o.__dict__, sort_keys=True))
+		# breakpoint()
+
+		# switch reg algs
 		selectedRegAlg = {}		
 		def selectedRegAlgSwitcherKNN(request):
 			return KNNRegression( 
@@ -694,14 +685,24 @@ class Views(): #acts as a namespace
 				int(request.POST['numNNs'])
 			)
 
-		selectedRegAlgSwitcher = { 
-		    'KNN': selectedRegAlgSwitcherKNN(request)
-		} 
-		selectedRegAlg = selectedRegAlgSwitcher.get(request.POST['selectedRegAlgId'], None)
+		selectedRegAlgId = request.POST['selectedRegAlgId']
+		# selectedRegAlg = None
+		if (selectedRegAlgId =='KNN'):
+			selectedRegAlg = selectedRegAlgSwitcherKNN(request)
 
 
 		selectedGenAlg = {}
-		def selectedGenAlgSwitcherStochasticHillclimber(request):
+		def selectedGenAlgSwitcherRandom(request):
+			print('RRRRRRRRRRRRRRRRR')
+			return RandomConfigsGen(
+				playerModelBridge = playerBridge, 
+				interactionsProfileTemplate = intProfTemplate.generateCopy(),
+				minNumberOfPlayersPerGroup = int(request.POST['minNumberOfPlayersPerGroup']), 
+				maxNumberOfPlayersPerGroup = int(request.POST['maxNumberOfPlayersPerGroup']), 
+				preferredNumberOfPlayersPerGroup = int(request.POST['preferredNumberOfPlayersPerGroup']))
+
+		def selectedGenAlgSwitcherPRS(request):
+			print('PPPPPPPPPPPPPPPPP')
 			return PureRandomSearchConfigsGen(
 							playerModelBridge = playerBridge, 
 							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
@@ -719,7 +720,8 @@ class Views(): #acts as a namespace
 							qualityWeights = PlayerCharacteristics(ability=float(request.POST['qualityWeightsAb']), engagement=float(request.POST['qualityWeightsEng']))
 					)
 
-		def selectedGenAlgSwitcherSimulatedAnnealing(request):
+		def selectedGenAlgSwitcherAnnealedPRS(request):
+			print('AAAAAAAAAAAAAAAAA')
 			return AnnealedPRSConfigsGen(
 							playerModelBridge = playerBridge, 
 							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
@@ -738,21 +740,44 @@ class Views(): #acts as a namespace
 							temperatureDecay = float(request.POST['temperatureDecay'])
 					)
 
-
-		def selectedGenAlgSwitcherRandom(request):
-			return RandomConfigsGen(
+		def selectedGenAlgSwitcherEvolutionary(request):
+			print('EEEEEEEEEEEEEEEEE')
+			return EvolutionaryConfigsGenDEAP(
 				playerModelBridge = playerBridge, 
-				interactionsProfileTemplate = intProfTemplate.generateCopy(),
-				minNumberOfPlayersPerGroup = int(request.POST['minNumberOfPlayersPerGroup']), 
-				maxNumberOfPlayersPerGroup = int(request.POST['maxNumberOfPlayersPerGroup']), 
-				preferredNumberOfPlayersPerGroup = int(request.POST['preferredNumberOfPlayersPerGroup']))
+				interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+				regAlg = selectedRegAlg, 
+				preferredNumberOfPlayersPerGroup = int(request.POST['preferredNumberOfPlayersPerGroup']), 
+				qualityWeights = PlayerCharacteristics(ability=float(request.POST['qualityWeightsAb']), engagement=float(request.POST['qualityWeightsEng'])),
+				initialPopulationSize = int(request.POST['initialPopulationSize']), 
+				numberOfEvolutionsPerIteration = int(request.POST['numberOfEvolutionsPerIteration']), 
+				
+				probOfCross = float(request.POST['probOfCross']), 
+				probOfMutation = float(request.POST['probOfMutation']),
 
-		selectedGenAlgSwitcher = { 
-		    'Random': selectedGenAlgSwitcherRandom(request), 
-		    'Annealed PRS': selectedGenAlgSwitcherStochasticHillclimber(request),
-		    'Pure Random Search': selectedGenAlgSwitcherSimulatedAnnealing(request)
-		} 
-		selectedGenAlg = selectedGenAlgSwitcher.get(request.POST['selectedGenAlgId'], defaultConfigsAlg)
+				probOfMutationConfig = float(request.POST['probOfMutationConfig']), 
+				probOfMutationGIPs = float(request.POST['probOfMutationGIPs']), 
+				
+				numChildrenPerIteration = float(request.POST['numChildrenPerIteration']),
+				numSurvivors = float(request.POST['numSurvivors']),
+
+				cxOp = "order")
+
+		
+
+		# switch config. gen. algs
+		print(request.POST['selectedGenAlgId'])
+		# breakpoint()
+
+		selectedGenAlgId = request.POST['selectedGenAlgId']
+		selectedGenAlg = defaultConfigsAlg
+		if (selectedGenAlgId =='Random (no search)'):
+			selectedGenAlg = selectedGenAlgSwitcherRandom(request)
+		elif (selectedGenAlgId =='Pure Random Search'):
+			selectedGenAlg = selectedGenAlgSwitcherPRS(request)
+		elif (selectedGenAlgId =='Annealed Pure Random Search'):
+			selectedGenAlg = selectedGenAlgSwitcherAnnealedPRS(request)
+		elif (selectedGenAlgId =='Evolutionary Search'):
+			selectedGenAlg = selectedGenAlgSwitcherEvolutionary(request)
 
 		adaptation.init(playerBridge, taskBridge, configsGenAlg = selectedGenAlg, name='GIMME')
 

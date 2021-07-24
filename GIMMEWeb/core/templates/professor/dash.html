@@ -250,7 +250,7 @@
 								<div class='dropdown-menu' id='dropdown-menu3_professor_dash' role='menu' style="height:35em; overflow-y:scroll">
 									<div class='dropdown-content'>
 										<a class='dropdown-item is-active'>
-											Random
+											Random (no search)
 										</a>
 										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
 											Pure Random Search
@@ -278,30 +278,48 @@
 										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
 											Evolutionary Search
 											<div class='form-group'>
-												<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
+												<label class='column is-4 control-label' for='textinput'>Initial Population Size</label>  
 												<div class='control'>
-													<input id='numberOfConfigChoicesId_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
-												</div>
-
-												<label class='column is-4 control-label' for='textinput'>Fitness Weights</label>  
-												<div class='control'>
-													<input id='temperatureDecay_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.5'>
+													<input id='initialPopulationSize_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
 												</div>
 												
-												<label class='column is-4 control-label' for='textinput'>Mutation Prob</label>  
+												<label class='column is-4 control-label' for='textinput'>Crossover Prob.</label>  
 												<div class='control'>
-													<input id='temperatureDecay_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.2'>
+													<input id='probOfCross_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.2'>
+												</div>
+												
+												<label class='column is-4 control-label' for='textinput'>Mutation Prob.</label>  
+												<div class='control'>
+													<input id='probOfMutation_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.2'>
+
+													<div class='form-group'>
+														<label class='column is-4 control-label' for='textinput'>Config. Mutation Prob.</label>  
+														<div class='control'>
+															<input id='probOfMutationConfig_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.2'>
+														</div>
+														<label class='column is-4 control-label' for='textinput'>Profile Mutation Prob.</label>  
+														<div class='control'>
+															<input id='probOfMutationGIPs_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.2'>
+														</div>
+													</div>
+
 												</div>
 
-												<label class='column is-4 control-label' for='textinput'>Num Mutations</label>  
+												<label class='column is-4 control-label' for='textinput'>Num. Evolutions Per Iteration</label>  
 												<div class='control'>
-													<input id='temperatureDecay_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='4'>
+													<input id='numberOfEvolutionsPerIteration_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='4'>
 												</div>
 
-												<label class='column is-4 control-label' for='textinput'>Num Fit Survivors (Elitism)</label>  
+												<label class='column is-4 control-label' for='textinput'>Num. Children Per Generation</label>  
 												<div class='control'>
-													<input id='temperatureDecay_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='20'>
+													<input id='numChildrenPerIteration_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='20'>
 												</div>
+
+												<label class='column is-4 control-label' for='textinput'>Num. Survivors Per Generation</label>  
+												<div class='control'>
+													<input id='numSurvivors_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='20'>
+												</div>
+
 											</div>
 										</a>
 									</div>
@@ -321,7 +339,7 @@
 										</span>
 									</button>
 								</div>
-								<div class='dropdown-menu' id='dropdown-menu3_professor_dash' role='menu'>
+								<div class='dropdown-menu' id='dropdown-menu4_professor_dash' role='menu'>
 									<div class='dropdown-content'>
 										<a class='dropdown-item is-active'>
 											KNN
@@ -491,10 +509,10 @@ crossorigin='anonymous'></script>
 
 		var currServerState = {};
 		var currAdaptationConfig = {
-							'selectedGenAlgId': '', 
+							'selectedGenAlgId': '',
 							'selectedRegAlgId': '',
 
-							'numberOfConfigChoices': '',
+
 							'numNNs': '',
 							'minNumberOfPlayersPerGroup': '',
 							'maxNumberOfPlayersPerGroup': '',
@@ -502,11 +520,25 @@ crossorigin='anonymous'></script>
 							'qualityWeightsAb': '',
 							'qualityWeightsEng': '',
 							'playerWindow': '',
-							'numBootstrapIterations': '',
-							'precomputeBootstrap': ''
+
+							'numberOfConfigChoices': '',
+
+							'temperatureDecay': '',
+
+							'initialPopulationSize': '',
+							'probOfCross': '',
+							'probOfMutation': '',
+							'probOfMutationConfig': '',
+							'probOfMutationGIPs': '',
+							'numberOfEvolutionsPerIteration': '',
+							'numChildrenPerIteration': '',
+							'numSurvivors': '',
+
+
+
+							'isBootstrapped': '',
+							'numBootstrapIterations': ''
 						};
-
-
 
 
 		// special button effects
@@ -584,7 +616,6 @@ crossorigin='anonymous'></script>
 			        tag.addClass('is-medium');
 			        tag.addClass('is-rounded');
 			        table.append(tag);
-			        console.log('here')
 			        tag.show(135);
 			    }
 		    }
@@ -767,9 +798,7 @@ crossorigin='anonymous'></script>
 							'selectedGenAlgId': $('#selectedGenAlgId_professor_dash').text(), 
 							'selectedRegAlgId': $('#selectedRegAlgId_professor_dash').text(),
 
-							'temperatureDecay': $('#temperatureDecay_professor_dash').val(),
 
-							'numberOfConfigChoices': $('#numberOfConfigChoicesId_professor_dash').val(),
 							'numNNs': $('#numNNsId_professor_dash').val(),
 							'minNumberOfPlayersPerGroup': $('#minNumberOfPlayersPerGroupId_professor_dash').val(),
 							'maxNumberOfPlayersPerGroup': $('#maxNumberOfPlayersPerGroupId_professor_dash').val(),
@@ -777,6 +806,21 @@ crossorigin='anonymous'></script>
 							'qualityWeightsAb': $('#qualityWeightsAbId_professor_dash').val(),
 							'qualityWeightsEng': $('#qualityWeightsEngId_professor_dash').val(),
 							'playerWindow': $('#playerWindowId_professor_dash').val(),
+
+							'numberOfConfigChoices': $('#numberOfConfigChoicesId_professor_dash').val(),
+
+							'temperatureDecay': $('#temperatureDecay_professor_dash').val(),
+
+							'initialPopulationSize': $('#initialPopulationSize_professor_dash').val(),
+							'probOfCross': $('#probOfCross_professor_dash').val(),
+							'probOfMutation': $('#probOfMutation_professor_dash').val(),
+							'probOfMutationConfig': $('#probOfMutationConfig_professor_dash').val(),
+							'probOfMutationGIPs': $('#probOfMutationGIPs_professor_dash').val(),
+							'numberOfEvolutionsPerIteration': $('#numberOfEvolutionsPerIteration_professor_dash').val(),
+							'numChildrenPerIteration': $('#numChildrenPerIteration_professor_dash').val(),
+							'numSurvivors': $('#numSurvivors_professor_dash').val(),
+
+
 
 							'isBootstrapped': $('#precomputeBootstrapId_professor_dash').prop("checked"),
 							'numBootstrapIterations': $('#numBootstrapIterationsId_professor_dash').val()
