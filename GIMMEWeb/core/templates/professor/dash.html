@@ -438,8 +438,9 @@
 							<label id='adaptationIssuesText_professor_dash'></label>
 						</div>
 						
-						<div class='column is-centered' style='width:100%' id='groupsPlot_professor_dash'></div>
-						<div class='column is-centered' style='width:100%' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></div>
+						<div class='column is-centered is-fullwidth' id='groupsPlot_professor_dash'></div>
+						
+						<img class='column is-centered is-fullwidth' style='position: relative; left: 50%; transform: translateX(-50%);' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 
 					</div>
 				</div>
@@ -448,18 +449,20 @@
 					<p>Overall Preferences Distribution</p>
 					<div class='columns is-vcentered'>
 						<div class='column is-one-third'></div>
-						<div class='column is-one-third is-centered' id='professor_interactionsProfilePlot'></div>
+						<div class='column is-one-third is-centered' id='interactionsProfilePlot_professor_dash'></div>
 						<div class='column is-one-third'></div>
 					</div>
+					<img class='column is-centered' style='position: relative; left: 50%; transform: translateX(-50%);' id='interactionsProfilePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 				</div>
 
 				<div class='panel-block' style='display: block;'>
 					<p>Average Class Learning State</p>
 					<div class='columns is-vcentered'>
 						<div class='column is-one-third'></div>
-						<div class='column is-one-third' id='professor_learningStatePlot'></div>
+						<div class='column is-one-third' id='learningStatePlot_professor_dash'></div>
 						<div class='column is-one-third'></div>
 					</div>
+					<img class='column is-centered' style='size:10%; position: relative; left: 50%; transform: translateX(-50%);' id='learningStatePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 				</div>
 			</div>
 		</section>
@@ -642,13 +645,33 @@ crossorigin='anonymous'></script>
 
 							readyForNewActivity = newServerState.readyForNewActivity;
 							if(readyForNewActivity==true){
+								
 								$('#forceStartAdaptation_professor_dash').removeClass('is-loading');
 								$('#loadAndStartAdaptation_professor_dash').removeClass('is-loading');
 								$('#rebuildPlot_professor_dash').removeClass('is-loading');
+								
+								$('#groupsPlot_professor_dash').show(500)
+								$('#interactionsProfilePlot_professor_dash').show(500)
+								$('#learningStatePlot_professor_dash').show(500)
+								
+								$('#groupsPlotLoadingImage_professor_dash').hide(500)
+								$('#interactionsProfilePlotLoadingImage_professor_dash').hide(500)
+								$('#learningStatePlotLoadingImage_professor_dash').hide(500)
+
 							}else{
+								
 								$('#rebuildPlot_professor_dash').addClass('is-loading');
 								$('#forceStartAdaptation_professor_dash').addClass('is-loading');
 								$('#loadAndStartAdaptation_professor_dash').addClass('is-loading');
+
+								$('#groupsPlot_professor_dash').hide(500)
+								$('#interactionsProfilePlot_professor_dash').hide(500)
+								$('#learningStatePlot_professor_dash').hide(500)
+								
+								$('#groupsPlotLoadingImage_professor_dash').show(500)
+								$('#interactionsProfilePlotLoadingImage_professor_dash').show(500)
+								$('#learningStatePlotLoadingImage_professor_dash').show(500)
+
 							}
 
 							var currSelectedUsers = newServerState.currSelectedUsers;
@@ -747,8 +770,8 @@ crossorigin='anonymous'></script>
 			studentsStates = Object.values(currServerState.studentsStates);
 
 
-			$('#professor_interactionsProfilePlot').empty()
-			$('#professor_learningStatePlot').empty()
+			$('#interactionsProfilePlot_professor_dash').empty()
+			$('#learningStatePlot_professor_dash').empty()
 			var interactionDatapoints = [];
 			var avgChars = [0,0];
 			for(var i=0; i<studentsStates.length; i++){
@@ -759,8 +782,8 @@ crossorigin='anonymous'></script>
 				avgChars[0] += currState.characteristics.ability/studentsStates.length;
 				avgChars[1] += currState.characteristics.engagement/studentsStates.length;
 			}
-			buildScatterInteractionPlot('professor_interactionsProfilePlot', interactionDatapoints);
-			buildStatePlot('professor_learningStatePlot', 
+			buildScatterInteractionPlot('interactionsProfilePlot_professor_dash', interactionDatapoints);
+			buildStatePlot('learningStatePlot_professor_dash', 
 				[
 					{ "name": "Ability" , "value": 0.3/*avgChars[0]*/ },
 					{ "name": "Engagement" , "value": 0.6/*avgChars[1]*/ }
