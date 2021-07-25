@@ -202,7 +202,7 @@
 		</section>
 
 
-		<section class='section'>
+		<section class='section' style='position: relative; z-index:10000'>
 			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
 					<div class='columns is-vcentered'>
@@ -219,7 +219,7 @@
 				</div>
 		
 				<!-- starts hidden -->
-				<div class='panel-block' id='additionalAlgorithmsSection_1_professor_dash' style='display: block;'>
+				<div class='panel-block' id='additionalAlgorithmsSection_1_professor_dash' style='display: block'>
 					<div class='columns is-multiline is-mobile'>
 						<div class='column is-full'>
 							<p>Algorithms</p>
@@ -285,21 +285,21 @@
 												
 												<label class='column is-4 control-label' for='textinput'>Crossover Prob.</label>  
 												<div class='control'>
-													<input id='probOfCross_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.2'>
+													<input id='probOfCross_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.65'>
 												</div>
 												
 												<label class='column is-4 control-label' for='textinput'>Mutation Prob.</label>  
 												<div class='control'>
-													<input id='probOfMutation_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.2'>
+													<input id='probOfMutation_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.15'>
 
 													<div class='form-group'>
-														<label class='column is-4 control-label' for='textinput'>Config. Mutation Prob.</label>  
+														<label class='column is-4 control-label' for='textinput'>Config. Change Mutation Prob.</label>  
 														<div class='control'>
-															<input id='probOfMutationConfig_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.2'>
+															<input id='probOfMutationConfig_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.8'>
 														</div>
-														<label class='column is-4 control-label' for='textinput'>Profile Mutation Prob.</label>  
+														<label class='column is-4 control-label' for='textinput'>Profile Change Mutation Prob.</label>  
 														<div class='control'>
-															<input id='probOfMutationGIPs_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.2'>
+															<input id='probOfMutationGIPs_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.4'>
 														</div>
 													</div>
 
@@ -307,17 +307,17 @@
 
 												<label class='column is-4 control-label' for='textinput'>Num. Evolutions Per Iteration</label>  
 												<div class='control'>
-													<input id='numberOfEvolutionsPerIteration_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='4'>
+													<input id='numberOfEvolutionsPerIteration_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='50'>
 												</div>
 
 												<label class='column is-4 control-label' for='textinput'>Num. Children Per Generation</label>  
 												<div class='control'>
-													<input id='numChildrenPerIteration_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='20'>
+													<input id='numChildrenPerIteration_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='100'>
 												</div>
 
 												<label class='column is-4 control-label' for='textinput'>Num. Survivors Per Generation</label>  
 												<div class='control'>
-													<input id='numSurvivors_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='20'>
+													<input id='numSurvivors_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='10'>
 												</div>
 
 											</div>
@@ -439,6 +439,7 @@
 						</div>
 						
 						<div class='column is-centered' style='width:100%' id='groupsPlot_professor_dash'></div>
+						<div class='column is-centered' style='width:100%' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></div>
 
 					</div>
 				</div>
@@ -637,6 +638,8 @@ crossorigin='anonymous'></script>
 								return;
 							}
 
+// dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+
 							readyForNewActivity = newServerState.readyForNewActivity;
 							if(readyForNewActivity==true){
 								$('#forceStartAdaptation_professor_dash').removeClass('is-loading');
@@ -714,8 +717,6 @@ crossorigin='anonymous'></script>
 							// 	currUserId = currSelectedUsers[i];
 							// 	studentsStates[currUserId] = fetchUserStateCallBack(currUserId)
 							// }
-							
-							
 							
 
 							$.ajax({

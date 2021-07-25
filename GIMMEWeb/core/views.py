@@ -693,7 +693,7 @@ class Views(): #acts as a namespace
 
 		selectedGenAlg = {}
 		def selectedGenAlgSwitcherRandom(request):
-			print('RRRRRRRRRRRRRRRRR')
+			# print('RRRRRRRRRRRRRRRRR')
 			return RandomConfigsGen(
 				playerModelBridge = playerBridge, 
 				interactionsProfileTemplate = intProfTemplate.generateCopy(),
@@ -702,46 +702,46 @@ class Views(): #acts as a namespace
 				preferredNumberOfPlayersPerGroup = int(request.POST['preferredNumberOfPlayersPerGroup']))
 
 		def selectedGenAlgSwitcherPRS(request):
-			print('PPPPPPPPPPPPPPPPP')
+			# print('PPPPPPPPPPPPPPPPP')
 			return PureRandomSearchConfigsGen(
+						playerModelBridge = playerBridge, 
+						interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+						regAlg = selectedRegAlg, 
+						persEstAlg = ExplorationPreferencesEstAlg(
 							playerModelBridge = playerBridge, 
 							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
-							regAlg = selectedRegAlg, 
-							persEstAlg = ExplorationPreferencesEstAlg(
-								playerModelBridge = playerBridge, 
-								interactionsProfileTemplate = intProfTemplate.generateCopy(), 
-								regAlg = selectedRegAlg,
-								numTestedPlayerProfiles = 100, 
-								qualityWeights = PlayerCharacteristics(ability=float(request.POST['qualityWeightsAb']), engagement=float(request.POST['qualityWeightsEng']))),
-							numberOfConfigChoices = int(request.POST['numberOfConfigChoices']), 
-					minNumberOfPlayersPerGroup = int(request.POST['minNumberOfPlayersPerGroup']), 
-					maxNumberOfPlayersPerGroup = int(request.POST['maxNumberOfPlayersPerGroup']), 
-					preferredNumberOfPlayersPerGroup = int(request.POST['preferredNumberOfPlayersPerGroup']),
-							qualityWeights = PlayerCharacteristics(ability=float(request.POST['qualityWeightsAb']), engagement=float(request.POST['qualityWeightsEng']))
+							regAlg = selectedRegAlg,
+							numTestedPlayerProfiles = 100, 
+							qualityWeights = PlayerCharacteristics(ability=float(request.POST['qualityWeightsAb']), engagement=float(request.POST['qualityWeightsEng']))),
+						numberOfConfigChoices = int(request.POST['numberOfConfigChoices']), 
+						minNumberOfPlayersPerGroup = int(request.POST['minNumberOfPlayersPerGroup']), 
+						maxNumberOfPlayersPerGroup = int(request.POST['maxNumberOfPlayersPerGroup']), 
+						preferredNumberOfPlayersPerGroup = int(request.POST['preferredNumberOfPlayersPerGroup']),
+						qualityWeights = PlayerCharacteristics(ability=float(request.POST['qualityWeightsAb']), engagement=float(request.POST['qualityWeightsEng']))
 					)
 
 		def selectedGenAlgSwitcherAnnealedPRS(request):
-			print('AAAAAAAAAAAAAAAAA')
+			# print('AAAAAAAAAAAAAAAAA')
 			return AnnealedPRSConfigsGen(
+						playerModelBridge = playerBridge, 
+						interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+						regAlg = selectedRegAlg, 
+						persEstAlg = ExplorationPreferencesEstAlg(
 							playerModelBridge = playerBridge, 
 							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
-							regAlg = selectedRegAlg, 
-							persEstAlg = ExplorationPreferencesEstAlg(
-								playerModelBridge = playerBridge, 
-								interactionsProfileTemplate = intProfTemplate.generateCopy(), 
-								regAlg = selectedRegAlg,
-								numTestedPlayerProfiles = 100, 
-								qualityWeights = PlayerCharacteristics(ability=float(request.POST['qualityWeightsAb']), engagement=float(request.POST['qualityWeightsEng']))),
-							numberOfConfigChoices = int(request.POST['numberOfConfigChoices']), 
-							minNumberOfPlayersPerGroup = int(request.POST['minNumberOfPlayersPerGroup']), 
-							maxNumberOfPlayersPerGroup = int(request.POST['maxNumberOfPlayersPerGroup']), 
-							preferredNumberOfPlayersPerGroup = int(request.POST['preferredNumberOfPlayersPerGroup']),
-							qualityWeights = PlayerCharacteristics(ability=float(request.POST['qualityWeightsAb']), engagement=float(request.POST['qualityWeightsEng'])),
-							temperatureDecay = float(request.POST['temperatureDecay'])
+							regAlg = selectedRegAlg,
+							numTestedPlayerProfiles = 100, 
+							qualityWeights = PlayerCharacteristics(ability=float(request.POST['qualityWeightsAb']), engagement=float(request.POST['qualityWeightsEng']))),
+						numberOfConfigChoices = int(request.POST['numberOfConfigChoices']), 
+						minNumberOfPlayersPerGroup = int(request.POST['minNumberOfPlayersPerGroup']), 
+						maxNumberOfPlayersPerGroup = int(request.POST['maxNumberOfPlayersPerGroup']), 
+						preferredNumberOfPlayersPerGroup = int(request.POST['preferredNumberOfPlayersPerGroup']),
+						qualityWeights = PlayerCharacteristics(ability=float(request.POST['qualityWeightsAb']), engagement=float(request.POST['qualityWeightsEng'])),
+						temperatureDecay = float(request.POST['temperatureDecay'])
 					)
 
 		def selectedGenAlgSwitcherEvolutionary(request):
-			print('EEEEEEEEEEEEEEEEE')
+			# print('EEEEEEEEEEEEEEEEE')
 			return EvolutionaryConfigsGenDEAP(
 				playerModelBridge = playerBridge, 
 				interactionsProfileTemplate = intProfTemplate.generateCopy(), 
@@ -757,8 +757,8 @@ class Views(): #acts as a namespace
 				probOfMutationConfig = float(request.POST['probOfMutationConfig']), 
 				probOfMutationGIPs = float(request.POST['probOfMutationGIPs']), 
 				
-				numChildrenPerIteration = float(request.POST['numChildrenPerIteration']),
-				numSurvivors = float(request.POST['numSurvivors']),
+				numChildrenPerIteration = int(request.POST['numChildrenPerIteration']),
+				numSurvivors = int(request.POST['numSurvivors']),
 
 				cxOp = "order")
 
