@@ -431,7 +431,7 @@
 				</div>
 
 
-				<div class='panel-block'>
+				<div class='panel-block is-borderless'>
 					<div id='adaptationError_professor_dash' class='section hero is-danger is-centered has-text-centered' style='width:100%'>
 						<label class='label subtitle is-4 is-white'>Adaptation Error! Tip: verify if enough players are selected. 
 						Maintaining old state...</label>
@@ -444,15 +444,14 @@
 						<label id='adaptationInfoTitle_professor_dash' class='label subtitle is-4 is-white'>Adaptation Info: </label>
 						<label id='adaptationInfoText_professor_dash'></label>
 					</div>
-					<div class='column is-centered is-fullwidth' id='groupsPlot_professor_dash'></div>
 				</div>
 
-				<div class='panel-block'>
-					<div class='colums' style="position: relative; left: 50%; transform: translateX(-50%);">
-						<img class='column is-centered is-fullwidth' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
-					</div>
+				<div class='panel-block is-borderless'>
 					<div class='colums'>
 						<div class='column is-centered is-fullwidth' id='groupsPlot_professor_dash'></div>
+					</div>
+					<div class='colums' style="position: relative; left: 50%; transform: translateX(-50%);">
+						<img class='column is-centered is-fullwidth' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>
 				</div>
 
@@ -674,7 +673,7 @@ crossorigin='anonymous'></script>
 							}else{
 								
 								$('#adaptationInfoTitle_professor_dash').html('<br></br>Watch out, Big Brain Time!');
-								$('#adaptationInfoText_professor_dash').html('<br></br>Please wait some moments until groups are organized according to their members\' preferences...');
+								$('#adaptationInfoText_professor_dash').html('<br></br>Please wait some moments until groups are organized according to the students\' preferences...');
 								$('#adaptationInfo_professor_dash').show(500);
 
 

@@ -519,14 +519,23 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             dimensions[key] = Number((currD).toFixed(2));
         }
 
-        node["Characteristics"] = characteristics;
+
+        node["Group ID"] = node.groupId;
+        node["Adapted Task"] = node.tasks;
+
+        node["Characteristics"] = {};
+        node["Characteristics"]["Ability"] = characteristics.ability;
+        node["Characteristics"]["Engagement"] = characteristics.engagement;
         node["Profile"] = dimensions;
+
 
         //delete undisplayed attributes
         delete node.profile;
         delete node.characteristics;
         delete node.centerOfMass;
 
+        delete node.groupId;
+        delete node.tasks;
 
 
 
@@ -536,8 +545,6 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     groupIndicators.on('mouseover', function(d){ d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'visible');})
             .on('mouseout', function(d){ d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'hidden');});        
-
-
 
 
 
@@ -561,12 +568,12 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                             })
         .attr('stroke', 'black');
     
-    userInfoTooltips.each(function(node){
-        var currTooltip = d3.select(userInfoTooltips._groups[0][node.plotIndex]);
+    userInfoTooltips.each(function(originalNode){
+        var currTooltip = d3.select(userInfoTooltips._groups[0][originalNode.plotIndex]);
         
         //change displayed attributes to be more friendly and easy to read
-        characteristics = node.userState.characteristics;
-        dimensions = node.userState.preferencesEst.dimensions;
+        characteristics = originalNode.userState.characteristics;
+        dimensions = originalNode.userState.preferencesEst.dimensions;
 
         cKeys = Object.keys(characteristics);
         dKeys = Object.keys(dimensions);
@@ -581,20 +588,18 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             dimensions[key] = Number((currD).toFixed(2));
         }
 
-        node.userState["Student Name"] = node.userState.fullName;
-        node.userState["Characteristics"] = characteristics;
-        node.userState["Preferences Est"] = dimensions;
+        node = {}
+        node["User ID"] = originalNode.userId;
 
-        //delete undisplayed attributes
-        delete node.userState.group;
-        delete node.userState.tasks;
-        delete node.userState.statesDataFrame;
-        delete node.userState.preferencesEst.dimensionality;
-        delete node.userState.preferencesEst
-        delete node.userState.fullName
-        delete node.userState.characteristics
+        node["Student Name"] = originalNode.userState.fullName;
 
-        htmlFromJSON({'userId': node.userId, 'userState': node.userState}, currTooltip, 0, 0);
+        node["Characteristics"] = {};
+        node["Characteristics"]["Ability"] = characteristics.ability;
+        node["Characteristics"]["Engagement"] = characteristics.engagement;
+
+        node["Preferences Est"] = dimensions;
+
+        htmlFromJSON(node, currTooltip, 0, 0);
     })
 
 
