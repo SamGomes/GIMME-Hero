@@ -128,12 +128,9 @@
 				
 
 				<div class='panel-block' style='display: block;'>
-					<div class='columns is-multiline is-mobile'>
-						<div class='column is-full'>
-							<p>Groups</p>
-						</div>
+					<div class='columns is-multiline is-mobile is-centered'>
 
-						<div class='column is-5 columns is-multiline is-mobile'>
+						<!-- <div class='column is-5 columns is-multiline is-mobile'>
 							<div class='column is-half'>
 								<label id='mgsInput_professor_dash' class='control-label' for='quantity' min='2'>Min Group Size</label>  
 								<div class='control'>
@@ -149,31 +146,38 @@
 						</div>
 						<div class='column is-2 has-text-centered'>
 							<p>OR</p>
-						</div>
+						</div>-->
 
-						<div class='column is-5'>
-							<label class='control-label' for='quantity'>Preferred Group Size</label>  
-							<div class='control'>
-								<input id='preferredNumberOfPlayersPerGroupId_professor_dash' class='input' type='number' min='2' max='100' placeholder='4'>
+						<div class='column is-3'>
+							<!-- <p>Groups</p> -->
+							
+							<div class='has-tooltip-arrow' data-tooltip='Sets the preferred amount of students per group.'>
+								<label class='control-label' for='quantity'>Preferred Group Size</label>  
+								<div class='control'>
+									<input id='preferredNumberOfPlayersPerGroupId_professor_dash' class='input' type='number' min='2' max='100' placeholder='4'>
+								</div>
 							</div>
 						</div>
+
+						<div class='column is-3'>
+						</div>
+
+						<div class='column is-3'>
+							<!-- <p>Students</p> -->
+						
+							<div class='has-tooltip-arrow' data-tooltip="Sets the amount of stored past states, for when taking a decision about a student's group. This will only take effect whenever player states are updated.">
+								<label class='control-label' for='quantity'>Students Past Models Window</label>  
+								<div class='control'>
+									<input id='playerWindowId_professor_dash' class='input' type='number' min='2' max='100' placeholder='10'>
+								</div>
+							</div>
+						</div>
+
 					</div>
+
 				</div>
 
 
-				<div class='panel-block' style='display: block;'>
-					<div class='columns is-multiline is-mobile has-tooltip-arrow' data-tooltip="Sets the amount of stored past states, for when taking a decision about a student's group. This will only take effect whenever player states are updated.">
-						<div class='column is-full'>
-							<p>Students</p>
-						</div>
-						<div class='column is-half is-centered'>
-							<label class='field control-label' for='textinput'>Students Past Models Window</label>  
-							<div class='field control'>
-								<input id='playerWindowId_professor_dash' class='input' type='number' min='1' max='100' placeholder='10'>
-							</div>
-						</div>
-					</div>
-				</div>
 
 				<div class='panel-block' style='display: block;'>
 					<div class='columns is-multiline is-mobile  has-tooltip-arrow' data-tooltip='This feature is optional, and still does not function as it should.'>
@@ -364,7 +368,7 @@
 				</div>
 
 				<div class='panel-block' id='additionalAlgorithmsSection_2_professor_dash' style='display: block;'>
-					<div class='columns is-multiline is-mobile'>
+					<div class='columns is-multiline'>
 						<div class='column is-full'>
 							<p>Quality Weights</p>
 						</div>
@@ -403,45 +407,52 @@
 					</div>
 				</div>
 				
+				
+				<div class='panel-block'>
+					<div class='columns is-fullwidth'>
+						<div class='column is-full'>
+							<p>Group Organization</p>
+						</div>
 
+						<div class='column is-half has-text-centered has-tooltip-top has-tooltip-arrow' data-tooltip='Loads the parameterization above iff the configuration changed, and computes a new adaptation state.'>
+							<a><button class='button is-large is-info' type='submit' id='loadAndStartAdaptation_professor_dash'>Check Setup and Iterate</button></a>
+						</div>
+
+						<!-- <div class='column is-one-third has-text-centered  has-tooltip-top has-tooltip-arrow is-warning'  data-tooltip='Forces an adaptation initialization call, even when no parameterization changes occur.'>
+							<a>
+								<button class='button is-large' type='submit' id='forceStartAdaptation_professor_dash'>Force Setup and Iterate</button>
+							</a>
+						</div> -->
+
+						<div class='column is-half has-text-centered has-tooltip-top has-tooltip-arrow' data-tooltip='Rebuilds the plot, without computing a new adaptation state.'>
+							<button class='button is-large' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plot</button>
+						</div>
+					</div>
+				</div>
 
 
 				<div class='panel-block'>
+					<div id='adaptationError_professor_dash' class='section hero is-danger is-centered has-text-centered' style='width:100%'>
+						<label class='label subtitle is-4 is-white'>Adaptation Error! Tip: verify if enough players are selected. 
+						Maintaining old state...</label>
+					</div>
+					<div id='adaptationIssues_professor_dash' class='section hero is-warning is-centered has-text-centered' style='width:100%'>
+						<label class='label subtitle is-4 is-white'>Adaptation Issues Found: </label>
+						<label id='adaptationIssuesText_professor_dash'></label>
+					</div>
+					<div id='adaptationInfo_professor_dash' class='section hero is-info is-centered has-text-centered' style='width:100%'>
+						<label id='adaptationInfoTitle_professor_dash' class='label subtitle is-4 is-white'>Adaptation Info: </label>
+						<label id='adaptationInfoText_professor_dash'></label>
+					</div>
+					<div class='column is-centered is-fullwidth' id='groupsPlot_professor_dash'></div>
+				</div>
+
+				<div class='panel-block'>
+					<div class='colums' style="position: relative; left: 50%; transform: translateX(-50%);">
+						<img class='column is-centered is-fullwidth' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
+					</div>
 					<div class='colums'>
-						<p>Group Organization</p>
-						
-
-						<div class='columns is-multiline'>
-							<div class='column is-one-third has-text-centered has-tooltip-top has-tooltip-arrow'  data-tooltip='Rebuilds the plot, without computing a new adaptation state.'>
-								<button class='button is-large' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plot</button>
-							</div>
-							<div class='column is-one-third has-text-centered has-tooltip-top has-tooltip-arrow' data-tooltip='Loads the parameterization above iff the configuration changed, and computes a new adaptation state.' >
-								<a>
-									<button class='button is-large' type='submit' id='loadAndStartAdaptation_professor_dash' >Load Setup and Compute New Adaptation</button>
-								</a>
-							</div>
-							<div class='column is-one-third has-text-centered  has-tooltip-top has-tooltip-arrow'  data-tooltip='Forces an adaptation call, even when no parameterization changes occur.'>
-								<a>
-									<button class='button is-large' type='submit' id='forceStartAdaptation_professor_dash'>Force Start Adaptation</button>
-								</a>
-							</div>
-						</div>
-
-
-
-						<div id='adaptationError_professor_dash' class='section hero is-danger is-centered has-text-centered'>
-							<label class='label subtitle is-4 is-white'>Adaptation Error! Tip: verify if enough players are selected. 
-							Maintaining old state...</label>
-						</div>
-						<div id='adaptationIssues_professor_dash' class='section hero is-warning is-centered has-text-centered'>
-							<label class='label subtitle is-4 is-white'>Adaptation Issues Found: </label>
-							<label id='adaptationIssuesText_professor_dash'></label>
-						</div>
-						
 						<div class='column is-centered is-fullwidth' id='groupsPlot_professor_dash'></div>
-						
-						<img class='column is-centered is-fullwidth' style='position: relative; left: 50%; transform: translateX(-50%);' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
-
 					</div>
 				</div>
 
@@ -509,6 +520,7 @@ crossorigin='anonymous'></script>
 
 		$("#adaptationError_professor_dash").hide();
 		$("#adaptationIssues_professor_dash").hide();
+		$("#adaptationInfo_professor_dash").hide();
 		$("#adaptationIssuesText_professor_dash").html('');
 
 		var currServerState = {};
@@ -518,8 +530,8 @@ crossorigin='anonymous'></script>
 
 
 							'numNNs': '',
-							'minNumberOfPlayersPerGroup': '',
-							'maxNumberOfPlayersPerGroup': '',
+							// 'minNumberOfPlayersPerGroup': '',
+							// 'maxNumberOfPlayersPerGroup': '',
 							'preferredNumberOfPlayersPerGroup': '',
 							'qualityWeightsAb': '',
 							'qualityWeightsEng': '',
@@ -577,19 +589,19 @@ crossorigin='anonymous'></script>
 		        	tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'>").text(nameArray[i]);
 		        
 		        	if(deleteElementUrl!=""){
-			            var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete This Task'>");
+			            var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this task'>");
 			            deleteButton.append('<form method=\'GET\' action=\''+deleteElementUrl+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+deleteElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash pointer\'></i></button></form>');
 			            tag.append(deleteButton);
 		            }
 
 		        	if(editElementUrl!=""){
-			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually Edit State'>");
+			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually edit state'>");
 			            editButton.append('<form method=\'GET\' action=\''+editElementUrl+'\'><input type=\'hidden\' name=\''+editElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-edit pointer\'></i></button></form>');
 			            tag.append(editButton);
 					}
 
 		        	if(moveElementUrl!=""){
-			            var moveButton = $("<div class='button is-rounded is-small pointer' style='color:white; background-color:transparent; margin:0.5em;'>");
+			            var moveButton = $("<div class='button is-rounded is-small pointer' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Select/Deselect this student/task for the next iteration'>");
 			            moveButton.append("<i class='fas "+moveButtonIconClass+" pointer'></i>");
 			            moveButton.click(function() {
 			                var data = {};
@@ -605,7 +617,7 @@ crossorigin='anonymous'></script>
 
 		        }else{
 		        	if(addElementURL!=""){
-		        		var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Add New Task'>");
+		        		var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Add new task'>");
 			            addButton.append('<form method="POST" action=\''+addElementURL+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+addElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-plus-circle\'></i></button></form>');
 		        	
 		        		tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'>").text(nameArray[i]);
@@ -641,36 +653,42 @@ crossorigin='anonymous'></script>
 								return;
 							}
 
-// dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
-
+							
 							readyForNewActivity = newServerState.readyForNewActivity;
-							if(readyForNewActivity==true){
-								
+							if(readyForNewActivity){
+
+								$('#adaptationInfo_professor_dash').hide(500); 
+
 								$('#forceStartAdaptation_professor_dash').removeClass('is-loading');
 								$('#loadAndStartAdaptation_professor_dash').removeClass('is-loading');
 								$('#rebuildPlot_professor_dash').removeClass('is-loading');
 								
-								$('#groupsPlot_professor_dash').show(500)
-								$('#interactionsProfilePlot_professor_dash').show(500)
-								$('#learningStatePlot_professor_dash').show(500)
+								$('#groupsPlot_professor_dash').show(500);
+								$('#interactionsProfilePlot_professor_dash').show(500);
+								$('#learningStatePlot_professor_dash').show(500);
 								
-								$('#groupsPlotLoadingImage_professor_dash').hide(500)
-								$('#interactionsProfilePlotLoadingImage_professor_dash').hide(500)
-								$('#learningStatePlotLoadingImage_professor_dash').hide(500)
+								$('#groupsPlotLoadingImage_professor_dash').hide(500);
+								$('#interactionsProfilePlotLoadingImage_professor_dash').hide(500);
+								$('#learningStatePlotLoadingImage_professor_dash').hide(500);
 
 							}else{
 								
+								$('#adaptationInfoTitle_professor_dash').html('<br></br>Watch out, Big Brain Time!');
+								$('#adaptationInfoText_professor_dash').html('<br></br>Please wait some moments until groups are organized according to their members\' preferences...');
+								$('#adaptationInfo_professor_dash').show(500);
+
+
 								$('#rebuildPlot_professor_dash').addClass('is-loading');
 								$('#forceStartAdaptation_professor_dash').addClass('is-loading');
 								$('#loadAndStartAdaptation_professor_dash').addClass('is-loading');
 
-								$('#groupsPlot_professor_dash').hide(500)
-								$('#interactionsProfilePlot_professor_dash').hide(500)
-								$('#learningStatePlot_professor_dash').hide(500)
+								$('#groupsPlot_professor_dash').hide(500);
+								$('#interactionsProfilePlot_professor_dash').hide(500);
+								$('#learningStatePlot_professor_dash').hide(500);
 								
-								$('#groupsPlotLoadingImage_professor_dash').show(500)
-								$('#interactionsProfilePlotLoadingImage_professor_dash').show(500)
-								$('#learningStatePlotLoadingImage_professor_dash').show(500)
+								$('#groupsPlotLoadingImage_professor_dash').show(500);
+								$('#interactionsProfilePlotLoadingImage_professor_dash').show(500);
+								$('#learningStatePlotLoadingImage_professor_dash').show(500);
 
 							}
 
@@ -824,8 +842,8 @@ crossorigin='anonymous'></script>
 
 
 							'numNNs': $('#numNNsId_professor_dash').val(),
-							'minNumberOfPlayersPerGroup': $('#minNumberOfPlayersPerGroupId_professor_dash').val(),
-							'maxNumberOfPlayersPerGroup': $('#maxNumberOfPlayersPerGroupId_professor_dash').val(),
+							// 'minNumberOfPlayersPerGroup': $('#minNumberOfPlayersPerGroupId_professor_dash').val(),
+							// 'maxNumberOfPlayersPerGroup': $('#maxNumberOfPlayersPerGroupId_professor_dash').val(),
 							'preferredNumberOfPlayersPerGroup': $('#preferredNumberOfPlayersPerGroupId_professor_dash').val(),
 							'qualityWeightsAb': $('#qualityWeightsAbId_professor_dash').val(),
 							'qualityWeightsEng': $('#qualityWeightsEngId_professor_dash').val(),

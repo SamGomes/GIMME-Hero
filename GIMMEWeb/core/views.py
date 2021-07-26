@@ -31,11 +31,6 @@ from django.contrib import messages
 from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm
 
 
-intProfTemplate = InteractionsProfile({'Challenge': 0, 'Focus': 0})
-trimAlgTemplate = ProximitySortPlayerDataTrimAlg(
-				maxNumModelElements = 10, 
-				epsilon = 0.05
-			) 
 
 class ServerStateModelBridge():
 
@@ -339,10 +334,13 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 playerBridge = CustomPlayerModelBridge()
 adaptation = Adaptation()
-# profileTemplate = serverStateModelBridge.getProfileTemplate()
-# for d in range(numInteractionDimensions):
-# 	profileTemplate.dimensions['dim_'+str(d)] = 0.0
+currConfigParams = {}
 
+intProfTemplate = InteractionsProfile({'Challenge': 0, 'Focus': 0})
+trimAlgTemplate = ProximitySortPlayerDataTrimAlg(
+				maxNumModelElements = 10, 
+				epsilon = 0.05
+			) 
 
 defaultConfigsAlg = RandomConfigsGen(
 				playerModelBridge = playerBridge, 
@@ -676,16 +674,22 @@ class Views(): #acts as a namespace
 	def configAdaptation(request):
 		
 		# breakpoint()
+		global currConfigParams
+
+		newConfigParams = request.POST
+		print(currConfigParams == newConfigParams)
+		if(currConfigParams == newConfigParams):
+			return HttpResponse('ok')
 
 		# switch reg algs
 		selectedRegAlg = {}		
 		def selectedRegAlgSwitcherKNN(request):
 			return KNNRegression( 
 				playerBridge, 
-				int(request.POST['numNNs'])
+				int(newConfigParams['numNNs'])
 			)
 
-		selectedRegAlgId = request.POST['selectedRegAlgId']
+		selectedRegAlgId = newConfigParams['selectedRegAlgId']
 		# selectedRegAlg = None
 		if (selectedRegAlgId =='KNN'):
 			selectedRegAlg = selectedRegAlgSwitcherKNN(request)
@@ -697,9 +701,9 @@ class Views(): #acts as a namespace
 			return RandomConfigsGen(
 				playerModelBridge = playerBridge, 
 				interactionsProfileTemplate = intProfTemplate.generateCopy(),
-				minNumberOfPlayersPerGroup = int(request.POST['minNumberOfPlayersPerGroup']), 
-				maxNumberOfPlayersPerGroup = int(request.POST['maxNumberOfPlayersPerGroup']), 
-				preferredNumberOfPlayersPerGroup = int(request.POST['preferredNumberOfPlayersPerGroup']))
+				# minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
+				# maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
+				preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']))
 
 		def selectedGenAlgSwitcherPRS(request):
 			# print('PPPPPPPPPPPPPPPPP')
@@ -712,12 +716,12 @@ class Views(): #acts as a namespace
 							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
 							regAlg = selectedRegAlg,
 							numTestedPlayerProfiles = 100, 
-							qualityWeights = PlayerCharacteristics(ability=float(request.POST['qualityWeightsAb']), engagement=float(request.POST['qualityWeightsEng']))),
-						numberOfConfigChoices = int(request.POST['numberOfConfigChoices']), 
-						minNumberOfPlayersPerGroup = int(request.POST['minNumberOfPlayersPerGroup']), 
-						maxNumberOfPlayersPerGroup = int(request.POST['maxNumberOfPlayersPerGroup']), 
-						preferredNumberOfPlayersPerGroup = int(request.POST['preferredNumberOfPlayersPerGroup']),
-						qualityWeights = PlayerCharacteristics(ability=float(request.POST['qualityWeightsAb']), engagement=float(request.POST['qualityWeightsEng']))
+							qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng']))),
+						numberOfConfigChoices = int(newConfigParams['numberOfConfigChoices']), 
+						# minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
+						# maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
+						preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
+						qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng']))
 					)
 
 		def selectedGenAlgSwitcherAnnealedPRS(request):
@@ -731,13 +735,13 @@ class Views(): #acts as a namespace
 							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
 							regAlg = selectedRegAlg,
 							numTestedPlayerProfiles = 100, 
-							qualityWeights = PlayerCharacteristics(ability=float(request.POST['qualityWeightsAb']), engagement=float(request.POST['qualityWeightsEng']))),
-						numberOfConfigChoices = int(request.POST['numberOfConfigChoices']), 
-						minNumberOfPlayersPerGroup = int(request.POST['minNumberOfPlayersPerGroup']), 
-						maxNumberOfPlayersPerGroup = int(request.POST['maxNumberOfPlayersPerGroup']), 
-						preferredNumberOfPlayersPerGroup = int(request.POST['preferredNumberOfPlayersPerGroup']),
-						qualityWeights = PlayerCharacteristics(ability=float(request.POST['qualityWeightsAb']), engagement=float(request.POST['qualityWeightsEng'])),
-						temperatureDecay = float(request.POST['temperatureDecay'])
+							qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng']))),
+						numberOfConfigChoices = int(newConfigParams['numberOfConfigChoices']), 
+						# minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
+						# maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
+						preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
+						qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng'])),
+						temperatureDecay = float(newConfigParams['temperatureDecay'])
 					)
 
 		def selectedGenAlgSwitcherEvolutionary(request):
@@ -746,29 +750,30 @@ class Views(): #acts as a namespace
 				playerModelBridge = playerBridge, 
 				interactionsProfileTemplate = intProfTemplate.generateCopy(), 
 				regAlg = selectedRegAlg, 
-				preferredNumberOfPlayersPerGroup = int(request.POST['preferredNumberOfPlayersPerGroup']), 
-				qualityWeights = PlayerCharacteristics(ability=float(request.POST['qualityWeightsAb']), engagement=float(request.POST['qualityWeightsEng'])),
-				initialPopulationSize = int(request.POST['initialPopulationSize']), 
-				numberOfEvolutionsPerIteration = int(request.POST['numberOfEvolutionsPerIteration']), 
-				
-				probOfCross = float(request.POST['probOfCross']), 
-				probOfMutation = float(request.POST['probOfMutation']),
 
-				probOfMutationConfig = float(request.POST['probOfMutationConfig']), 
-				probOfMutationGIPs = float(request.POST['probOfMutationGIPs']), 
+				preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']), 
 				
-				numChildrenPerIteration = int(request.POST['numChildrenPerIteration']),
-				numSurvivors = int(request.POST['numSurvivors']),
+				qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng'])),
+				initialPopulationSize = int(newConfigParams['initialPopulationSize']), 
+				numberOfEvolutionsPerIteration = int(newConfigParams['numberOfEvolutionsPerIteration']), 
+				
+				probOfCross = float(newConfigParams['probOfCross']), 
+				probOfMutation = float(newConfigParams['probOfMutation']),
+
+				probOfMutationConfig = float(newConfigParams['probOfMutationConfig']), 
+				probOfMutationGIPs = float(newConfigParams['probOfMutationGIPs']), 
+				
+				numChildrenPerIteration = int(newConfigParams['numChildrenPerIteration']),
+				numSurvivors = int(newConfigParams['numSurvivors']),
 
 				cxOp = "order")
 
 		
 
 		# switch config. gen. algs
-		print(request.POST['selectedGenAlgId'])
-		# breakpoint()
+		# print(newConfigParams['selectedGenAlgId'])
 
-		selectedGenAlgId = request.POST['selectedGenAlgId']
+		selectedGenAlgId = newConfigParams['selectedGenAlgId']
 		selectedGenAlg = defaultConfigsAlg
 		if (selectedGenAlgId =='Random (no search)'):
 			selectedGenAlg = selectedGenAlgSwitcherRandom(request)
@@ -781,9 +786,10 @@ class Views(): #acts as a namespace
 
 		adaptation.init(playerBridge, taskBridge, configsGenAlg = selectedGenAlg, name='GIMME')
 
-		if(request.POST['isBootstrapped']=='true'):
-			adaptation.bootstrap(int(request.POST['numBootstrapIterations']))
+		if(newConfigParams['isBootstrapped']=='true'):
+			adaptation.bootstrap(int(newConfigParams['numBootstrapIterations']))
 
+		currConfigParams = newConfigParams
 		return HttpResponse('ok')
 
 
