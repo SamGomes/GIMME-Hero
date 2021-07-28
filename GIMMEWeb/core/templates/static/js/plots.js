@@ -436,8 +436,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         }
 
         var keys = Object.keys(json)
-        var x = currX + 50;
-        var y = currY + 35;
+        var x = currX + 100;
+        var y = currY + 75;
         for(var i=0; i < keys.length; i++){
             var currKey = keys[i];
             var currJson = json[currKey];
@@ -494,7 +494,6 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     // Returns path data for a rectangle with rounded right corners.
     // The top-left corner is ⟨x,y⟩.
     function rightRoundedRect(x, y, width, height, radius) {
-
         return "M" + x + "," + y
             + "l" + (width*0.1) + "," + (height*0.1)
             + "h" + (width*0.9)
@@ -513,7 +512,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     groupInfoTooltips
         .append("path")
         .attr("d", function(d) {
-          return rightRoundedRect(15, 4, 630, 350, 15);
+          return rightRoundedRect(15, 4, 630, 380, 15);
         })
         .attr('fill', function(node){
                                 var baseColor = colors[node.groupId].split('#')[1];
@@ -593,7 +592,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     userInfoTooltips
         .append("path")
         .attr("d", function(d) {
-            return rightRoundedRect(15, 4, 630, 350, 15);
+            return rightRoundedRect(15, 4, 630, 300, 15);
         })
         .attr('fill', function(node){
             return generatePlayerColor(node);
