@@ -93,6 +93,10 @@ body {
   object-fit: fill;
 }
 
+.panel-block-borderless{ 
+  border-style:none; 
+}
+
 
 .alias {cursor: alias;}
 .all-scroll {cursor: all-scroll;}

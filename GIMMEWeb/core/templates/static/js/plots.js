@@ -138,6 +138,9 @@ var buildStatePlot = function(canvasId, data){
 
 var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
+    // used to correctly generate user colors
+    var abCap = 0;
+    var engCap = 0; 
 
     $("#adaptationIssues_professor_dash").hide();
     $("#adaptationIssuesText_professor_dash").html('');
@@ -226,17 +229,21 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         return "#a3a1a1"
     }
     
+
+    // source: https://www.w3docs.com/snippets/javascript/how-to-convert-rgb-to-hex-and-vice-versa.html
+    var rgbToHex = function(r, g, b) {
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+
     var generatePlayerColor = function(node){
-        // var userChar = node.userState.profile;
-        // var baseColor = colors[node.groupId];
-        // color = Color(baseColor);
-        // var hsl = {
-        //     h: color.h(),
-        //     s: color.s(),
-        //     l: Math.round(30+50*sqrDistBetweenVectors(node.groupCharacteristics, userChar))
-        // };
-        // color = Color( hsl );
-        return generateGroupColor(node.userState.preferencesEst);
+        var userChar = node.userState.characteristics;
+        abRatio = abCap > 0.0? (userChar.ability /abCap): 0.0;
+        engRatio = engCap > 0.0? (userChar.engagement /engCap): 0.0;
+
+        ratio = (abRatio + engRatio) / 2.0;
+        console.log(rgbToHex(255, 0.0, 0.0));
+
+        return rgbToHex(Number((1.0 - ratio)*255), Number(ratio*255), 0.0);
     }
 
 
@@ -268,6 +275,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         // pad each with zeros and return
         return "#" + padZero(r) + padZero(g) + padZero(b);
     }
+
     var padZero = function(str, len) {
         len = len || 2;
         var zeros = new Array(len).join('0');
@@ -328,9 +336,9 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     var groupIndicators =
         svg.append('g')
-          .selectAll('circle')
-          .data(groupIndicatorNodes)
-          .enter().append('circle')
+            .selectAll('circle')
+            .data(groupIndicatorNodes)
+            .enter().append('circle')
             .attr('r', node => {
                 var group = userNodes;
                 var maxRadius = 0;
@@ -348,9 +356,9 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             })
             .attr('cx', node => node.centerOfMass.x)
             .attr('cy', node => node.centerOfMass.y)
-            .attr('stroke-dasharray', '6,5')
+            .attr('stroke-dasharray', '8,5')
             .attr('stroke', node => colors[node.groupId])
-            .attr('stroke-width', '3') 
+            .attr('stroke-width', '3.5') 
             .attr('fill', 'transparent');
            
 
@@ -362,10 +370,22 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     var nodeElements =
         svg.append('g')
-          .selectAll('circle')
-          .data(userNodes)
-          .enter().append('circle')
+            .selectAll('circle')
+            .data(userNodes)
+            .enter().append('circle')
             .attr('r', 15)
+            .each(function(node){
+                //update caps before treating nodes for print
+                var currAb = node.userState.characteristics.ability;
+                if(currAb > abCap){
+                    abCap = currAb;
+                }
+                var currEng = node.userState.characteristics.engagement;
+                if(currEng > engCap){
+                    engCap = currEng; 
+                }
+                // console.log("partial abCap: " + abCap)
+            })
             .attr('fill', function(node){
                                 return generatePlayerColor(node);
                             });
@@ -470,15 +490,31 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     };
 
 
+    // adapted from: https://stackoverflow.com/questions/12115691/svg-d3-js-rounded-corner-on-one-corner-of-a-rectangle
+    // Returns path data for a rectangle with rounded right corners.
+    // The top-left corner is ⟨x,y⟩.
+    function rightRoundedRect(x, y, width, height, radius) {
+
+        return "M" + x + "," + y
+            + "l" + (width*0.1) + "," + (height*0.1)
+            + "h" + (width*0.9)
+            + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius
+            + "v" + (height - 2 * radius)
+            + "a" + radius + "," + radius + " 0 0 1 " + -radius + "," + radius
+            + "h" + (radius - width*0.95)
+            + "a" + radius + "," + -radius + " 0 0 1 " + -radius + "," + -radius
+            + "l" + 0.0 + "," + -height*0.9
+            + "z";
+    }
 
 
-    groupInfoTooltips.append('rect')
-        .attr('x', 15)
-        .attr('y', 4)
-        .attr('rx', '15px')
-        // .attr('ry', '35px')
-        .attr('width', 650)
-        .attr('height', 480)
+
+
+    groupInfoTooltips
+        .append("path")
+        .attr("d", function(d) {
+          return rightRoundedRect(15, 4, 630, 350, 15);
+        })
         .attr('fill', function(node){
                                 var baseColor = colors[node.groupId].split('#')[1];
                                 transparency = 200;
@@ -537,8 +573,6 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         delete node.groupId;
         delete node.tasks;
 
-
-
         htmlFromJSON(node, currTooltip, 0, 0);
     });
 
@@ -556,22 +590,21 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             .append('g')
             .style('visibility','hidden');
 
-    userInfoTooltips.append('rect')
-        .attr('x', 15)
-        .attr('y', 4)
-        .attr('rx', '15px')
-        // .attr('ry', '35px')
-        .attr('width', 630)
-        .attr('height', 480)
+    userInfoTooltips
+        .append("path")
+        .attr("d", function(d) {
+            return rightRoundedRect(15, 4, 630, 350, 15);
+        })
         .attr('fill', function(node){
-                                return generatePlayerColor(node);
-                            })
+            return generatePlayerColor(node);
+        })
         .attr('stroke', 'black');
     
     userInfoTooltips.each(function(originalNode){
-        var currTooltip = d3.select(userInfoTooltips._groups[0][originalNode.plotIndex]);
-        
+
         //change displayed attributes to be more friendly and easy to read
+        var currTooltip = d3.select(userInfoTooltips._groups[0][originalNode.plotIndex]);
+
         characteristics = originalNode.userState.characteristics;
         dimensions = originalNode.userState.preferencesEst.dimensions;
 
@@ -582,14 +615,14 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             currC = characteristics[key]; 
             characteristics[key] = Number((currC).toFixed(2));
         }
-        for (i=0; i<dKeys.length; i++){
-            key = dKeys[i];
-            currD = dimensions[key]; 
-            dimensions[key] = Number((currD).toFixed(2));
-        }
+        // for (i=0; i<dKeys.length; i++){
+        //     key = dKeys[i];
+        //     currD = dimensions[key]; 
+        //     dimensions[key] = Number((currD).toFixed(2));
+        // }
 
         node = {}
-        node["User ID"] = originalNode.userId;
+        node["Student ID"] = originalNode.userId;
 
         node["Student Name"] = originalNode.userState.fullName;
 
@@ -597,10 +630,10 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         node["Characteristics"]["Ability"] = characteristics.ability;
         node["Characteristics"]["Engagement"] = characteristics.engagement;
 
-        node["Preferences Est"] = dimensions;
+        // node["Preferences Est"] = dimensions;
 
         htmlFromJSON(node, currTooltip, 0, 0);
-    })
+    });
 
 
     // nodeElements.on('click', function(d){ 

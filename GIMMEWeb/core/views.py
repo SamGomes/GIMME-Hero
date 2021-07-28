@@ -411,7 +411,7 @@ class Views(): #acts as a namespace
 						trimAlg = trimAlgTemplate
 					), 
 				default=lambda o: o.__dict__, sort_keys=True)
-				profile.preferences = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
+				profile.preferences = json.dumps(intProfTemplate.generateCopy().reset(), default=lambda o: o.__dict__, sort_keys=True)
 
 				profile.save() 
 
