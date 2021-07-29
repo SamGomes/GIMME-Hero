@@ -139,8 +139,13 @@ var buildStatePlot = function(canvasId, data){
 var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     // used to correctly generate user colors
-    var abCap = 0;
-    var engCap = 0; 
+    var abMax = 0;
+    var engMax = 0; 
+
+    var abMin = Infinity;
+    var engMin = Infinity; 
+
+
 
     $("#adaptationIssues_professor_dash").hide();
     $("#adaptationIssuesText_professor_dash").html('');
@@ -230,20 +235,20 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     }
     
 
-    // source: https://www.w3docs.com/snippets/javascript/how-to-convert-rgb-to-hex-and-vice-versa.html
-    var rgbToHex = function(r, g, b) {
-        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-    }
 
     var generatePlayerColor = function(node){
+
         var userChar = node.userState.characteristics;
-        abRatio = abCap > 0.0? (userChar.ability /abCap): 0.0;
-        engRatio = engCap > 0.0? (userChar.engagement /engCap): 0.0;
+        abRatio = abMax > 0.0? ((userChar.ability - abMin) / (abMax - abMin)): 0.0;
+        engRatio = engMax > 0.0? ((userChar.engagement - engMin) / (engMax - engMin)): 0.0;
+
 
         ratio = (abRatio + engRatio) / 2.0;
-        console.log(rgbToHex(255, 0.0, 0.0));
 
-        return rgbToHex(Number((1.0 - ratio)*255), Number(ratio*255), 0.0);
+        return d3.scaleLinear()
+        .domain([0.0, 0.5, 1.0])
+        .range(["#FF0000", "#FFFF00", "#00FF00"])(ratio)
+
     }
 
 
@@ -287,7 +292,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     }
 
     var resizeCanvas = function(canvas){
-        var targetWidth = canvasContainer.getBoundingClientRect().width - 50;
+        var targetWidth = canvasContainer.getBoundingClientRect().width;
         canvas.attr("width", targetWidth);
         canvas.attr("height", targetWidth/aspect);
     }
@@ -297,7 +302,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     var canvas = svg;
     var canvasContainer = canvas.node().parentNode.parentNode.parentNode;
 
-    aspect = 2.0 / 0.8;
+    aspect = 2.5 / 2.0;
 
     resizeCanvas(canvas);
 
@@ -319,7 +324,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         delete avgCharacteristics.profile
         var profile = data.profiles[i]
         var tasks = data.tasks[i]
-        var groupCenterOfMass = {'x': 100 + Math.random()*(canvasContainer.getBoundingClientRect().width - 300), 'y': 100 + Math.random()*(canvasContainer.getBoundingClientRect().height - 300)};
+        var groupCenterOfMass = {'x': 10 + Math.random()*(canvasContainer.getBoundingClientRect().width - 200), 'y': 10 + Math.random()*(canvasContainer.getBoundingClientRect().height - 200)};
 
         groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics, 'profile': profile, 'tasks': tasks, 'centerOfMass': groupCenterOfMass});
         
@@ -377,18 +382,25 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             .each(function(node){
                 //update caps before treating nodes for print
                 var currAb = node.userState.characteristics.ability;
-                if(currAb > abCap){
-                    abCap = currAb;
+                if(currAb > abMax){
+                    abMax = currAb;
+                }
+                if(currAb < abMin){
+                    abMin = currAb;
                 }
                 var currEng = node.userState.characteristics.engagement;
-                if(currEng > engCap){
-                    engCap = currEng; 
+                if(currEng > engMax){
+                    engMax = currEng; 
                 }
-                // console.log("partial abCap: " + abCap)
+                if(currAb < engMin){
+                    engMin = currAb;
+                }
             })
             .attr('fill', function(node){
                                 return generatePlayerColor(node);
-                            });
+                            })
+            .attr('stroke', node => colors[node.groupId])
+            .attr('stroke-width', '3');
 
 
     // var textElements =
@@ -429,15 +441,22 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         return totalLength;
     }
 
-    var htmlFromJSON = function(json, fatherElem, currX, currY){
+    var htmlFromJSON = function(json, fatherElem, currX, currY, paddingX, paddingY, j){
         
         if(typeof json == "string" || typeof json == "number" || json == undefined){
             return;
         }
 
+
         var keys = Object.keys(json)
         var x = currX + 100;
-        var y = currY + 75;
+        var y = currY + 30;
+
+        if(j==0){
+            x += paddingX;
+            y += paddingY;
+        }
+
         for(var i=0; i < keys.length; i++){
             var currKey = keys[i];
             var currJson = json[currKey];
@@ -482,7 +501,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                 .text(currJson);
             }
 
-            htmlFromJSON(currJson, fatherElem, x, y);
+            htmlFromJSON(currJson, fatherElem, x, y, paddingX, paddingY, ++j);
 
             y += 35*(1+getJSONLength(currJson));
         }
@@ -507,12 +526,10 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     }
 
 
-
-
     groupInfoTooltips
         .append("path")
         .attr("d", function(d) {
-          return rightRoundedRect(15, 4, 630, 380, 15);
+          return rightRoundedRect(30, 30, 630, 380, 15);
         })
         .attr('fill', function(node){
                                 var baseColor = colors[node.groupId].split('#')[1];
@@ -520,7 +537,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                                 return '#' +  baseColor + transparency.toString(16);
                                 // return colors[node.groupId];
                             })
-        .attr('stroke', 'black');
+        .attr('stroke', 'gray')
+        .attr('stroke-width', '3.5');
     
 
     groupInfoTooltips.each(function(originalNode){ 
@@ -572,7 +590,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         delete node.groupId;
         delete node.tasks;
 
-        htmlFromJSON(node, currTooltip, 0, 0);
+        htmlFromJSON(node, currTooltip, 0, 0, 0, 80, 0);
     });
 
 
@@ -592,12 +610,13 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     userInfoTooltips
         .append("path")
         .attr("d", function(d) {
-            return rightRoundedRect(15, 4, 630, 300, 15);
+            return rightRoundedRect(10, 10, 630, 300, 15);
         })
         .attr('fill', function(node){
             return generatePlayerColor(node);
         })
-        .attr('stroke', 'black');
+        .attr('stroke', 'gray')
+        .attr('stroke-width', '3.5');
     
     userInfoTooltips.each(function(originalNode){
 
@@ -631,7 +650,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
         // node["Preferences Est"] = dimensions;
 
-        htmlFromJSON(node, currTooltip, 0, 0);
+        htmlFromJSON(node, currTooltip, 0, 0, 0, 50, 0);
     });
 
 

@@ -1061,6 +1061,22 @@ class Views(): #acts as a namespace
 			return HttpResponse('ok')
 		return HttpResponse('error')
 
+
+	# (FOR DEBUG) IF YOU WANT TO GENERATE STATES FOR ALL PLAYERS
+	# def uploadTaskResults(request):
+
+	# 	if request.method == 'POST':
+	# 		for username in playerBridge.getAllStoredStudentUsernames():
+	# 			characteristicsDelta = json.loads(request.POST['characteristicsDelta'])
+
+	# 			characteristics = playerBridge.getPlayerCurrCharacteristics(username)
+	# 			characteristics.ability = random.uniform(0.5, 3)
+	# 			characteristics.engagement = random.uniform(0.5, 3)
+	# 			playerBridge.setPlayerCharacteristics(username, characteristics)
+
+	# 	return HttpResponse('ok')
+
+
 	def manuallyManageStudent(request):
 		if request.method == 'GET':
 			return render(request, 'manuallyManageStudent.html')

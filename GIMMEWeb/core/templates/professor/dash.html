@@ -78,7 +78,7 @@
 				</div>
 				<div class='panel-block'>
 					<div class='column is-offset-1 dash-cell-box'>
-						<div class='subtitle is-5' style='color:gray;' >Free Tasks</div>
+						<div class='subtitle is-5' style='color:gray;'>Free Tasks</div>
 						<div class='table-container'>
 							<div class='table' style='margin:2em;' id='freeTasksTable_professor_dash'>
 							</div>
@@ -448,7 +448,8 @@
 
 				<div class='panel-block is-borderless'>
 					<div class='colums'>
-						<div class='column is-centered is-fullwidth' id='groupsPlot_professor_dash'></div>
+						<img class='column is-half' id='groupsPlotLegend_professor_dash' src="{% static "media/images/groupPlotLegend.png" %}"></img>
+						<div class='column is-half' id='groupsPlot_professor_dash'></div>
 					</div>
 					<div class='colums' style="position: relative; left: 50%; transform: translateX(-50%);">
 						<img class='column is-centered is-fullwidth' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
@@ -662,6 +663,7 @@ crossorigin='anonymous'></script>
 								$('#loadAndStartAdaptation_professor_dash').removeClass('is-loading');
 								$('#rebuildPlot_professor_dash').removeClass('is-loading');
 								
+								$('#groupsPlotLegend_professor_dash').show(500);
 								$('#groupsPlot_professor_dash').show(500);
 								$('#interactionsProfilePlot_professor_dash').show(500);
 								$('#learningStatePlot_professor_dash').show(500);
@@ -681,6 +683,7 @@ crossorigin='anonymous'></script>
 								$('#forceStartAdaptation_professor_dash').addClass('is-loading');
 								$('#loadAndStartAdaptation_professor_dash').addClass('is-loading');
 
+								$('#groupsPlotLegend_professor_dash').hide(500);
 								$('#groupsPlot_professor_dash').hide(500);
 								$('#interactionsProfilePlot_professor_dash').hide(500);
 								$('#learningStatePlot_professor_dash').hide(500);
