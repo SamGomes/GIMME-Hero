@@ -123,8 +123,8 @@ var buildStatePlot = function(canvasId, data){
         .attr('fill', '#50C2E3');
 
     var gy = svg.append('g')
-        .attr('class', 'y axis')
-        .call(yAxis)        
+        .attr('class', 'y axis label')
+        .call(yAxis) 
         .style("font-size","20px");
 
 
@@ -822,6 +822,7 @@ var buildScatterInteractionPlot  = function(canvasId, data){
     // append the svg object to the body of the page
     svg = d3.select('#'+canvasId)
       .append('svg')
+        .attr('transform', 'scale(0.75)')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         .style('background', 'url("../media/images/plots/interactionSpaceBckgrd.png") no-repeat')
@@ -833,21 +834,21 @@ var buildScatterInteractionPlot  = function(canvasId, data){
     
     svg.append('g')
         .append('text') 
-        .attr("class", "x label")
-        .attr("x", width/2)
-        .attr("y", height + 60)
-        .attr("text-anchor", "middle")
+        .attr('class', 'x label')
+        .attr('x', width/2)
+        .attr('y', height + 60)
+        .attr('text-anchor', 'middle')
         .style('font-size','30px')
-        .text("Focus");
+        .text('Focus');
 
     svg.append('g')
         .append('text') 
-        .attr("class", "y label")
-        .attr("text-anchor", "end")
-        .attr("x", -60)
-        .attr("y", height/2)
+        .attr('class', 'y label')
+        .attr('text-anchor', 'end')
+        .attr('x', -60)
+        .attr('y', height/2)
         .style('font-size','30px')
-        .text("Challenge");
+        .text('Challenge');
 
 
     // Add X axis
