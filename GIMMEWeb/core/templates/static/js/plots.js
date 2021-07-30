@@ -25,18 +25,18 @@ var buildInteractionsProfilePlot = function(canvasId, data){
             .attr('height', height + margin.top + margin.bottom)
             .append('g')
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
+        
     svg.append('g')
             .attr('class', 'x axis')
             .attr('transform', 'translate(' + 0 + ',' + height / 2 + ')')
-            .call(xAxis);
+            .call(xAxis)
+    
 
     svg.append('g')
-            .attr('class', 'y axis')
-            .attr('transform', 'translate(' + width / 2 + ',' + 0 + ')')
-            .call(yAxis)
-            .append('text');
-              
+        .attr('class', 'y axis')
+        .attr('transform', 'translate(' + width / 2 + ',' + 0 + ')')
+        .call(yAxis)
+            
 
   var dots =  svg.selectAll('g.dot')
             .data(data)
@@ -291,7 +291,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         return (Math.pow(vec1.ability - vec2.ability, 2) + Math.pow(vec1.engagement - vec2.engagement, 2));
     }
 
-    var resizeCanvas = function(canvas){
+    var resizeCanvas = function(canvas, aspect){
         var targetWidth = canvasContainer.getBoundingClientRect().width;
         canvas.attr("width", targetWidth);
         canvas.attr("height", targetWidth/aspect);
@@ -302,9 +302,12 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     var canvas = svg;
     var canvasContainer = canvas.node().parentNode.parentNode.parentNode;
 
+    width = canvasContainer.getBoundingClientRect().width;
+    height = canvasContainer.getBoundingClientRect().height;
+
     aspect = 2.5 / 2.0;
 
-    resizeCanvas(canvas);
+    resizeCanvas(canvas, aspect);
 
 
     var userNodes = [];
@@ -320,11 +323,11 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     for (i=0; i<data.groups.length; i++){
         var group = data.groups[i]
-        var avgCharacteristics = $.extend( {}, data.avgCharacteristics[i])
+        var avgCharacteristics = $.extend({}, data.avgCharacteristics[i])
         delete avgCharacteristics.profile
         var profile = data.profiles[i]
         var tasks = data.tasks[i]
-        var groupCenterOfMass = {'x': 10 + Math.random()*(canvasContainer.getBoundingClientRect().width - 200), 'y': 10 + Math.random()*(canvasContainer.getBoundingClientRect().height - 200)};
+        var groupCenterOfMass = {'x': 100 + Math.random()*(width*0.8), 'y': 10 + Math.random()*(height*0.8)};
 
         groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics, 'profile': profile, 'tasks': tasks, 'centerOfMass': groupCenterOfMass});
         
@@ -566,10 +569,12 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             currC = characteristics[key]; 
             characteristics[key] = Number((currC).toFixed(2));
         }
+
+        //also put profile in range [-3,3]
         for (i=0; i<dKeys.length; i++){
             key = dKeys[i];
             currD = dimensions[key]; 
-            dimensions[key] = Number((currD).toFixed(2));
+            dimensions[key] = Number((currD*6.0 - 3.0).toFixed(2));
         }
 
 
@@ -659,8 +664,35 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     //     d3.select(d).style('stroke-width','3em');
     //     elem.style('visibility') == 'visible'? elem.style('visibility', 'hidden') : elem.style('visibility', 'visible');});
 
+    var mouseX = 0;
+    var mouseY = 0;
+
     nodeElements.on('mouseover', function(d){ d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'visible');})
-        .on('mouseout', function(d){ d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'hidden');});        
+        .on('mouseout', function(d){ d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'hidden');})
+        .on('click', function(d){ 
+            // if(d.isForChange){
+
+            // }else{
+
+            // }
+
+            var coordinates= d3.mouse(this);
+            mouseX = coordinates[0];
+            mouseY = coordinates[1];
+
+            thisElem = d3.select(this);
+            thisElem.attr('r', 20)
+            
+            d3.select(this.parentNode)
+                .append("line")
+                .attr("x1", thisElem.attr('cx'))
+                .attr("y1", thisElem.attr('cy'))
+                .attr("x2", mouseX)
+                .attr("y2", mouseY)
+                .attr("stroke-width", 5)
+                .attr("stroke", "black");
+
+        });        
 
         
 
@@ -680,6 +712,12 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     resetSim();
     simulation.on('tick', () => {
+
+            console.log(nodeElements);
+            nodeElements.selectAll('.line')
+                .attr("x2", mouseX)
+                .attr("y2", mouseY);
+
             nodeElements
                 .attr('cx', node => node.x)
                 .attr('cy', node => node.y);
@@ -777,9 +815,9 @@ var buildScatterInteractionPlot  = function(canvasId, data){
     //originally from https://www.d3-graph-gallery.com/graph/scatter_basic.html
 
     // set the dimensions and margins of the graph
-    var margin = {top: 50, right: 50, bottom: 50, left: 50},
-        width = 600 - margin.left - margin.right,
-        height = 600 - margin.top - margin.bottom;
+    var margin = {top: 50, right: 200, bottom: 100, left: 200},
+        width = 1150 - margin.left - margin.right,
+        height = 850 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
     svg = d3.select('#'+canvasId)
@@ -787,12 +825,29 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         .style('background', 'url("../media/images/plots/interactionSpaceBckgrd.png") no-repeat')
-        .style('background-size', '90%')
+        .style('background-size', '70%')
         .style('background-position', 'center')
       .append('g')
         .attr('transform',
               'translate(' + margin.left + ',' + margin.top + ')');
     
+    svg.append('g')
+        .append('text') 
+        .attr("class", "x label")
+        .attr("x", width/2)
+        .attr("y", height + 60)
+        .attr("text-anchor", "middle")
+        .style('font-size','30px')
+        .text("Focus");
+
+    svg.append('g')
+        .append('text') 
+        .attr("class", "y label")
+        .attr("text-anchor", "end")
+        .attr("x", -60)
+        .attr("y", height/2)
+        .style('font-size','30px')
+        .text("Challenge");
 
 
     // Add X axis
@@ -802,7 +857,7 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         svg.append('g')
         .attr('transform', 'translate(0,' + height + ')')
         .call(d3.axisBottom(x).ticks(5, "f"))
-        .style('font-size','20px');
+        .style('font-size','30px');
 
 
     // Add Y axis
@@ -811,7 +866,7 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .range([ height, 0]);
         svg.append('g')
         .call(d3.axisLeft(y).ticks(5, "f"))
-        .style('font-size','20px');
+        .style('font-size','30px');
 
     // Add dots
     svg.append('g')

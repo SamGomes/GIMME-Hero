@@ -448,8 +448,8 @@
 
 				<div class='panel-block is-borderless'>
 					<div class='colums'>
-						<img class='column is-half' id='groupsPlotLegend_professor_dash' src="{% static "media/images/groupPlotLegend.png" %}"></img>
-						<div class='column is-half' id='groupsPlot_professor_dash'></div>
+						<img class='column' id='groupsPlotLegend_professor_dash' src="{% static "media/images/groupPlotLegend.png" %}"></img>
+						<div class='column' id='groupsPlot_professor_dash'></div>
 					</div>
 					<div class='colums' style="position: relative; left: 50%; transform: translateX(-50%);">
 						<img class='column is-centered is-fullwidth' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
@@ -459,9 +459,9 @@
 				<div class='panel-block' style='display: block;'>
 					<p>Overall Preferences Distribution</p>
 					<div class='columns is-vcentered'>
-						<div class='column is-one-third'></div>
-						<div class='column is-one-third is-centered' id='interactionsProfilePlot_professor_dash'></div>
-						<div class='column is-one-third'></div>
+						<div class='column is-3'></div>
+						<div class='column is-4 is-centered' id='interactionsProfilePlot_professor_dash'></div>
+						<div class='column'></div>
 					</div>
 					<img class='column is-centered' style='position: relative; left: 50%; transform: translateX(-50%);' id='interactionsProfilePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 				</div>
@@ -788,7 +788,7 @@ crossorigin='anonymous'></script>
 		var buildPlots = function(currServerState){
 			buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
 			studentsStates = Object.values(currServerState.studentsStates);
-
+			console.log(currServerState)
 
 			$('#interactionsProfilePlot_professor_dash').empty()
 			$('#learningStatePlot_professor_dash').empty()
@@ -796,8 +796,12 @@ crossorigin='anonymous'></script>
 			var avgChars = [0,0];
 			for(var i=0; i<studentsStates.length; i++){
 				var currState = JSON.parse(studentsStates[i]);
-				// console.log(currState)
-				interactionDatapoints[i] = { "Full Name": currState.fullName,"focus": currState.preferencesEst.dimensions.Focus*6-3, "challenge": currState.preferencesEst.dimensions.Challenge*6-3 , "timestamp": 1 }
+				interactionDatapoints[i] = { 
+					"Full Name": currState.fullName, 
+					"focus": currState.preferencesEst.dimensions.Focus*6-3, 
+					"challenge": currState.preferencesEst.dimensions.Challenge*6-3, 
+					"timestamp": 1 
+				}
 				
 				avgChars[0] += currState.characteristics.ability/studentsStates.length;
 				avgChars[1] += currState.characteristics.engagement/studentsStates.length;
@@ -805,8 +809,8 @@ crossorigin='anonymous'></script>
 			buildScatterInteractionPlot('interactionsProfilePlot_professor_dash', interactionDatapoints);
 			buildStatePlot('learningStatePlot_professor_dash', 
 				[
-					{ "name": "Ability" , "value": 0.3/*avgChars[0]*/ },
-					{ "name": "Engagement" , "value": 0.6/*avgChars[1]*/ }
+					{ "name": "Ability" , "value": avgChars[0] },
+					{ "name": "Engagement" , "value": avgChars[1] }
 				]
 			);
 		}
