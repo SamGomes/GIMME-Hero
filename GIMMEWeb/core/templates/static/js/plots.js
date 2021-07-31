@@ -146,7 +146,6 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     var engMin = Infinity; 
 
 
-
     $("#adaptationIssues_professor_dash").hide();
     $("#adaptationIssuesText_professor_dash").html('');
 
@@ -300,12 +299,12 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     svg = d3.select('#'+canvasId).append('svg');
 
     var canvas = svg;
-    var canvasContainer = canvas.node().parentNode.parentNode.parentNode;
+    var canvasContainer = canvas.node().parentNode;
 
     width = canvasContainer.getBoundingClientRect().width;
     height = canvasContainer.getBoundingClientRect().height;
 
-    aspect = 2.5 / 2.0;
+    aspect = 2.5 / 1.0;
 
     resizeCanvas(canvas, aspect);
 
@@ -315,18 +314,18 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     var colors = [];
 
     var currPlotIndex = 0;
- 
+
     d3.select(window)
         .on("resize", function() {
             resizeCanvas(canvas);
         });
 
     for (i=0; i<data.groups.length; i++){
-        var group = data.groups[i]
-        var avgCharacteristics = $.extend({}, data.avgCharacteristics[i])
-        delete avgCharacteristics.profile
-        var profile = data.profiles[i]
-        var tasks = data.tasks[i]
+        var group = data.groups[i];
+        var avgCharacteristics = $.extend({}, data.avgCharacteristics[i]);
+        delete avgCharacteristics.profile;
+        var profile = data.profiles[i];
+        var tasks = data.tasks[i];
         var groupCenterOfMass = {'x': 100 + Math.random()*(width*0.8), 'y': 10 + Math.random()*(height*0.8)};
 
         groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics, 'profile': profile, 'tasks': tasks, 'centerOfMass': groupCenterOfMass});
@@ -400,8 +399,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                 }
             })
             .attr('fill', function(node){
-                                return generatePlayerColor(node);
-                            })
+                    return generatePlayerColor(node);
+                })
             .attr('stroke', node => colors[node.groupId])
             .attr('stroke-width', '3');
 
@@ -835,20 +834,21 @@ var buildScatterInteractionPlot  = function(canvasId, data){
     svg.append('g')
         .append('text') 
         .attr('class', 'x label')
-        .attr('x', width/2)
-        .attr('y', height + 60)
+        .attr('x', width/2 + 20)
+        .attr('y', height + 80)
         .attr('text-anchor', 'middle')
-        .style('font-size','30px')
-        .text('Focus');
+        .style('font-size','35px')
+        .text('Self ←     Focus     → Others');
 
     svg.append('g')
         .append('text') 
         .attr('class', 'y label')
-        .attr('text-anchor', 'end')
-        .attr('x', -60)
-        .attr('y', height/2)
-        .style('font-size','30px')
-        .text('Challenge');
+        .attr('text-anchor', 'middle')
+        .attr('y', -60)
+        .attr('x', -height/2 + 10)
+        .style('font-size','35px')
+        .attr('transform', 'rotate(-90)')
+        .text('Facilitate ←     Challenge     →  Complicate');
 
 
     // Add X axis

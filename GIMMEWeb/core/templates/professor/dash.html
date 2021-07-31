@@ -446,9 +446,12 @@
 					</div>
 				</div>
 
-				<div class='panel-block is-borderless'>
-					<div class='colums'>
-						<img class='column' id='groupsPlotLegend_professor_dash' src="{% static "media/images/groupPlotLegend.png" %}"></img>
+				<div class='panel-block'>
+					<div class='columns'>
+						<!-- <img class='column is-4' id='groupsPlotLegend_professor_dash' src="{% static "media/images/groupPlotLegend.png" %}"></img> -->
+						<div class='column is-3'>
+							<img id='groupsPlotLegend_professor_dash' src="{% static "media/images/groupPlotLegend.png" %}"></img>
+						</div>
 						<div class='column' id='groupsPlot_professor_dash'></div>
 					</div>
 					<div class='colums' style="position: relative; left: 50%; transform: translateX(-50%);">
@@ -469,9 +472,9 @@
 				<div class='panel-block' style='display: block;'>
 					<p>Average Class Learning State</p>
 					<div class='columns is-vcentered'>
-						<div class='column is-one-third'></div>
-						<div class='column is-one-third' id='learningStatePlot_professor_dash'></div>
-						<div class='column is-one-third'></div>
+						<div class='column is-3'></div>
+						<div class='column is-3' id='learningStatePlot_professor_dash'></div>
+						<div class='column'></div>
 					</div>
 					<img class='column is-centered' style='size:10%; position: relative; left: 50%; transform: translateX(-50%);' id='learningStatePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 				</div>
@@ -674,7 +677,7 @@ crossorigin='anonymous'></script>
 
 							}else{
 								
-								$('#adaptationInfoTitle_professor_dash').html('<br></br>Watch out, Big Brain Time!');
+								$('#adaptationInfoTitle_professor_dash').html('<br></br>Watch out, it is Big Brain Time!');
 								$('#adaptationInfoText_professor_dash').html('<br></br>Please wait some moments until groups are organized according to the students\' preferences...');
 								$('#adaptationInfo_professor_dash').show(500);
 
@@ -787,25 +790,28 @@ crossorigin='anonymous'></script>
 
 		var buildPlots = function(currServerState){
 			buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
-			studentsStates = Object.values(currServerState.studentsStates);
-			console.log(currServerState)
 
 			$('#interactionsProfilePlot_professor_dash').empty()
 			$('#learningStatePlot_professor_dash').empty()
 			var interactionDatapoints = [];
 			var avgChars = [0,0];
-			for(var i=0; i<studentsStates.length; i++){
-				var currState = JSON.parse(studentsStates[i]);
+
+			var profiles = currServerState.currAdaptationState.profiles;
+			var avgCharacteristicsPerGroup = currServerState.currAdaptationState.avgCharacteristics;
+			for(var i=0; i<profiles.length; i++){
+				var currProfile = profiles[i];
+				var currState = avgCharacteristicsPerGroup[i]
 				interactionDatapoints[i] = { 
-					"Full Name": currState.fullName, 
-					"focus": currState.preferencesEst.dimensions.Focus*6-3, 
-					"challenge": currState.preferencesEst.dimensions.Challenge*6-3, 
+					"ID": i, 
+					"focus": currProfile.dimensions.Focus*6-3, 
+					"challenge": currProfile.dimensions.Challenge*6-3, 
 					"timestamp": 1 
-				}
-				
-				avgChars[0] += currState.characteristics.ability/studentsStates.length;
-				avgChars[1] += currState.characteristics.engagement/studentsStates.length;
+				};
+
+				avgChars[0] += currState.ability/ profiles.length;
+				avgChars[1] += currState.engagement/ profiles.length;
 			}
+
 			buildScatterInteractionPlot('interactionsProfilePlot_professor_dash', interactionDatapoints);
 			buildStatePlot('learningStatePlot_professor_dash', 
 				[
@@ -843,36 +849,36 @@ crossorigin='anonymous'></script>
 
 		var loadAndStartAdaptation = function(){
 			newAdaptationConfig = {
-							'selectedGenAlgId': $('#selectedGenAlgId_professor_dash').text(), 
-							'selectedRegAlgId': $('#selectedRegAlgId_professor_dash').text(),
+				'selectedGenAlgId': $('#selectedGenAlgId_professor_dash').text(), 
+				'selectedRegAlgId': $('#selectedRegAlgId_professor_dash').text(),
 
 
-							'numNNs': $('#numNNsId_professor_dash').val(),
-							// 'minNumberOfPlayersPerGroup': $('#minNumberOfPlayersPerGroupId_professor_dash').val(),
-							// 'maxNumberOfPlayersPerGroup': $('#maxNumberOfPlayersPerGroupId_professor_dash').val(),
-							'preferredNumberOfPlayersPerGroup': $('#preferredNumberOfPlayersPerGroupId_professor_dash').val(),
-							'qualityWeightsAb': $('#qualityWeightsAbId_professor_dash').val(),
-							'qualityWeightsEng': $('#qualityWeightsEngId_professor_dash').val(),
-							'playerWindow': $('#playerWindowId_professor_dash').val(),
+				'numNNs': $('#numNNsId_professor_dash').val(),
+				// 'minNumberOfPlayersPerGroup': $('#minNumberOfPlayersPerGroupId_professor_dash').val(),
+				// 'maxNumberOfPlayersPerGroup': $('#maxNumberOfPlayersPerGroupId_professor_dash').val(),
+				'preferredNumberOfPlayersPerGroup': $('#preferredNumberOfPlayersPerGroupId_professor_dash').val(),
+				'qualityWeightsAb': $('#qualityWeightsAbId_professor_dash').val(),
+				'qualityWeightsEng': $('#qualityWeightsEngId_professor_dash').val(),
+				'playerWindow': $('#playerWindowId_professor_dash').val(),
 
-							'numberOfConfigChoices': $('#numberOfConfigChoicesId_professor_dash').val(),
+				'numberOfConfigChoices': $('#numberOfConfigChoicesId_professor_dash').val(),
 
-							'temperatureDecay': $('#temperatureDecay_professor_dash').val(),
+				'temperatureDecay': $('#temperatureDecay_professor_dash').val(),
 
-							'initialPopulationSize': $('#initialPopulationSize_professor_dash').val(),
-							'probOfCross': $('#probOfCross_professor_dash').val(),
-							'probOfMutation': $('#probOfMutation_professor_dash').val(),
-							'probOfMutationConfig': $('#probOfMutationConfig_professor_dash').val(),
-							'probOfMutationGIPs': $('#probOfMutationGIPs_professor_dash').val(),
-							'numberOfEvolutionsPerIteration': $('#numberOfEvolutionsPerIteration_professor_dash').val(),
-							'numChildrenPerIteration': $('#numChildrenPerIteration_professor_dash').val(),
-							'numSurvivors': $('#numSurvivors_professor_dash').val(),
+				'initialPopulationSize': $('#initialPopulationSize_professor_dash').val(),
+				'probOfCross': $('#probOfCross_professor_dash').val(),
+				'probOfMutation': $('#probOfMutation_professor_dash').val(),
+				'probOfMutationConfig': $('#probOfMutationConfig_professor_dash').val(),
+				'probOfMutationGIPs': $('#probOfMutationGIPs_professor_dash').val(),
+				'numberOfEvolutionsPerIteration': $('#numberOfEvolutionsPerIteration_professor_dash').val(),
+				'numChildrenPerIteration': $('#numChildrenPerIteration_professor_dash').val(),
+				'numSurvivors': $('#numSurvivors_professor_dash').val(),
 
 
 
-							'isBootstrapped': $('#precomputeBootstrapId_professor_dash').prop("checked"),
-							'numBootstrapIterations': $('#numBootstrapIterationsId_professor_dash').val()
-						};
+				'isBootstrapped': $('#precomputeBootstrapId_professor_dash').prop("checked"),
+				'numBootstrapIterations': $('#numBootstrapIterationsId_professor_dash').val()
+			};
 			currAdaptationConfig = newAdaptationConfig;
 			$.ajax(
 				{
