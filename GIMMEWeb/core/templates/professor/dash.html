@@ -451,10 +451,12 @@
 
 				<div class='panel-block'>
 					<div class='columns'>
-						<div class='column is-3 button has-tooltip-top has-tooltip-arrow' id='groupsPlotLegendTrigger_professor_dash' data-tooltip='Click on this legend to hide it.'>
-							Show Legend
+						<div class='column is-1' id='groupsPlotLegendTrigger_professor_dash'>
+							<div class='button has-tooltip-top has-tooltip-arrow' data-tooltip='Show legend.'>
+								<i class="fa fa-window-maximize" aria-hidden="true"></i>
+							</div>
 						</div>
-						<div class='column is-3 has-tooltip-top has-tooltip-arrow' id='groupsPlotLegend_professor_dash' data-tooltip='Click on this legend to hide it.'>
+						<div class='column is-3 has-text-right has-tooltip-top has-tooltip-arrow' id='groupsPlotLegend_professor_dash' data-tooltip='Click on this legend to hide it.'>
 							<img src="{% static "media/images/groupPlotLegend.png" %}"></img>
 						</div>
 						<div class='column' id='groupsPlot_professor_dash'></div>

@@ -675,6 +675,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         .attr('markerWidth', 4)
         .attr('markerHeight', 4)
         .attr('orient', 'auto')
+        .attr('stroke', 'gray')
+        .attr('fill', 'white')
 
         .append('path')
             .attr('d', 'M0,-5 L10,0 L0,5')
@@ -688,6 +690,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         .attr('markerWidth', 4)
         .attr('markerHeight', 4)
         .attr('orient', 'auto')
+        .attr('stroke', 'gray')
+        .attr('fill', 'white')
 
         .append('path')
             .attr('d', 'M10,-5 L0,0 L10,5')
@@ -698,23 +702,33 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     var mouseX = 0;
     var mouseY = 0;
 
-    nodeElements.on('mouseover', function(d){ d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'visible');})
-        .on('mouseout', function(d){ d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'hidden');})
-        .on('click', function(d){ 
-            // if(d.isForChange){
+    var studentForChange1 = undefined;
+    var studentForChange2 = undefined;
 
-            // }else{
+    var resetChangeState = function(){
+        nodeElements.attr('r', 15);
 
-            // }
+        studentForChange1 = undefined;
+        studentForChange2 = undefined;
 
-            // console.log(this);
+        d3.select('#'+canvasId).select('line').remove();
+    }
+
+    d3.select('#'+canvasId).on('dbclick',function(d){
+        resetChangeState();
+    });
+
+    nodeElements.on('click', function(d){ 
+
+        if(studentForChange2 == undefined){
 
             var coordinates = d3.mouse(this);
             var mouseX = coordinates[0];
             var mouseY = coordinates[1];
 
             thisElem = d3.select(this);
-            thisElem.attr('r', 20)
+            thisElem.attr('r', 20);
+            studentForChange1 = d;
             
             d3.select(this.parentNode)
 
@@ -728,21 +742,42 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                 .attr('x2', mouseX)
                 .attr('y2', mouseY)
                 .attr('stroke-width', 5)
-                .attr('stroke', 'black');
+                .attr('stroke-dasharray', 4)
+                .attr('stroke', 'gray');
 
-        });
-        d3.select('#'+canvasId).on('mouseover', function(d){
+        }else{
+            //perform change
+            resetChangeState();
+        }
+    });
 
-            var coordinates = d3.mouse(this);
-            var mouseX = coordinates[0];
-            var mouseY = coordinates[1];
+    nodeElements.on('mouseover', function(d){
+
+        d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'visible');
+        if(studentForChange1 != undefined){
+
+            thisElem = d3.select(this);
+            thisElem.attr('r', 20);
+
+            if(d.groupId == studentForChange1.groupId){
+                resetChangeState();
+                return;
+            }
+            studentForChange2 = d;
 
             d3.select('#'+canvasId).select('line')
-                .attr('x2', mouseX)
-                .attr('y2', mouseY);
-        });
+                .attr('x2', thisElem.attr('cx'))
+                .attr('y2', thisElem.attr('cy'));
+        }
+    });
+    nodeElements.on('mouseout', function(d){
+        d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'hidden');
+        if(studentForChange2!=undefined){
+            thisElem = d3.select(this);
+            thisElem.attr('r', 15);
+        }  
+    });
 
-        
 
 
 
