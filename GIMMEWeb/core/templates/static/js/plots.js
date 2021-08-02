@@ -125,14 +125,14 @@ var buildStatePlot = function(canvasId, data){
     var gy = svg.append('g')
         .attr('class', 'y axis label')
         .call(yAxis) 
-        .style("font-size","20px");
+        .style('font-size','20px');
 
 
     var gx = svg.append('g')
         .attr('class', 'x axis')
         .call(xAxis)
         .attr('transform', 'translate(0,' + height + ')')
-        .style("font-size","20px");
+        .style('font-size','20px');
 }
 
 
@@ -146,8 +146,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     var engMin = Infinity; 
 
 
-    $("#adaptationIssues_professor_dash").hide();
-    $("#adaptationIssuesText_professor_dash").html('');
+    $('#adaptationIssues_professor_dash').hide();
+    $('#adaptationIssuesText_professor_dash').html('');
 
     // from http://bl.ocks.org/mbostock/7555321
     var wrap = function (text, width) {
@@ -158,25 +158,25 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                 line = [],
                 lineNumber = 0,
                 lineHeight = 1.1, // ems
-                x = text.attr("x"),
-                y = text.attr("y"),
-                dy = 0, //parseFloat(text.attr("dy")),
+                x = text.attr('x'),
+                y = text.attr('y'),
+                dy = 0, //parseFloat(text.attr('dy')),
                 tspan = text.text(null)
-                            .append("tspan")
-                            .attr("x", x)
-                            .attr("y", y)
-                            .attr("dy", dy + "em");
+                            .append('tspan')
+                            .attr('x', x)
+                            .attr('y', y)
+                            .attr('dy', dy + 'em');
             while (word = words.pop()) {
                 line.push(word);
-                tspan.text(line.join(" "));
+                tspan.text(line.join(' '));
                 if (tspan.node().getComputedTextLength() > width) {
                     line.pop();
-                    tspan.text(line.join(" "));
+                    tspan.text(line.join(' '));
                     line = [word];
-                    tspan = text.append("tspan")
-                                .attr("x", x)
-                                .attr("y", y)
-                                .attr("dy", ++lineNumber * lineHeight + dy + "em")
+                    tspan = text.append('tspan')
+                                .attr('x', x)
+                                .attr('y', y)
+                                .attr('dy', ++lineNumber * lineHeight + dy + 'em')
                                 .text(word);
                 }
             }
@@ -199,38 +199,38 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
         if (focus >= 0 && focus < 0.33){
             if (challenge >= 0 && challenge < 0.33){
-                return "#b5dd02"
+                return '#dd6c02'
             }
             else if (challenge >= 0.33 && challenge < 0.66){
-                return "#ddb502"
+                return '#ddb502'
             }
             else if (challenge >= 0.66 && challenge <= 1.0){
-                return "#dd6c02"
+                return '#b5dd02'
             }
         }
         else if (focus >= 0.33 && focus < 0.66){
             if (challenge >= 0 && challenge < 0.33){
-                return "#dd1402"
+                return '#dd1402'
             }
             else if (challenge >= 0.33 && challenge < 0.66){
-                return "#a3a1a1"
+                return '#a3a1a1'
             }
             else if (challenge >= 0.66 && challenge <= 1.0){
-                return "#19c151"
+                return '#19c151'
             }
         }
         else if (focus >= 0.66 && focus <= 1.0){
             if (challenge >= 0 && challenge < 0.33){
-                return "#7724d6"
+                return '#89150b'
             }
             else if (challenge >= 0.33 && challenge < 0.66){
-                return "#cd7dce"
+                return '#cd7dce'
             }
             else if (challenge >= 0.66 && challenge <= 1.0){
-                return "#89150b"
+                return '#7724d6'
             }
         }
-        return "#a3a1a1"
+        return '#a3a1a1'
     }
     
 
@@ -246,7 +246,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
         return d3.scaleLinear()
         .domain([0.0, 0.5, 1.0])
-        .range(["#FF0000", "#FFFF00", "#00FF00"])(ratio)
+        .range(['#FF0000', '#FFFF00', '#00FF00'])(ratio)
 
     }
 
@@ -277,7 +277,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         g = (255 - g).toString(16);
         b = (255 - b).toString(16);
         // pad each with zeros and return
-        return "#" + padZero(r) + padZero(g) + padZero(b);
+        return '#' + padZero(r) + padZero(g) + padZero(b);
     }
 
     var padZero = function(str, len) {
@@ -292,8 +292,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     var resizeCanvas = function(canvas, aspect){
         var targetWidth = canvasContainer.getBoundingClientRect().width;
-        canvas.attr("width", targetWidth);
-        canvas.attr("height", targetWidth/aspect);
+        canvas.attr('width', targetWidth);
+        canvas.attr('height', targetWidth/aspect);
     }
 
     svg = d3.select('#'+canvasId).append('svg');
@@ -316,7 +316,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     var currPlotIndex = 0;
 
     d3.select(window)
-        .on("resize", function() {
+        .on('resize', function() {
             resizeCanvas(canvas);
         });
 
@@ -427,13 +427,13 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
 
     var getJSONLength = function(json){
-        if(typeof json == "string"|| json == undefined){
+        if(typeof json == 'string'|| json == undefined){
             return 0;
         }
         var keys = Object.keys(json);
         var totalLength = keys.length;
         for(var i=0; i < keys.length; i++){
-            if(currKey=="0"){
+            if(currKey=='0'){
                 continue;
             }
             var currKey = keys[i];
@@ -445,7 +445,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     var htmlFromJSON = function(json, fatherElem, currX, currY, paddingX, paddingY, j){
         
-        if(typeof json == "string" || typeof json == "number" || json == undefined){
+        if(typeof json == 'string' || typeof json == 'number' || json == undefined){
             return;
         }
 
@@ -463,12 +463,12 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             var currKey = keys[i];
             var currJson = json[currKey];
             
-            if(currKey=="0"){
+            if(currKey=='0'){
                 continue;
             }
 
-            if(typeof currJson != "string" && typeof currJson != "number"){
-                currKey+=" ↴";
+            if(typeof currJson != 'string' && typeof currJson != 'number'){
+                currKey+=' ↴';
             }
 
             fatherElem
@@ -481,7 +481,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             .call(wrap, 300)
             .text(currKey);
 
-            if(typeof currJson == "string" || typeof currJson == "number"){
+            if(typeof currJson == 'string' || typeof currJson == 'number'){
 
                 fatherElem
                 .append('rect')
@@ -489,7 +489,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                 .attr('y', y)
                 .attr('width', 260)
                 .attr('height', 30)
-                .attr('fill', function(node){ return "white"; })
+                .attr('fill', function(node){ return 'white'; })
                 .attr('stroke', 'black');
 
                 fatherElem
@@ -498,7 +498,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                 .attr('y', y + 20)
                 .attr('font-size', 20)
                 .attr('font-family', 'Calibri,sans-serif')
-                .attr('color', function(node){ return "black"; })
+                .attr('color', function(node){ return 'black'; })
                 .call(wrap, 300)
                 .text(currJson);
             }
@@ -515,22 +515,22 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     // Returns path data for a rectangle with rounded right corners.
     // The top-left corner is ⟨x,y⟩.
     function rightRoundedRect(x, y, width, height, radius) {
-        return "M" + x + "," + y
-            + "l" + (width*0.1) + "," + (height*0.1)
-            + "h" + (width*0.9)
-            + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius
-            + "v" + (height - 2 * radius)
-            + "a" + radius + "," + radius + " 0 0 1 " + -radius + "," + radius
-            + "h" + (radius - width*0.95)
-            + "a" + radius + "," + -radius + " 0 0 1 " + -radius + "," + -radius
-            + "l" + 0.0 + "," + -height*0.9
-            + "z";
+        return 'M' + x + ',' + y
+            + 'l' + (width*0.1) + ',' + (height*0.1)
+            + 'h' + (width*0.9)
+            + 'a' + radius + ',' + radius + ' 0 0 1 ' + radius + ',' + radius
+            + 'v' + (height - 2 * radius)
+            + 'a' + radius + ',' + radius + ' 0 0 1 ' + -radius + ',' + radius
+            + 'h' + (radius - width*0.95)
+            + 'a' + radius + ',' + -radius + ' 0 0 1 ' + -radius + ',' + -radius
+            + 'l' + 0.0 + ',' + -height*0.9
+            + 'z';
     }
 
 
     groupInfoTooltips
-        .append("path")
-        .attr("d", function(d) {
+        .append('path')
+        .attr('d', function(d) {
           return rightRoundedRect(30, 30, 630, 380, 15);
         })
         .attr('fill', function(node){
@@ -577,13 +577,13 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         }
 
 
-        node["Group ID"] = node.groupId;
-        node["Adapted Task"] = node.tasks;
+        node['Group ID'] = node.groupId;
+        node['Adapted Task'] = node.tasks;
 
-        node["Characteristics"] = {};
-        node["Characteristics"]["Ability"] = characteristics.ability;
-        node["Characteristics"]["Engagement"] = characteristics.engagement;
-        node["Profile"] = dimensions;
+        node['Characteristics'] = {};
+        node['Characteristics']['Ability'] = characteristics.ability;
+        node['Characteristics']['Engagement'] = characteristics.engagement;
+        node['Profile'] = dimensions;
 
 
         //delete undisplayed attributes
@@ -612,8 +612,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             .style('visibility','hidden');
 
     userInfoTooltips
-        .append("path")
-        .attr("d", function(d) {
+        .append('path')
+        .attr('d', function(d) {
             return rightRoundedRect(10, 10, 630, 300, 15);
         })
         .attr('fill', function(node){
@@ -644,15 +644,15 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         // }
 
         node = {}
-        node["Student ID"] = originalNode.userId;
+        node['Student ID'] = originalNode.userId;
 
-        node["Student Name"] = originalNode.userState.fullName;
+        node['Student Name'] = originalNode.userState.fullName;
 
-        node["Characteristics"] = {};
-        node["Characteristics"]["Ability"] = characteristics.ability;
-        node["Characteristics"]["Engagement"] = characteristics.engagement;
+        node['Characteristics'] = {};
+        node['Characteristics']['Ability'] = characteristics.ability;
+        node['Characteristics']['Engagement'] = characteristics.engagement;
 
-        // node["Preferences Est"] = dimensions;
+        // node['Preferences Est'] = dimensions;
 
         htmlFromJSON(node, currTooltip, 0, 0, 0, 50, 0);
     });
@@ -662,6 +662,38 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     //     var elem = d3.select(userInfoTooltips._groups[0][d.plotIndex]); 
     //     d3.select(d).style('stroke-width','3em');
     //     elem.style('visibility') == 'visible'? elem.style('visibility', 'hidden') : elem.style('visibility', 'visible');});
+
+
+    // define arrow points paths
+    var defs = svg.append('defs');
+
+    defs.append('marker')
+        .attr('id', 'arrow')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 5)
+        .attr('refY', 0)
+        .attr('markerWidth', 4)
+        .attr('markerHeight', 4)
+        .attr('orient', 'auto')
+
+        .append('path')
+            .attr('d', 'M0,-5 L10,0 L0,5')
+            .attr('class', 'arrowHead');
+
+    defs.append('marker')
+        .attr('id', 'arrowFront')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 5)
+        .attr('refY', 0)
+        .attr('markerWidth', 4)
+        .attr('markerHeight', 4)
+        .attr('orient', 'auto')
+
+        .append('path')
+            .attr('d', 'M10,-5 L0,0 L10,5')
+            .attr('class', 'arrowHead');
+
+
 
     var mouseX = 0;
     var mouseY = 0;
@@ -675,23 +707,40 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
             // }
 
-            var coordinates= d3.mouse(this);
-            mouseX = coordinates[0];
-            mouseY = coordinates[1];
+            // console.log(this);
+
+            var coordinates = d3.mouse(this);
+            var mouseX = coordinates[0];
+            var mouseY = coordinates[1];
 
             thisElem = d3.select(this);
             thisElem.attr('r', 20)
             
             d3.select(this.parentNode)
-                .append("line")
-                .attr("x1", thisElem.attr('cx'))
-                .attr("y1", thisElem.attr('cy'))
-                .attr("x2", mouseX)
-                .attr("y2", mouseY)
-                .attr("stroke-width", 5)
-                .attr("stroke", "black");
 
-        });        
+                .append('line')
+                .attr('class', 'arrow')
+                .attr('marker-start', 'url(#arrowFront)')
+                .attr('marker-end', 'url(#arrow)')
+
+                .attr('x1', thisElem.attr('cx'))
+                .attr('y1', thisElem.attr('cy'))
+                .attr('x2', mouseX)
+                .attr('y2', mouseY)
+                .attr('stroke-width', 5)
+                .attr('stroke', 'black');
+
+        });
+        d3.select('#'+canvasId).on('mouseover', function(d){
+
+            var coordinates = d3.mouse(this);
+            var mouseX = coordinates[0];
+            var mouseY = coordinates[1];
+
+            d3.select('#'+canvasId).select('line')
+                .attr('x2', mouseX)
+                .attr('y2', mouseY);
+        });
 
         
 
@@ -711,11 +760,6 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     resetSim();
     simulation.on('tick', () => {
-
-            console.log(nodeElements);
-            nodeElements.selectAll('.line')
-                .attr("x2", mouseX)
-                .attr("y2", mouseY);
 
             nodeElements
                 .attr('cx', node => node.x)
@@ -857,7 +901,7 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .range([ 0, width ]);
         svg.append('g')
         .attr('transform', 'translate(0,' + height + ')')
-        .call(d3.axisBottom(x).ticks(5, "f"))
+        .call(d3.axisBottom(x).ticks(5, 'f'))
         .style('font-size','30px');
 
 
@@ -866,7 +910,7 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .domain([-3, 3])
         .range([ height, 0]);
         svg.append('g')
-        .call(d3.axisLeft(y).ticks(5, "f"))
+        .call(d3.axisLeft(y).ticks(5, 'f'))
         .style('font-size','30px');
 
     // Add dots

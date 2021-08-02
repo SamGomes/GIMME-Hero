@@ -413,20 +413,23 @@
 						<div class='column is-full'>
 							<p>Group Organization</p>
 						</div>
+					</div>
+				</div>
 
+				<div class='panel-block panel-block-borderless'>
+					<!-- is-fullwidth only occupies a portion of the panel block -->
+					<div class='columns is-fullwidth'>
+						<div class='column is-full'></div>
+						
 						<div class='column is-half has-text-centered has-tooltip-top has-tooltip-arrow' data-tooltip='Loads the parameterization above iff the configuration changed, and computes a new adaptation state.'>
 							<a><button class='button is-large is-info' type='submit' id='loadAndStartAdaptation_professor_dash'>Check Setup and Iterate</button></a>
 						</div>
+						<div class='column is-half'></div>
 
-						<!-- <div class='column is-one-third has-text-centered  has-tooltip-top has-tooltip-arrow is-warning'  data-tooltip='Forces an adaptation initialization call, even when no parameterization changes occur.'>
-							<a>
-								<button class='button is-large' type='submit' id='forceStartAdaptation_professor_dash'>Force Setup and Iterate</button>
-							</a>
-						</div> -->
-
-						<div class='column is-half has-text-centered has-tooltip-top has-tooltip-arrow' data-tooltip='Rebuilds the plot, without computing a new adaptation state.'>
+						<div class='column is-one-quarter has-text-centered has-tooltip-top has-tooltip-arrow' data-tooltip='Rebuilds the plot, without computing a new adaptation state.'>
 							<button class='button is-large' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plot</button>
 						</div>
+						<div class='column is-half'></div>
 					</div>
 				</div>
 
@@ -448,9 +451,11 @@
 
 				<div class='panel-block'>
 					<div class='columns'>
-						<!-- <img class='column is-4' id='groupsPlotLegend_professor_dash' src="{% static "media/images/groupPlotLegend.png" %}"></img> -->
-						<div class='column is-3'>
-							<img id='groupsPlotLegend_professor_dash' src="{% static "media/images/groupPlotLegend.png" %}"></img>
+						<div class='column is-3 button has-tooltip-top has-tooltip-arrow' id='groupsPlotLegendTrigger_professor_dash' data-tooltip='Click on this legend to hide it.'>
+							Show Legend
+						</div>
+						<div class='column is-3 has-tooltip-top has-tooltip-arrow' id='groupsPlotLegend_professor_dash' data-tooltip='Click on this legend to hide it.'>
+							<img src="{% static "media/images/groupPlotLegend.png" %}"></img>
 						</div>
 						<div class='column' id='groupsPlot_professor_dash'></div>
 					</div>
@@ -696,6 +701,17 @@ crossorigin='anonymous'></script>
 								$('#learningStatePlotLoadingImage_professor_dash').show(500);
 
 							}
+
+							$('#groupsPlotLegendTrigger_professor_dash').hide();
+							$('#groupsPlotLegend_professor_dash').click(function(){
+									$('#groupsPlotLegend_professor_dash').hide(500);
+									$('#groupsPlotLegendTrigger_professor_dash').show(500);
+							});
+							$('#groupsPlotLegendTrigger_professor_dash').click(function(){
+									$('#groupsPlotLegend_professor_dash').show(500);
+									$('#groupsPlotLegendTrigger_professor_dash').hide(500);
+							});
+
 
 							var currSelectedUsers = newServerState.currSelectedUsers;
 							var currFreeUsers = newServerState.currFreeUsers;
