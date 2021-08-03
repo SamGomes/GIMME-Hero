@@ -1080,11 +1080,7 @@ class Views(): #acts as a namespace
 	def manuallyChangeStudentGroup(request):
 		if request.method == 'POST':
 			adaptState = serverStateModelBridge.getCurrAdaptationState()
-			print(adaptState)
-			# print(request.POST)
-
-			# breakpoint()
-
+			
 			g1i = int(request.POST['student1[groupId]'])
 			g2i = int(request.POST['student2[groupId]'])
 
@@ -1119,6 +1115,7 @@ class Views(): #acts as a namespace
 					# change student information
 					playerBridge.setPlayerProfile(currPlayerI, adaptState['profiles'][gi])
 					playerBridge.setPlayerGroup(currPlayerI, g)
+					playerBridge.setPlayerTasks(currPlayerI, adaptState['tasks'][gi])
 
 
 			return render(request, 'manuallyManageStudent.html')

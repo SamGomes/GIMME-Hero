@@ -936,7 +936,7 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .attr('x', -height/2 + 10)
         .style('font-size','35px')
         .attr('transform', 'rotate(-90)')
-        .text('Facilitate ←     Challenge     →  Complicate');
+        .text('Complicate ←     Challenge     →  Facilitate');
 
 
     // Add X axis
@@ -945,7 +945,6 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .range([ 0, width ]);
         svg.append('g')
         .attr('transform', 'translate(0,' + height + ')')
-        .call(d3.axisBottom(x).ticks(5, 'f'))
         .style('font-size','30px');
 
 
@@ -954,7 +953,6 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .domain([-3, 3])
         .range([ height, 0]);
         svg.append('g')
-        .call(d3.axisLeft(y).ticks(5, 'f'))
         .style('font-size','30px');
 
     // Add dots
