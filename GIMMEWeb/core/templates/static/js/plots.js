@@ -922,21 +922,21 @@ var buildScatterInteractionPlot  = function(canvasId, data){
     svg.append('g')
         .append('text') 
         .attr('class', 'x label')
-        .attr('x', width/2 + 20)
-        .attr('y', height + 80)
+        .attr('x', width/2 + 10)
+        .attr('y', height + 40)
         .attr('text-anchor', 'middle')
         .style('font-size','35px')
-        .text('Self ←     Focus     → Others');
+        .text(' Self      ← Focus →     Others');
 
     svg.append('g')
         .append('text') 
         .attr('class', 'y label')
         .attr('text-anchor', 'middle')
-        .attr('y', -60)
-        .attr('x', -height/2 + 10)
+        .attr('y', -20)
+        .attr('x', -height/2 -10)
         .style('font-size','35px')
         .attr('transform', 'rotate(-90)')
-        .text('Complicate ←     Challenge     →  Facilitate');
+        .text('Complicate ← Challenge → Facilitate ');
 
 
     // Add X axis
