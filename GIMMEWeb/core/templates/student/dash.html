@@ -240,7 +240,7 @@
 						);
 
 
-						console.log(myInfo)
+						// console.log(myInfo)
 						$('#student_interactionsProfilePlot').empty()
 						buildScatterInteractionPlot('student_interactionsProfilePlot', 
 							[
@@ -249,7 +249,7 @@
 								// { 'focus': 1.7 , 'challenge': 1.2 , 'timestamp': 1 },
 								// { 'focus': 2.3 , 'challenge': 2.5 , 'timestamp': 4 },
 								// { 'focus': -1.5 , 'challenge': -2.1 , 'timestamp': 8 },
-								{ 'focus': myInfo.groupProfile['Focus'] , 'challenge': myInfo.groupProfile['Challenge'] , 'timestamp': 9 }
+								{ 'focus': myInfo.groupProfile['Focus']*6.0 - 3.0 , 'challenge': myInfo.groupProfile['Challenge']*6.0 - 3.0 , 'timestamp': 9 }
 							]
 						);
 
@@ -262,7 +262,6 @@
 
 			updateData();
 			// setInterval(updateData, 500);
-
 
 
 

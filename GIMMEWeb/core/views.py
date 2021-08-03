@@ -1088,8 +1088,8 @@ class Views(): #acts as a namespace
 			g1i = int(request.POST['student1[groupId]'])
 			g2i = int(request.POST['student2[groupId]'])
 
-			u1n = request.POST['student1[userId]']
-			u2n = request.POST['student2[userId]']
+			u1n = str(request.POST['student1[userId]'])
+			u2n = str(request.POST['student2[userId]'])
 
 			# change groups
 			adaptState['groups'][g1i].remove(u1n)
@@ -1098,7 +1098,7 @@ class Views(): #acts as a namespace
 			adaptState['groups'][g1i].append(u2n)
 			adaptState['groups'][g2i].append(u1n)
 
-			for gi, u in [g1i, g2i], [u2n, u1n]:
+			for gi in [g1i, g2i]:
 				g = adaptState['groups'][gi]
 
 				# recalculate averages
@@ -1114,9 +1114,11 @@ class Views(): #acts as a namespace
 
 					serverStateModelBridge.setCurrAdaptationState(adaptState)
 
-				# change student information
-				playerBridge.setPlayerProfile(u, adaptState['profiles'][gi])
-				playerBridge.setPlayerGroup(u, g)
+					# breakpoint()
+
+					# change student information
+					playerBridge.setPlayerProfile(currPlayerI, adaptState['profiles'][gi])
+					playerBridge.setPlayerGroup(currPlayerI, g)
 
 
 			return render(request, 'manuallyManageStudent.html')
