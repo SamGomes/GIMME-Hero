@@ -252,13 +252,12 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 			states.append(newCell)
 
 		trimAlg = json.loads(json.dumps(pastModelIncreasesDataFrame['trimAlg']))
-		# print(trimAlg)
 		sdf = PlayerStatesDataFrame(
-			states = states,
-			interactionsProfileTemplate = intProfTemplate.generateCopy().reset(), 
-			trimAlg = ProximitySortPlayerDataTrimAlg(
-				maxNumModelElements = int(trimAlg['maxNumModelElements']), 
-				epsilon = float(trimAlg['epsilon'])
+				states = states,
+				interactionsProfileTemplate = intProfTemplate.generateCopy().reset(), 
+				trimAlg = ProximitySortPlayerDataTrimAlg(
+					maxNumModelElements = int(trimAlg['maxNumModelElements']), 
+					epsilon = float(trimAlg['epsilon'])
 				)
 			)
 		return sdf
@@ -940,8 +939,9 @@ class Views(): #acts as a namespace
 			# userState['myStateGrid'] = playerBridge.getPlayerStateGrid(username)
 			userInfo['fullName'] = playerBridge.getPlayerFullName(username)
 			userInfo['characteristics'] = playerBridge.getPlayerCurrCharacteristics(username)
-			userInfo['preferencesEst'] = playerBridge.getPlayerPreferencesEst(username)
+			# userInfo['preferencesEst'] = playerBridge.getPlayerPreferencesEst(username)
 			userInfo['group'] = playerBridge.getPlayerCurrGroup(username)
+			userInfo['groupProfile'] = playerBridge.getPlayerCurrProfile(username).dimensions
 			userInfo['tasks'] = playerBridge.getPlayerCurrTasks(username)
 			userInfo['statesDataFrame'] = playerBridge.getPlayerStatesDataFrame(username)
 
@@ -1075,6 +1075,51 @@ class Views(): #acts as a namespace
 	# 			playerBridge.setPlayerCharacteristics(username, characteristics)
 
 	# 	return HttpResponse('ok')
+
+
+	def manuallyChangeStudentGroup(request):
+		if request.method == 'POST':
+			adaptState = serverStateModelBridge.getCurrAdaptationState()
+			print(adaptState)
+			# print(request.POST)
+
+			# breakpoint()
+
+			g1i = int(request.POST['student1[groupId]'])
+			g2i = int(request.POST['student2[groupId]'])
+
+			u1n = request.POST['student1[userId]']
+			u2n = request.POST['student2[userId]']
+
+			# change groups
+			adaptState['groups'][g1i].remove(u1n)
+			adaptState['groups'][g2i].remove(u2n)
+
+			adaptState['groups'][g1i].append(u2n)
+			adaptState['groups'][g2i].append(u1n)
+
+			for gi, u in [g1i, g2i], [u2n, u1n]:
+				g = adaptState['groups'][gi]
+
+				# recalculate averages
+				currAvgCharacteristics = PlayerCharacteristics()
+				currAvgCharacteristics.reset()
+				for currPlayerI in g:
+					currPlayerChars = playerBridge.getPlayerCurrCharacteristics(currPlayerI) 
+					groupSize = len(g)
+					currAvgCharacteristics.ability += currPlayerChars.ability / groupSize
+					currAvgCharacteristics.engagement += currPlayerChars.engagement / groupSize
+
+					adaptState['avgCharacteristics'][gi] = currAvgCharacteristics		
+
+					serverStateModelBridge.setCurrAdaptationState(adaptState)
+
+				# change student information
+				playerBridge.setPlayerProfile(u, adaptState['profiles'][gi])
+				playerBridge.setPlayerGroup(u, g)
+
+
+			return render(request, 'manuallyManageStudent.html')
 
 
 	def manuallyManageStudent(request):

@@ -304,7 +304,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     width = canvasContainer.getBoundingClientRect().width;
     height = canvasContainer.getBoundingClientRect().height;
 
-    aspect = 2.5 / 1.0;
+    aspect = 2.5 / 1.8;
 
     resizeCanvas(canvas, aspect);
 
@@ -628,7 +628,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         var currTooltip = d3.select(userInfoTooltips._groups[0][originalNode.plotIndex]);
 
         characteristics = originalNode.userState.characteristics;
-        dimensions = originalNode.userState.preferencesEst.dimensions;
+        // dimensions = originalNode.userState.preferencesEst.dimensions;
 
         cKeys = Object.keys(characteristics);
         dKeys = Object.keys(dimensions);
@@ -747,6 +747,15 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
         }else{
             //perform change
+            //deploy confirmation box?
+            $.ajax({
+                type: 'POST',
+                url: '/manuallyChangeStudentGroup/',
+                data: {'student1': studentForChange1, 'student2': studentForChange2},
+                success: 
+                function(){}
+            });
+
             resetChangeState();
         }
     });

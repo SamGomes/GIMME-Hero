@@ -51,6 +51,8 @@ urlpatterns = [
 
     re_path(r'^fetchUserState/', Views.fetchUserState, name='fetchUserState'),
     re_path(r'^uploadTaskResults/', Views.uploadTaskResults, name='uploadTaskResults'),
+    
+    re_path(r'^manuallyChangeStudentGroup/', Views.manuallyChangeStudentGroup, name='manuallyChangeStudentGroup'),
     re_path(r'^manuallyManageStudent/', Views.manuallyManageStudent, name='manuallyManageStudent')
 ]
 

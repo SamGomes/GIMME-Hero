@@ -120,9 +120,9 @@
 						</div>
 					</div>
 					<div class='panel-block'>
-						<div class='column is-one-third'></div>
-						<div class='column is-one-third is-centered' id='student_interactionsProfilePlot'></div>
-						<div class='column is-one-third'></div>
+						<div class='column is-2'></div>
+						<div class='column is-3 is-centered' id='student_interactionsProfilePlot'></div>
+						<div class='column'></div>
 					</div>
 				</div>
 			</section>
@@ -239,6 +239,8 @@
 							]
 						);
 
+
+						console.log(myInfo)
 						$('#student_interactionsProfilePlot').empty()
 						buildScatterInteractionPlot('student_interactionsProfilePlot', 
 							[
@@ -247,7 +249,7 @@
 								// { 'focus': 1.7 , 'challenge': 1.2 , 'timestamp': 1 },
 								// { 'focus': 2.3 , 'challenge': 2.5 , 'timestamp': 4 },
 								// { 'focus': -1.5 , 'challenge': -2.1 , 'timestamp': 8 },
-								{ 'focus': -2.1 , 'challenge': 0.5 , 'timestamp': 9 }
+								{ 'focus': myInfo.groupProfile['Focus'] , 'challenge': myInfo.groupProfile['Challenge'] , 'timestamp': 9 }
 							]
 						);
 
