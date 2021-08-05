@@ -807,7 +807,7 @@ class Views(): #acts as a namespace
 
 					task.profile = json.dumps(InteractionsProfile(
 						{
-						 'Challenge': float(requestInfo['profileDim0']),
+						 'Challenge': 1.0 - float(requestInfo['profileDim0']),
 						 'Focus': float(requestInfo['profileDim1'])
 						 }
 					), default=lambda o: o.__dict__, sort_keys=True)
@@ -837,7 +837,7 @@ class Views(): #acts as a namespace
 			if request.method == 'POST':
 				taskIdToUpdate = request.GET.get('taskIdToUpdate')
 				try:
-					instance = Task.objects.get(taskId=taskIdToUpdate)
+					instance = Task.objects.get(taskId = taskIdToUpdate)
 					
 					post = request.POST
 					_mutable = post._mutable
@@ -845,7 +845,7 @@ class Views(): #acts as a namespace
 					post['taskId'] = taskIdToUpdate
 					post._mutable = _mutable
 
-					form = UpdateTaskForm(request.POST, instance=instance)
+					form = UpdateTaskForm(request.POST, instance = instance)
 					if form.is_valid():
 						form.save()
 						return redirect('/dash')
@@ -861,9 +861,9 @@ class Views(): #acts as a namespace
 			elif request.method == 'GET':
 				taskIdToUpdate = request.GET.get('taskIdToUpdate')
 				try:
-					instance = Task.objects.get(taskId=taskIdToUpdate)
+					instance = Task.objects.get(taskId = taskIdToUpdate)
 
-					form = UpdateTaskForm(instance=instance)
+					form = UpdateTaskForm(instance = instance)
 					context = { 'form' : form }
 					return render(request, 'taskUpdate.html',  context)
 
