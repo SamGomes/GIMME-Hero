@@ -705,7 +705,6 @@ class Views(): #acts as a namespace
 				preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']))
 
 		def selectedGenAlgSwitcherPRS(request):
-			# print('PPPPPPPPPPPPPPPPP')
 			return PureRandomSearchConfigsGen(
 						playerModelBridge = playerBridge, 
 						interactionsProfileTemplate = intProfTemplate.generateCopy(), 
@@ -724,7 +723,6 @@ class Views(): #acts as a namespace
 					)
 
 		def selectedGenAlgSwitcherAnnealedPRS(request):
-			# print('AAAAAAAAAAAAAAAAA')
 			return AnnealedPRSConfigsGen(
 						playerModelBridge = playerBridge, 
 						interactionsProfileTemplate = intProfTemplate.generateCopy(), 
@@ -744,7 +742,6 @@ class Views(): #acts as a namespace
 					)
 
 		def selectedGenAlgSwitcherEvolutionary(request):
-			# print('EEEEEEEEEEEEEEEEE')
 			return EvolutionaryConfigsGenDEAP(
 				playerModelBridge = playerBridge, 
 				interactionsProfileTemplate = intProfTemplate.generateCopy(), 

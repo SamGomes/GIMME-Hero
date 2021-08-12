@@ -104,7 +104,7 @@ CSRF_USE_SESSIONS = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'GIMMEWeb/core/templates/static/') ]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'GIMMEWeb/core/templates/static/')]
 
 
 MEDIA_URL = '/media/'
