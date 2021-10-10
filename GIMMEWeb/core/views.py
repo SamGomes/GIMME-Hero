@@ -186,15 +186,16 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 	def getPlayer(self, username):
 		return User.objects.get(username = username).userprofile
 
-	def setAndSavePlayerStateToGrid(self, username, newState):
-		playerInfo = User.objects.get(username=username).userprofile
-
+	def setAndSavePlayerStateToDataFrame(self, username, newState):
+		
 		self.setPlayerCharacteristics(username, newState.characteristics)
 		self.setPlayerProfile(username, newState.profile)
 
-		playerStateGrid = self.getPlayerStateGrid(username)
-		playerStateGrid.pushToGrid(newState)
-		playerInfo.pastModelIncreasesDataFrame = json.dumps(playerStateGrid, default=lambda o: o.__dict__)
+		playerStatesDataFrame = self.getPlayerStatesDataFrame(username)
+		playerStatesDataFrame.pushToDataFrame(newState)
+
+		playerInfo = User.objects.get(username=username).userprofile
+		playerInfo.pastModelIncreasesDataFrame = json.dumps(playerStatesDataFrame, default=lambda o: o.__dict__)
 		playerInfo.save()
 
 
@@ -206,7 +207,6 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		return serverStateModelBridge.getCurrSelectedUsers()
 
 	def getAllStoredStudentUsernames(self):
-		# breakpoint()
 		allUsers = User.objects.all()
 		allUsersIds = []
 		for player in allUsers:
@@ -243,13 +243,18 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		states = []
 		for state in pastModelIncreasesDataFrame['states']:
 			characteristics = state['characteristics']
-			characteristics = PlayerCharacteristics(ability= float(characteristics['ability']), engagement= float(characteristics['engagement']))
+			characteristics = PlayerCharacteristics(
+				ability= float(characteristics['ability']), 
+				engagement= float(characteristics['engagement']))
 
 			profile = state['profile']
 			profile = InteractionsProfile(dimensions= profile['dimensions'])
 			
-			newCell.append(PlayerState(profile = profile, characteristics = characteristics, dist=state['dist'], quality=state['quality']))
-			states.append(newCell)
+			playerState = PlayerState(profile = profile, 
+				characteristics = characteristics, 
+				dist=state['dist'], 
+				quality=state['quality'])
+			states.append(playerState)
 
 		trimAlg = json.loads(json.dumps(pastModelIncreasesDataFrame['trimAlg']))
 		sdf = PlayerStatesDataFrame(
@@ -376,7 +381,6 @@ class Views(): #acts as a namespace
 		password = request.POST.get('password')
 		print('[INFO] login check performed on user with id - ' + str(username) + ', password - '+str(password))
 
-		# breakpoint()
 		if(username is None):
 			return
 
@@ -551,7 +555,6 @@ class Views(): #acts as a namespace
 
 	
 	def addSelectedUser(request): #reads (player) from args
-		# breakpoint()
 		if request.method == 'POST':
 			usernameToAdd = request.POST.get('username')
 			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
@@ -654,10 +657,14 @@ class Views(): #acts as a namespace
 	# professor methods
 	
 	def startAdaptation(request):
-		# breakpoint()
 		serverStateModelBridge.setReadyForNewActivity(False)
 		try:
 			currAdaptationState = adaptation.iterate()
+
+			# store current states in players' state window, after the adaptation returns
+			for username in playerBridge.getAllStoredStudentUsernames():
+				playerBridge.setAndSavePlayerStateToDataFrame(username, playerBridge.getPlayerCurrState(username));
+
 		except (Exception, ArithmeticError, ValueError) as e:
 			template = 'An exception of type {0} occurred. Arguments:\n{1!r}'
 			message = template.format(type(e).__name__, e.args)
@@ -672,7 +679,6 @@ class Views(): #acts as a namespace
 
 	def configAdaptation(request):
 		
-		# breakpoint()
 		global currConfigParams
 
 		newConfigParams = request.POST
@@ -827,7 +833,6 @@ class Views(): #acts as a namespace
 				return render(request, 'taskRegistration.html', context)
 	
 	def taskUpdate(request):
-		# breakpoint()
 		if(not 'professor' in request.user.userprofile.role):
 			return HttpResponse('500')
 		else:
@@ -981,7 +986,6 @@ class Views(): #acts as a namespace
 
 			newSessionState['readyForNewActivity'] = serverStateModelBridge.isReadyForNewActivity()
 
-			# breakpoint()
 			if('professor' in request.user.userprofile.role):
 				newSessionState['currAdaptationState'] = serverStateModelBridge.getCurrAdaptationState()
 
@@ -1017,7 +1021,6 @@ class Views(): #acts as a namespace
 
 	def fetchGroupFromId(request):
 		if request.method == 'POST':
-			# breakpoint();
 			groupId = int(request.POST['groupId'])
 
 			allGroups = serverStateModelBridge.getCurrAdaptationState()['groups'];
@@ -1035,7 +1038,6 @@ class Views(): #acts as a namespace
 		return HttpResponse('error')
 
 	def fetchUserState(request):
-		# breakpoint()
 		if request.method == 'POST':
 			username = request.POST['username']
 
@@ -1106,8 +1108,6 @@ class Views(): #acts as a namespace
 					adaptState['avgCharacteristics'][gi] = currAvgCharacteristics		
 
 					serverStateModelBridge.setCurrAdaptationState(adaptState)
-
-					# breakpoint()
 
 					# change student information
 					playerBridge.setPlayerProfile(currPlayerI, adaptState['profiles'][gi])
