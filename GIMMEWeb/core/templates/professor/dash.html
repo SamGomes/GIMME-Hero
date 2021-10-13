@@ -415,14 +415,13 @@
 
 				<div class='panel-block panel-block-borderless'>
 					<!-- is-fullwidth only occupies a portion of the panel block -->
-					<div class='columns is-fullwidth'>
-						<div class='column is-full'></div>
-						
-						<div class='has-text-centered'>
+					<div style="width:100%" class='columns has-text-centered'>
+						<div class='column is-half'>
 							<a><button class='button is-large is-info has-tooltip-top has-tooltip-arrow' type='submit' id='loadAndStartAdaptation_professor_dash' data-tooltip='Loads the parameterization above iff the configuration changed, and computes a new adaptation state.'>Check Setup and Iterate</button></a>
+						</div>
+						<div class='column is-half'>
 							<button class='button is-large' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plot</button>
 						</div>
-						<div class='column is-half'></div>
 					</div>
 				</div>
 
@@ -443,17 +442,16 @@
 				</div>
 
 				<div class='panel-block'>
-					<div class='columns'>
-						<div class='column is-1' id='groupsPlotLegendTrigger_professor_dash'>
-							<div class='button has-tooltip-top has-tooltip-arrow' data-tooltip='Show caption.'>
-								<i class="fa fa-window-maximize" aria-hidden="true"></i>
-							</div>
+					<div id='groupsPlotLegendTrigger_professor_dash'>
+						<div class='button has-tooltip-top has-tooltip-arrow' data-tooltip='Show caption.'>
+							<i class="fa fa-window-maximize" aria-hidden="true"></i>
 						</div>
-						<div class='column is-3 has-text-right has-tooltip-top has-tooltip-arrow' id='groupsPlotLegend_professor_dash' data-tooltip='Click on this caption to hide it.'>
-							<img src="{% static "media/images/groupPlotLegend.png" %}"></img>
-						</div>
-						<div class='column' id='groupsPlot_professor_dash'></div>
 					</div>
+					<div style="width:50%" class='has-text-right has-tooltip-top has-tooltip-arrow' id='groupsPlotLegend_professor_dash' data-tooltip='Click on this caption to hide it.'>
+						<img src="{% static "media/images/groupPlotLegend.png" %}"></img>
+					</div>
+					<div id='groupsPlot_professor_dash'></div>
+					
 					<div class='colums' style="position: relative; left: 50%; transform: translateX(-50%);">
 						<img class='column is-centered is-fullwidth' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>

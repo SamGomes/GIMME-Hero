@@ -173,14 +173,14 @@ var buildStatePlot = function(canvasId, data){
         .attr('class', 'y axis label')
         .call(yAxis) 
         .attr('transform', 'translate(' + margin.left + ',0)')
-        .style('font-size','35px');
+        .style('font-size','30px');
 
 
     var gx = svg.append('g')
         .attr('class', 'x axis')
         .call(xAxis)
         .attr('transform', 'translate(0,' + height + ')')
-        .style('font-size','35px');
+        .style('font-size','30px');
 }
 
 
@@ -945,6 +945,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     groupIndicators.call(dragDrop);    
 }
+
+
 
 var buildScatterInteractionPlot  = function(canvasId, data){
     //originally from https://www.d3-graph-gallery.com/graph/scatter_basic.html
