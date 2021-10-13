@@ -27,10 +27,10 @@
 				<div class='panel-heading'>
 					<div class='columns is-vcentered'>
 						<div class='column'>
-							<p>Students Setup</p>
-						</div>
-						<div class='is-pulled-left'>
-							<div class='button minimizerButton'></div>
+							Students Setup
+							<div class='is-pulled-right'>
+								<div class='button minimizerButton'></div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -69,10 +69,10 @@
 				<div class='panel-heading'>
 					<div class='columns is-vcentered'>
 						<div class='column'>
-							<p>Tasks Setup</p>
-						</div>
-						<div class='is-pulled-left'>
-							<div class='button minimizerButton'></div>
+							Tasks Setup
+							<div class='is-pulled-right'>
+								<div class='button minimizerButton'></div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -110,7 +110,10 @@
 				<div class='panel-heading'>
 					<div class='columns is-vcentered'>
 						<div class='column'>
-							<p>Adaptation Setup</p>
+							Adaptation Setup
+							<div class='is-pulled-right'>
+								<div class='button minimizerButton'></div>
+							</div>
 						</div>
 						<!-- <div class='is-pulled-left'>
 							<button class='button has-tooltip' id='toggleAdditionalConfigs_professor_dash' data-tooltip="Toggles additional algorithm selectors.">
@@ -120,9 +123,6 @@
 						<div class='is-pulled-left'>
 							<p> </p>
 						</div> -->
-						<div class='is-pulled-left'>
-							<div class='button minimizerButton'></div>
-						</div>
 					</div>
 				</div>
 				
@@ -211,13 +211,10 @@
 				<div class='panel-heading'>
 					<div class='columns is-vcentered'>
 						<div class='column'>
-							<p>Additional Adaptation Parameters</p>
-						</div>
-						<div class='is-pulled-left'>
-							<p> </p>
-						</div>
-						<div class='is-pulled-left'>
-							<button class='button minimizerButton' id='additionalAdaptMinimizerButton_professor_dash'></button>
+							Additional Adaptation Parameters
+							<div class='is-pulled-right'>
+								<button class='button minimizerButton' id='additionalAdaptMinimizerButton_professor_dash'></button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -399,10 +396,10 @@
 				<div class='panel-heading'>
 					<div class='columns is-vcentered'>
 						<div class='column'>
-							<p>Current Adaptation State</p>
-						</div>
-						<div class='is-pulled-left'>
-							<div class='button minimizerButton'></div>
+							Current Adaptation State
+							<div class='is-pulled-right'>
+								<div class='button minimizerButton'></div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -421,12 +418,8 @@
 					<div class='columns is-fullwidth'>
 						<div class='column is-full'></div>
 						
-						<div class='column is-half has-text-centered has-tooltip-top has-tooltip-arrow' data-tooltip='Loads the parameterization above iff the configuration changed, and computes a new adaptation state.'>
-							<a><button class='button is-large is-info' type='submit' id='loadAndStartAdaptation_professor_dash'>Check Setup and Iterate</button></a>
-						</div>
-						<div class='column is-half'></div>
-
-						<div class='column is-one-quarter has-text-centered has-tooltip-top has-tooltip-arrow' data-tooltip='Rebuilds the plot, without computing a new adaptation state.'>
+						<div class='has-text-centered'>
+							<a><button class='button is-large is-info has-tooltip-top has-tooltip-arrow' type='submit' id='loadAndStartAdaptation_professor_dash' data-tooltip='Loads the parameterization above iff the configuration changed, and computes a new adaptation state.'>Check Setup and Iterate</button></a>
 							<button class='button is-large' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plot</button>
 						</div>
 						<div class='column is-half'></div>
@@ -468,21 +461,13 @@
 
 				<div class='panel-block' style='display: block;'>
 					<p>Overall Preferences Distribution</p>
-					<div class='columns is-vcentered'>
-						<div class='column is-2'></div>
-						<div class='column is-3 is-centered' id='interactionsProfilePlot_professor_dash'></div>
-						<div class='column'></div>
-					</div>
+					<div id='interactionsProfilePlot_professor_dash'></div>
 					<img class='column is-centered' style='position: relative; left: 50%; transform: translateX(-50%);' id='interactionsProfilePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 				</div>
 
 				<div class='panel-block' style='display: block;'>
 					<p>Average Class Learning State</p>
-					<div class='columns is-vcentered'>
-						<div class='column is-3'></div>
-						<div class='column is-3' id='learningStatePlot_professor_dash'></div>
-						<div class='column'></div>
-					</div>
+					<div id='learningStatePlot_professor_dash'></div>
 					<img class='column is-centered' style='size:10%; position: relative; left: 50%; transform: translateX(-50%);' id='learningStatePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 				</div>
 			</div>

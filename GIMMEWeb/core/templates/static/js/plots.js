@@ -1,14 +1,49 @@
+//source: https://www.geeksforgeeks.org/best-way-to-make-a-d3-js-visualization-layout-responsive/
+var responsivefy = function(svg, targetWidthClamp) {
+    // Container is the DOM element, svg is appended.
+    // Then we measure the container and find its
+    // aspect ratio.
+    const container = d3.select(svg.node().parentNode),
+        width = parseInt(svg.style('width'), 10),
+        height = parseInt(svg.style('height'), 10),
+        aspect = width / height;
+         
+    // Add viewBox attribute to set the value to initial size
+    // add preserveAspectRatio attribute to specify how to scale
+    // and call resize so that svg resizes on page load
+    svg.attr('viewBox', `0 0 ${width} ${height}`).
+    attr('preserveAspectRatio', 'xMinYMid');
+    svg.call(resize);
+     
+    d3.select(window).on('resize.' + container.attr('id'), resize);
+
+    function resize() {
+        var targetWidth = parseInt(container.style('width'));
+        svg.attr('width', targetWidth)
+        .attr('transform', 'translate('+targetWidth*0.15+','+0+')');
+        if(targetWidth > targetWidthClamp){
+            targetWidth = targetWidthClamp;
+        }
+
+        svg.attr('height', Math.round(targetWidth / aspect));
+
+    }
+}
+
+
+
 var buildInteractionsProfilePlot = function(canvasId, data){
     
-    var width = 500;
-    var height = 500;
+    var width = canvasContainer.getBoundingClientRect().width;
+    var height = canvasContainer.getBoundingClientRect().height;
 
     var margin = {
-        top: 40,
-        right: 40,
-        bottom: 40,
-        left: 40
+        top: height * 0.1,
+        right: width * 0.1,
+        bottom: height * 0.1,
+        left: width * 0.1
     };
+
 
     var x = d3.scaleLinear().range([0, width]);
     var y = d3.scaleLinear().range([height, 0]);
@@ -19,24 +54,24 @@ var buildInteractionsProfilePlot = function(canvasId, data){
     var xAxis = d3.axisTop(x);
     var yAxis = d3.axisRight(y);
 
+
+
     var svg = d3.select('#'+canvasId)
             .append('svg')
-            .attr('width', width + margin.left + margin.right)
-            .attr('height', height + margin.top + margin.bottom)
-            .append('g')
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+            .call(responsivefy);
         
     svg.append('g')
             .attr('class', 'x axis')
             .attr('transform', 'translate(' + 0 + ',' + height / 2 + ')')
-            .call(xAxis)
+            .call(xAxis);
     
 
     svg.append('g')
         .attr('class', 'y axis')
         .attr('transform', 'translate(' + width / 2 + ',' + 0 + ')')
-        .call(yAxis)
-            
+        .call(yAxis);
+       
+
 
   var dots =  svg.selectAll('g.dot')
             .data(data)
@@ -54,45 +89,57 @@ var buildInteractionsProfilePlot = function(canvasId, data){
                 .style('fill', function (d) {
                     return '#50C2E3';
                 })
-                .on('mouseover',function(d){
+                .on('mouseover',function(d) {
                     d3.select(this).append('text').text(function(d){
-                                return d.name;
-                            })
-                            .attr('x', function (d) {
-                                return x(d.K_i);
-                            })
-                            .attr('y', function (d) {
-                                return y(d.K_cp);
-                            });
+                        return d.name;
+                    })
+                    .attr('x', function (d) {
+                        return x(d.K_i);
+                    })
+                    .attr('y', function (d) {
+                        return y(d.K_cp);
+                    });
                 });
 }
 
 
 var buildStatePlot = function(canvasId, data){
 
+
+    // var width = 960 - margin.left - margin.right;
+    // var height = 100 - margin.top - margin.bottom;
+
+    console.log(data);
+
+    var canvas = d3.select('#'+canvasId);
+    var canvasContainer = canvas.node().parentNode;
+
+    var width = 900;
+    var height = 150;
+
     var margin = {
-        top: 20,
-        right: 30,
-        bottom: 30,
-        left: 150
+        top: height * 0.1,
+        right: width * 0.1,
+        bottom: height * 0.1,
+        left: width * 0.3
     };
 
-    var width = 960 - margin.left - margin.right;
-    var height = 100 - margin.top - margin.bottom;
+    var svg = canvas.append('svg');
 
-    var svg = d3.select('#'+canvasId).append('svg')
-        .attr('width', width + margin.left + margin.right)
-        .attr('height', height + margin.top + margin.bottom)
-        .append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+    svg.attr('width', width + margin.left + margin.right)
+        .attr('display', 'block')
+        .attr('margin', 'auto')
+        .attr('height', height + margin.top + margin.bottom + 200)
+        .call(responsivefy, 1000);
+
 
     var maxValue = Math.max(data[0].value, data[1].value);
     var x = d3.scaleLinear()
-        .range([0, width])
+        .range([margin.left, width])
         .domain([0, maxValue + 0.5]);
 
     var y = d3.scaleBand()
-        .range([0, height])
+        .range([margin.bottom, height])
         .domain(data.map(function(d) {
             return d.name;
         }));
@@ -107,32 +154,33 @@ var buildStatePlot = function(canvasId, data){
     var bars = svg.selectAll('.bar')
         .data(data)
         .enter()
-        .append('g')
+        .append('g');
 
 
     bars.append('rect')
         .attr('class', 'bar')
         .attr('y', function (d) {
-            return y(d.name)+y.bandwidth()*3/16;
+            return y(d.name) + y.bandwidth()*3/16;
         })
-        .attr('height', y.bandwidth()*3/4)
-        .attr('x', 0)
+        .attr('height', y.bandwidth()*1/2)
+        .attr('x', margin.left)
         .attr('width', function (d) {
-            return x(d.value);
+            return  x(d.value) - margin.left;
         })
         .attr('fill', '#50C2E3');
 
     var gy = svg.append('g')
         .attr('class', 'y axis label')
         .call(yAxis) 
-        .style('font-size','20px');
+        .attr('transform', 'translate(' + margin.left + ',0)')
+        .style('font-size','35px');
 
 
     var gx = svg.append('g')
         .attr('class', 'x axis')
         .call(xAxis)
         .attr('transform', 'translate(0,' + height + ')')
-        .style('font-size','20px');
+        .style('font-size','35px');
 }
 
 
@@ -901,40 +949,40 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 var buildScatterInteractionPlot  = function(canvasId, data){
     //originally from https://www.d3-graph-gallery.com/graph/scatter_basic.html
 
-    // set the dimensions and margins of the graph
-    var margin = {top: 50, right: 200, bottom: 100, left: 200},
-        width = 1150 - margin.left - margin.right,
-        height = 850 - margin.top - margin.bottom;
+    var canvas = d3.select('#'+canvasId);
+    var canvasContainer = canvas.node().parentNode;
+    var width = canvasContainer.getBoundingClientRect().width;
+    var height = canvasContainer.getBoundingClientRect().height;
+
 
     // append the svg object to the body of the page
-    svg = d3.select('#'+canvasId)
-      .append('svg')
+    svg = canvas
+        .append('svg')
+        .call(responsivefy)
         .attr('transform', 'scale(0.75)')
-        .attr('width', width + margin.left + margin.right)
-        .attr('height', height + margin.top + margin.bottom)
+        .attr('width', width)
+        .attr('height', height)
         .style('background', 'url("../media/images/plots/interactionSpaceBckgrd.png") no-repeat')
         .style('background-size', '70%')
         .style('background-position', 'center')
-      .append('g')
-        .attr('transform',
-              'translate(' + margin.left + ',' + margin.top + ')');
+        .append('g');
     
     svg.append('g')
         .append('text') 
         .attr('class', 'x label')
-        .attr('x', width/2 + 10)
-        .attr('y', height + 40)
+        .attr('x', width/2)
+        .attr('y', 0)
         .attr('text-anchor', 'middle')
-        .style('font-size','35px')
+        .style('font-size','20px')
         .text(' Self      ← Focus →     Others');
 
     svg.append('g')
         .append('text') 
         .attr('class', 'y label')
         .attr('text-anchor', 'middle')
-        .attr('y', -20)
-        .attr('x', -height/2 -10)
-        .style('font-size','35px')
+        .attr('y', 0)
+        .attr('x', height/2)
+        .style('font-size','20px')
         .attr('transform', 'rotate(-90)')
         .text('Complicate ← Challenge → Facilitate ');
 
