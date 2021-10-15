@@ -105,12 +105,6 @@ var buildInteractionsProfilePlot = function(canvasId, data){
 
 var buildStatePlot = function(canvasId, data){
 
-
-    // var width = 960 - margin.left - margin.right;
-    // var height = 100 - margin.top - margin.bottom;
-
-    console.log(data);
-
     var canvas = d3.select('#'+canvasId);
     var canvasContainer = canvas.node().parentNode;
 
@@ -952,39 +946,37 @@ var buildScatterInteractionPlot  = function(canvasId, data){
     //originally from https://www.d3-graph-gallery.com/graph/scatter_basic.html
 
     var canvas = d3.select('#'+canvasId);
-    var canvasContainer = canvas.node().parentNode;
-    var width = canvasContainer.getBoundingClientRect().width;
-    var height = canvasContainer.getBoundingClientRect().height;
+    var canvasContainer = canvas.node();
+    var width = 500;
+    var height = 500;
 
 
     // append the svg object to the body of the page
     svg = canvas
         .append('svg')
-        .call(responsivefy)
-        .attr('transform', 'scale(0.75)')
         .attr('width', width)
         .attr('height', height)
         .style('background', 'url("../media/images/plots/interactionSpaceBckgrd.png") no-repeat')
-        .style('background-size', '70%')
-        .style('background-position', 'center')
-        .append('g');
+        .style('background-size', '100%')
+        .style('background-position', 'center');
+        // .call(responsivefy, 3000);
     
     svg.append('g')
         .append('text') 
         .attr('class', 'x label')
-        .attr('x', width/2)
-        .attr('y', 0)
+        .attr('x', width* 0.5)
+        .attr('y', height* 0.94)
         .attr('text-anchor', 'middle')
-        .style('font-size','20px')
+        .style('font-size', width*0.05+'px')
         .text(' Self      ← Focus →     Others');
 
     svg.append('g')
         .append('text') 
         .attr('class', 'y label')
         .attr('text-anchor', 'middle')
-        .attr('y', 0)
-        .attr('x', height/2)
-        .style('font-size','20px')
+        .attr('x', -width *0.48)
+        .attr('y', height* 0.04)
+        .style('font-size', height*0.05+'px')
         .attr('transform', 'rotate(-90)')
         .text('Complicate ← Challenge → Facilitate ');
 
@@ -993,17 +985,17 @@ var buildScatterInteractionPlot  = function(canvasId, data){
     var x = d3.scaleLinear()
         .domain([-3, 3])
         .range([ 0, width ]);
-        svg.append('g')
-        .attr('transform', 'translate(0,' + height + ')')
-        .style('font-size','30px');
+    // svg.append('g')
+    //     .attr('transform', 'translate(0,' + height + ')')
+    //     .style('font-size','30px');
 
 
     // Add Y axis
     var y = d3.scaleLinear()
         .domain([-3, 3])
-        .range([ height, 0]);
-        svg.append('g')
-        .style('font-size','30px');
+        .range([ height, 0 ]);
+    // svg.append('g')
+    //     .style('font-size','30px');
 
     // Add dots
     svg.append('g')
@@ -1013,10 +1005,10 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .append('circle')
         .attr('cx', function (d) { return x(d.focus); } )
         .attr('cy', function (d) { return y(d.challenge); } )
-        .attr('r', 10)
+        .attr('r', height*0.02)
         .style('fill', '#50C2E3')
         .style('stroke', 'black')
-        .style('stroker-width', '5');
+        .style('stroker-width', height*0.01);
 
     
 }
