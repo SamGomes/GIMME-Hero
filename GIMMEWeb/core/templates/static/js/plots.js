@@ -1,5 +1,5 @@
 //source: https://www.geeksforgeeks.org/best-way-to-make-a-d3-js-visualization-layout-responsive/
-var responsivefy = function(svg, targetWidthClamp) {
+var responsivefy = function(svg, targetWidthClamp, leftPaddingRatio) {
     // Container is the DOM element, svg is appended.
     // Then we measure the container and find its
     // aspect ratio.
@@ -19,14 +19,15 @@ var responsivefy = function(svg, targetWidthClamp) {
 
     function resize() {
         var targetWidth = parseInt(container.style('width'));
-        svg.attr('width', targetWidth)
-        .attr('transform', 'translate('+targetWidth*0.15+','+0+')');
+        svg.attr('transform', 'translate('+targetWidth*leftPaddingRatio+','+0+')');
         if(targetWidth > targetWidthClamp){
             targetWidth = targetWidthClamp;
         }
 
+        console.log(targetWidth);
+        svg.attr('width', targetWidth);
         svg.attr('height', Math.round(targetWidth / aspect));
-
+        
     }
 }
 
@@ -124,7 +125,7 @@ var buildStatePlot = function(canvasId, data){
         .attr('display', 'block')
         .attr('margin', 'auto')
         .attr('height', height + margin.top + margin.bottom + 200)
-        .call(responsivefy, 1000);
+        .call(responsivefy, 1000, 0.15);
 
 
     var maxValue = Math.max(data[0].value, data[1].value);
@@ -947,8 +948,8 @@ var buildScatterInteractionPlot  = function(canvasId, data){
 
     var canvas = d3.select('#'+canvasId);
     var canvasContainer = canvas.node();
-    var width = 500;
-    var height = 500;
+    var width = 200;
+    var height = 200;
 
 
     // append the svg object to the body of the page
@@ -958,8 +959,8 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .attr('height', height)
         .style('background', 'url("../media/images/plots/interactionSpaceBckgrd.png") no-repeat')
         .style('background-size', '100%')
-        .style('background-position', 'center');
-        // .call(responsivefy, 3000);
+        .style('background-position', 'center')
+        .call(responsivefy, 500, 0);
     
     svg.append('g')
         .append('text') 
@@ -985,17 +986,12 @@ var buildScatterInteractionPlot  = function(canvasId, data){
     var x = d3.scaleLinear()
         .domain([-3, 3])
         .range([ 0, width ]);
-    // svg.append('g')
-    //     .attr('transform', 'translate(0,' + height + ')')
-    //     .style('font-size','30px');
 
 
     // Add Y axis
     var y = d3.scaleLinear()
         .domain([-3, 3])
         .range([ height, 0 ]);
-    // svg.append('g')
-    //     .style('font-size','30px');
 
     // Add dots
     svg.append('g')
@@ -1005,10 +1001,10 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .append('circle')
         .attr('cx', function (d) { return x(d.focus); } )
         .attr('cy', function (d) { return y(d.challenge); } )
-        .attr('r', height*0.02)
+        .attr('r', height*0.015)
         .style('fill', '#50C2E3')
         .style('stroke', 'black')
-        .style('stroker-width', height*0.01);
+        .style('stroker-width', height*0.02);
 
     
 }
