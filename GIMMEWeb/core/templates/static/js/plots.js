@@ -323,6 +323,21 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         return '#' + padZero(r) + padZero(g) + padZero(b);
     }
 
+    //source: https://campushippo.com/lessons/how-to-convert-rgb-colors-to-hexadecimal-with-javascript-78219fdb
+    var rgbToHex = function (rgb) { 
+        var hex = Number(rgb).toString(16);
+        if (hex.length < 2) {
+            hex = "0" + hex;
+        }
+        return hex;
+    };
+    var fullColorHex = function(r,g,b) {   
+        var red = rgbToHex(r);
+        var green = rgbToHex(g);
+        var blue = rgbToHex(b);
+        return red+green+blue;
+    };
+
     var padZero = function(str, len) {
         len = len || 2;
         var zeros = new Array(len).join('0');
@@ -336,7 +351,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     var resizeCanvas = function(canvas, aspect){
         var targetWidth = canvasContainer.getBoundingClientRect().width;
         canvas.attr('width', targetWidth);
-        canvas.attr('height', targetWidth/aspect);
+        canvas.attr('height', targetWidth/ aspect);
     }
 
     svg = d3.select('#'+canvasId).append('svg');
@@ -358,7 +373,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     var currPlotIndex = 0;
 
-    svg.style('background-color','black').call(responsivefy,1000,0);
+    svg.style('background-color','black').call(responsivefy,5000,0);
 
     for (i=0; i<data.groups.length; i++){
         var group = data.groups[i];
@@ -403,9 +418,9 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             })
             .attr('cx', node => node.centerOfMass.x)
             .attr('cy', node => node.centerOfMass.y)
-            .attr('stroke-dasharray', '8.5')
+            .attr('stroke-dasharray', '1%')
             .attr('stroke', node => colors[node.groupId])
-            .attr('stroke-width', '3.5') 
+            .attr('stroke-width', '0.25%') 
             .attr('fill', 'transparent');
            
 
@@ -420,7 +435,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             .selectAll('circle')
             .data(userNodes)
             .enter().append('circle')
-            .attr('r', 12)
+            .attr('r', '1%')
             .each(function(node){
                 //update caps before treating nodes for print
                 var currAb = node.userState.characteristics.ability;
@@ -442,7 +457,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                     return generatePlayerColor(node);
                 })
             .attr('stroke', node => colors[node.groupId])
-            .attr('stroke-width', '0.5%');
+            .attr('stroke-width', '0.3%');
 
 
     // var textElements =
@@ -571,16 +586,15 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     groupInfoTooltips
         .append('path')
         .attr('d', function(d) {
-          return rightRoundedRect(15, 15, 600, 300, 7);
+          return rightRoundedRect(15, 15, 600, 350, 7);
         })
         .attr('fill', function(node){
                                 var baseColor = colors[node.groupId].split('#')[1];
                                 transparency = 200;
                                 return '#' +  baseColor + transparency.toString(16);
-                                // return colors[node.groupId];
                             })
         .attr('stroke', 'gray')
-        .attr('stroke-width', '3.5');
+        .attr('stroke-width', '0.15%');
     
 
     groupInfoTooltips.each(function(originalNode){ 
@@ -657,10 +671,13 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             return rightRoundedRect(5, 5, 600, 250, 7);
         })
         .attr('fill', function(node){
-            return generatePlayerColor(node);
+            var playerColor = generatePlayerColor(node).split(/,|\(|\)/);
+            var baseColor = fullColorHex(playerColor[1], playerColor[2], playerColor[3]);
+            transparency = 200;
+            return '#' +  baseColor + transparency.toString(16);
         })
         .attr('stroke', 'gray')
-        .attr('stroke-width', '3.5');
+        .attr('stroke-width', '0.15%');
     
     userInfoTooltips.each(function(originalNode){
 
@@ -746,7 +763,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     var studentForChange2 = undefined;
 
     var resetChangeState = function(){
-        nodeElements.attr('r', 15);
+        nodeElements.attr('r', '1%');
 
         studentForChange1 = undefined;
         studentForChange2 = undefined;
@@ -767,7 +784,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             var mouseY = coordinates[1];
 
             thisElem = d3.select(this);
-            thisElem.attr('r', 20);
+            thisElem.attr('r', '2%');
             studentForChange1 = d;
             
             d3.select(this.parentNode)
@@ -781,8 +798,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                 .attr('y1', thisElem.attr('cy'))
                 .attr('x2', mouseX)
                 .attr('y2', mouseY)
-                .attr('stroke-width', 5)
-                .attr('stroke-dasharray', 4)
+                .attr('stroke-width', '0.5%')
+                .attr('stroke-dasharray', '2%')
                 .attr('stroke', 'gray');
 
         }else{
@@ -806,7 +823,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         if(studentForChange1 != undefined){
 
             thisElem = d3.select(this);
-            thisElem.attr('r', 20);
+            thisElem.attr('r', '2%');
 
             if(d.groupId == studentForChange1.groupId){
                 resetChangeState();
@@ -823,7 +840,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'hidden');
         if(studentForChange2!=undefined){
             thisElem = d3.select(this);
-            thisElem.attr('r', 15);
+            thisElem.attr('r', '1%');
         }  
     });
 
@@ -833,7 +850,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     var simulation = d3.forceSimulation();
     var resetSim = function(){
         simulation.nodes(userNodes)
-        .force('collide', d3.forceCollide(20)
+        .force('collide', d3.forceCollide()
+            .radius(width*0.015)
             .strength(0.1))
         .force('attract', d3.forceAttract()
                     .target((node) => {return [node.centerOfMass.x, node.centerOfMass.y];})
@@ -865,7 +883,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                             maxRadius = currRadius;
                         }
                     }
-                    return Math.sqrt(maxRadius) + 25 
+                    sqrtMR = Math.sqrt(maxRadius);
+                    return 2*sqrtMR; 
                 });
                 
 
