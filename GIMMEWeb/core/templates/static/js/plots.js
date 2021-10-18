@@ -24,7 +24,7 @@ var responsivefy = function(svg, targetWidthClamp, leftPaddingRatio) {
             targetWidth = targetWidthClamp;
         }
 
-        console.log(targetWidth);
+        // console.log(targetWidth);
         svg.attr('width', targetWidth);
         svg.attr('height', Math.round(targetWidth / aspect));
         
@@ -358,10 +358,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     var currPlotIndex = 0;
 
-    d3.select(window)
-        .on('resize', function() {
-            resizeCanvas(canvas);
-        });
+    svg.style('background-color','black').call(responsivefy,1000,0);
 
     for (i=0; i<data.groups.length; i++){
         var group = data.groups[i];
@@ -406,7 +403,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             })
             .attr('cx', node => node.centerOfMass.x)
             .attr('cy', node => node.centerOfMass.y)
-            .attr('stroke-dasharray', '8,5')
+            .attr('stroke-dasharray', '8.5')
             .attr('stroke', node => colors[node.groupId])
             .attr('stroke-width', '3.5') 
             .attr('fill', 'transparent');
@@ -423,7 +420,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             .selectAll('circle')
             .data(userNodes)
             .enter().append('circle')
-            .attr('r', 15)
+            .attr('r', 12)
             .each(function(node){
                 //update caps before treating nodes for print
                 var currAb = node.userState.characteristics.ability;
@@ -445,7 +442,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                     return generatePlayerColor(node);
                 })
             .attr('stroke', node => colors[node.groupId])
-            .attr('stroke-width', '3');
+            .attr('stroke-width', '0.5%');
 
 
     // var textElements =
@@ -517,32 +514,32 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             fatherElem
             .append('text')
             .attr('x', x)
-            .attr('y', y + 20)
-            .attr('font-size', 20)
+            .attr('y', y + 10)
+            .attr('font-size', 18)
             .attr('font-family', 'Calibri,sans-serif')
             .attr('color', function(node){ return invertColor(colors[node.groupId], true); })
-            .call(wrap, 300)
+            .call(wrap, 150)
             .text(currKey);
 
             if(typeof currJson == 'string' || typeof currJson == 'number'){
 
                 fatherElem
                 .append('rect')
-                .attr('x', x + 160)
-                .attr('y', y)
-                .attr('width', 260)
-                .attr('height', 30)
+                .attr('x', x + 140)
+                .attr('y', y - 5)
+                .attr('width', 180)
+                .attr('height', 20)
                 .attr('fill', function(node){ return 'white'; })
                 .attr('stroke', 'black');
 
                 fatherElem
                 .append('text')
-                .attr('x', x + 170)
-                .attr('y', y + 20)
-                .attr('font-size', 20)
+                .attr('x', x + 145)
+                .attr('y', y + 10)
+                .attr('font-size', 15)
                 .attr('font-family', 'Calibri,sans-serif')
                 .attr('color', function(node){ return 'black'; })
-                .call(wrap, 300)
+                .call(wrap, 150)
                 .text(currJson);
             }
 
@@ -574,7 +571,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     groupInfoTooltips
         .append('path')
         .attr('d', function(d) {
-          return rightRoundedRect(30, 30, 630, 380, 15);
+          return rightRoundedRect(15, 15, 600, 300, 7);
         })
         .attr('fill', function(node){
                                 var baseColor = colors[node.groupId].split('#')[1];
@@ -637,7 +634,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         delete node.groupId;
         delete node.tasks;
 
-        htmlFromJSON(node, currTooltip, 0, 0, 0, 80, 0);
+        htmlFromJSON(node, currTooltip, 0, 0, 0, 40, 0);
     });
 
 
@@ -657,7 +654,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     userInfoTooltips
         .append('path')
         .attr('d', function(d) {
-            return rightRoundedRect(10, 10, 630, 300, 15);
+            return rightRoundedRect(5, 5, 600, 250, 7);
         })
         .attr('fill', function(node){
             return generatePlayerColor(node);
@@ -837,7 +834,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     var resetSim = function(){
         simulation.nodes(userNodes)
         .force('collide', d3.forceCollide(20)
-            .strength(0.2))
+            .strength(0.1))
         .force('attract', d3.forceAttract()
                     .target((node) => {return [node.centerOfMass.x, node.centerOfMass.y];})
                     .strength(3)
@@ -868,7 +865,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                             maxRadius = currRadius;
                         }
                     }
-                    return Math.sqrt(maxRadius) + 30 
+                    return Math.sqrt(maxRadius) + 25 
                 });
                 
 
@@ -903,7 +900,8 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             }
         })
         .on('drag', node => {
-            simulation.alphaTarget(1.0).restart();
+            if (!d3.event.active)
+                simulation.alphaTarget(1.0).restart();
             node.centerOfMass.x = d3.event.x;
             node.centerOfMass.y = d3.event.y;
             node.fx = node.centerOfMass.x;
@@ -1001,10 +999,10 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .append('circle')
         .attr('cx', function (d) { return x(d.focus); } )
         .attr('cy', function (d) { return y(d.challenge); } )
-        .attr('r', height*0.015)
-        .style('fill', '#50C2E3')
+        .attr('r', height * 0.015)
+        .style('fill', '#5afcf4')
         .style('stroke', 'black')
-        .style('stroker-width', height*0.02);
+        .style('stroke-width', '1%');
 
     
 }

@@ -419,7 +419,7 @@
 						<div class='column is-half'>
 							<a><button class='button is-large is-info has-tooltip-top has-tooltip-arrow' type='submit' id='loadAndStartAdaptation_professor_dash' data-tooltip='Loads the parameterization above iff the configuration changed, and computes a new adaptation state.'>Check Setup and Iterate</button></a>
 						</div>
-						<div class='column is-half'>
+						<div class='column'>
 							<button class='button is-large' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plot</button>
 						</div>
 					</div>
@@ -447,28 +447,39 @@
 							<i class="fa fa-window-maximize" aria-hidden="true"></i>
 						</div>
 					</div>
-					<div style="width:50%" class='has-text-right has-tooltip-top has-tooltip-arrow' id='groupsPlotLegend_professor_dash' data-tooltip='Click on this caption to hide it.'>
-						<img src="{% static "media/images/groupPlotLegend.png" %}"></img>
-					</div>
-					<div id='groupsPlot_professor_dash'></div>
 					
-					<div class='colums' style="position: relative; left: 50%; transform: translateX(-50%);">
-						<img class='column is-centered is-fullwidth' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
+					<div class="columns is-centered is-mobile is-fullwidth">
+						<div class='column is-3 has-text-right has-tooltip-top has-tooltip-arrow' id='groupsPlotLegend_professor_dash' data-tooltip='Click on this caption to hide it.'>
+							<img src="{% static "media/images/groupPlotLegend.png" %}"></img>
+						</div>
+						<div class='column' id='groupsPlot_professor_dash'></div>
+					</div>
+
+					<div class='columns is-centered is-mobile'>
+						<img class='column is-2' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>
 				</div>
 
 				<div class='panel-block' style='display: block;'>
 					<p>Overall Preferences Distribution</p>
-					<div style='width: 50%; transform: translateX(50%);'>
-					<div id='interactionsProfilePlot_professor_dash'></div>
+					<div class='columns is-centered is-mobile'>
+						<div class='column is-4' id='interactionsProfilePlot_professor_dash'></div>
 					</div>
-					<img class='column is-centered' style='position: relative; left: 50%; transform: translateX(-50%);' id='interactionsProfilePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
+
+					<div class='columns is-centered is-mobile'>
+						<img class='column is-2' id='interactionsProfilePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
+					</div>
 				</div>
 
 				<div class='panel-block' style='display: block;'>
 					<p>Average Class Learning State</p>
-					<div id='learningStatePlot_professor_dash'></div>
-					<img class='column is-centered' style='size:10%; position: relative; left: 50%; transform: translateX(-50%);' id='learningStatePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
+					<div class='columns is-centered is-mobile'>
+						<div class='column is-7' id='learningStatePlot_professor_dash'></div>
+					</div>
+
+					<div class='columns is-centered is-mobile'>
+						<img class='column is-2' id='learningStatePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
+					</div>
 				</div>
 			</div>
 		</section>
@@ -581,22 +592,22 @@ crossorigin='anonymous'></script>
 		            return table;
 		        }
 		        if(i<idArray.length){
-		        	tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'>").text(nameArray[i]);
-		        
+		        	tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>").text(nameArray[i]);
+		        	tag.append("<br></br>")
 		        	if(deleteElementUrl!=""){
-			            var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this task'>");
+			            var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this task'></div>");
 			            deleteButton.append('<form method=\'GET\' action=\''+deleteElementUrl+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+deleteElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash pointer\'></i></button></form>');
 			            tag.append(deleteButton);
 		            }
 
 		        	if(editElementUrl!=""){
-			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually edit state'>");
+			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually edit state'></div>");
 			            editButton.append('<form method=\'GET\' action=\''+editElementUrl+'\'><input type=\'hidden\' name=\''+editElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-edit pointer\'></i></button></form>');
 			            tag.append(editButton);
 					}
 
 		        	if(moveElementUrl!=""){
-			            var moveButton = $("<div class='button is-rounded is-small pointer' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Select/Deselect this student/task for the next iteration'>");
+			            var moveButton = $("<div class='button is-rounded is-small pointer' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Select/Deselect this student/task for the next iteration'></div>");
 			            moveButton.append("<i class='fas "+moveButtonIconClass+" pointer'></i>");
 			            moveButton.click(function() {
 			                var data = {};
@@ -612,7 +623,7 @@ crossorigin='anonymous'></script>
 
 		        }else{
 		        	if(addElementURL!=""){
-		        		var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Add new task'>");
+		        		var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Add new task'></div>");
 			            addButton.append('<form method="POST" action=\''+addElementURL+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+addElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-plus-circle\'></i></button></form>');
 		        	
 		        		tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'>").text(nameArray[i]);
