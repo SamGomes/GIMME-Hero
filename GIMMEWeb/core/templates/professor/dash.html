@@ -25,7 +25,7 @@
 		<section class='section danger'>
 			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
-					<div class='columns is-vcentered'>
+					<div class='columns is-mobile is-vcentered'>
 						<div class='column'>
 							Students Setup
 							<div class='is-pulled-right'>
@@ -35,16 +35,20 @@
 					</div>
 				</div>
 				<div class='panel-block'>
-					<div class='column is-offset-1 dash-cell-box'>
-						<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the students, selected from all available students, to be considered for the next group management iteration.'>Free Students</div>
-						<div class='table-container'>
-							<div class='table' style='margin:2em;' id='freeUsersTable_professor_dash'></div>
+					<div class='column is-half is-offset1 is-mobile'>
+						<div class='dash-cell-box'>
+							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the students, selected from all available students, to be considered for the next group management iteration.'>Free Students</div>
+							<div class='table-container'>
+								<div class='table' style='margin:2em;' id='freeUsersTable_professor_dash'></div>
+							</div>
 						</div>
 					</div>
-					<div class='column is-offset-1 dash-cell-box'>
-						<div class='subtitle is-4 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the students, selected from all available students, to be considered for the next group management iteration.'>Selected Students</div>
-						<div class='table-container column is-full'>
-							<div class='table' style='margin:2em;' id='selectedUsersTable_professor_dash'></div>
+					<div class='column is-half is-offset1 is-mobile'>
+						<div class='dash-cell-box'>
+							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the students, selected from all available students, to be considered for the next group management iteration.'>Selected Students</div>
+							<div class='table-container'>
+								<div class='table' style='margin:2em;' id='selectedUsersTable_professor_dash'></div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -67,7 +71,7 @@
 		<section class='section'>
 			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
-					<div class='columns is-vcentered'>
+					<div class='columns is-mobile is-vcentered'>
 						<div class='column'>
 							Tasks Setup
 							<div class='is-pulled-right'>
@@ -77,17 +81,23 @@
 					</div>
 				</div>
 				<div class='panel-block'>
-					<div class='column is-offset-1 dash-cell-box'>
-						<div class='subtitle is-5' style='color:gray;'>Free Tasks</div>
-						<div class='table-container'>
-							<div class='table' style='margin:2em;' id='freeTasksTable_professor_dash'>
+					<div class='columns'>
+						<div class='column is-half is-offset1 is-mobile'>
+							<div class='dash-cell-box'>
+								<div class='subtitle is-5' style='color:gray;'>Free Tasks</div>
+								<div class='table-container'>
+									<div class='table' id='freeTasksTable_professor_dash'>
+									</div>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class='column is-offset-1 dash-cell-box'>
-						<div class='subtitle is-4 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the tasks, selected from all available tasks, to be considered for the next group management iteration.'>Selected Tasks</div>
-						<div class='table-container column is-full'>
-							<div class='table' style='margin:2em;' id='selectedTasksTable_professor_dash'></div>
+						<div class='column is-half is-offset1 is-mobile'>
+							<div class='dash-cell-box'>
+								<div class='subtitle is-4 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the tasks, selected from all available tasks, to be considered for the next group management iteration.'>Selected Tasks</div>
+								<div class='table-container'>
+									<div class='table' id='selectedTasksTable_professor_dash'></div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -108,7 +118,7 @@
 		<section class='section'>
 			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
-					<div class='columns is-vcentered'>
+					<div class='columns is-mobile is-vcentered'>
 						<div class='column'>
 							Adaptation Setup
 							<div class='is-pulled-right'>
@@ -128,9 +138,9 @@
 				
 
 				<div class='panel-block' style='display: block;'>
-					<div class='columns is-multiline is-mobile is-centered'>
+					<div class='columns is-mobile is-multiline is-mobile is-centered'>
 
-						<!-- <div class='column is-5 columns is-multiline is-mobile'>
+						<!-- <div class='column is-5 columns is-mobile is-multiline is-mobile'>
 							<div class='column is-half'>
 								<label id='mgsInput_professor_dash' class='control-label' for='quantity' min='2'>Min Group Size</label>  
 								<div class='control'>
@@ -180,7 +190,7 @@
 
 
 				<div class='panel-block' style='display: block;'>
-					<div class='columns is-multiline is-mobile  has-tooltip-arrow' data-tooltip='This feature is optional, and still does not function as it should.'>
+					<div class='columns is-mobile is-multiline is-mobile  has-tooltip-arrow' data-tooltip='This feature is optional, and still does not function as it should.'>
 						<div class='column is-full'>
 							<p>Bootstrap</p>
 						</div>
@@ -209,7 +219,7 @@
 		<section class='section' style='position: relative; z-index:10000'>
 			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
-					<div class='columns is-vcentered'>
+					<div class='columns is-mobile is-vcentered'>
 						<div class='column'>
 							Additional Adaptation Parameters
 							<div class='is-pulled-right'>
@@ -221,13 +231,13 @@
 		
 				<!-- starts hidden -->
 				<div class='panel-block' id='additionalAlgorithmsSection_1_professor_dash' style='display: block'>
-					<div class='columns is-multiline is-mobile'>
+					<div class='columns is-mobile is-multiline is-mobile'>
 						<div class='column is-full'>
 							<p>Algorithms</p>
 						</div>
 					</div>
 
-					<div class='columns is-multiline is-mobile'>
+					<div class='columns is-mobile is-multiline is-mobile'>
 						<div class='column is-half'>
 							<span>Grouping Alg.</span>
 						</div>
@@ -235,7 +245,7 @@
 							<span>Regression Alg.</span>
 						</div>
 					</div>
-					<div class='columns is-multiline is-mobile'>
+					<div class='columns is-mobile is-multiline is-mobile'>
 						<div class='column is-half'>
 							<div class='dropdown'>
 								<div class='dropdown-trigger'>
@@ -365,7 +375,7 @@
 				</div>
 
 				<div class='panel-block' id='additionalAlgorithmsSection_2_professor_dash' style='display: block;'>
-					<div class='columns is-multiline'>
+					<div class='columns is-mobile is-multiline'>
 						<div class='column is-full'>
 							<p>Quality Weights</p>
 						</div>
@@ -394,7 +404,7 @@
 		<section class='section'>
 			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
-					<div class='columns is-vcentered'>
+					<div class='columns is-mobile is-vcentered'>
 						<div class='column'>
 							Current Adaptation State
 							<div class='is-pulled-right'>
@@ -406,7 +416,7 @@
 				
 				
 				<div class='panel-block panel-block-borderless'>
-					<div class='columns is-fullwidth'>
+					<div class='columns is-mobile is-fullwidth'>
 						<div class='column is-full'>
 							<p>Group Organization</p>
 						</div>
@@ -415,12 +425,12 @@
 
 				<div class='panel-block panel-block-borderless'>
 					<!-- is-fullwidth only occupies a portion of the panel block -->
-					<div style="width:100%" class='columns has-text-centered'>
-						<div class='column is-half'>
-							<a><button class='button is-large is-info has-tooltip-top has-tooltip-arrow' type='submit' id='loadAndStartAdaptation_professor_dash' data-tooltip='Loads the parameterization above iff the configuration changed, and computes a new adaptation state.'>Check Setup and Iterate</button></a>
+					<div style="width:100%" class='columns is-mobile has-text-centered'>
+						<div class='column is-6 is-offset-1'>
+							<a><button class='button is-fullwidth is-fullheight is-info has-tooltip-top has-tooltip-arrow' type='submit' id='loadAndStartAdaptation_professor_dash' data-tooltip='Loads the parameterization above iff the configuration changed, and computes a new adaptation state.'>Check Setup and Iterate</button></a>
 						</div>
-						<div class='column'>
-							<button class='button is-large' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plot</button>
+						<div class='column is-3 is-offset-1'>
+							<button class='button is-fullwidth is-fullheight' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plot</button>
 						</div>
 					</div>
 				</div>
@@ -442,46 +452,45 @@
 				</div>
 
 				<div class='panel-block'>
-					<div id='groupsPlotLegendTrigger_professor_dash'>
-						<div class='button has-tooltip-top has-tooltip-arrow' data-tooltip='Show caption.'>
-							<i class="fa fa-window-maximize" aria-hidden="true"></i>
-						</div>
-					</div>
-					
-					<div class="columns is-centered is-mobile is-fullwidth">
+					<div class="columns is-mobile is-centered is-mobile">
 						<div class='column is-3'>
+							<div id='groupsPlotLegendTrigger_professor_dash'>
+								<div class='button has-tooltip-top has-tooltip-arrow' data-tooltip='Show caption.'>
+									<i class="fa fa-window-maximize" aria-hidden="true"></i>
+								</div>
+							</div>
 							<div class='has-text-right has-tooltip-top has-tooltip-arrow' id='groupsPlotLegend_professor_dash' data-tooltip='Click on this caption to hide it.'>
 								<img src="{% static "media/images/groupPlotLegend.png" %}"></img>
 							</div>
 						</div>
-						<div class='column'>
+						<div class='column is-9'>
 							<div id='groupsPlot_professor_dash'></div>
 						</div>
 					</div>
 
-					<div class='columns is-centered is-mobile'>
+					<div class='columns is-mobile is-centered is-mobile'>
 						<img class='column is-2' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>
 				</div>
 
 				<div class='panel-block' style='display: block;'>
 					<p>Overall Preferences Distribution</p>
-					<div class='columns is-centered is-mobile'>
+					<div class='columns is-mobile is-centered is-mobile'>
 						<div class='column is-4' id='interactionsProfilePlot_professor_dash'></div>
 					</div>
 
-					<div class='columns is-centered is-mobile'>
+					<div class='columns is-mobile is-centered is-mobile'>
 						<img class='column is-2' id='interactionsProfilePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>
 				</div>
 
 				<div class='panel-block' style='display: block;'>
 					<p>Average Class Learning State</p>
-					<div class='columns is-centered is-mobile'>
+					<div class='columns is-mobile is-centered is-mobile'>
 						<div class='column is-7' id='learningStatePlot_professor_dash'></div>
 					</div>
 
-					<div class='columns is-centered is-mobile'>
+					<div class='columns is-mobile is-centered is-mobile'>
 						<img class='column is-2' id='learningStatePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>
 				</div>

@@ -18,18 +18,21 @@
         <img style="max-height: 3rem" src="{% static "media/images/GIMMELogo.png" %}">
       </a>
 
-      <!-- <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-      </a> -->
+    <div class="navbar-burger burger" onclick="$('#nav-menu').toggle('is-active');">
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
+
+    </div>
+
+
 
     {% if debug %}
       <div class="button" id="initServerButton_header"> Init Server</div>
     {% endif %}
 
-    <div class="navbar-menu">
+    <div id="nav-menu" class="navbar-menu">
       
       <div class="navbar-start">
         <div class="navbar-item has-dropdown is-hoverable">
@@ -54,6 +57,7 @@
             </a>
           </div>
         </div>
+
       </div>
 
 
@@ -69,12 +73,19 @@
           </div>
         </div>
       {% else %}
+        
         <div class="navbar-item center-left is-hoverable">
           <div class="navbar-brand">
             <figure class="image navbar-item">
               <!-- sets placeholder if no image is found for some reason -->
-              <img class="is-rounded is-fullheight" style="max-width:3rem" onError="this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';" src="{{ user.userprofile.avatar.url }}">
+              <img class="is-rounded is-fullheight" style="max-width:3rem; padding-top: 100%;" onError="this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';" src="{{ user.userprofile.avatar.url }}">
             </figure>
+          </div>
+
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link is-hidden-desktop">
+              Account Info.
+            </a>
           </div>
 
           <div class="navbar-dropdown is-right">
@@ -103,6 +114,10 @@
       {% endif %}
 
     </div>
+
+
+
+
 
   </nav>
 </header>

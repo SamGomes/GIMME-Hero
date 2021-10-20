@@ -86,6 +86,7 @@ body {
 
 .dash-cell-box{
   padding:2em; 
+  overflow: auto;
   border-color:gray; 
   border-style:solid; 
   border-radius: 1em; 

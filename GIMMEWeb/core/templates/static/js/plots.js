@@ -373,7 +373,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     var currPlotIndex = 0;
 
-    svg.style('background-color','black').call(responsivefy,5000,0);
+    svg.call(responsivefy,5000,0);
 
     for (i=0; i<data.groups.length; i++){
         var group = data.groups[i];
