@@ -99,6 +99,18 @@ body {
 }
 
 
+.circular-img-format{
+  display: inline-block;
+  position: relative;
+  /*width: 50vw;*/
+  height: 1.75rem;
+  overflow: hidden;
+  border-radius: 50%;
+
+}
+
+
+
 .alias {cursor: alias;}
 .all-scroll {cursor: all-scroll;}
 .auto {cursor: auto;}

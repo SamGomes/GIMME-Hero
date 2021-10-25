@@ -40,7 +40,7 @@
             Documentation
           </a>
 
-          <div class="navbar-dropdown">
+          <div class="navbar-dropdown is-hidden-desktop">
             <a class="navbar-item" href="https://github.com/SamGomes/GIMME" target="_blank">
               <i class="fas fa-code"></i> &nbsp; GIMME API repo
             </a>
@@ -75,15 +75,14 @@
       {% else %}
         
         <div class="navbar-item center-left is-hoverable">
-          <div class="navbar-brand">
-            <figure class="image navbar-item">
-              <!-- sets placeholder if no image is found for some reason -->
-              <img class="is-rounded is-fullheight" style="max-width:3rem; padding-top: 100%;" onError="this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';" src="{{ user.userprofile.avatar.url }}">
-            </figure>
+          
+          <div class="navbar-item is-hidden-touch">
+            <!-- sets placeholder if no image is found for some reason -->
+            <img class="circular-img circular-img-format" onError="this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';" src="{{ user.userprofile.avatar.url }}">
           </div>
 
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link is-hidden-desktop">
+          <div class="navbar-item has-dropdown is-hoverable is-hidden-desktop">
+            <a class="navbar-link">
               Account Info.
             </a>
           </div>
@@ -100,12 +99,14 @@
                 Email: <strong>{{user.email}}</strong>
               </div>
               <div class="column">
-                <div class="button is-info" id="updateUserRegButton">
+                <div class="button is-fullwidth is-info" id="updateUserRegButton">
                   <strong>Manage Account</strong>
                 </div>
               </div>
               <div class="column">
-                <a href="{% url 'logoutCheck' %}"><button class="button is-info modal-button">Logout</button></a>
+                <a href="{% url 'logoutCheck' %}">
+                  <button class="button is-info is-fullwidth modal-button">Logout</button>
+                </a>
               </div>
             </p>
           </div>
