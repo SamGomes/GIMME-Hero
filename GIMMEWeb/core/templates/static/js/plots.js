@@ -179,7 +179,7 @@ var buildStatePlot = function(canvasId, data){
 }
 
 
-var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
+var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates){
 
     // used to correctly generate user colors
     var abMax = 0;
@@ -350,6 +350,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     var resizeCanvas = function(canvas, aspect){
         var targetWidth = canvasContainer.getBoundingClientRect().width;
+        height = canvasContainer.getBoundingClientRect().height;
         canvas.attr('width', targetWidth);
         canvas.attr('height', targetWidth/ aspect);
     }
@@ -360,9 +361,12 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
     var canvasContainer = canvas.node().parentNode;
 
     width = canvasContainer.getBoundingClientRect().width;
-    height = canvasContainer.getBoundingClientRect().height;
 
-    aspect = 2.5 / 1.8;
+    if(isForStudent){
+        aspect = 2.5 / 1.0;
+    }else{
+        aspect = 2.5/ 1.5;
+    }
 
     resizeCanvas(canvas, aspect);
 
@@ -377,21 +381,33 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
 
     for (i=0; i<data.groups.length; i++){
         var group = data.groups[i];
-        var avgCharacteristics = $.extend({}, data.avgCharacteristics[i]);
-        delete avgCharacteristics.profile;
-        var profile = data.profiles[i];
-        var tasks = data.tasks[i];
         var groupCenterOfMass = {'x': 100 + Math.random()*(width*0.8), 'y': 10 + Math.random()*(height*0.8)};
-
-        groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics, 'profile': profile, 'tasks': tasks, 'centerOfMass': groupCenterOfMass});
         
-        for(var j=0;j<group.length; j++){
-            //TODO: add user characteristics
-            var userId = group[j];
-            userState = selectedUsersStates[userId];
-            userNodes.push({'plotIndex': currPlotIndex++, 'userId': userId, 'userState': unformattedStringToObj(userState), 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
+        if(isForStudent){
+            groupIndicatorNodes.push({'groupId': i, 'tasks': tasks, 'centerOfMass': groupCenterOfMass});
+            
+            for(var j=0;j<group.length; j++){
+                var userId = group[j];
+                userState = selectedUsersStates[userId];
+                userNodes.push({'plotIndex': currPlotIndex++, 'userId': userId, 'userState': unformattedStringToObj(userState), 'groupId': i, 'centerOfMass': groupCenterOfMass});
+            }
+            colors[i] = "#778caa";
+        }else{
+            var avgCharacteristics = $.extend({}, data.avgCharacteristics[i]);
+            delete avgCharacteristics.profile;
+            var profile = data.profiles[i];
+            var tasks = data.tasks[i];
+
+            groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics, 'profile': profile, 'tasks': tasks, 'centerOfMass': groupCenterOfMass});
+            
+            for(var j=0;j<group.length; j++){
+                var userId = group[j];
+                userState = selectedUsersStates[userId];
+                userNodes.push({'plotIndex': currPlotIndex++, 'userId': userId, 'userState': unformattedStringToObj(userState), 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
+            }
+            colors[i] = generateGroupColor(profile);
         }
-        colors[i] = generateGroupColor(profile);
+
     } 
 
     
@@ -419,7 +435,9 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             .attr('cx', node => node.centerOfMass.x)
             .attr('cy', node => node.centerOfMass.y)
             .attr('stroke-dasharray', '1%')
-            .attr('stroke', node => colors[node.groupId])
+            .attr('stroke', function(node){
+                return colors[node.groupId];
+            })
             .attr('stroke-width', '0.25%') 
             .attr('fill', 'transparent');
            
@@ -454,9 +472,11 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
                 }
             })
             .attr('fill', function(node){
-                    return generatePlayerColor(node);
+                    return isForStudent? colors[0]: generatePlayerColor(node);
                 })
-            .attr('stroke', node => colors[node.groupId])
+            .attr('stroke', function(node){
+                    return isForStudent? (data.myStudentId == node.userId? "red": colors[0]): colors[node.groupId];
+                })
             .attr('stroke-width', '0.3%');
 
 
@@ -532,7 +552,7 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             .attr('y', y + 10)
             .attr('font-size', 18)
             .attr('font-family', 'Calibri,sans-serif')
-            .attr('color', function(node){ return invertColor(colors[node.groupId], true); })
+            .attr('color', function(node){ return isForStudent? invertColor(colors[0], true): invertColor(colors[node.groupId], true); })
             .call(wrap, 150)
             .text(currKey);
 
@@ -608,53 +628,54 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         node = $.extend({}, originalNode); //performs a shallow copy
         node.tasks = originalNode.tasks == -1 ? '<No computed tasks>' : originalNode.tasks;
 
-
-        //change displayed attributes to be more friendly and easy to read
-        characteristics = $.extend({}, originalNode.characteristics);
-        dimensions = $.extend({}, originalNode.profile.dimensions);
-        // characteristics = node.characteristics;
-        // dimensions = node.profile.dimensions;
-
-        cKeys = Object.keys(characteristics);
-        dKeys = Object.keys(dimensions);
-        for (i=0; i<cKeys.length; i++){
-            key = cKeys[i];
-            currC = characteristics[key]; 
-            characteristics[key] = Number((currC).toFixed(2));
-        }
-
-        //also put profile in range [-3,3]
-        for (i=0; i<dKeys.length; i++){
-            key = dKeys[i];
-            currD = dimensions[key]; 
-            dimensions[key] = Number((currD*6.0 - 3.0).toFixed(2));
-        }
-
-
         node['Group ID'] = node.groupId;
-        node['Adapted Task'] = node.tasks;
-
-        node['Characteristics'] = {};
-        node['Characteristics']['Ability'] = characteristics.ability;
-        node['Characteristics']['Engagement'] = characteristics.engagement;
-        node['Profile'] = dimensions;
 
 
-        //delete undisplayed attributes
-        delete node.profile;
-        delete node.characteristics;
-        delete node.centerOfMass;
+        if(!isForStudent){
+            //change displayed attributes to be more friendly and easy to read
+            characteristics = $.extend({}, originalNode.characteristics);
+            dimensions = $.extend({}, originalNode.profile.dimensions);
+            // characteristics = node.characteristics;
+            // dimensions = node.profile.dimensions;
 
-        delete node.groupId;
+            cKeys = Object.keys(characteristics);
+            dKeys = Object.keys(dimensions);
+            for (i=0; i<cKeys.length; i++){
+                key = cKeys[i];
+                currC = characteristics[key]; 
+                characteristics[key] = Number((currC).toFixed(2));
+            }
+
+            //also put profile in range [-3,3]
+            for (i=0; i<dKeys.length; i++){
+                key = dKeys[i];
+                currD = dimensions[key]; 
+                dimensions[key] = Number((currD*6.0 - 3.0).toFixed(2));
+            }
+
+
+
+            node['Characteristics'] = {};
+            node['Characteristics']['Ability'] = characteristics.ability;
+            node['Characteristics']['Engagement'] = characteristics.engagement;
+            node['Profile'] = dimensions;
+
+            //delete undisplayed attributes
+            delete node.profile;
+            delete node.characteristics;
+        }
         delete node.tasks;
+        delete node.centerOfMass;
+        delete node.groupId;
 
         htmlFromJSON(node, currTooltip, 0, 0, 0, 40, 0);
     });
 
 
-    groupIndicators.on('mouseover', function(d){ d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'visible');})
-            .on('mouseout', function(d){ d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'hidden');});        
-
+    if(!isForStudent){
+        groupIndicators.on('mouseover', function(d){ d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'visible');})
+                .on('mouseout', function(d){ d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'hidden');});        
+    }
 
 
     var userInfoTooltips =
@@ -671,10 +692,16 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
             return rightRoundedRect(5, 5, 600, 250, 7);
         })
         .attr('fill', function(node){
-            var playerColor = generatePlayerColor(node).split(/,|\(|\)/);
-            var baseColor = fullColorHex(playerColor[1], playerColor[2], playerColor[3]);
+            var baseColor = {}
             transparency = 200;
-            return '#' +  baseColor + transparency.toString(16);
+            if(isForStudent){
+                baseColor = colors[0];
+                return baseColor + transparency.toString(16);
+            }else{
+                var playerColor = generatePlayerColor(node).split(/,|\(|\)/);
+                baseColor = fullColorHex(playerColor[1], playerColor[2], playerColor[3]);
+                return '#' +  baseColor + transparency.toString(16);
+            }
         })
         .attr('stroke', 'gray')
         .attr('stroke-width', '0.15%');
@@ -684,32 +711,34 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         //change displayed attributes to be more friendly and easy to read
         var currTooltip = d3.select(userInfoTooltips._groups[0][originalNode.plotIndex]);
 
-        characteristics = originalNode.userState.characteristics;
-        // dimensions = originalNode.userState.preferencesEst.dimensions;
-
-        cKeys = Object.keys(characteristics);
-        dKeys = Object.keys(dimensions);
-        for (i=0; i<cKeys.length; i++){
-            key = cKeys[i];
-            currC = characteristics[key]; 
-            characteristics[key] = Number((currC).toFixed(2));
-        }
-        // for (i=0; i<dKeys.length; i++){
-        //     key = dKeys[i];
-        //     currD = dimensions[key]; 
-        //     dimensions[key] = Number((currD).toFixed(2));
-        // }
-
         node = {}
         node['Student ID'] = originalNode.userId;
-
         node['Student Name'] = originalNode.userState.fullName;
+        node['Email'] = originalNode.userState.email;
 
-        node['Characteristics'] = {};
-        node['Characteristics']['Ability'] = characteristics.ability;
-        node['Characteristics']['Engagement'] = characteristics.engagement;
+        if(!isForStudent){
+            characteristics = originalNode.userState.characteristics;
+            // dimensions = originalNode.userState.preferencesEst.dimensions;
 
-        // node['Preferences Est'] = dimensions;
+            cKeys = Object.keys(characteristics);
+            dKeys = Object.keys(dimensions);
+            for (i=0; i<cKeys.length; i++){
+                key = cKeys[i];
+                currC = characteristics[key]; 
+                characteristics[key] = Number((currC).toFixed(2));
+            }
+            // for (i=0; i<dKeys.length; i++){
+            //     key = dKeys[i];
+            //     currD = dimensions[key]; 
+            //     dimensions[key] = Number((currD).toFixed(2));
+            // }
+
+            node['Characteristics'] = {};
+            node['Characteristics']['Ability'] = characteristics.ability;
+            node['Characteristics']['Engagement'] = characteristics.engagement;
+
+            // node['Preferences Est'] = dimensions;
+        }
 
         htmlFromJSON(node, currTooltip, 0, 0, 0, 50, 0);
     });
@@ -775,47 +804,50 @@ var buildGroupsPlot = function(canvasId, data, selectedUsersStates){
         resetChangeState();
     });
 
-    nodeElements.on('click', function(d){ 
+    // only professors can perform changes in groups
+    if(!isForStudent){
+        nodeElements.on('click', function(d){ 
 
-        if(studentForChange2 == undefined){
+            if(studentForChange2 == undefined){
 
-            var coordinates = d3.mouse(this);
-            var mouseX = coordinates[0];
-            var mouseY = coordinates[1];
+                var coordinates = d3.mouse(this);
+                var mouseX = coordinates[0];
+                var mouseY = coordinates[1];
 
-            thisElem = d3.select(this);
-            thisElem.attr('r', '2%');
-            studentForChange1 = d;
-            
-            d3.select(this.parentNode)
+                thisElem = d3.select(this);
+                thisElem.attr('r', '2%');
+                studentForChange1 = d;
+                
+                d3.select(this.parentNode)
 
-                .append('line')
-                .attr('class', 'arrow')
-                .attr('marker-start', 'url(#arrowFront)')
-                .attr('marker-end', 'url(#arrow)')
+                    .append('line')
+                    .attr('class', 'arrow')
+                    .attr('marker-start', 'url(#arrowFront)')
+                    .attr('marker-end', 'url(#arrow)')
 
-                .attr('x1', thisElem.attr('cx'))
-                .attr('y1', thisElem.attr('cy'))
-                .attr('x2', mouseX)
-                .attr('y2', mouseY)
-                .attr('stroke-width', '0.5%')
-                .attr('stroke-dasharray', '2%')
-                .attr('stroke', 'gray');
+                    .attr('x1', thisElem.attr('cx'))
+                    .attr('y1', thisElem.attr('cy'))
+                    .attr('x2', mouseX)
+                    .attr('y2', mouseY)
+                    .attr('stroke-width', '0.5%')
+                    .attr('stroke-dasharray', '2%')
+                    .attr('stroke', 'gray');
 
-        }else{
-            //perform change
-            //deploy confirmation box?
-            $.ajax({
-                type: 'POST',
-                url: '/manuallyChangeStudentGroup/',
-                data: {'student1': studentForChange1, 'student2': studentForChange2},
-                success: 
-                function(){}
-            });
+            }else{
+                //perform change
+                //deploy confirmation box?
+                $.ajax({
+                    type: 'POST',
+                    url: '/manuallyChangeStudentGroup/',
+                    data: {'student1': studentForChange1, 'student2': studentForChange2},
+                    success: 
+                    function(){}
+                });
 
-            resetChangeState();
-        }
-    });
+                resetChangeState();
+            }
+        });
+    }
 
     nodeElements.on('mouseover', function(d){
 

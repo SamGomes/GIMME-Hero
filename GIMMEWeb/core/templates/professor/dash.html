@@ -816,7 +816,7 @@ crossorigin='anonymous'></script>
 
 
 		var buildPlots = function(currServerState){
-			buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
+			buildGroupsPlot(false, 'groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
 
 			$('#interactionsProfilePlot_professor_dash').empty()
 			$('#learningStatePlot_professor_dash').empty()
@@ -979,7 +979,7 @@ crossorigin='anonymous'></script>
 		$('#rebuildPlot_professor_dash').click(function(){
 			$('#groupsPlot_professor_dash').empty();
 			if(currServerState.currAdaptationState != undefined && currServerState.currAdaptationState.groups != undefined){
-				buildGroupsPlot('groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
+				buildGroupsPlot(false, 'groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
 			}
 		})
 	});

@@ -218,6 +218,9 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		player = User.objects.get(username=username)
 		return player.username
 
+	def getPlayerEmail(self, username):
+		player = User.objects.get(username=username)
+		return player.email
 	
 	def getPlayerCurrProfile(self,  username):
 		playerInfo = User.objects.get(username=username).userprofile
@@ -940,6 +943,7 @@ class Views(): #acts as a namespace
 			userInfo = {}
 			# userState['myStateGrid'] = playerBridge.getPlayerStateGrid(username)
 			userInfo['fullName'] = playerBridge.getPlayerFullName(username)
+			userInfo['email'] = playerBridge.getPlayerEmail(username)
 			userInfo['characteristics'] = playerBridge.getPlayerCurrCharacteristics(username)
 			# userInfo['preferencesEst'] = playerBridge.getPlayerPreferencesEst(username)
 			userInfo['group'] = playerBridge.getPlayerCurrGroup(username)
