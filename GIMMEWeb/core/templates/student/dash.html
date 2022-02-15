@@ -87,10 +87,11 @@
 					</div>
 
 					<div class='panel-block' id='student_currentActivityInfo' style='display: block;'>
-						<label class='column is-3'>
+						<label class='column is-8'>
 							<p class='has-text-weight-bold'>Submit your Task Results:</p>
-							<input class='control has-icons-left button' type='file' id='student_results_file' name='filename'>
-							<button class='button is-info' id='student_apply_results'>Apply Changes</button>
+							<br/>
+							<input class='control has-icons-left button' style='margin: 1em;' type='file' id='student_results_file' name='filename'>
+							<button class='button is-info' style='margin: 1em;' id='student_apply_results'>Apply Changes</button>
 						</label>
 					</div>
 				</div>
@@ -160,7 +161,6 @@
 	<script>
 	$(document).ready(
 		function(){
-
 
 			$('#groupsPlotLegend_student_dash').show(500);
 			$('#groupsPlotLegendTrigger_student_dash').hide();
