@@ -31,79 +31,6 @@ var responsivefy = function(svg, targetWidthClamp, leftPaddingRatio) {
     }
 }
 
-
-
-var buildInteractionsProfilePlot = function(canvasId, data){
-    
-    var width = canvasContainer.getBoundingClientRect().width;
-    var height = canvasContainer.getBoundingClientRect().height;
-
-    var margin = {
-        top: height * 0.1,
-        right: width * 0.1,
-        bottom: height * 0.1,
-        left: width * 0.1
-    };
-
-
-    var x = d3.scaleLinear().range([0, width]);
-    var y = d3.scaleLinear().range([height, 0]);
-
-    x.domain([0,1]);
-    y.domain([0,1]);
-
-    var xAxis = d3.axisTop(x);
-    var yAxis = d3.axisRight(y);
-
-
-
-    var svg = d3.select('#'+canvasId)
-            .append('svg')
-            .call(responsivefy);
-        
-    svg.append('g')
-            .attr('class', 'x axis')
-            .attr('transform', 'translate(' + 0 + ',' + height / 2 + ')')
-            .call(xAxis);
-    
-
-    svg.append('g')
-        .attr('class', 'y axis')
-        .attr('transform', 'translate(' + width / 2 + ',' + 0 + ')')
-        .call(yAxis);
-       
-
-
-  var dots =  svg.selectAll('g.dot')
-            .data(data)
-            .enter().append('g');
-            
-            dots.append('circle')
-                .attr('class', 'dot')
-                .attr('r', 5)
-                .attr('cx', function (d) {
-                    return x(d.K_i);
-                })
-                .attr('cy', function (d) {
-                    return y(d.K_cp);
-                })
-                .style('fill', function (d) {
-                    return '#50C2E3';
-                })
-                .on('mouseover',function(d) {
-                    d3.select(this).append('text').text(function(d){
-                        return d.name;
-                    })
-                    .attr('x', function (d) {
-                        return x(d.K_i);
-                    })
-                    .attr('y', function (d) {
-                        return y(d.K_cp);
-                    });
-                });
-}
-
-
 var buildStatePlot = function(canvasId, data){
 
     var canvas = d3.select('#'+canvasId);
@@ -1034,13 +961,13 @@ var buildScatterInteractionPlot  = function(canvasId, data){
     // Add X axis
     var x = d3.scaleLinear()
         .domain([-3, 3])
-        .range([ 0, width ]);
+        .range([14, width-10]);
 
 
     // Add Y axis
     var y = d3.scaleLinear()
         .domain([-3, 3])
-        .range([ height, 0 ]);
+        .range([height-25, 12]);
 
     // Add dots
     svg.append('g')

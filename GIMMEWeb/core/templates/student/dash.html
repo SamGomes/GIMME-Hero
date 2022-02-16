@@ -269,7 +269,7 @@
 
 						if(objChanged(oldChars, myInfo.characteristics)){
 		    				oldChars = myInfo.characteristics;
-		    				
+
 							$('#student_learningStatePlot').empty();
 							buildStatePlot('student_learningStatePlot', 
 								[
@@ -282,11 +282,10 @@
 							$('#student_interactionsProfilePlot').empty()
 							buildScatterInteractionPlot('student_interactionsProfilePlot', 
 								[
-									// { 'focus': -2.0 , 'challenge': 2.0 , 'timestamp': 5 },
-									// { 'focus': 1.2 , 'challenge': -2.4 , 'timestamp': 2 },
-									// { 'focus': 1.7 , 'challenge': 1.2 , 'timestamp': 1 },
-									// { 'focus': 2.3 , 'challenge': 2.5 , 'timestamp': 4 },
-									// { 'focus': -1.5 , 'challenge': -2.1 , 'timestamp': 8 },
+									// { 'focus': -3 , 'challenge': -3 , 'timestamp': 2 },
+									// { 'focus': 3, 'challenge': 3 , 'timestamp': 1 },
+									// { 'focus': 3 , 'challenge': -3 , 'timestamp': 4 },
+									// { 'focus': -3, 'challenge': 3 , 'timestamp': 8 }
 									{ 'focus': myInfo.groupProfile['Focus']*6.0 - 3.0 , 'challenge': myInfo.groupProfile['Challenge']*6.0 - 3.0 , 'timestamp': 9 }
 								]
 							);
@@ -300,8 +299,6 @@
 
 			updateData();
 			setInterval(updateData, 1000);
-
-
 
 
 			var resFr = new FileReader();
@@ -344,9 +341,6 @@
 					}
 				);
 			});
-
-
-
 
 		}
 	);
