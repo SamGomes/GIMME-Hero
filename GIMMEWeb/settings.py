@@ -13,7 +13,7 @@ SECRET_KEY = 'p+ah706u_0-zk@_jq&o#v6&u@)^w5#w&*r_re=usr@u9i-vh3d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS=["localhost","146.193.226.22","gimme-web.duckdns.org","gimme-web-secure.duckdns.org"]
+ALLOWED_HOSTS=["localhost","146.193.224.171","gimme-web.duckdns.org","gimme-web-secure.duckdns.org"]
 
 INTERNAL_IPS = (
     '127.0.0.1',
@@ -104,7 +104,7 @@ CSRF_USE_SESSIONS = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'GIMMEWeb/core/templates/static/') ]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'GIMMEWeb/core/templates/static/')]
 
 
 MEDIA_URL = '/media/'

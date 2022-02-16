@@ -1,4 +1,16 @@
 ﻿
+#fullscreen {
+        height: 100vh;
+        width: 100vw;
+        position: fixed;
+        top:0;
+        left:0;
+    }
+@media screen and (orientation:portrait) { height: 100vh;
+            width: 100vw; }
+@media screen and (orientation:landscape) {height: 100vh;
+            width: 100vw; }
+
 
 /* Sticky footer styles
 -------------------------------------------------- */
@@ -9,14 +21,17 @@ html {
 }
 
 body {
+
   /* Margin bottom by footer height */
   background-position: absolute;
   background-image: url("../media/images/background.png");
-  background-size: cover; 
+  background-size: cover;
   background-attachment: fixed; 
   /*background-color: transparent; */
   background-margin: 0; 
   height: 100%;
+  
+  /*margin: 0;*/
 }
 /*.footer {
   position: absolute;
@@ -86,12 +101,29 @@ body {
 
 .dash-cell-box{
   padding:2em; 
+  overflow: auto;
   border-color:gray; 
   border-style:solid; 
   border-radius: 1em; 
   border-width: 0.1em;
   object-fit: fill;
 }
+
+.panel-block-borderless{ 
+  border-style:none; 
+}
+
+
+.circular-img-format{
+  display: inline-block;
+  position: relative;
+  /*width: 50vw;*/
+  height: 1.75rem;
+  overflow: hidden;
+  border-radius: 50%;
+
+}
+
 
 
 .alias {cursor: alias;}
@@ -130,3 +162,11 @@ body {
 .wait {cursor: wait;}
 .zoom-in {cursor: zoom-in;}
 .zoom-out {cursor: zoom-out;}
+
+.dropdown-menu {
+  z-index: 1000;
+}
+
+.dropdown-item {
+  z-index: 1000;
+}

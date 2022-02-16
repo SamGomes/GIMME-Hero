@@ -1,0 +1,15 @@
+2021-08-12 10:59:16,984 CRIT Set uid to user 0
+2021-08-12 10:59:16,997 INFO RPC interface 'supervisor' initialized
+2021-08-12 10:59:16,997 CRIT Server 'inet_http_server' running without any HTTP authentication checking
+2021-08-12 10:59:16,998 INFO daemonizing the supervisord process
+2021-08-12 10:59:16,998 INFO supervisord started with pid 6122
+2021-08-12 10:59:18,002 INFO spawned: 'gunicorn' with pid 6136
+2021-08-12 10:59:18,010 INFO exited: gunicorn (exit status 127; not expected)
+2021-08-12 10:59:19,013 INFO spawned: 'gunicorn' with pid 6137
+2021-08-12 10:59:19,021 INFO exited: gunicorn (exit status 127; not expected)
+2021-08-12 10:59:21,034 INFO spawned: 'gunicorn' with pid 6138
+2021-08-12 10:59:21,043 INFO exited: gunicorn (exit status 127; not expected)
+2021-08-12 10:59:24,049 INFO spawned: 'gunicorn' with pid 6139
+2021-08-12 10:59:24,056 INFO exited: gunicorn (exit status 127; not expected)
+2021-08-12 10:59:25,058 INFO gave up: gunicorn entered FATAL state, too many start retries too quickly
+2021-08-12 11:00:04,468 WARN received SIGTERM indicating exit request

@@ -31,8 +31,6 @@ from django.contrib import messages
 from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm
 
 
-intProfTemplate = InteractionsProfile({"Valence": 0, "Focus": 0})
-
 
 class ServerStateModelBridge():
 
@@ -147,7 +145,7 @@ class CustomTaskModelBridge(TaskModelBridge):
 
 	def getTaskInteractionsProfile(self, taskId):
 		task = Task.objects.get(taskId = taskId)
-		return InteractionsProfile(dimensions = json.loads(task.profile)["dimensions"])
+		return InteractionsProfile(dimensions = json.loads(task.profile)['dimensions'])
 
 	def getMinTaskRequiredAbility(self, taskId):
 		task = Task.objects.get(taskId = taskId)
@@ -188,16 +186,18 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 	def getPlayer(self, username):
 		return User.objects.get(username = username).userprofile
 
-	def setAndSavePlayerStateToGrid(self, username, newState):
-		playerInfo = User.objects.get(username=username).userprofile
-
+	def setAndSavePlayerStateToDataFrame(self, username, newState):
+		
 		self.setPlayerCharacteristics(username, newState.characteristics)
 		self.setPlayerProfile(username, newState.profile)
 
-		playerStateGrid = self.getPlayerStateGrid(username)
-		playerStateGrid.pushToGrid(newState)
-		playerInfo.pastModelIncreasesGrid = json.dumps(playerStateGrid, default=lambda o: o.__dict__)
+		playerStatesDataFrame = self.getPlayerStatesDataFrame(username)
+		playerStatesDataFrame.pushToDataFrame(newState)
+
+		playerInfo = User.objects.get(username=username).userprofile
+		playerInfo.pastModelIncreasesDataFrame = json.dumps(playerStatesDataFrame, default=lambda o: o.__dict__)
 		playerInfo.save()
+
 
 	def resetPlayer(self, username):
 		return 0
@@ -207,11 +207,10 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		return serverStateModelBridge.getCurrSelectedUsers()
 
 	def getAllStoredStudentUsernames(self):
-		# breakpoint()
 		allUsers = User.objects.all()
 		allUsersIds = []
 		for player in allUsers:
-			if "student" in player.userprofile.role:
+			if 'student' in player.userprofile.role:
 				allUsersIds.append(player.username)
 		return allUsersIds
 
@@ -219,75 +218,80 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		player = User.objects.get(username=username)
 		return player.username
 
+	def getPlayerEmail(self, username):
+		player = User.objects.get(username=username)
+		return player.email
 	
 	def getPlayerCurrProfile(self,  username):
 		playerInfo = User.objects.get(username=username).userprofile
 		# print(json.dumps(player, default= lambda o: o.__dict__, sort_keys=True))
-		profile = json.loads(playerInfo.currState)["profile"]
-		profile = InteractionsProfile(dimensions= profile["dimensions"])
+		profile = json.loads(playerInfo.currState)['profile']
+		profile = InteractionsProfile(dimensions= profile['dimensions'])
 		return profile
 
 	def getPlayerCurrGroup(self,  username):
 		playerInfo = User.objects.get(username=username).userprofile
-		group = json.loads(playerInfo.currState)["group"]
+		group = json.loads(playerInfo.currState)['group']
 		return group
 
 	def getPlayerCurrTasks(self,  username):
 		playerInfo = User.objects.get(username=username).userprofile
-		tasks = json.loads(playerInfo.currState)["tasks"]
+		tasks = json.loads(playerInfo.currState)['tasks']
 		return tasks
 	
-	def getPlayerStateGrid(self, username):
+	def getPlayerStatesDataFrame(self, username):
 		playerInfo = User.objects.get(username=username).userprofile
+		pastModelIncreasesDataFrame = json.loads(playerInfo.pastModelIncreasesDataFrame)
 
-		playerStateGrid = json.loads(playerInfo.pastModelIncreasesGrid)
-		cells = [[]]
-		for cell in playerStateGrid["cells"]:
-			newCell = []
-			for state in cell:
-				characteristics = state["characteristics"]
-				characteristics = PlayerCharacteristics(ability= float(characteristics["ability"]), engagement= float(characteristics["engagement"]))
+		states = []
+		for state in pastModelIncreasesDataFrame['states']:
+			characteristics = state['characteristics']
+			characteristics = PlayerCharacteristics(
+				ability= float(characteristics['ability']), 
+				engagement= float(characteristics['engagement']))
 
-				profile = state["profile"]
-				profile = InteractionsProfile(dimensions= profile["dimensions"])
-				
-				newCell.append(PlayerState(profile = profile, characteristics = characteristics, dist=state["dist"]))
-			cells.append(newCell)
+			profile = state['profile']
+			profile = InteractionsProfile(dimensions= profile['dimensions'])
+			
+			playerState = PlayerState(profile = profile, 
+				characteristics = characteristics, 
+				dist=state['dist'], 
+				quality=state['quality'])
+			states.append(playerState)
 
-		gridTrimAlg = json.loads(json.dumps(playerStateGrid["gridTrimAlg"]))
-		# print(gridTrimAlg)
-		return	PlayerStateGrid(
-			cells = cells,
-			interactionsProfileTemplate = intProfTemplate.generateCopy().reset(), 
-			gridTrimAlg = QualitySortGridTrimAlg(
-			# gridTrimAlg = AgeSortGridTrimAlg(
-				maxNumModelElements = int(gridTrimAlg["maxNumModelElements"]), 
-				qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5)
-				), 
-			numCells = int(playerStateGrid["numCells"])
+		trimAlg = json.loads(json.dumps(pastModelIncreasesDataFrame['trimAlg']))
+		sdf = PlayerStatesDataFrame(
+				states = states,
+				interactionsProfileTemplate = intProfTemplate.generateCopy().reset(), 
+				trimAlg = ProximitySortPlayerDataTrimAlg(
+					maxNumModelElements = int(trimAlg['maxNumModelElements']), 
+					epsilon = float(trimAlg['epsilon'])
+				)
 			)
+		return sdf
+
 
 	def getPlayerCurrCharacteristics(self, username):
 		playerInfo = User.objects.get(username=username).userprofile
-		characteristics = json.loads(playerInfo.currState)["characteristics"]
-		return PlayerCharacteristics(ability= float(characteristics["ability"]), 
-			engagement= float(characteristics["engagement"]))
+		characteristics = json.loads(playerInfo.currState)['characteristics']
+		return PlayerCharacteristics(ability= float(characteristics['ability']), 
+			engagement= float(characteristics['engagement']))
 	
-	def getPlayerPersonalityEst(self, username):
+	def getPlayerPreferencesEst(self, username):
 		playerInfo = User.objects.get(username=username).userprofile
-		personality = json.loads(playerInfo.personality)
-		personality = InteractionsProfile(dimensions= personality["dimensions"])
-		return personality
+		preferences = json.loads(playerInfo.preferences)
+		preferences = InteractionsProfile(dimensions= preferences['dimensions'])
+		return preferences
 
 	def getPlayerCurrState(self, username):
 		playerInfo = User.objects.get(username=username).userprofile
 		currState = json.loads(playerInfo.currState)
 		return PlayerState(profile = self.getPlayerCurrProfile(username), 
 			characteristics = self.getPlayerCurrCharacteristics(username), 
-			dist = currState["dist"],
-			quality = currState["quality"],
-			group = currState["group"],
-			tasks = currState["tasks"])
+			dist = currState['dist'],
+			quality = currState['quality'],
+			group = currState['group'],
+			tasks = currState['tasks'])
 
 	def getPlayerFullName(self, username):
 		playerInfo = User.objects.get(username=username).userprofile
@@ -300,9 +304,9 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		playerInfo.currState = json.dumps(newState, default=lambda o: o.__dict__)
 		playerInfo.save()
 
-	def setPlayerPersonalityEst(self, username, personality):
+	def setPlayerPreferencesEst(self, username, preferences):
 		playerInfo = User.objects.get(username=username).userprofile
-		playerInfo.personality = json.dumps(personality, default=lambda o: o.__dict__)
+		playerInfo.preferences = json.dumps(preferences, default=lambda o: o.__dict__)
 		playerInfo.save()
 
 
@@ -337,33 +341,26 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 playerBridge = CustomPlayerModelBridge()
 adaptation = Adaptation()
-# profileTemplate = serverStateModelBridge.getProfileTemplate()
-# for d in range(numInteractionDimensions):
-# 	profileTemplate.dimensions["dim_"+str(d)] = 0.0
+currConfigParams = {}
 
+intProfTemplate = InteractionsProfile({'Challenge': 0, 'Focus': 0})
+trimAlgTemplate = ProximitySortPlayerDataTrimAlg(
+				maxNumModelElements = 10, 
+				epsilon = 0.05
+			) 
 
-defaultConfigsAlg = StochasticHillclimberConfigsGen(
-	playerModelBridge = playerBridge, 
-	interactionsProfileTemplate = intProfTemplate.generateCopy(), 
-	regAlg = KNNRegression(playerBridge, 5), 
-	persEstAlg = ExplorationPersonalityEstAlg(
-		playerModelBridge = playerBridge, 
-		interactionsProfileTemplate = intProfTemplate.generateCopy(), 
-		regAlg = KNNRegression(playerBridge, 5),
-		numTestedPlayerProfiles = 100, 
-		qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5)), 
-	numberOfConfigChoices = 300, 
-	preferredNumberOfPlayersPerGroup = 5, 
-	qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5)
-)
-adaptation.init(playerBridge, taskBridge, configsGenAlg = defaultConfigsAlg, name="GIMME")
+defaultConfigsAlg = RandomConfigsGen(
+				playerModelBridge = playerBridge, 
+				interactionsProfileTemplate = intProfTemplate.generateCopy(),
+				preferredNumberOfPlayersPerGroup = 4)
+adaptation.init(playerBridge, taskBridge, configsGenAlg = defaultConfigsAlg, name='GIMME')
 
 
 class Views(): #acts as a namespace
 
 	def initServer(request):
 		serverStateModelBridge.setCurrAdaptationState([])
-		serverStateModelBridge.setReadyForNewActivity(False)
+		serverStateModelBridge.setReadyForNewActivity(True)
 		serverStateModelBridge.setCurrSelectedUsers([])
 		serverStateModelBridge.setCurrFreeUsers(playerBridge.getAllStoredStudentUsernames())
 		serverStateModelBridge.setCurrSelectedTasks([])
@@ -387,6 +384,9 @@ class Views(): #acts as a namespace
 		password = request.POST.get('password')
 		print('[INFO] login check performed on user with id - ' + str(username) + ', password - '+str(password))
 
+		if(username is None):
+			return
+
 		user = authenticate(request, username=username, password=password)
 		if user is not None:
 			login(request, user)
@@ -400,7 +400,7 @@ class Views(): #acts as a namespace
 	
 	
 	def userRegistration(request):
-		if request.method == "POST":
+		if request.method == 'POST':
 			form = CreateUserForm(request.POST)
 			profileForm = CreateUserProfileForm(request.POST, request.FILES)
 
@@ -411,22 +411,17 @@ class Views(): #acts as a namespace
 				profile.user = user
 
 				profile.currState = json.dumps(PlayerState(), default=lambda o: o.__dict__, sort_keys=True)
-				profile.pastModelIncreasesGrid = json.dumps(
-					PlayerStateGrid(
+				profile.pastModelIncreasesDataFrame = json.dumps(
+					PlayerStatesDataFrame(
 						interactionsProfileTemplate = intProfTemplate.generateCopy().reset(), 
-						gridTrimAlg = QualitySortGridTrimAlg(
-						# gridTrimAlg = AgeSortGridTrimAlg(
-							maxNumModelElements = 30, #requestInfo["maxNumModelElements"]
-							qualityWeights = PlayerCharacteristics(ability=0.5, engagement=0.5) #requestInfo["ability"]...
-							), 
-						numCells = 1 #requestInfo["numCells"]
+						trimAlg = trimAlgTemplate
 					), 
 				default=lambda o: o.__dict__, sort_keys=True)
-				profile.personality = json.dumps(InteractionsProfile(), default=lambda o: o.__dict__, sort_keys=True)
+				profile.preferences = json.dumps(intProfTemplate.generateCopy().reset(), default=lambda o: o.__dict__, sort_keys=True)
 
 				profile.save() 
 
-				if "student" in profile.role:
+				if 'student' in profile.role:
 					currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
 					currFreeUsers.append(user.username)
 					serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
@@ -438,7 +433,7 @@ class Views(): #acts as a namespace
 				context = { 'form' : form , 'profileForm': profileForm }
 				return render(request, 'userRegistration.html', context)
 
-		elif request.method == "GET":
+		elif request.method == 'GET':
 			form = CreateUserForm()
 			profileForm = CreateUserProfileForm()
 
@@ -447,7 +442,7 @@ class Views(): #acts as a namespace
 
 	
 	def userUpdate(request):
-		if request.method == "POST":
+		if request.method == 'POST':
 
 			instance = request.user
 			usernameToUpdate = request.GET.get('usernameToUpdate')
@@ -456,7 +451,7 @@ class Views(): #acts as a namespace
 					instance = User.objects.get(username=usernameToUpdate)
 				except User.DoesNotExist:
 					messages.info(request, 'Account not updated! Username not found.')
-					return redirect("/userUpdate")
+					return redirect('/userUpdate')
 
 
 			form = UpdateUserForm(request.POST, instance=instance)
@@ -470,7 +465,7 @@ class Views(): #acts as a namespace
 				context = { 'form' : form , 'profileForm': profileForm }
 				return render(request, 'userUpdate.html',  context)
 
-		elif request.method == "GET":
+		elif request.method == 'GET':
 
 			instance = request.user
 			usernameToUpdate = request.GET.get('usernameToUpdate')
@@ -489,9 +484,9 @@ class Views(): #acts as a namespace
 
 	
 	def userDeletion(request):
-		if request.method == "GET":
+		if request.method == 'GET':
 			canLogout = False
-			username = request.GET.get("usernameToDelete")
+			username = request.GET.get('usernameToDelete')
 			if(not username):
 				username = request.user.username
 				canLogout = True
@@ -504,7 +499,7 @@ class Views(): #acts as a namespace
 
 			except User.DoesNotExist:
 				messages.info(request, 'Account not deleted! Username not found.')
-				return redirect("/userUpdate")
+				return redirect('/userUpdate')
 
 			currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
 			if username in currFreeUsers:
@@ -515,18 +510,18 @@ class Views(): #acts as a namespace
 			if username in currSelectedUsers:
 				currSelectedUsers.remove(username)
 				serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
-			return redirect("/home")
+			return redirect('/home')
 
 
 	def isUserRegistered(username):
 		returned = {}
 		if(username != None):
 			try:
-				returned["user"] = User.objects.get(username=username).userprofile
-				returned["storedUsers"] = UserProfile.objects.filter(username__contains=username)
+				returned['user'] = User.objects.get(username=username).userprofile
+				returned['storedUsers'] = UserProfile.objects.filter(username__contains=username)
 			except ObjectDoesNotExist as e:
-				print("user does not exist!")
-				returned = {"user": False, "storedUsers": User.objects.filter(username__contains=username)}
+				print('user does not exist!')
+				returned = {'user': False, 'storedUsers': User.objects.filter(username__contains=username)}
 		return returned
 
 	def dash(request):
@@ -540,7 +535,7 @@ class Views(): #acts as a namespace
 	
 	def getRandomString(length):
 		letters = string.ascii_lowercase
-		numbers = "0123456789"
+		numbers = '0123456789'
 		chars = letters + numbers
 		result_str = random.choice(numbers) + ''.join(random.choice(chars) for i in range(length))
 		return result_str
@@ -550,21 +545,20 @@ class Views(): #acts as a namespace
 
 	
 	def addAllUsersSelected(request): #reads (player) from args
-		if request.method == "POST":
+		if request.method == 'POST':
 			serverStateModelBridge.setCurrSelectedUsers(playerBridge.getAllStoredStudentUsernames())
 			serverStateModelBridge.setCurrFreeUsers([])
 			return HttpResponse('ok')
 	
 	def removeAllUsersSelected(request): #reads (player) from args
-		if request.method == "POST":
+		if request.method == 'POST':
 			serverStateModelBridge.setCurrSelectedUsers([])
 			serverStateModelBridge.setCurrFreeUsers(playerBridge.getAllStoredStudentUsernames())
 			return HttpResponse('ok')
 
 	
 	def addSelectedUser(request): #reads (player) from args
-		# breakpoint()
-		if request.method == "POST":
+		if request.method == 'POST':
 			usernameToAdd = request.POST.get('username')
 			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
 			currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
@@ -577,7 +571,7 @@ class Views(): #acts as a namespace
 
 	
 	def removeSelectedUser(request): #reads (player) from args
-		if request.method == "POST":
+		if request.method == 'POST':
 			usernameToRemove = request.POST.get('username')
 			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
 			currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
@@ -592,21 +586,21 @@ class Views(): #acts as a namespace
 
 	
 	def addAllTasksSelected(request): #reads (player) from args
-		if request.method == "POST":
+		if request.method == 'POST':
 			serverStateModelBridge.setCurrSelectedTasks(taskBridge.getAllStoredTaskIds())
 			serverStateModelBridge.setCurrFreeTasks([])
 			return HttpResponse('ok')
 
 	
 	def removeAllTasksSelected(request): #reads (player) from args
-		if request.method == "POST":
+		if request.method == 'POST':
 			serverStateModelBridge.setCurrSelectedTasks([])
 			serverStateModelBridge.setCurrFreeTasks(taskBridge.getAllStoredTaskIds())
 			return HttpResponse('ok')
 
 	
 	def addSelectedTask(request): #reads (player) from args
-		if request.method == "POST":
+		if request.method == 'POST':
 			taskToAdd = request.POST.get('taskId')
 			currSelectedTasks = serverStateModelBridge.getCurrSelectedTasks();
 			currFreeTasks = serverStateModelBridge.getCurrFreeTasks();
@@ -619,7 +613,7 @@ class Views(): #acts as a namespace
 
 	
 	def removeSelectedTask(request): #reads (player) from args
-		if request.method == "POST":
+		if request.method == 'POST':
 			TaskIdToRemove = request.POST.get('taskId')
 			currSelectedTasks = serverStateModelBridge.getCurrSelectedTasks();
 			currFreeTasks = serverStateModelBridge.getCurrFreeTasks();
@@ -638,8 +632,8 @@ class Views(): #acts as a namespace
 		currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
 		currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
 
-		currSelectedUsers.remove(request.session.get("username"))
-		currFreeUsers.append(request.session.get("username"))
+		currSelectedUsers.remove(request.session.get('username'))
+		currFreeUsers.append(request.session.get('username'))
 		serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
 		serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
 		return render(request, 'student/activity.html')
@@ -651,13 +645,13 @@ class Views(): #acts as a namespace
 		currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
 		currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
 		
-		currFreeUsers.remove(request.session.get("username"))
+		currFreeUsers.remove(request.session.get('username'))
 		serverStateModelBridge.setcurrFreeUsers(currFreeUsers)
 
 		if request.POST:
-			username = request.session.get("username")
+			username = request.session.get('username')
 			characteristics = playerBridge.getPlayerCurrCharacteristics(username)
-			characteristics = PlayerCharacteristics(ability=float(request.POST["ability"]) - characteristics.ability, engagement=float(request.POST["engagement"]) - characteristics.engagement)
+			characteristics = PlayerCharacteristics(ability=float(request.POST['ability']) - characteristics.ability, engagement=float(request.POST['engagement']) - characteristics.engagement)
 			playerBridge.setPlayerCharacteristics(username, characteristics)
 			playerBridge.setAndSavePlayerStateToGrid(username, PlayerState(characteristics=characteristics, profile=playerBridge.getPlayerCurrProfile(username)))
 			return Views.dash(request)
@@ -666,12 +660,18 @@ class Views(): #acts as a namespace
 	# professor methods
 	
 	def startAdaptation(request):
-		# breakpoint()
 		serverStateModelBridge.setReadyForNewActivity(False)
 		try:
 			currAdaptationState = adaptation.iterate()
-		except ValueError:
-			print("Iteration call returned ValueError error!")
+
+			# store current states in players' state window, after the adaptation returns
+			for username in playerBridge.getAllStoredStudentUsernames():
+				playerBridge.setAndSavePlayerStateToDataFrame(username, playerBridge.getPlayerCurrState(username));
+
+		except (Exception, ArithmeticError, ValueError) as e:
+			template = 'An exception of type {0} occurred. Arguments:\n{1!r}'
+			message = template.format(type(e).__name__, e.args)
+			print(message)
 			serverStateModelBridge.setReadyForNewActivity(True)
 			return HttpResponse('error')
 			
@@ -680,92 +680,131 @@ class Views(): #acts as a namespace
 		return Views.fetchServerState(request)
 
 
-	
 	def configAdaptation(request):
 		
-		# print(json.dumps(request.POST, default=lambda o: o.__dict__, sort_keys=True))
+		global currConfigParams
+
+		newConfigParams = request.POST
+		print(currConfigParams == newConfigParams)
+		if(currConfigParams == newConfigParams):
+			return HttpResponse('ok')
+
+		# switch reg algs
 		selectedRegAlg = {}		
 		def selectedRegAlgSwitcherKNN(request):
 			return KNNRegression( 
 				playerBridge, 
-				int(request.POST["numNNs"])
+				int(newConfigParams['numNNs'])
 			)
 
-		selectedRegAlgSwitcher = { 
-		    "KNN": selectedRegAlgSwitcherKNN(request)
-		} 
-		selectedRegAlg = selectedRegAlgSwitcher.get(request.POST["selectedRegAlgId"], None)
+		selectedRegAlgId = newConfigParams['selectedRegAlgId']
+		# selectedRegAlg = None
+		if (selectedRegAlgId =='KNN'):
+			selectedRegAlg = selectedRegAlgSwitcherKNN(request)
 
 
 		selectedGenAlg = {}
-		def selectedGenAlgSwitcherStochasticHillclimber(request):
-			return StochasticHillclimberConfigsGen(
-							playerModelBridge = playerBridge, 
-							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
-							regAlg = selectedRegAlg, 
-							persEstAlg = ExplorationPersonalityEstAlg(
-								playerModelBridge = playerBridge, 
-								interactionsProfileTemplate = intProfTemplate.generateCopy(), 
-								regAlg = selectedRegAlg,
-								numTestedPlayerProfiles = 100, 
-								qualityWeights = PlayerCharacteristics(ability=float(request.POST["qualityWeightsAb"]), engagement=float(request.POST["qualityWeightsEng"]))),
-							numberOfConfigChoices = int(request.POST["numberOfConfigChoices"]), 
-					minNumberOfPlayersPerGroup = int(request.POST["minNumberOfPlayersPerGroup"]), 
-					maxNumberOfPlayersPerGroup = int(request.POST["maxNumberOfPlayersPerGroup"]), 
-					preferredNumberOfPlayersPerGroup = int(request.POST["preferredNumberOfPlayersPerGroup"]),
-							qualityWeights = PlayerCharacteristics(ability=float(request.POST["qualityWeightsAb"]), engagement=float(request.POST["qualityWeightsEng"]))
-					)
-
-		def selectedGenAlgSwitcherSimulatedAnnealing(request):
-			return SimulatedAnnealingConfigsGen(
-							playerModelBridge = playerBridge, 
-							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
-							regAlg = selectedRegAlg, 
-							persEstAlg = ExplorationPersonalityEstAlg(
-								playerModelBridge = playerBridge, 
-								interactionsProfileTemplate = intProfTemplate.generateCopy(), 
-								regAlg = selectedRegAlg,
-								numTestedPlayerProfiles = 100, 
-								qualityWeights = PlayerCharacteristics(ability=float(request.POST["qualityWeightsAb"]), engagement=float(request.POST["qualityWeightsEng"]))),
-							numberOfConfigChoices = int(request.POST["numberOfConfigChoices"]), 
-							minNumberOfPlayersPerGroup = int(request.POST["minNumberOfPlayersPerGroup"]), 
-							maxNumberOfPlayersPerGroup = int(request.POST["maxNumberOfPlayersPerGroup"]), 
-							preferredNumberOfPlayersPerGroup = int(request.POST["preferredNumberOfPlayersPerGroup"]),
-							qualityWeights = PlayerCharacteristics(ability=float(request.POST["qualityWeightsAb"]), engagement=float(request.POST["qualityWeightsEng"])),
-							temperatureDecay = float(request.POST["temperatureDecay"])
-					)
-
-
 		def selectedGenAlgSwitcherRandom(request):
+			# print('RRRRRRRRRRRRRRRRR')
 			return RandomConfigsGen(
 				playerModelBridge = playerBridge, 
 				interactionsProfileTemplate = intProfTemplate.generateCopy(),
-				minNumberOfPlayersPerGroup = int(request.POST["minNumberOfPlayersPerGroup"]), 
-				maxNumberOfPlayersPerGroup = int(request.POST["maxNumberOfPlayersPerGroup"]), 
-				preferredNumberOfPlayersPerGroup = int(request.POST["preferredNumberOfPlayersPerGroup"]))
+				# minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
+				# maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
+				preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']))
 
-		selectedGenAlgSwitcher = { 
-		    "Random": selectedGenAlgSwitcherRandom(request), 
-		    "StochasticHillclimber": selectedGenAlgSwitcherStochasticHillclimber(request),
-		    "SimulatedAnnealing": selectedGenAlgSwitcherSimulatedAnnealing(request)
-		} 
-		selectedGenAlg = selectedGenAlgSwitcher.get(request.POST["selectedGenAlgId"], defaultConfigsAlg)
+		def selectedGenAlgSwitcherPRS(request):
+			return PureRandomSearchConfigsGen(
+						playerModelBridge = playerBridge, 
+						interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+						regAlg = selectedRegAlg, 
+						persEstAlg = ExplorationPreferencesEstAlg(
+							playerModelBridge = playerBridge, 
+							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+							regAlg = selectedRegAlg,
+							numTestedPlayerProfiles = 100, 
+							qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng']))),
+						numberOfConfigChoices = int(newConfigParams['numberOfConfigChoices']), 
+						# minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
+						# maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
+						preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
+						qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng']))
+					)
 
-		adaptation.init(playerBridge, taskBridge, configsGenAlg = selectedGenAlg, name="GIMME")
+		def selectedGenAlgSwitcherAnnealedPRS(request):
+			return AnnealedPRSConfigsGen(
+						playerModelBridge = playerBridge, 
+						interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+						regAlg = selectedRegAlg, 
+						persEstAlg = ExplorationPreferencesEstAlg(
+							playerModelBridge = playerBridge, 
+							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+							regAlg = selectedRegAlg,
+							numTestedPlayerProfiles = 100, 
+							qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng']))),
+						numberOfConfigChoices = int(newConfigParams['numberOfConfigChoices']), 
+						# minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
+						# maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
+						preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
+						qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng'])),
+						temperatureDecay = float(newConfigParams['temperatureDecay'])
+					)
 
-		if(request.POST["isBootstrapped"]=="true"):
-			adaptation.bootstrap(int(request.POST["numBootstrapIterations"]))
+		def selectedGenAlgSwitcherEvolutionary(request):
+			return EvolutionaryConfigsGenDEAP(
+				playerModelBridge = playerBridge, 
+				interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+				regAlg = selectedRegAlg, 
 
+				preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']), 
+				
+				qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng'])),
+				initialPopulationSize = int(newConfigParams['initialPopulationSize']), 
+				numberOfEvolutionsPerIteration = int(newConfigParams['numberOfEvolutionsPerIteration']), 
+				
+				probOfCross = float(newConfigParams['probOfCross']), 
+				probOfMutation = float(newConfigParams['probOfMutation']),
+
+				probOfMutationConfig = float(newConfigParams['probOfMutationConfig']), 
+				probOfMutationGIPs = float(newConfigParams['probOfMutationGIPs']), 
+				
+				numChildrenPerIteration = int(newConfigParams['numChildrenPerIteration']),
+				numSurvivors = int(newConfigParams['numSurvivors']),
+
+				cxOp = "order")
+
+		
+
+		# switch config. gen. algs
+		# print(newConfigParams['selectedGenAlgId'])
+
+		selectedGenAlgId = newConfigParams['selectedGenAlgId']
+		selectedGenAlg = defaultConfigsAlg
+		if (selectedGenAlgId =='Random (no search)'):
+			selectedGenAlg = selectedGenAlgSwitcherRandom(request)
+		elif (selectedGenAlgId =='Pure Random Search'):
+			selectedGenAlg = selectedGenAlgSwitcherPRS(request)
+		elif (selectedGenAlgId =='Annealed Pure Random Search'):
+			selectedGenAlg = selectedGenAlgSwitcherAnnealedPRS(request)
+		elif (selectedGenAlgId =='Evolutionary Search'):
+			selectedGenAlg = selectedGenAlgSwitcherEvolutionary(request)
+
+		adaptation.init(playerBridge, taskBridge, configsGenAlg = selectedGenAlg, name='GIMME')
+
+		if(newConfigParams['isBootstrapped']=='true'):
+			adaptation.bootstrap(int(newConfigParams['numBootstrapIterations']))
+
+		currConfigParams = newConfigParams
 		return HttpResponse('ok')
 
 
 
 	
 	def taskRegistration(request):
-		if(not "professor" in request.user.userprofile.role):
+		if(not 'professor' in request.user.userprofile.role):
 			return HttpResponse('500')
 		else:
-			if request.method == "POST":
+			if request.method == 'POST':
 				requestInfo = request.POST
 				form = CreateTaskForm(requestInfo, request.FILES)
 				if form.is_valid():
@@ -774,8 +813,8 @@ class Views(): #acts as a namespace
 
 					task.profile = json.dumps(InteractionsProfile(
 						{
-						 "Valence": float(requestInfo['profileDim0']),
-						 "Focus": float(requestInfo['profileDim1'])
+						 'Challenge': 1.0 - float(requestInfo['profileDim0']),
+						 'Focus': float(requestInfo['profileDim1'])
 						 }
 					), default=lambda o: o.__dict__, sort_keys=True)
 
@@ -791,54 +830,64 @@ class Views(): #acts as a namespace
 					context = { 'form' : form }
 					return render(request, 'taskRegistration.html', context)
 
-			elif request.method == "GET":				
+			elif request.method == 'GET':				
 				form = CreateTaskForm()
 				context = { 'form' : form }
 				return render(request, 'taskRegistration.html', context)
 	
 	def taskUpdate(request):
-		if request.method == "POST":
-			taskIdToUpdate = request.POST.get('taskIdToUpdate')
-			try:
-				instance = Task.objects.get(taskId=taskIdToUpdate)
+		if(not 'professor' in request.user.userprofile.role):
+			return HttpResponse('500')
+		else:
+			if request.method == 'POST':
+				taskIdToUpdate = request.GET.get('taskIdToUpdate')
+				try:
+					instance = Task.objects.get(taskId = taskIdToUpdate)
+					
+					post = request.POST
+					_mutable = post._mutable
+					post._mutable = True
+					post['taskId'] = taskIdToUpdate
+					post._mutable = _mutable
 
-				form = UpdateUserForm(request.POST, instance=instance)
-				profileForm = UpdateUserProfileForm(request.POST, request.FILES, instance=instance.userprofile)
+					form = UpdateTaskForm(request.POST, instance = instance)
+					if form.is_valid():
+						form.save()
+						return redirect('/dash')
+					else:
+						messages.info(request, 'Task not updated! Form not valid.')
+						return redirect('/taskUpdate')
 
-				if form.is_valid():
-					form.save()
+				except Task.DoesNotExist:
+					messages.info(request, 'Task not updated! Id not found.')
+					return redirect('/taskUpdate')
+
+
+			elif request.method == 'GET':
+				taskIdToUpdate = request.GET.get('taskIdToUpdate')
+				try:
+					instance = Task.objects.get(taskId = taskIdToUpdate)
+
+					form = UpdateTaskForm(instance = instance)
+					context = { 'form' : form }
+					return render(request, 'taskUpdate.html',  context)
+
+				except Task.DoesNotExist:
+					messages.info(request, 'Task not updated! Id not found.')
 					return redirect('/dash')
-
-			except Task.DoesNotExist:
-				messages.info(request, 'Task not updated! Id not found.')
-				return redirect("/taskUpdate")
-
-
-		elif request.method == "GET":
-			taskIdToUpdate = request.GET.get('taskIdToUpdate')
-			try:
-				instance = Task.objects.get(taskId=taskIdToUpdate)
-
-				form = UpdateTaskForm(instance=instance)
-				context = { 'form' : form }
-				return render(request, 'taskUpdate.html',  context)
-
-			except Task.DoesNotExist:
-				messages.info(request, 'Task not updated! Id not found.')
-				return redirect("/dash")
 
 
 	
 	def taskDeletion(request):		
-		if request.method == "GET":
-			taskId = request.GET.get("taskIdToDelete")
+		if request.method == 'GET':
+			taskId = request.GET.get('taskIdToDelete')
 			try:
 				task = Task.objects.get(taskId = taskId)
 				task.delete()
 
 			except Task.DoesNotExist:
 				messages.info(request, 'Task not deleted! Id not found.')
-				return redirect("/dash")
+				return redirect('/dash')
 
 			currFreeTasks = serverStateModelBridge.getCurrFreeTasks()
 			if(taskId in currFreeTasks):
@@ -850,7 +899,7 @@ class Views(): #acts as a namespace
 				currSelectedTasks.remove(taskId)
 				serverStateModelBridge.setCurrSelectedTasks(currSelectedTasks)
 
-			return redirect("/dash")
+			return redirect('/dash')
 
 
 
@@ -870,11 +919,11 @@ class Views(): #acts as a namespace
 
 	# auxiliary methods
 	def fetchStudentStates(request):
-		if request.method == "POST":
+		if request.method == 'POST':
 			selectedUserIds = playerBridge.getAllStoredStudentUsernames()
 
 			userInfoRequest = HttpRequest()
-			userInfoRequest.method = "POST"
+			userInfoRequest.method = 'POST'
 			userStates = {}
 			for username in selectedUserIds:
 				userInfoRequest.POST = {'username': username}
@@ -888,17 +937,19 @@ class Views(): #acts as a namespace
 
 
 	def fetchStudentInfo(request):
-		if request.method == "POST":
-			username = request.POST["username"]
+		if request.method == 'POST':
+			username = request.POST['username']
 
 			userInfo = {}
-			# userState["myStateGrid"] = playerBridge.getPlayerStateGrid(username)
-			userInfo["fullName"] = playerBridge.getPlayerFullName(username)
-			userInfo["characteristics"] = playerBridge.getPlayerCurrCharacteristics(username)
-			userInfo["personalityEst"] = playerBridge.getPlayerPersonalityEst(username)
-			userInfo["group"] = playerBridge.getPlayerCurrGroup(username)
-			userInfo["tasks"] = playerBridge.getPlayerCurrTasks(username)
-			userInfo["stateGrid"] = playerBridge.getPlayerStateGrid(username)
+			# userState['myStateGrid'] = playerBridge.getPlayerStateGrid(username)
+			userInfo['fullName'] = playerBridge.getPlayerFullName(username)
+			userInfo['email'] = playerBridge.getPlayerEmail(username)
+			userInfo['characteristics'] = playerBridge.getPlayerCurrCharacteristics(username)
+			# userInfo['preferencesEst'] = playerBridge.getPlayerPreferencesEst(username)
+			userInfo['group'] = playerBridge.getPlayerCurrGroup(username)
+			userInfo['groupProfile'] = playerBridge.getPlayerCurrProfile(username).dimensions
+			userInfo['tasks'] = playerBridge.getPlayerCurrTasks(username)
+			userInfo['statesDataFrame'] = playerBridge.getPlayerStatesDataFrame(username)
 
 			userInfo = json.dumps(userInfo, default=lambda o: o.__dict__, sort_keys=True)
 			return HttpResponse(userInfo)
@@ -909,7 +960,7 @@ class Views(): #acts as a namespace
 
 
 	def fetchServerState(request):
-		if request.method == "GET":
+		if request.method == 'GET':
 			newSessionState = {}
 			
 			newSessionState['currSelectedUsers'] = serverStateModelBridge.getCurrSelectedUsers()
@@ -919,9 +970,8 @@ class Views(): #acts as a namespace
 			currFreeTasks = []
 
 			taskObject = HttpRequest()
-			taskObject.method = "POST"
+			taskObject.method = 'POST'
 			
-			# breakpoint()
 
 			currSelectedTasksIds = serverStateModelBridge.getCurrSelectedTasks()
 			taskObject.POST = {'tasks': str(currSelectedTasksIds)[1:][:-1].replace(' ','').replace('\'','')}
@@ -929,7 +979,7 @@ class Views(): #acts as a namespace
 
 
 			taskObject = HttpRequest()
-			taskObject.method = "POST"
+			taskObject.method = 'POST'
 
 			currFreeTasksIds = serverStateModelBridge.getCurrFreeTasks()
 			taskObject.POST = {'tasks': str(currFreeTasksIds)[1:][:-1].replace(' ','').replace('\'','')}
@@ -950,8 +1000,8 @@ class Views(): #acts as a namespace
 
 
 	def fetchTasksFromId(request):
-		if request.method == "POST":
-			tasks = request.POST["tasks"]
+		if request.method == 'POST':
+			tasks = request.POST['tasks']
 			if tasks == '':
 				tasks = []
 			else:
@@ -963,9 +1013,9 @@ class Views(): #acts as a namespace
 
 				task = taskBridge.getTask(taskId)
 				returnedTask = {}
-				returnedTask["taskId"] = taskId
-				returnedTask["description"] = task.description
-				returnedTask["files"] = str(task.files)
+				returnedTask['taskId'] = taskId
+				returnedTask['description'] = task.description
+				returnedTask['files'] = str(task.files)
 				returnedTasks.append(returnedTask)
 
 
@@ -974,9 +1024,8 @@ class Views(): #acts as a namespace
 		return HttpResponse('error')
 
 	def fetchGroupFromId(request):
-		if request.method == "POST":
-			# breakpoint();
-			groupId = int(request.POST["groupId"])
+		if request.method == 'POST':
+			groupId = int(request.POST['groupId'])
 
 			allGroups = serverStateModelBridge.getCurrAdaptationState()['groups'];
 
@@ -985,7 +1034,7 @@ class Views(): #acts as a namespace
 
 			group = allGroups[groupId];
 			returnedGroup = {}
-			returnedGroup["group"] = group
+			returnedGroup['group'] = group
 
 
 			returnedGroup = json.dumps(returnedGroup, default=lambda o: o.__dict__, sort_keys=True)
@@ -993,9 +1042,8 @@ class Views(): #acts as a namespace
 		return HttpResponse('error')
 
 	def fetchUserState(request):
-		# breakpoint()
-		if request.method == "POST":
-			username = request.POST["username"]
+		if request.method == 'POST':
+			username = request.POST['username']
 
 			returnedState = {}
 			returnedState['currState'] = playerBridge.getPlayerCurrState(username)
@@ -1005,19 +1053,79 @@ class Views(): #acts as a namespace
 		return HttpResponse('error')
 
 	def uploadTaskResults(request):
-		if request.method == "POST":
-			username = request.POST["username"]
+		print("method: "+request.method)
+		if request.method == 'POST':
+			username = request.POST['username']
 			characteristicsDelta = json.loads(request.POST['characteristicsDelta'])
 
 			characteristics = playerBridge.getPlayerCurrCharacteristics(username)
 			characteristics.ability += characteristicsDelta['abilityInc']
 			characteristics.engagement += characteristicsDelta['engagementInc']
+			
 			playerBridge.setPlayerCharacteristics(username, characteristics)
 			return HttpResponse('ok')
 		return HttpResponse('error')
 
+
+	# (FOR DEBUG) IF YOU WANT TO GENERATE STATES FOR ALL PLAYERS
+	# def uploadTaskResults(request):
+
+	# 	if request.method == 'POST':
+	# 		for username in playerBridge.getAllStoredStudentUsernames():
+	# 			characteristicsDelta = json.loads(request.POST['characteristicsDelta'])
+
+	# 			characteristics = playerBridge.getPlayerCurrCharacteristics(username)
+	# 			characteristics.ability = random.uniform(0.5, 3)
+	# 			characteristics.engagement = random.uniform(0.5, 3)
+	# 			playerBridge.setPlayerCharacteristics(username, characteristics)
+
+	# 	return HttpResponse('ok')
+
+
+	def manuallyChangeStudentGroup(request):
+		if request.method == 'POST':
+			adaptState = serverStateModelBridge.getCurrAdaptationState()
+			
+			g1i = int(request.POST['student1[groupId]'])
+			g2i = int(request.POST['student2[groupId]'])
+
+			u1n = str(request.POST['student1[userId]'])
+			u2n = str(request.POST['student2[userId]'])
+
+			# change groups
+			adaptState['groups'][g1i].remove(u1n)
+			adaptState['groups'][g2i].remove(u2n)
+
+			adaptState['groups'][g1i].append(u2n)
+			adaptState['groups'][g2i].append(u1n)
+
+			for gi in [g1i, g2i]:
+				g = adaptState['groups'][gi]
+
+				# recalculate averages
+				currAvgCharacteristics = PlayerCharacteristics()
+				currAvgCharacteristics.reset()
+				for currPlayerI in g:
+					currPlayerChars = playerBridge.getPlayerCurrCharacteristics(currPlayerI) 
+					groupSize = len(g)
+					currAvgCharacteristics.ability += currPlayerChars.ability / groupSize
+					currAvgCharacteristics.engagement += currPlayerChars.engagement / groupSize
+
+					adaptState['avgCharacteristics'][gi] = currAvgCharacteristics		
+
+					serverStateModelBridge.setCurrAdaptationState(adaptState)
+
+					# change student information
+					playerBridge.setPlayerProfile(currPlayerI, adaptState['profiles'][gi])
+					playerBridge.setPlayerGroup(currPlayerI, g)
+					playerBridge.setPlayerTasks(currPlayerI, adaptState['tasks'][gi])
+
+
+			return render(request, 'manuallyManageStudent.html')
+
+
 	def manuallyManageStudent(request):
-		if request.method == "GET":
-			return render(request, "manuallyManageStudent.html")
+		if request.method == 'GET':
+			return render(request, 'manuallyManageStudent.html')
 			
 				

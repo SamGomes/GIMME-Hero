@@ -21,7 +21,7 @@ $(document).ready(function(){
         }
         dropdownItem.addClass("is-active");
         //update that dropdown text
-        $($($(dropdownItem.parent().parent().parent().children()[0]).children()[0]).children()[0]).text(dropdownItem.text().split('\n')[1].replace(/\W/g, ""));
+        $($($(dropdownItem.parent().parent().parent().children()[0]).children()[0]).children()[0]).text(dropdownItem.text().split('\n')[1].replaceAll('\t',''));
     };
 
     var dropdownItems = $(".dropdown-item");
@@ -98,7 +98,7 @@ $(document).ready(function(){
         $("#dashboard").show();
     }, 0);
 
-    $(".minimizerButton").append("<i class=\"fa fa-window-minimize\"></i>").parent().parent().parent().parent().find(".panel-block").show();
+    $(".minimizerButton").append("<i class=\"fa fa-window-minimize\"></i>").parent().parent().parent().parent().parent().find(".panel-block").show();
     $(".minimizerButton").click(function(){
         toggleTab($(this),350);
     });
@@ -107,7 +107,7 @@ $(document).ready(function(){
 
 var toggleTab = function(tab, time){
     tab.empty();
-    var content = tab.parent().parent().parent().parent().find(".panel-block");
+    var content = tab.parent().parent().parent().parent().parent().find(".panel-block");
     if(content.is(":hidden")){
         tab.append("<i class=\"fa fa-window-minimize\"></i>");
         content.show(time);
@@ -117,13 +117,13 @@ var toggleTab = function(tab, time){
     }
 }
 var showTab = function(tab, time){
-    var content = tab.parent().parent().parent().parent().find(".panel-block");
+    var content = tab.parent().parent().parent().parent().parent().find(".panel-block");
     tab.empty();
     tab.append("<i class=\"fa fa-window-minimize\"></i>");
     content.show(time);
 }
 var hideTab = function(tab, time){
-    var content = tab.parent().parent().parent().parent().find(".panel-block");
+    var content = tab.parent().parent().parent().parent().parent().find(".panel-block");
     tab.empty();
     tab.append("<i class=\"fa fa-window-maximize\"></i>");
     content.hide(time);
@@ -138,6 +138,7 @@ var parseUnformattedString = function(attributeStr){
 }
 
 var unformattedStringToObj = function(attributeStr){
+    // console.log(attributeStr);
     return JSON.parse(parseUnformattedString(attributeStr))
 }
 

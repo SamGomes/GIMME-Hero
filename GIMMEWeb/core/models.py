@@ -57,8 +57,8 @@ class UserProfile(models.Model):
 
 
     currState = models.CharField(max_length=255)
-    pastModelIncreasesGrid = models.CharField(max_length=255)
-    personality = models.CharField(max_length=255)
+    pastModelIncreasesDataFrame = models.CharField(max_length=255)
+    preferences = models.CharField(max_length=255)
 
 
     avatar = models.ImageField(upload_to=ModelAuxMethods.pathAndRename('images/userAvatars/'))

@@ -19,69 +19,79 @@
 
 	<div id='dashboard'>
 
-		<section class='section danger' id='student_currentClassInfo'>
+		<section class='section' id='student_currentClassInfo'>
 			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
-					<div class='columns is-vcentered'>
+					<div class='columns is-mobile is-vcentered'>
 						<div class='column'>
 							<p>Your Group</p>
-						</div>
-						<div class='is-pulled-left'>
-							<div class='button minimizerButton'></div>
+							<div class='is-pulled-right'>
+								<div class='button minimizerButton'></div>
+							</div>
 						</div>
 					</div>
 				</div>
 				<div class='panel-block'>
-						<!-- <div class='column is-offset-1' style='padding:2em; border-color:gray; border-style:solid; border-width: 0.5em'>
-							<div class='subtitle is-5' style='color:gray'>Available Students</div>
-							<div class='table-container'>
-								<div class='table' id='freeUsersTable_student_dash'></div>
+					<div class="columns is-mobile is-centered is-mobile">
+						<div class='column is-3'>
+							<div id='groupsPlotLegendTrigger_student_dash'>
+								<div class='button has-tooltip-top has-tooltip-arrow' data-tooltip='Show caption.'>
+									<i class="fa fa-window-maximize" aria-hidden="true"></i>
+								</div>
 							</div>
-						</div> -->
-						<div class='column dash-cell-box' style='padding:2em;'>
-							<div class='table-container column is-full'>
-								<div class='table' id='yourgrouptable_student_dash'></div>
+							<div class='has-text-right has-tooltip-top has-tooltip-arrow' id='groupsPlotLegend_student_dash' data-tooltip='Click on this caption to hide it.'>
+								<img src="{% static "media/images/studentGroupPlotLegend.png" %}"></img>
 							</div>
 						</div>
+						<div class='column is-9'>
+							<div id='groupsPlot_student_dash'></div>
+						</div>
+					</div>
+
+					<div class='columns is-mobile is-centered is-mobile'>
+						<img class='column is-2' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>
 				</div>
+
 			</section>
 
-			<section class='section danger'>
+			<section class='section'>
 				<div class='panel animated zoomIn'>
 					<div class='panel-heading'>
-						<div class='columns is-vcentered'>
+						<div class='columns is-mobile is-vcentered'>
 							<div class='column'>
 								<p>Current Activity</p>
-							</div>
-							<div class='is-pulled-left'>
-								<div class='button minimizerButton'>
+								<div class='is-pulled-right'>
+									<div class='button minimizerButton'></div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class='panel-block'  id='student_currentActivityInfo'>
-						<label class='column is-3'>
-							<p class='has-text-weight-bold'>Task Title:</p> 
-							<p id='student_currentActivityInfo_taskTitle'></p>
-						</label>
+					<div class='panel-block'  id='student_currentActivityInfo' style='display: block;'>
+						<div class='columns is-mobile is-centered'>
+							<div class='column is-4'>
+								<p class='has-text-weight-bold'>Task Title:</p> 
+								<p id='student_currentActivityInfo_taskTitle'></p>
+							</div>
 
-						<label class='column is-6'>
-							<p class='has-text-weight-bold'>Task Description:</p> 
-							<p id='student_currentActivityInfo_taskDesc'></p>
-						</label>
+							<div class='column is-4'>
+								<p class='has-text-weight-bold'>Task Description:</p> 
+								<p id='student_currentActivityInfo_taskDesc'></p>
+							</div>
 
-						<label class='column is-3'>
-							<p class='has-text-weight-bold'>Task Files:</p> 
-							<a id='student_currentActivityInfo_taskFiles' download></a>
-						</label>
+							<div class='column is-4'>
+								<p class='has-text-weight-bold'>Task Files:</p> 
+								<a id='student_currentActivityInfo_taskFiles' download></a>
+							</div>
+						</div>
 					</div>
 
-					<div class='panel-block'  id='student_currentActivityInfo'>
-						<label class='column is-3'>
+					<div class='panel-block' id='student_currentActivityInfo' style='display: block;'>
+						<label class='column is-8'>
 							<p class='has-text-weight-bold'>Submit your Task Results:</p>
-							<input class='control has-icons-left button' type='file' id='student_results_file' name='filename'>
-							<button class='button is-info' id='student_apply_results'>Apply Changes</button>
+							<br/>
+							<input class='control has-icons-left button' style='margin: 1em;' type='file' id='student_results_file' name='filename'>
+							<button class='button is-info' style='margin: 1em;' id='student_apply_results'>Apply Changes</button>
 						</label>
 					</div>
 				</div>
@@ -90,19 +100,23 @@
 			<section class='section'>
 				<div class='panel animated zoomIn'>
 					<div class='panel-heading'>
-						<div class='columns is-vcentered'>
+						<div class='columns is-mobile is-vcentered'>
 							<div class='column'>
 								<p>Your Learning State</p>
-							</div>
-							<div class='is-pulled-left'>
-								<div class='button minimizerButton'></div>
+								<div class='is-pulled-right'>
+									<div class='button minimizerButton'></div>
+								</div>
 							</div>
 						</div>
 					</div>
-					<div class='panel-block'>
-						<div class='column is-one-quarter'></div>
-						<div class='column is-one-third is-centered' id='student_learningStatePlot'></div>
-						<div class='column is-one-third'></div>
+					<div class='panel-block' style='display: block;'>
+						<div class='columns is-mobile is-centered is-mobile'>
+							<div class='column is-9' id='student_learningStatePlot'></div>
+						</div>
+
+						<!-- <div class='columns is-mobile is-centered is-mobile'>
+							<img class='column is-2' id='student_learningStatePlotLoadingImage' src="{% static "media/images/loading.gif" %}"></img>
+						</div> -->
 					</div>
 				</div>
 			</section>
@@ -110,19 +124,23 @@
 			<section class='section'>
 				<div class='panel animated zoomIn'>
 					<div class='panel-heading'>
-						<div class='columns is-vcentered'>
+						<div class='columns is-mobile is-vcentered'>
 							<div class='column'>
-								<p>Your Interactions Preference</p>
-							</div>
-							<div class='is-pulled-left'>
-								<div class='button minimizerButton'></div>
+								<p>Your Interaction Preference</p>
+								<div class='is-pulled-right'>
+									<div class='button minimizerButton'></div>
+								</div>
 							</div>
 						</div>
 					</div>
-					<div class='panel-block'>
-						<div class='column is-one-third'></div>
-						<div class='column is-one-third is-centered' id='student_interactionsProfilePlot'></div>
-						<div class='column is-one-third'></div>
+					<div class='panel-block' style='display: block;'>
+						<div class='columns is-mobile is-centered is-mobile'>
+							<div class='column is-5' id='student_interactionsProfilePlot'></div>
+						</div>
+
+						<!-- <div class='columns is-mobile is-centered is-mobile'>
+							<img class='column is-2' id='student_interactionsProfilePlotLoadingImage' src="{% static "media/images/loading.gif" %}"></img>
+						</div> -->
 					</div>
 				</div>
 			</section>
@@ -139,15 +157,23 @@
 	<script src='https://kit.fontawesome.com/cdbfc7205f.js' crossorigin='anonymous'></script>
 	<script src='https://d3js.org/d3.v5.js'></script>
 	<script src='{% static 'js/plots.js' %}'></script>
+	<script src='https://unpkg.com/d3-force-attract@latest' crossorigin='anonymous'></script>
 	<script>
 	$(document).ready(
 		function(){
 
-			// CSRF protection setup 
-			// (from: 
-			// https://docs.djangoproject.com/en/dev/ref/csrf/
-			// and https://stackoverflow.com/questions/54835849/django-how-to-send-csrf-token-with-ajax
-			// )
+			$('#groupsPlotLegend_student_dash').show(500);
+			$('#groupsPlotLegendTrigger_student_dash').hide();
+			$('#groupsPlotLegend_student_dash').click(function(){
+					$('#groupsPlotLegend_student_dash').hide(500);
+					$('#groupsPlotLegendTrigger_student_dash').show(500);
+			});
+			$('#groupsPlotLegendTrigger_student_dash').click(function(){
+					$('#groupsPlotLegend_student_dash').show(500);
+					$('#groupsPlotLegendTrigger_student_dash').hide(500);
+			});
+
+			
 			csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 			function csrfSafeMethod(method) {
 	    		// these HTTP methods do not require CSRF protection
@@ -162,26 +188,17 @@
 	    	});
 
 
+	    	var objChanged = function(obj1, obj2){
+				return !(JSON.stringify(obj1) === JSON.stringify(obj2));
+			};
+
+
 	    	var myStateGrid = undefined;
 	    	var myCharacteristics = undefined;
 
-
-	    	var generateDashTableFromArray = function(canAdd, array, tagClass){
-	    		var table = $('<div>');
-	    		for(var i=0; i < array.length; i++){
-
-	    			var tag = $('<span class=\'button\'>').text(array[i]);
-	    			if(!canAdd && i == array.length){
-	    				return table;
-	    			}
-	    			tag.addClass('tag');
-	    			tag.addClass(tagClass);
-	    			tag.addClass('is-medium');
-	    			tag.addClass('is-rounded');
-	    			table.append(tag);
-	    		}
-	    		return table;
-	    	};
+	    	var oldGroup = {};
+	    	var oldTasks = {};
+	    	var oldChars = {};
 
 	    	var updateData = function(){
 				
@@ -192,66 +209,88 @@
 	    			dataType: 'json',
 	    			data: {'username': '{{user.username}}'},
 	    			complete: 
-	    			function (res) {	
+	    			function (res) {
 
 	    				var myInfo = unformattedStringToObj(res.responseText);
-						var ygTable = generateDashTableFromArray(
-							true, myInfo.group, 'is-info'
-							);
-						$('#yourgrouptable_student_dash').empty();
-						$('#yourgrouptable_student_dash').append(ygTable);
+						
+						if(objChanged(oldGroup, myInfo.group)){
+		    				oldGroup = myInfo.group;
+
+							var currState = {}
+							currState.groups = [myInfo.group]
+							currState.myStudentId = '{{user.username}}'
+
+							$.ajax({
+								type: 'POST',
+								url: '/fetchStudentStates/',
+								success: 
+								function(studentsStates)
+								{
+									$('#groupsPlot_student_dash').empty();
+									studentsStates = JSON.parse(studentsStates);
+									buildGroupsPlot(true, 'groupsPlot_student_dash', currState, studentsStates);
+								}
+							});
+	    				}	    				
 
 
-						$.ajax(
-			    		{
-			    			url: '/fetchTasksFromId/',
-		            		type: 'POST',
-			    			dataType: 'json',
-			    			data: {'tasks': myInfo.tasks.toString()},
-			    			success: 
-			    			function (tasks) {
-			    				if(tasks.length==0){
+						if(objChanged(oldTasks, myInfo.tasks)){
+		    				oldTasks = myInfo.tasks;
+
+							$.ajax({
+				    			url: '/fetchTasksFromId/',
+			            		type: 'POST',
+				    			dataType: 'json',
+				    			data: {'tasks': myInfo.tasks.toString()},
+				    			success: 
+				    			function (tasks) {
+				    				if(tasks.length==0){
+				    					$('#student_currentActivityInfo_taskTitle').text('-');
+				    					$('#student_currentActivityInfo_taskDesc').text('-');
+				    					$('#student_currentActivityInfo_taskFiles').text('-');
+				    				}else{
+					    				var task = tasks[0];
+										$('#student_currentActivityInfo_taskTitle').text(task.taskId);
+										$('#student_currentActivityInfo_taskDesc').text(task.description);
+										$('#student_currentActivityInfo_taskFiles').text(task.files);
+										$('#student_currentActivityInfo_taskFiles').attr('href','../media/'+task.files);
+										// $('#student_interactionsProfilePlot').text(task.profile);
+				    				}
+								},
+								error:
+				    			function (tasks) {
 			    					$('#student_currentActivityInfo_taskTitle').text('-');
 			    					$('#student_currentActivityInfo_taskDesc').text('-');
 			    					$('#student_currentActivityInfo_taskFiles').text('-');
-			    				}else{
-				    				var task = tasks[0];
-									$('#student_currentActivityInfo_taskTitle').text(task.taskId);
-									$('#student_currentActivityInfo_taskDesc').text(task.description);
-									$('#student_currentActivityInfo_taskFiles').text(task.files);
-									$('#student_currentActivityInfo_taskFiles').attr('href','../media/'+task.files);
-									// $('#student_interactionsProfilePlot').text(task.profile);	
-			    				}
-							},
-							error:
-			    			function (tasks) {
-		    					$('#student_currentActivityInfo_taskTitle').text('-');
-		    					$('#student_currentActivityInfo_taskDesc').text('-');
-		    					$('#student_currentActivityInfo_taskFiles').text('-');
-			    			}
-						});	
-									
-						$('#student_learningStatePlot').empty()
-						buildStatePlot('student_learningStatePlot', 
-							[
-								{ 'name': 'Ability' , 'value': myInfo.characteristics.ability },
-								{ 'name': 'Engagement' , 'value': myInfo.characteristics.engagement }
-							]
-						);
+				    			}
+							});
+						}	
 
-						$('#student_interactionsProfilePlot').empty()
-						buildScatterInteractionPlot('student_interactionsProfilePlot', 
-							[
-								// { 'focus': -2.0 , 'valence': 2.0 , 'timestamp': 5 },
-								// { 'focus': 1.2 , 'valence': -2.4 , 'timestamp': 2 },
-								// { 'focus': 1.7 , 'valence': 1.2 , 'timestamp': 1 },
-								// { 'focus': 2.3 , 'valence': 2.5 , 'timestamp': 4 },
-								// { 'focus': -1.5 , 'valence': -2.1 , 'timestamp': 8 },
-								{ 'focus': -2.1 , 'valence': 0.5 , 'timestamp': 9 }
-							]
-						);
 
-	    				
+						if(objChanged(oldChars, myInfo.characteristics)){
+		    				oldChars = myInfo.characteristics;
+
+							$('#student_learningStatePlot').empty();
+							buildStatePlot('student_learningStatePlot', 
+								[
+									{ 'name': 'Ability' , 'value': myInfo.characteristics.ability },
+									{ 'name': 'Engagement' , 'value': myInfo.characteristics.engagement }
+								]
+							);
+
+
+							$('#student_interactionsProfilePlot').empty()
+							buildScatterInteractionPlot('student_interactionsProfilePlot', 
+								[
+									// { 'focus': -3 , 'challenge': -3 , 'timestamp': 2 },
+									// { 'focus': 3, 'challenge': 3 , 'timestamp': 1 },
+									// { 'focus': 3 , 'challenge': -3 , 'timestamp': 4 },
+									// { 'focus': -3, 'challenge': 3 , 'timestamp': 8 }
+									{ 'focus': myInfo.groupProfile['Focus']*6.0 - 3.0 , 'challenge': myInfo.groupProfile['Challenge']*6.0 - 3.0 , 'timestamp': 9 }
+								]
+							);
+						}
+
 					}
 				});
 
@@ -259,10 +298,7 @@
 			}
 
 			updateData();
-			// setInterval(updateData, 500);
-
-
-
+			setInterval(updateData, 1000);
 
 
 			var resFr = new FileReader();
@@ -270,7 +306,6 @@
 
 			var responseFileLoaded = function(){
 				newUserCharacteristicsDelta = resFr.result
-				console.log(resFr);
 			}
 
 			//inspired by https://stackoverflow.com/questions/12281775/get-data-from-file-input-in-jquery
@@ -297,17 +332,15 @@
 						url: '/uploadTaskResults/',
 						type: 'POST',
 						data: {'username': '{{user.username}}', 'characteristicsDelta': newUserCharacteristicsDelta},
-						success: 
-						function (res) {
-							console.log('aa')
-							updateData();
-						}
+						dataType: 'json'
+						// ,
+						// complete:
+						// function (res) {
+						// 	updateData();
+						// }
 					}
 				);
 			});
-
-
-
 
 		}
 	);

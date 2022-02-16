@@ -30,16 +30,16 @@
 						<form  method="POST" action="">
 							{% csrf_token %}
 							<div class='field'>
-							  <label class='label subtitle is-5'>Username</label>
+							  <label class='label subtitle is-5'>Username:</label>
 							  <div class='control'>
-							    <input id='loginUsername_home' class='input' type='text' placeholder='Username' name='username'>
+							    <input id='loginUsername_home' class='input' type='text' name='username'>
 							  </div>
 							</div>
 
 							<div class='field'>
-								<label class='label subtitle is-5'>Password</label>
+								<label class='label subtitle is-5'>Password:</label>
 								<p class='control has-icons-left'>
-									<input id='loginPassword_home' class='input' type='password' placeholder='Password' name='password'>
+									<input id='loginPassword_home' class='input' type='password' name='password'>
 									<span class='icon is-small is-left'>
 										<i class='fas fa-lock'></i>
 									</span>
@@ -57,8 +57,8 @@
 
 								<div class='field'></div>
 
-								<div class="control">
-									<input class="button is-info" type="submit" name="Log In" value="Log In">
+								<div class='control'>
+									<input class='button is-info' type='submit' name='Log In' value='Log In'>
 								</div>
 
 								<p class='buttons'>
@@ -104,10 +104,12 @@
 		
 		$(document).ready(function(){
 			
-			$('#loginError_home').hide()
-			$('#loginError_home').show(500)
-			setTimeout(function(){ $('#loginError_home').hide(500); }, 5000);
-
+			console.log($('#loginError_home'))
+			if($('#loginError_home').textContent != ""){
+				$('#loginError_home').hide()
+				$('#loginError_home').show(500)
+				setTimeout(function(){ $('#loginError_home').hide(500); }, 5000);
+			}
 			
 			$('#newUserRegButton_home').click(function(){
 		    	callUserReg('true');

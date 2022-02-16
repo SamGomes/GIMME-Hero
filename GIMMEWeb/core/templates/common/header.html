@@ -2,131 +2,132 @@
 <header>
 
   <!-- favicon stuff -->
-  <link rel="apple-touch-icon" sizes="57x57" src="{% static "media/images/apple-icon-57x57.png" %}>
-  <link rel="apple-touch-icon" sizes="60x60" src="{% static "media/images/apple-icon-60x60.png" %}>
-  <link rel="apple-touch-icon" sizes="72x72" src="{% static "media/images/apple-icon-72x72.png" %}>
-  <link rel="apple-touch-icon" sizes="76x76" src="{% static "media/images/apple-icon-76x76.png" %}>
-  <link rel="apple-touch-icon" sizes="114x114" src="{% static "media/images/apple-icon-114x114.png" %}>
-  <link rel="apple-touch-icon" sizes="120x120" src="{% static "media/images/apple-icon-120x120.png" %}>
-  <link rel="apple-touch-icon" sizes="144x144" src="{% static "media/images/apple-icon-144x144.png" %}>
-  <link rel="apple-touch-icon" sizes="152x152" src="{% static "media/images/apple-icon-152x152.png" %}>
-  <link rel="apple-touch-icon" sizes="180x180" src="{% static "media/images/apple-icon-180x180.png" %}>
-  <link rel="icon" type="image/png" sizes="192x192"  src="{% static "/android-icon-192x192.png" %}>
-  <link rel="icon" type="image/png" sizes="32x32" src="{% static "media/images/favicon-32x32.png" %}>
-  <link rel="icon" type="image/png" sizes="96x96" src="{% static "media/images/favicon-96x96.png" %}>
-  <link rel="icon" type="image/png" sizes="16x16" src="{% static "media/images/favicon-16x16.png" %}>
-  <link rel="manifest" src="{% static "media/images/manifest.json" %}>
-  <meta name="msapplication-TileColor" content="#ffffff">
-  <meta name="msapplication-TileImage" src="{% static "media/images/ms-icon-144x144.png" %}>
-  <meta name="theme-color" content="#ffffff">
+  <link rel='shortcut icon' href='#'>
+
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/assets/owl.carousel.min.css'>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css'>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.1.20/jquery.fancybox.min.css' />
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css'/>
+  <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/@creativebulma/bulma-tooltip@1.2.0/dist/bulma-tooltip.min.css'/>
+  <link rel='stylesheet' href='{% static 'css/site.css' %}'>
 
 
-
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/assets/owl.carousel.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.1.20/jquery.fancybox.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css"/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@creativebulma/bulma-tooltip@1.2.0/dist/bulma-tooltip.min.css"/>
-  <link rel="stylesheet" href="{% static "css/site.css" %}">
-
-
-  <nav class="navbar" role="navigation" aria-label="main navigation" style="background-color:#e5e5e5;">
-    <div class="navbar-brand"  id="logo_header">
-      <a class="navbar-item" href = {% url 'home' %}>
-        <img style="max-height: 3rem" src="{% static "media/images/GIMMELogo.png" %}">
+  <nav class='navbar' role='navigation' aria-label='main navigation' style='background-color:#e5e5e5;'>
+    <div class='navbar-brand'  id='logo_header'>
+      <a class='navbar-item' href = {% url 'home' %}>
+        <img style='max-height: 3rem' src='{% static 'media/images/GIMMELogo.png' %}'>
       </a>
 
-      <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-      </a>
+    <div class='navbar-burger burger' onclick='$('#nav-menu').toggle('is-active');'>
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
 
-    {% if debug %}<div class="button" id="initServerButton_header"> Init Server</div>{% endif %}
+    </div>
 
-    <div class="navbar-menu">
-      <div class="navbar-start">
 
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link">
+
+    {% if debug %}
+      <div class='button' id='initServerButton_header'> Init Server</div>
+    {% endif %}
+
+    <div id='nav-menu' class='navbar-menu'>
+      
+      <div class='navbar-start'>
+        <div class='navbar-item has-dropdown is-hoverable'>
+          <a class='navbar-link'>
             Documentation
           </a>
 
-          <div class="navbar-dropdown">
-            <a class="navbar-item" href="https://github.com/SamGomes/GIMME" target="_blank">
-              GIMME API repo
+          <div class='navbar-dropdown'>
+            <a class='navbar-item' href='https://github.com/SamGomes/GIMME' target='_blank'>
+              <i class='fas fa-code'></i> &nbsp; GIMME API repo
             </a>
-            <a class="navbar-item" href="https://github.com/SamGomes/GIMME/wiki" target="_blank">
-              GIMME API wiki
+            <a class='navbar-item' href='https://github.com/SamGomes/GIMME/wiki' target='_blank'>
+              <i class='fas fa-book'></i> &nbsp; GIMME API wiki
             </a>
-            <hr class="navbar-divider">
-            <a class="navbar-item" href="https://github.com/SamGomes/GIMME-Web" target="_blank">
-              GIMME-Web repo
+            <hr class='navbar-divider'>
+            <a class='navbar-item' href='https://github.com/SamGomes/GIMME-Web' target='_blank'>
+              <i class='fas fa-code'></i> &nbsp; GIMME-Web repo
             </a>
-            <hr class="navbar-divider">
-            <a class="navbar-item">
-              Report an issue
+            <hr class='navbar-divider'>
+            <a class='navbar-item' id='reportIssueBtn_header'>
+              <i class='fas fa-bug'></i> &nbsp; Report an issue
             </a>
           </div>
         </div>
+
       </div>
 
 
 
       {% if not user.is_authenticated %}
-        <div class="navbar-end">
-          <div class="navbar-item">
-            <div class="buttons">
-              <div class="button is-info" id="newUserRegButton">
+        <div class='navbar-end'>
+          <div class='navbar-item'>
+            <div class='buttons'>
+              <div class='button is-info' id='newUserRegBtn_header'>
                 <strong>Register</strong>
               </div>
             </div>
           </div>
         </div>
       {% else %}
-        <div class="navbar-item center-left is-hoverable">
-          <div class="navbar-brand">
-            <figure class="image navbar-item">
-              <!-- sets placeholder if no image is found for some reason -->
-              <img class="is-rounded is-fullheight" style="max-width:3rem" onError="this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';" src="{{ user.userprofile.avatar.url }}">
-            </figure>
+        
+        <div class='navbar-item center-left is-hoverable'>
+          
+          <div class='navbar-item is-hidden-touch'>
+            <!-- sets placeholder if no image is found for some reason -->
+            <img class='circular-img circular-img-format' onError='this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';' src='{{ user.userprofile.avatar.url }}'>
           </div>
 
-          <div class="navbar-dropdown is-right">
-            <p class="navbar-item columns" >
-              <div class="column">
+          <div class='navbar-item has-dropdown is-hoverable is-hidden-desktop'>
+            <a class='navbar-link' id='accountInfoBtn_header'>
+              Account Info.
+            </a>
+          </div>
+
+          <div class='navbar-dropdown is-right'>
+            <p class='navbar-item columns' >
+              <div class='column'>
                 Logged in as a <strong>{{user.userprofile.role}}</strong> called <strong>{{user.userprofile.fullName}}</strong>
               </div>
-              <div class="column">
+              <div class='column'>
                 Username: <strong>{{user.username}}</strong>
               </div>
-              <div class="column">
+              <div class='column'>
                 Email: <strong>{{user.email}}</strong>
               </div>
-              <div class="column">
-                <div class="button is-info" id="updateUserRegButton">
+              <div class='column'>
+                <div class='button is-fullwidth is-info' id='updateUserRegBtn_header'>
                   <strong>Manage Account</strong>
                 </div>
               </div>
-              <div class="column">
-                <a href="{% url 'logoutCheck' %}"><button class="button is-info modal-button">Logout</button></a>
+              <div class='column'>
+                <a href='{% url 'logoutCheck' %}'>
+                  <button class='button is-info is-fullwidth modal-button'>Logout</button>
+                </a>
               </div>
             </p>
           </div>
 
         </div>
       {% endif %}
+
     </div>
+
+
+
+
+
   </nav>
 </header>
 <script
-    src="https://code.jquery.com/jquery-3.2.1.min.js"
-    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-    crossorigin="anonymous"></script>
+    src='https://code.jquery.com/jquery-3.2.1.min.js'
+    integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='
+    crossorigin='anonymous'></script>
 {% include 'common/general.html' %}
-<script type="text/javascript">
+<script type='text/javascript'>
   $(document).ready(function(){
 
     // CSRF protection setup 
@@ -142,21 +143,26 @@
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                xhr.setRequestHeader('X-CSRFToken', csrftoken);
             }
         }
     });
 
-    $('#newUserRegButton').click(function(){
+    $('#newUserRegBtn_header').click(function(){
       callUserReg(true);
     });
-    $('#updateUserRegButton').click(function(){
+    $('#updateUserRegBtn_header').click(function(){
       callUserReg(false);
     });
   });
+  
+
+  $('#reportIssueBtn_header').click(function(){
+    window.open('mailto:samuel.gomes@tecnico.ulisboa.pt?subject=[GIMME-Web][Issue]&body=Dear GIMME-Web staff,%0D%0A%0D%0AI would like to report the following issue while working with GIMME-Web: %0D%0A%0D%0A<describe issue here>%0D%0A%0D%0ABest regards,%0D%0A<your name>');
+  });
 
   $('#initServerButton_header').click(function(){
-      console.log("here");
+      console.log('here');
       $.ajax({
               type: 'POST',
               url: '/initServer/'
