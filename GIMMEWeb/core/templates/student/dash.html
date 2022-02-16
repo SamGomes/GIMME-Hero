@@ -197,6 +197,8 @@
 	    	var myCharacteristics = undefined;
 
 	    	var oldGroup = {};
+	    	var oldTasks = {};
+	    	var oldChars = {};
 
 	    	var updateData = function(){
 				
@@ -207,81 +209,88 @@
 	    			dataType: 'json',
 	    			data: {'username': '{{user.username}}'},
 	    			complete: 
-	    			function (res) {	
+	    			function (res) {
 
 	    				var myInfo = unformattedStringToObj(res.responseText);
-	    				if(!objChanged(oldGroup, myInfo.group)){
-	    					return;
-	    				}
+						
+						if(objChanged(oldGroup, myInfo.group)){
+		    				oldGroup = myInfo.group;
 
-	    				oldGroup = myInfo.group;
+							var currState = {}
+							currState.groups = [myInfo.group]
+							currState.myStudentId = '{{user.username}}'
 
-						var currState = {}
-						currState.groups = [myInfo.group]
-						currState.myStudentId = '{{user.username}}'
-
-						$.ajax({
-							type: 'POST',
-							url: '/fetchStudentStates/',
-							success: 
-							function(studentsStates)
-							{
-								$('#groupsPlot_student_dash').empty();
-								studentsStates = JSON.parse(studentsStates);
-								buildGroupsPlot(true, 'groupsPlot_student_dash', currState, studentsStates);
-							}
-						});
+							$.ajax({
+								type: 'POST',
+								url: '/fetchStudentStates/',
+								success: 
+								function(studentsStates)
+								{
+									$('#groupsPlot_student_dash').empty();
+									studentsStates = JSON.parse(studentsStates);
+									buildGroupsPlot(true, 'groupsPlot_student_dash', currState, studentsStates);
+								}
+							});
+	    				}	    				
 
 
-						$.ajax({
-			    			url: '/fetchTasksFromId/',
-		            		type: 'POST',
-			    			dataType: 'json',
-			    			data: {'tasks': myInfo.tasks.toString()},
-			    			success: 
-			    			function (tasks) {
-			    				if(tasks.length==0){
+						if(objChanged(oldTasks, myInfo.tasks)){
+		    				oldTasks = myInfo.tasks;
+
+							$.ajax({
+				    			url: '/fetchTasksFromId/',
+			            		type: 'POST',
+				    			dataType: 'json',
+				    			data: {'tasks': myInfo.tasks.toString()},
+				    			success: 
+				    			function (tasks) {
+				    				if(tasks.length==0){
+				    					$('#student_currentActivityInfo_taskTitle').text('-');
+				    					$('#student_currentActivityInfo_taskDesc').text('-');
+				    					$('#student_currentActivityInfo_taskFiles').text('-');
+				    				}else{
+					    				var task = tasks[0];
+										$('#student_currentActivityInfo_taskTitle').text(task.taskId);
+										$('#student_currentActivityInfo_taskDesc').text(task.description);
+										$('#student_currentActivityInfo_taskFiles').text(task.files);
+										$('#student_currentActivityInfo_taskFiles').attr('href','../media/'+task.files);
+										// $('#student_interactionsProfilePlot').text(task.profile);
+				    				}
+								},
+								error:
+				    			function (tasks) {
 			    					$('#student_currentActivityInfo_taskTitle').text('-');
 			    					$('#student_currentActivityInfo_taskDesc').text('-');
 			    					$('#student_currentActivityInfo_taskFiles').text('-');
-			    				}else{
-				    				var task = tasks[0];
-									$('#student_currentActivityInfo_taskTitle').text(task.taskId);
-									$('#student_currentActivityInfo_taskDesc').text(task.description);
-									$('#student_currentActivityInfo_taskFiles').text(task.files);
-									$('#student_currentActivityInfo_taskFiles').attr('href','../media/'+task.files);
-									// $('#student_interactionsProfilePlot').text(task.profile);	
-			    				}
-							},
-							error:
-			    			function (tasks) {
-		    					$('#student_currentActivityInfo_taskTitle').text('-');
-		    					$('#student_currentActivityInfo_taskDesc').text('-');
-		    					$('#student_currentActivityInfo_taskFiles').text('-');
-			    			}
-						});	
-									
-						$('#student_learningStatePlot').empty()
-						buildStatePlot('student_learningStatePlot', 
-							[
-								{ 'name': 'Ability' , 'value': myInfo.characteristics.ability },
-								{ 'name': 'Engagement' , 'value': myInfo.characteristics.engagement }
-							]
-						);
+				    			}
+							});
+						}	
 
 
-						// console.log(myInfo) 
-						$('#student_interactionsProfilePlot').empty()
-						buildScatterInteractionPlot('student_interactionsProfilePlot', 
-							[
-								// { 'focus': -2.0 , 'challenge': 2.0 , 'timestamp': 5 },
-								// { 'focus': 1.2 , 'challenge': -2.4 , 'timestamp': 2 },
-								// { 'focus': 1.7 , 'challenge': 1.2 , 'timestamp': 1 },
-								// { 'focus': 2.3 , 'challenge': 2.5 , 'timestamp': 4 },
-								// { 'focus': -1.5 , 'challenge': -2.1 , 'timestamp': 8 },
-								{ 'focus': myInfo.groupProfile['Focus']*6.0 - 3.0 , 'challenge': myInfo.groupProfile['Challenge']*6.0 - 3.0 , 'timestamp': 9 }
-							]
-						);
+						if(objChanged(oldChars, myInfo.characteristics)){
+		    				oldChars = myInfo.characteristics;
+		    				
+							$('#student_learningStatePlot').empty();
+							buildStatePlot('student_learningStatePlot', 
+								[
+									{ 'name': 'Ability' , 'value': myInfo.characteristics.ability },
+									{ 'name': 'Engagement' , 'value': myInfo.characteristics.engagement }
+								]
+							);
+
+
+							$('#student_interactionsProfilePlot').empty()
+							buildScatterInteractionPlot('student_interactionsProfilePlot', 
+								[
+									// { 'focus': -2.0 , 'challenge': 2.0 , 'timestamp': 5 },
+									// { 'focus': 1.2 , 'challenge': -2.4 , 'timestamp': 2 },
+									// { 'focus': 1.7 , 'challenge': 1.2 , 'timestamp': 1 },
+									// { 'focus': 2.3 , 'challenge': 2.5 , 'timestamp': 4 },
+									// { 'focus': -1.5 , 'challenge': -2.1 , 'timestamp': 8 },
+									{ 'focus': myInfo.groupProfile['Focus']*6.0 - 3.0 , 'challenge': myInfo.groupProfile['Challenge']*6.0 - 3.0 , 'timestamp': 9 }
+								]
+							);
+						}
 
 					}
 				});
@@ -290,7 +299,7 @@
 			}
 
 			updateData();
-			setInterval(updateData, 500);
+			setInterval(updateData, 1000);
 
 
 
@@ -300,7 +309,6 @@
 
 			var responseFileLoaded = function(){
 				newUserCharacteristicsDelta = resFr.result
-				console.log(resFr);
 			}
 
 			//inspired by https://stackoverflow.com/questions/12281775/get-data-from-file-input-in-jquery
@@ -327,10 +335,12 @@
 						url: '/uploadTaskResults/',
 						type: 'POST',
 						data: {'username': '{{user.username}}', 'characteristicsDelta': newUserCharacteristicsDelta},
-						success: 
-						function (res) {
-							updateData();
-						}
+						dataType: 'json'
+						// ,
+						// complete:
+						// function (res) {
+						// 	updateData();
+						// }
 					}
 				);
 			});

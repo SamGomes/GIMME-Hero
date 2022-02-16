@@ -1053,6 +1053,7 @@ class Views(): #acts as a namespace
 		return HttpResponse('error')
 
 	def uploadTaskResults(request):
+		print("method: "+request.method)
 		if request.method == 'POST':
 			username = request.POST['username']
 			characteristicsDelta = json.loads(request.POST['characteristicsDelta'])
@@ -1060,6 +1061,7 @@ class Views(): #acts as a namespace
 			characteristics = playerBridge.getPlayerCurrCharacteristics(username)
 			characteristics.ability += characteristicsDelta['abilityInc']
 			characteristics.engagement += characteristicsDelta['engagementInc']
+			
 			playerBridge.setPlayerCharacteristics(username, characteristics)
 			return HttpResponse('ok')
 		return HttpResponse('error')
