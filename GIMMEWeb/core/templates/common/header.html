@@ -1,4 +1,12 @@
 {% load static %}
+<head>
+  {% if not user.is_authenticated %}
+    <title>GIMME-Web</title>
+  {% else %}
+    <title>GIMME-Web ({{user.username}}'s {{ request.resolver_match.view_name }})</title>
+  {% endif %}
+</head>
+
 <header>
 
   <!-- favicon stuff -->
@@ -115,10 +123,6 @@
       {% endif %}
 
     </div>
-
-
-
-
 
   </nav>
 </header>

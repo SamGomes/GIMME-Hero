@@ -1,10 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset='utf-8'>
-	<title>GIMME</title>
-</head>
 <body class='layout-default'>
 	{% include 'common/header.html' %}
 
@@ -14,7 +10,7 @@
 				<div class='has-text-centered; slider-content animated zoomIn'>
 					<div>
 						<p class='title is-1 main-text'>Welcome to GIMME-Web, {{request.session.fullName}}</p>
-						<p class='subtitle is-4 main-text'>A sophisticated Group Interactions Management Tool</p>
+						<p class='subtitle is-4 main-text'>A Sophisticated Group Interactions Management Tool</p>
 					</div>
 				</div>
 			</div>
@@ -86,7 +82,7 @@
 							<div class='dash-cell-box'>
 								<div class='subtitle is-5' style='color:gray;'>Free Tasks</div>
 								<div class='table-container'>
-									<div class='table' id='freeTasksTable_professor_dash'>
+									<div class='table' style='margin:2em;' id='freeTasksTable_professor_dash'>
 									</div>
 								</div>
 							</div>
@@ -95,7 +91,7 @@
 							<div class='dash-cell-box'>
 								<div class='subtitle is-4 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the tasks, selected from all available tasks, to be considered for the next group management iteration.'>Selected Tasks</div>
 								<div class='table-container'>
-									<div class='table' id='selectedTasksTable_professor_dash'></div>
+									<div class='table' style='margin:2em;' id='selectedTasksTable_professor_dash'></div>
 								</div>
 							</div>
 						</div>
