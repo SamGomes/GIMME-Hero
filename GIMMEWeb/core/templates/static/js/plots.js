@@ -31,7 +31,7 @@ var responsivefy = function(svg, targetWidthClamp, leftPaddingRatio) {
     }
 }
 
-var buildStatePlot = function(canvasId, data){
+var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined){
 
     var canvas = d3.select('#'+canvasId);
     var canvasContainer = canvas.node().parentNode;
@@ -55,10 +55,19 @@ var buildStatePlot = function(canvasId, data){
         .call(responsivefy, 1000, 0.15);
 
 
-    var maxValue = Math.max(data[0].value, data[1].value);
+    if(maxValue == undefined){
+        for(var i=0; i < data.length; i++){
+            var currValue = parseFloat(data[i].value);
+            if(maxValue == undefined || currValue > maxValue){
+                maxValue = currValue;
+            }
+        }
+        maxValue += 0.1*maxValue;
+    }
+
     var x = d3.scaleLinear()
         .range([margin.left, width])
-        .domain([0, maxValue + 0.5]);
+        .domain([minValue, maxValue]);
 
     var y = d3.scaleBand()
         .range([margin.bottom, height])
@@ -533,7 +542,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
     groupInfoTooltips
         .append('path')
         .attr('d', function(d) {
-          return rightRoundedRect(15, 15, 600, 350, 7);
+          return rightRoundedRect(15, 15, 600, 280, 7);
         })
         .attr('fill', function(node){
                                 var baseColor = colors[node.groupId].split('#')[1];
@@ -580,8 +589,6 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
                 dimensions[key] = Number((currD*6.0 - 3.0).toFixed(2));
             }
 
-
-
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
@@ -616,7 +623,11 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
     userInfoTooltips
         .append('path')
         .attr('d', function(d) {
-            return rightRoundedRect(5, 5, 600, 250, 7);
+            if(!isForStudent){
+                return rightRoundedRect(5, 5, 600, 320, 7);
+            }else{
+                return rightRoundedRect(5, 5, 500, 200, 7);
+            }
         })
         .attr('fill', function(node){
             var baseColor = {}
@@ -654,27 +665,16 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
                 currC = characteristics[key]; 
                 characteristics[key] = Number((currC).toFixed(2));
             }
-            // for (i=0; i<dKeys.length; i++){
-            //     key = dKeys[i];
-            //     currD = dimensions[key]; 
-            //     dimensions[key] = Number((currD).toFixed(2));
-            // }
 
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
-
-            // node['Preferences Est'] = dimensions;
+            node['(External) Grade'] = originalNode.userState.grade;
         }
 
         htmlFromJSON(node, currTooltip, 0, 0, 0, 50, 0);
     });
 
-
-    // nodeElements.on('click', function(d){ 
-    //     var elem = d3.select(userInfoTooltips._groups[0][d.plotIndex]); 
-    //     d3.select(d).style('stroke-width','3em');
-    //     elem.style('visibility') == 'visible'? elem.style('visibility', 'hidden') : elem.style('visibility', 'visible');});
 
 
     // define arrow points paths

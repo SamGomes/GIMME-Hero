@@ -39,6 +39,14 @@ class ModelAuxMethods():
         return wrapper
 
 
+
+# class Subject(models.Model):
+#     subjectId = models.CharField(max_length=255,primary_key=True)
+#     description = models.TextField(max_length=255)
+#     studentIds = models.CharField(max_length=255)
+
+
+
 class UserProfile(models.Model):
 
     # included from 
@@ -56,9 +64,13 @@ class UserProfile(models.Model):
     description = models.TextField(max_length=255)
 
 
-    currState = models.CharField(max_length=255)
+    currState = models.CharField(max_length=1500)
     pastModelIncreasesDataFrame = models.CharField(max_length=255)
     preferences = models.CharField(max_length=255)
+
+    
+    # subjectIds = models.CharField(max_length=255)
+    grade = models.CharField(max_length=255)
 
 
     avatar = models.ImageField(upload_to=ModelAuxMethods.pathAndRename('images/userAvatars/'))

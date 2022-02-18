@@ -276,6 +276,11 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		characteristics = json.loads(playerInfo.currState)['characteristics']
 		return PlayerCharacteristics(ability= float(characteristics['ability']), 
 			engagement= float(characteristics['engagement']))
+
+	def getPlayerGrade(self, username):
+		playerInfo = User.objects.get(username=username).userprofile
+		return playerInfo.grade;
+
 	
 	def getPlayerPreferencesEst(self, username):
 		playerInfo = User.objects.get(username=username).userprofile
@@ -316,6 +321,12 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		newState.characteristics = characteristics
 		playerInfo.currState = json.dumps(newState, default=lambda o: o.__dict__)
 		playerInfo.save()
+
+	def setPlayerGrade(self, username, grade):
+		playerInfo = User.objects.get(username=username).userprofile
+		playerInfo.grade = grade
+		playerInfo.save()
+
 
 	def setPlayerProfile(self, username, profile):
 		playerInfo = User.objects.get(username=username).userprofile
@@ -945,11 +956,11 @@ class Views(): #acts as a namespace
 			userInfo['fullName'] = playerBridge.getPlayerFullName(username)
 			userInfo['email'] = playerBridge.getPlayerEmail(username)
 			userInfo['characteristics'] = playerBridge.getPlayerCurrCharacteristics(username)
-			# userInfo['preferencesEst'] = playerBridge.getPlayerPreferencesEst(username)
 			userInfo['group'] = playerBridge.getPlayerCurrGroup(username)
 			userInfo['groupProfile'] = playerBridge.getPlayerCurrProfile(username).dimensions
 			userInfo['tasks'] = playerBridge.getPlayerCurrTasks(username)
 			userInfo['statesDataFrame'] = playerBridge.getPlayerStatesDataFrame(username)
+			userInfo['grade'] = playerBridge.getPlayerGrade(username)
 
 			userInfo = json.dumps(userInfo, default=lambda o: o.__dict__, sort_keys=True)
 			return HttpResponse(userInfo)
@@ -1063,6 +1074,11 @@ class Views(): #acts as a namespace
 			characteristics.engagement += characteristicsDelta['engagementInc']
 			
 			playerBridge.setPlayerCharacteristics(username, characteristics)
+			
+			grade = int(playerBridge.getPlayerGrade(username))
+			grade += characteristicsDelta['gradeInc']
+			playerBridge.setPlayerGrade(username, grade)
+			
 			return HttpResponse('ok')
 		return HttpResponse('error')
 
