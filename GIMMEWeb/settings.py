@@ -1,5 +1,7 @@
 import os
 
+from decouple import config
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # print(BASE_DIR)
@@ -9,10 +11,10 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'p+ah706u_0-zk@_jq&o#v6&u@)^w5#w&*r_re=usr@u9i-vh3d'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG')
 ALLOWED_HOSTS=["localhost","146.193.224.171","gimme-web.duckdns.org","gimme-web-secure.duckdns.org"]
 
 INTERNAL_IPS = (
@@ -68,8 +70,12 @@ WSGI_APPLICATION = 'GIMMEWeb.wsgi.application'
 # Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('DB_NAME'),
+        'HOST': config('DB_HOST'),
+        'PORT': '3306',
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
     }
 }
 

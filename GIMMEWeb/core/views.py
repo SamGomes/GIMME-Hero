@@ -187,7 +187,6 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		return User.objects.get(username = username).userprofile
 
 	def setAndSavePlayerStateToDataFrame(self, username, newState):
-		
 		self.setPlayerCharacteristics(username, newState.characteristics)
 		self.setPlayerProfile(username, newState.profile)
 
@@ -674,9 +673,9 @@ class Views(): #acts as a namespace
 		serverStateModelBridge.setReadyForNewActivity(False)
 		try:
 			currAdaptationState = adaptation.iterate()
-
+			print(currAdaptationState)
 			# store current states in players' state window, after the adaptation returns
-			for username in playerBridge.getAllStoredStudentUsernames():
+			for username in serverStateModelBridge.getCurrSelectedUsers():
 				playerBridge.setAndSavePlayerStateToDataFrame(username, playerBridge.getPlayerCurrState(username));
 
 		except (Exception, ArithmeticError, ValueError) as e:
@@ -702,17 +701,26 @@ class Views(): #acts as a namespace
 
 		# switch reg algs
 		selectedRegAlg = {}		
+		persEstRegAlg = {}
 		def selectedRegAlgSwitcherKNN(request):
 			return KNNRegression( 
 				playerBridge, 
 				int(newConfigParams['numNNs'])
+			)
+		def selectedRegAlgSwitcherSynergy(request):
+			return TabularAgentSynergies(
+				playerModelBridge = playerBridge,
+				taskModelBridge = taskBridge
 			)
 
 		selectedRegAlgId = newConfigParams['selectedRegAlgId']
 		# selectedRegAlg = None
 		if (selectedRegAlgId =='KNN'):
 			selectedRegAlg = selectedRegAlgSwitcherKNN(request)
+		elif (selectedRegAlgId =='Synergy Between Students'):
+			selectedRegAlg = selectedRegAlgSwitcherSynergy(request)
 
+		persEstRegAlg = selectedRegAlgSwitcherKNN(request)
 
 		selectedGenAlg = {}
 		def selectedGenAlgSwitcherRandom(request):
@@ -732,7 +740,7 @@ class Views(): #acts as a namespace
 						persEstAlg = ExplorationPreferencesEstAlg(
 							playerModelBridge = playerBridge, 
 							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
-							regAlg = selectedRegAlg,
+							regAlg = persEstRegAlg,
 							numTestedPlayerProfiles = 100, 
 							qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng']))),
 						numberOfConfigChoices = int(newConfigParams['numberOfConfigChoices']), 
@@ -750,7 +758,7 @@ class Views(): #acts as a namespace
 						persEstAlg = ExplorationPreferencesEstAlg(
 							playerModelBridge = playerBridge, 
 							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
-							regAlg = selectedRegAlg,
+							regAlg = persEstRegAlg,
 							numTestedPlayerProfiles = 100, 
 							qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng']))),
 						numberOfConfigChoices = int(newConfigParams['numberOfConfigChoices']), 
@@ -784,11 +792,46 @@ class Views(): #acts as a namespace
 
 				cxOp = "order")
 
-		
+		def selectedGenAlgSwitcherODPIP(request):
+			return ODPIP(
+				playerModelBridge = playerBridge,
+				interactionsProfileTemplate = intProfTemplate.generateCopy(),
+				regAlg = selectedRegAlg,
+				persEstAlg = ExplorationPreferencesEstAlg(
+					playerModelBridge = playerBridge, 
+					interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+					regAlg = persEstRegAlg,
+					numTestedPlayerProfiles = 100, 
+					qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng']))),
+
+				preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
+
+				qualityWeights = PlayerCharacteristics(ability = float(newConfigParams['qualityWeightsAb']), engagement = float(newConfigParams['qualityWeightsEng'])),
+				taskModelBridge = taskBridge,
+				jointPlayerConstraints = newConfigParams['jointPlayerConstraints'],
+				separatedPlayerConstraints = newConfigParams['separatedPlayerConstraints']
+			) 
+
+		def selectedGenAlgSwitcherCLink(request):
+			return CLink(
+				playerModelBridge = playerBridge,
+				interactionsProfileTemplate = intProfTemplate.generateCopy(),
+				regAlg = selectedRegAlg,
+				persEstAlg = ExplorationPreferencesEstAlg(
+					playerModelBridge = playerBridge, 
+					interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+					regAlg = persEstRegAlg,
+					numTestedPlayerProfiles = 100, 
+					qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng']))),
+
+				preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
+
+				qualityWeights = PlayerCharacteristics(ability = float(newConfigParams['qualityWeightsAb']), engagement = float(newConfigParams['qualityWeightsEng'])),
+				taskModelBridge = taskBridge
+			) 
 
 		# switch config. gen. algs
 		# print(newConfigParams['selectedGenAlgId'])
-
 		selectedGenAlgId = newConfigParams['selectedGenAlgId']
 		selectedGenAlg = defaultConfigsAlg
 		if (selectedGenAlgId =='Random (no search)'):
@@ -799,6 +842,10 @@ class Views(): #acts as a namespace
 			selectedGenAlg = selectedGenAlgSwitcherAnnealedPRS(request)
 		elif (selectedGenAlgId =='Evolutionary Search'):
 			selectedGenAlg = selectedGenAlgSwitcherEvolutionary(request)
+		elif (selectedGenAlgId =='ODPIP Search'):
+			selectedGenAlg = selectedGenAlgSwitcherODPIP(request)
+		elif (selectedGenAlgId =='Coalition Link Search'):
+			selectedGenAlg = selectedGenAlgSwitcherCLink(request)
 
 		adaptation.init(playerBridge, taskBridge, configsGenAlg = selectedGenAlg, name='GIMME')
 

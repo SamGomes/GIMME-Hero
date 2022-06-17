@@ -329,6 +329,23 @@
 
 											</div>
 										</a>
+										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
+											ODPIP Search
+											<div class='form-group'>
+												<label class='column is-4 control-label' for='textinput'>Joint Player Constraints</label>  
+												<div class='control' data-tooltip='Optional, Format: [id1, id2]; [id3, id4]'>
+													<input id='jointPlayerConstraintsId_professor_dash' class='input' type='text'>
+												</div>
+
+												<label class='column is-4 control-label' for='textinput'>Separated Player Constraints</label>  
+												<div class='control' data-tooltip='Optional, Format: [id1, id2]; [id3, id4]'>
+													<input id='separatedPlayerConstraintsId_professor_dash' class='input' type='text'>
+												</div>
+											</div>
+										</a>
+										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
+											Coalition Link Search
+										</a>
 									</div>
 								</div>
 							</div>
@@ -356,12 +373,27 @@
 													<input  id='numNNsId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>
 												</div>
 											</div>
+											<div class='form-group'>
+												<label class='column is-4 control-label' for='textinput'>Ability</label>  
+												<div class='control'>
+													<input id='qualityWeightsAbId_professor_dash' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
+												</div>
+											</div>
+											<div class='form-group'>
+												<label class='column is-4 control-label' for='textinput'>Engagement</label>  
+												<div class='control'>
+													<input id='qualityWeightsEngId_professor_dash' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
+												</div>
+											</div>
 										</a>
 										<a class='dropdown-item'>
 											Neural Networks
 										</a>
 										<a class='dropdown-item'>
 											Reinf. Learn.
+										</a>
+										<a class='dropdown-item'>
+											Synergy Between Students
 										</a>
 									</div>
 								</div>
@@ -370,7 +402,7 @@
 					</div>
 				</div>
 
-				<div class='panel-block' id='additionalAlgorithmsSection_2_professor_dash' style='display: block;'>
+				<!-- <div class='panel-block' id='additionalAlgorithmsSection_2_professor_dash' style='display: block;'>
 					<div class='columns is-mobile is-multiline'>
 						<div class='column is-full'>
 							<p>Quality Weights</p>
@@ -392,7 +424,7 @@
 					</div>
 				</div>
 
-				</div>
+				</div> -->
 			</div>
 		</section>
 
@@ -868,6 +900,7 @@ crossorigin='anonymous'></script>
 						// $('#forceStartAdaptation_professor_dash').removeClass("is-loading");
 
 						$('#groupsPlot_professor_dash').empty();
+						console.log(newServerState);
 						if(newServerState.responseText.localeCompare("error")==0){
 							$('#adaptationError_professor_dash').show(500);
 							setTimeout(function(){ $('#adaptationError_professor_dash').hide(500); }, 5000);
@@ -909,6 +942,8 @@ crossorigin='anonymous'></script>
 				'numberOfEvolutionsPerIteration': $('#numberOfEvolutionsPerIteration_professor_dash').val(),
 				'numChildrenPerIteration': $('#numChildrenPerIteration_professor_dash').val(),
 				'numSurvivors': $('#numSurvivors_professor_dash').val(),
+				'jointPlayerConstraints': $('#jointPlayerConstraintsId_professor_dash').val(),
+				'separatedPlayerConstraints': $('#separatedPlayerConstraintsId_professor_dash').val(),
 
 
 
