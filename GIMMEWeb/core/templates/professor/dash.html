@@ -4,6 +4,7 @@
 <body class='layout-default'>
 	{% include 'common/header.html' %}
 
+	
 	<div id='welcomeBanner'>
 		<section class='hero main_hero is-fullheight'>
 			<div class='hero-body'>
@@ -261,86 +262,30 @@
 										</a>
 										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
 											Pure Random Search
+											<div class='column'></div>
 											<div class='form-group'>
-												<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
-												<div class='control'>
-													<input id='numberOfConfigChoicesId_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
-												</div>
+												<button class="button modal-button" data-target="modal-prs">Configure...</button>
 											</div>
 										</a>
 										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
 											Annealed Pure Random Search
+											<div class='column'></div>
 											<div class='form-group'>
-												<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
-												<div class='control'>
-													<input id='numberOfConfigChoicesId_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
-												</div>
-
-												<label class='column is-4 control-label' for='textinput'>Temperature Decay</label>  
-												<div class='control'>
-													<input id='temperatureDecay_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.5'>
-												</div>
+												<button class="button modal-button" data-target="modal-annealed-prs">Configure...</button>
 											</div>
 										</a>
 										<a class='dropdown-item is-active' data-tooltip='See GIMME-API for details'>
 											Evolutionary Search
+											<div class='column'></div>
 											<div class='form-group'>
-												<label class='column is-4 control-label' for='textinput'>Initial Population Size</label>  
-												<div class='control'>
-													<input id='initialPopulationSize_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
-												</div>
-												
-												<label class='column is-4 control-label' for='textinput'>Crossover Prob.</label>  
-												<div class='control'>
-													<input id='probOfCross_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.65'>
-												</div>
-												
-												<label class='column is-4 control-label' for='textinput'>Mutation Prob.</label>  
-												<div class='control'>
-													<input id='probOfMutation_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.15'>
-
-													<div class='form-group'>
-														<label class='column is-4 control-label' for='textinput'>Config. Change Mutation Prob.</label>  
-														<div class='control'>
-															<input id='probOfMutationConfig_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.8'>
-														</div>
-														<label class='column is-4 control-label' for='textinput'>Profile Change Mutation Prob.</label>  
-														<div class='control'>
-															<input id='probOfMutationGIPs_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.4'>
-														</div>
-													</div>
-
-												</div>
-
-												<label class='column is-4 control-label' for='textinput'>Num. Evolutions Per Iteration</label>  
-												<div class='control'>
-													<input id='numberOfEvolutionsPerIteration_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='50'>
-												</div>
-
-												<label class='column is-4 control-label' for='textinput'>Num. Children Per Generation</label>  
-												<div class='control'>
-													<input id='numChildrenPerIteration_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='100'>
-												</div>
-
-												<label class='column is-4 control-label' for='textinput'>Num. Survivors Per Generation</label>  
-												<div class='control'>
-													<input id='numSurvivors_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='10'>
-												</div>
-
+												<button class="button modal-button" data-target="modal-evolutionary">Configure...</button>
 											</div>
 										</a>
 										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
 											ODPIP Search
+											<div class='column'></div>
 											<div class='form-group'>
-												<label class='column is-4 control-label' for='textinput'>Joint Player Constraints</label>  
-												<div class='control' data-tooltip='Optional, Format: [id1, id2]; [id3, id4]'>
-													<input id='jointPlayerConstraintsId_professor_dash' class='input' type='text'>
-												</div>
-
-												<label class='column is-4 control-label' for='textinput'>Separated Player Constraints</label>  
-												<div class='control' data-tooltip='Optional, Format: [id1, id2]; [id3, id4]'>
-													<input id='separatedPlayerConstraintsId_professor_dash' class='input' type='text'>
-												</div>
+												<button class="button modal-button" data-target="modal-odpip">Configure...</button>
 											</div>
 										</a>
 										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
@@ -367,23 +312,9 @@
 									<div class='dropdown-content'>
 										<a class='dropdown-item is-active'>
 											KNN
+											<div class='column'></div>
 											<div class='form-group'>
-												<label class='column is-4 control-label' for='textinput'>Num NNs</label>  
-												<div class='control'>
-													<input  id='numNNsId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>
-												</div>
-											</div>
-											<div class='form-group'>
-												<label class='column is-4 control-label' for='textinput'>Ability</label>  
-												<div class='control'>
-													<input id='qualityWeightsAbId_professor_dash' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
-												</div>
-											</div>
-											<div class='form-group'>
-												<label class='column is-4 control-label' for='textinput'>Engagement</label>  
-												<div class='control'>
-													<input id='qualityWeightsEngId_professor_dash' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
-												</div>
+												<button class="button modal-button" data-target="modal-knn">Configure...</button>
 											</div>
 										</a>
 										<a class='dropdown-item'>
@@ -393,7 +324,11 @@
 											Reinf. Learn.
 										</a>
 										<a class='dropdown-item'>
-											Synergy Between Students
+											Heuristic Synergy Between Students
+											<div class='column'></div>
+											<div class='form-group'>
+												<button class="button modal-button" data-target="modal-synergies">Configure...</button>
+											</div>
 										</a>
 									</div>
 								</div>
@@ -497,18 +432,18 @@
 					</div>
 
 					<div class='columns is-mobile is-centered is-mobile'>
-						<img class='column is-2' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
+						<img class='column is-2 loading-anim' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>
 				</div>
 
 				<div class='panel-block' style='display: block;'>
 					<p>Overall Preferences Distribution</p>
 					<div class='columns is-mobile is-centered is-mobile'>
-						<div class='column is-4' id='interactionsProfilePlot_professor_dash'></div>
+						<div class='column is-4 loading-anim' id='interactionsProfilePlot_professor_dash'></div>
 					</div>
 
 					<div class='columns is-mobile is-centered is-mobile'>
-						<img class='column is-2' id='interactionsProfilePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
+						<img class='column is-2 loading-anim' id='interactionsProfilePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>
 				</div>
 
@@ -519,14 +454,182 @@
 					</div>
 
 					<div class='columns is-mobile is-centered is-mobile'>
-						<img class='column is-2' id='learningStatePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
+						<img class='column is-2 loading-anim' id='learningStatePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>
 				</div>
 			</div>
 		</section>
+		
+		
+			
+			
+		
+		<!-- modals -->
+		<div class="modal" id="modal-prs">
+			<div class="modal-background"></div>
+			<div class="modal-content">
+				<div class="is-size-2">Configuration Options: Pure Random Search</div>
+				<div class="column"></div>
+				<div class='form-group'>
+					<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
+					<div class='control'>
+						<input id='numberOfConfigChoicesId_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
+					</div>
+				</div>
+			</div>
+			<button class="modal-close is-large" aria-label="close"></button>
+		</div>
+		
+		
+		<div class="modal" id="modal-annealed-prs">
+			<div class="modal-background"></div>
+			<div class="modal-content">
+				<div class="is-size-2">Configuration Options: Annealed Pure Random Search</div>
+				<div class="column"></div>
+				
+				<div class='form-group'>
+					<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
+					<div class='control'>
+						<input id='numberOfConfigChoicesId_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
+					</div>
+
+					<label class='column is-4 control-label' for='textinput'>Temperature Decay</label>  
+					<div class='control'>
+						<input id='temperatureDecay_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.5'>
+					</div>
+				</div>
+				
+			</div>
+			<button class="modal-close is-large" aria-label="close"></button>
+		</div>
+		
+		
+		<div class="modal" id="modal-evolutionary">
+			<div class="modal-background"></div>
+			<div class="modal-content">
+				<div class="is-size-2">Configuration Options: Evolutionary (Genetic) Search</div>
+				<div class="column"></div>
+				
+				<div class='form-group'>
+					<label class='column is-4 control-label' for='textinput'>Initial Population Size</label>  
+					<div class='control'>
+						<input id='initialPopulationSize_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
+					</div>
+					
+					<label class='column is-4 control-label' for='textinput'>Crossover Prob.</label>  
+					<div class='control'>
+						<input id='probOfCross_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.65'>
+					</div>
+					
+					<label class='column is-4 control-label' for='textinput'>Mutation Prob.</label>  
+					<div class='control'>
+						<input id='probOfMutation_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.15'>
+
+						<div class='form-group'>
+							<label class='column is-4 control-label' for='textinput'>Config. Change Mutation Prob.</label>  
+							<div class='control'>
+								<input id='probOfMutationConfig_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.8'>
+							</div>
+							<label class='column is-4 control-label' for='textinput'>Profile Change Mutation Prob.</label>  
+							<div class='control'>
+								<input id='probOfMutationGIPs_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.4'>
+							</div>
+						</div>
+
+					</div>
+
+					<label class='column is-4 control-label' for='textinput'>Num. Evolutions Per Iteration</label>  
+					<div class='control'>
+						<input id='numberOfEvolutionsPerIteration_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='50'>
+					</div>
+
+					<label class='column is-4 control-label' for='textinput'>Num. Children Per Generation</label>  
+					<div class='control'>
+						<input id='numChildrenPerIteration_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='100'>
+					</div>
+
+					<label class='column is-4 control-label' for='textinput'>Num. Survivors Per Generation</label>  
+					<div class='control'>
+						<input id='numSurvivors_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='10'>
+					</div>
+				</div>
+				
+			</div>
+			<button class="modal-close is-large" aria-label="close"></button>
+		</div>
+		
+		
+		<div class="modal" id="modal-odpip">
+			<div class="modal-background"></div>
+			<div class="modal-content">
+				<div class="is-size-2">Configuration Options: ODPIP Search</div>
+				<div class="column"></div>
+				
+				<div class='form-group'>
+					<label class='column is-4 control-label' for='textinput'>Joint Player Constraints</label>  
+					<div class='control' data-tooltip='Optional, Format: [id1, id2]; [id3, id4]'>
+						<input id='jointPlayerConstraintsId_professor_dash' class='input' type='text'>
+					</div>
+
+					<label class='column is-4 control-label' for='textinput'>Separated Player Constraints</label>  
+					<div class='control' data-tooltip='Optional, Format: [id1, id2]; [id3, id4]'>
+						<input id='separatedPlayerConstraintsId_professor_dash' class='input' type='text'>
+					</div>
+				</div>
+			</div>
+			
+			<button class="modal-close is-large" aria-label="close"></button>
+		</div>
+		
+		
+		<div class="modal" id="modal-knn">
+			<div class="modal-background"></div>
+			
+			<div class="modal-content">
+				<div class="is-size-2">Configuration Options: KNN</div>
+				<div class="column"></div>
+				<div class='form-group'>
+					<label class='column is-4 control-label' for='textinput'>Num NNs</label>  
+					<div class='control'>
+						<input  id='numNNsId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>
+					</div>
+				
+					<label class='column is-4 control-label' for='textinput'>Ability</label>  
+					<div class='control'>
+						<input id='qualityWeightsAbId_professor_dash' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
+					</div>
+				
+					<label class='column is-4 control-label' for='textinput'>Engagement</label>  
+					<div class='control'>
+						<input id='qualityWeightsEngId_professor_dash' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
+					</div>
+				</div>
+			</div>
+			
+			<button class="modal-close is-large" aria-label="close"></button>
+		</div>
+		
+		<div class="modal" id="modal-synergies">
+			<div class="modal-background"></div>
+			<div class="modal-content">
+				<div class="is-size-2">Configuration Options: Heuristic Synergy Between Students</div>
+				<div class="column"></div>
+				<div class='form-group'>
+					
+				</div>
+			</div>
+			
+			<button class="modal-close is-large" aria-label="close"></button>
+		</div>
+		
+		
+		
+		
 		{% csrf_token %}
 
-
+		
+		
+		
 	</div>
 	{% include 'common/footer.html' %}
 </body>

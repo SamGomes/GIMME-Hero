@@ -284,28 +284,23 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
         return (Math.pow(vec1.ability - vec2.ability, 2) + Math.pow(vec1.engagement - vec2.engagement, 2));
     }
 
-    var resizeCanvas = function(canvas, aspect){
-        var targetWidth = canvasContainer.getBoundingClientRect().width;
-        height = canvasContainer.getBoundingClientRect().height;
-        canvas.attr('width', targetWidth);
-        canvas.attr('height', targetWidth/ aspect);
-    }
-
     svg = d3.select('#'+canvasId).append('svg');
 
     var canvas = svg;
     var canvasContainer = canvas.node().parentNode;
-
     width = canvasContainer.getBoundingClientRect().width;
-
+ 
     if(isForStudent){
         aspect = 2.5 / 1.0;
     }else{
         aspect = 2.5/ 1.5;
     }
-
-    resizeCanvas(canvas, aspect);
-
+   
+    height = width/ aspect;
+    
+    canvas.attr('width', width);
+    canvas.attr('height', height);
+    
 
     var userNodes = [];
     var groupIndicatorNodes = [];
@@ -923,7 +918,24 @@ var buildScatterInteractionPlot  = function(canvasId, data){
     //originally from https://www.d3-graph-gallery.com/graph/scatter_basic.html
 
     var canvas = d3.select('#'+canvasId);
-    var canvasContainer = canvas.node();
+    
+    var width = 200;
+    var height = 200;
+
+    var svg = canvas.append('svg');
+
+    svg.attr('width', width)
+        .attr('display', 'block')
+        .attr('margin', 'auto')
+        .attr('height', height)
+        .style('background', 'url("../media/images/plots/interactionSpaceBckgrd.png") no-repeat')
+        .style('background-size', '100%')
+        .style('background-position', 'center')
+        .call(responsivefy, 1000, 200);
+    
+    /*
+    var canvas = d3.select('#'+canvasId);
+    var canvasContainer = canvas.node().parentNode.parentNode;
     var width = 200;
     var height = 200;
 
@@ -936,7 +948,7 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .style('background', 'url("../media/images/plots/interactionSpaceBckgrd.png") no-repeat')
         .style('background-size', '100%')
         .style('background-position', 'center')
-        .call(responsivefy, 500, 0);
+        .call(responsivefy, 500, 0);*/
     
     svg.append('g')
         .append('text') 

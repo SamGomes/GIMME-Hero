@@ -41,9 +41,9 @@ class ModelAuxMethods():
 
 
 # class Subject(models.Model):
-#     subjectId = models.CharField(max_length=255,primary_key=True)
-#     description = models.TextField(max_length=255)
-#     studentIds = models.CharField(max_length=255)
+#     subjectId = models.CharField(max_length=1020,primary_key=True)
+#     description = models.TextField(max_length=1020)
+#     studentIds = models.CharField(max_length=1020)
 
 
 
@@ -58,19 +58,19 @@ class UserProfile(models.Model):
 
     role = MultiSelectField(choices=ROLE, max_choices=1)
     
-    fullName = models.CharField(max_length=255)
+    fullName = models.CharField(max_length=1020)
     age = models.IntegerField()
     gender = MultiSelectField(choices=GENDER, max_choices=1)
-    description = models.TextField(max_length=255)
+    description = models.TextField(max_length=1020)
 
 
     currState = models.CharField(max_length=1500)
-    pastModelIncreasesDataFrame = models.CharField(max_length=255)
-    preferences = models.CharField(max_length=255)
+    pastModelIncreasesDataFrame = models.CharField(max_length=1020)
+    preferences = models.CharField(max_length=1020)
 
     
-    # subjectIds = models.CharField(max_length=255)
-    grade = models.CharField(max_length=255)
+    # subjectIds = models.CharField(max_length=1020)
+    grade = models.CharField(max_length=1020)
 
 
     avatar = models.ImageField(upload_to=ModelAuxMethods.pathAndRename('images/userAvatars/'))
@@ -83,13 +83,13 @@ class UserProfile(models.Model):
 
 
 class Task(models.Model):
-    taskId = models.CharField(max_length=255,primary_key=True)
+    taskId = models.CharField(max_length=1020,primary_key=True)
 
-    creator = models.CharField(max_length=255)
-    creationTime = models.CharField(max_length=255)
-    description = models.TextField(max_length=255)
+    creator = models.CharField(max_length=1020)
+    creationTime = models.CharField(max_length=1020)
+    description = models.TextField(max_length=1020)
     minReqAbility = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
-    profile = models.CharField(max_length=255)
+    profile = models.CharField(max_length=1020)
     
     profileWeight = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
     difficultyWeight = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
@@ -106,15 +106,15 @@ class Task(models.Model):
         return self.taskId
 
 class ServerState(models.Model):
-    currAdaptationState = models.CharField(max_length=255, default="[]")
+    currAdaptationState = models.CharField(max_length=1020, default="[]")
 
-    currSelectedUsers = models.CharField(max_length=255, default="[]")
-    currFreeUsers = models.CharField(max_length=255, default="[]")
+    currSelectedUsers = models.CharField(max_length=1020, default="[]")
+    currFreeUsers = models.CharField(max_length=1020, default="[]")
 
-    currSelectedTasks = models.CharField(max_length=255, default="[]")
-    currFreeTasks = models.CharField(max_length=255, default="[]")
+    currSelectedTasks = models.CharField(max_length=1020, default="[]")
+    currFreeTasks = models.CharField(max_length=1020, default="[]")
 
-    readyForNewActivity = models.CharField(max_length=255, default="false")
+    readyForNewActivity = models.CharField(max_length=1020, default="false")
 
-    initDate = models.CharField(max_length=255, default="[]")
-    finalDate = models.CharField(max_length=255, default="[]")
+    initDate = models.CharField(max_length=1020, default="[]")
+    finalDate = models.CharField(max_length=1020, default="[]")

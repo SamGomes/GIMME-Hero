@@ -125,6 +125,15 @@ body {
 }
 
 
+.loading-anim{
+  max-width: 96px;
+}
+
+.modal{
+  color: white;
+  z-index: 999999;
+}
+
 
 .alias {cursor: alias;}
 .all-scroll {cursor: all-scroll;}
