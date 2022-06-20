@@ -724,6 +724,39 @@ crossorigin='anonymous'></script>
 			newServerState.studentsStates = currServerState.studentsStates
 			return objChanged(currServerState, newServerState);
 		}
+		
+		
+// 		var generateSynergiesTableFromFile = function(){
+// 			$.ajax(
+// 			{
+// 				type: 'POST',
+// 				url: '/fetchSynergiesTable/',
+// 				success: 
+// 					function(sngTbl) {
+						var sngTbl = 
+						`agent_1,agent_2,synergy
+								00,00,0
+								00,01,0
+								00,10,0
+								00,11,0
+								01,01,0
+								01,10,1
+								01,11,0
+								10,10,0
+								10,11,0
+								11,11,0`;
+						sngTbl = sngTbl.replaceAll('\t','');
+						sngTbl = sngTbl.split("\n");
+						var structuredSngTbl = [];
+						for(var i=0; i<sngTbl.length; i++){
+							var item = sngTbl[i];
+							structuredSngTbl.push(item.split(','));
+						}
+						console.log(structuredSngTbl);
+// 					}
+// 			}
+// 			);
+// 		}();
 
 
 
