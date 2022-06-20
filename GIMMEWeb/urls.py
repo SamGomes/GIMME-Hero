@@ -11,6 +11,7 @@ urlpatterns = [
     re_path(r'^home/$', Views.home, name='home'),
 
     re_path(r'^initServer/$', Views.initServer, name='initServer'),
+    re_path(r'^simulateReaction/$', Views.simulateReaction, name='simulateReaction'),
 
     re_path(r'^dash/$', Views.dash, name='dash'),
 

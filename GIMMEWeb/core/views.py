@@ -3,6 +3,7 @@ import sys
 
 import random
 import string
+import copy
 import time
 from datetime import datetime, date, time, timedelta
 
@@ -22,6 +23,7 @@ from GIMMEWeb.core.models import ServerState
 from django.views.decorators.csrf import csrf_protect
 
 from GIMMECore import *
+
 
 
 from django.contrib.auth import authenticate
@@ -308,6 +310,19 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		playerInfo.currState = json.dumps(newState, default=lambda o: o.__dict__)
 		playerInfo.save()
 
+	def resetPlayerPastModelIncreases(self, username):
+		playerStatesDataFrame = self.getPlayerStatesDataFrame(username)
+		
+		self.setPlayerCharacteristics(username, PlayerCharacteristics())
+		self.setPlayerProfile(username, playerStatesDataFrame.interactionsProfileTemplate.generateCopy())
+		
+		playerStatesDataFrame.reset()
+		
+
+		playerInfo = User.objects.get(username=username).userprofile
+		playerInfo.pastModelIncreasesDataFrame = json.dumps(playerStatesDataFrame, default=lambda o: o.__dict__)
+		playerInfo.save()
+
 	def setPlayerPreferencesEst(self, username, preferences):
 		playerInfo = User.objects.get(username=username).userprofile
 		playerInfo.preferences = json.dumps(preferences, default=lambda o: o.__dict__)
@@ -378,8 +393,41 @@ class Views(): #acts as a namespace
 
 		for player in playerBridge.getAllStoredStudentUsernames():
 			playerBridge.resetPlayerCurrState(player)
+			playerBridge.resetPlayerPastModelIncreases(player)
 
 		return HttpResponse('ok')
+
+	def calcReaction(playerBridge, state, playerId):
+		preferences = playerBridge.getPlayerPreferencesEst(playerId)
+		numDims = len(preferences.dimensions)
+		newState = PlayerState(
+			stateType = 1, 
+			characteristics = PlayerCharacteristics(
+				ability=state.characteristics.ability, 
+				engagement=state.characteristics.engagement
+				), 
+			profile=state.profile)
+		newState.characteristics.engagement = 1 - (preferences.distanceBetween(state.profile) / math.sqrt(numDims))  #between 0 and 1
+		if newState.characteristics.engagement>1:
+			breakpoint()
+		abilityIncreaseSim = (newState.characteristics.engagement)
+		newState.characteristics.ability = newState.characteristics.ability + abilityIncreaseSim
+		return newState
+
+	def simulateReaction(request):
+		allUsers = playerBridge.getAllPlayerIds()
+		print(allUsers)
+		for playerId in allUsers:
+			prevState = playerBridge.getPlayerStatesDataFrame(playerId).states[-1]
+			newState = Views.calcReaction(
+				playerBridge = playerBridge, 
+				state = prevState, 
+				playerId = playerId)
+
+			Views.savePlayerCharacteristics(playerId, newState.characteristics.ability, newState.characteristics.engagement)
+
+		return HttpResponse('ok')
+
 
 	#global methods
 	def home(request):
@@ -650,33 +698,26 @@ class Views(): #acts as a namespace
 
 	
 	def saveTaskResults(request):
-
-		# remove from occupied list
-		currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
-		currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
-		
-		currFreeUsers.remove(request.session.get('username'))
-		serverStateModelBridge.setcurrFreeUsers(currFreeUsers)
-
 		if request.POST:
 			username = request.session.get('username')
-			characteristics = playerBridge.getPlayerCurrCharacteristics(username)
-			characteristics = PlayerCharacteristics(ability=float(request.POST['ability']) - characteristics.ability, engagement=float(request.POST['engagement']) - characteristics.engagement)
-			playerBridge.setPlayerCharacteristics(username, characteristics)
-			playerBridge.setAndSavePlayerStateToGrid(username, PlayerState(characteristics=characteristics, profile=playerBridge.getPlayerCurrProfile(username)))
+			Views.savePlayerCharacteristics(username, request.POST['ability'], request.POST['engagement'])
 			return Views.dash(request)
 
+	def savePlayerCharacteristics(username, ability, engagement):
+		characteristics = playerBridge.getPlayerStatesDataFrame(username).states[-1].characteristics
+		characteristics = PlayerCharacteristics(ability=float(ability) - characteristics.ability, engagement=float(engagement))
+		playerBridge.setPlayerCharacteristics(username, characteristics)
 
 	# professor methods
 	
 	def startAdaptation(request):
 		serverStateModelBridge.setReadyForNewActivity(False)
-		try:
-			currAdaptationState = adaptation.iterate()
-			print(currAdaptationState)
+		try:			
 			# store current states in players' state window, after the adaptation returns
 			for username in serverStateModelBridge.getCurrSelectedUsers():
-				playerBridge.setAndSavePlayerStateToDataFrame(username, playerBridge.getPlayerCurrState(username));
+				playerBridge.setAndSavePlayerStateToDataFrame(username, playerBridge.getPlayerCurrState(username))
+
+			currAdaptationState = adaptation.iterate()
 
 		except (Exception, ArithmeticError, ValueError) as e:
 			template = 'An exception of type {0} occurred. Arguments:\n{1!r}'
@@ -717,10 +758,11 @@ class Views(): #acts as a namespace
 		# selectedRegAlg = None
 		if (selectedRegAlgId =='KNN'):
 			selectedRegAlg = selectedRegAlgSwitcherKNN(request)
+			persEstRegAlg = selectedRegAlg
 		elif (selectedRegAlgId =='Synergy Between Students'):
 			selectedRegAlg = selectedRegAlgSwitcherSynergy(request)
+			persEstRegAlg = selectedRegAlgSwitcherKNN(request)
 
-		persEstRegAlg = selectedRegAlgSwitcherKNN(request)
 
 		selectedGenAlg = {}
 		def selectedGenAlgSwitcherRandom(request):
