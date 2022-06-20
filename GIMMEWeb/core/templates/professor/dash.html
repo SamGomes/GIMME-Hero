@@ -615,7 +615,8 @@
 				<div class="is-size-2">Configuration Options: Heuristic Synergy Between Students</div>
 				<div class="column"></div>
 				<div class='form-group'>
-					
+					<label class='column is-4 control-label' for='textinput'>Synergies Table</label>  
+					<div class='control' style='margin: auto' id="modal-synergies-table"></div>
 				</div>
 			</div>
 			
@@ -752,7 +753,40 @@ crossorigin='anonymous'></script>
 							var item = sngTbl[i];
 							structuredSngTbl.push(item.split(','));
 						}
-						console.log(structuredSngTbl);
+// 						console.log(structuredSngTbl);
+						
+						var domTable = $('#modal-synergies-table')
+							.append('<div class=\'columns\'></div>');
+						for(var line=0; line<structuredSngTbl.length + 1; line++){
+							
+							var colElems = undefined;
+							if(line < structuredSngTbl.length){
+								colElems = structuredSngTbl[line];
+							}else{
+								colElems = ["+"];
+							}
+							var row = domTable.append('<div class=\'row\'></div>');
+							
+							for(var col=0; col<colElems.length; col++){
+								id = "table_"+col+"_"+line;
+								
+								var textInputBox = $('<input />').attr({
+									type: "text", id: id, name: id
+								});
+								
+								
+								lineElem = colElems[col];
+									
+								if(line == 0){
+									textInputBox.attr("readonly", "readonly");
+									textInputBox.attr("background-color", "gray");
+								}
+								
+								textInputBox.val(lineElem);
+								row.append(textInputBox);
+							}
+							
+						}
 // 					}
 // 			}
 // 			);
