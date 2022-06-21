@@ -724,8 +724,8 @@ crossorigin='anonymous'></script>
 		
 		
 		
-		var addSynergyTableLine = function(domTable, colElems, isRemovable){
-			var rowContent = $('<div class=\'row columns\'></div>');
+		var addSynergyTableLine = function(line, domTable, colElems, isRemovable){
+			var rowContent = $('<div class=\'row columns is-variable\'></div>');
 			if(isRemovable){
 				var removeButton = $(`
 				<div class=\'column is-1 button is-danger\'>
@@ -737,7 +737,7 @@ crossorigin='anonymous'></script>
 					($(this)).parent().hide(500, function(){ ($(this)).remove(); });
 				});
 			}else{
-				rowContent.append($("<div class=\'column is-1\'></div>"));
+				rowContent.append($("<div class=\'column is-1 \'></div>"));
 			}
 			for(var col=0; col<colElems.length; col++){
 				id = "table_"+col+"_"+line;
@@ -758,17 +758,52 @@ crossorigin='anonymous'></script>
 				textInputBox.val(lineElem);
 				rowContent.append(textInputBox);
 			}
+			rowContent.hide();
 			domTable.append(rowContent);
+			rowContent.show(500);
 		}
 		
+		var parseSynergiesTable = function(sngTbl, domTable){
+			
+			sngTbl = sngTbl.replaceAll('\t','');
+			sngTbl = sngTbl.split("\n");
+			var structuredSngTbl = [];
+			for(var i=0; i<sngTbl.length; i++){
+				var item = sngTbl[i];
+				structuredSngTbl.push(item.split(','));
+			}
+			
+			var table = $('<div class=\'column\'></div>');
+			for(var line=0; line<structuredSngTbl.length; line++){
+				var colElems = undefined;
+				colElems = structuredSngTbl[line];	
+				addSynergyTableLine(line, table, colElems, line > 0);
+			}
+			domTable.append(table);
+			
+			
+			var addLineButtonRow = $('<div class=\'column columns is-variable\'></div>');
+			domTable.append(addLineButtonRow);
+			colElems = new Array(structuredSngTbl[0].length).fill("<NA>");
+			var addLineButton = $('<button class=\'column is-1 button is-info\'/>').attr({
+				type: "text", id: id, name: id
+			});
+			addLineButton.text("+");
+			addLineButton.click(function(){
+				addSynergyTableLine(0, table, colElems, true);
+			});
+			addLineButtonRow.append(addLineButton);
+		}
 // 		var generateSynergiesTableFromFile = function(){
 // 			$.ajax(
 // 			{
 // 				type: 'POST',
 // 				url: '/fetchSynergiesTable/',
 // 				success: 
-// 					function(sngTbl) {
-						var sngTbl = 
+// 					function(textualTbl) {
+						
+						var domTable = $('#modal-synergies-table');
+						var textualTbl = 
 						`agent_1,agent_2,synergy
 								00,00,0
 								00,01,0
@@ -780,35 +815,7 @@ crossorigin='anonymous'></script>
 								10,10,0
 								10,11,0
 								11,11,0`;
-						sngTbl = sngTbl.replaceAll('\t','');
-						sngTbl = sngTbl.split("\n");
-						var structuredSngTbl = [];
-						for(var i=0; i<sngTbl.length; i++){
-							var item = sngTbl[i];
-							structuredSngTbl.push(item.split(','));
-						}
-						
-						var domTable = $('#modal-synergies-table')
-						var table = $('<div class=\'column\'></div>');
-						for(var line=0; line<structuredSngTbl.length; line++){
-							var colElems = undefined;
-							colElems = structuredSngTbl[line];	
-							addSynergyTableLine(table, colElems, line > 0);
-						}
-						domTable.append(table);
-						
-						
-						var addLineButtonRow = $('<div class=\'columns\'></div>');
-						domTable.append(addLineButtonRow);
-						colElems = new Array(structuredSngTbl[0].length).fill("<NA>");
-						var addLineButton = $('<button class=\'column is-1 button is-2 is-info\'/>').attr({
-							type: "text", id: id, name: id
-						});
-						addLineButton.text("+");
-						addLineButton.click(function(){
-							addSynergyTableLine(table, colElems, true);
-						});
-						domTable.append(addLineButton);
+						parseSynergiesTable(textualTbl, domTable);
 						
 // 					}
 // 			}
