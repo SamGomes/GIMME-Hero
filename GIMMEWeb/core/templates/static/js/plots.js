@@ -838,6 +838,20 @@ var buildScatterInteractionPlot  = function(canvasId, data){
     var width = 500;
     var height = 500;
 
+//     console.log(data);
+//     data=[{
+//             "ID": 3,
+//             "focus": -3,
+//             "challenge": -3,
+//             "timestamp": 1
+//             },
+//             {
+//             "ID": 3,
+//             "focus": 3,
+//             "challenge": 3,
+//             "timestamp": 1
+//             }]
+//             ;
 
     // append the svg object to the body of the page
     svg = canvas
@@ -857,16 +871,16 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .attr('x', width* 0.5)
         .attr('y', height* 0.94)
         .attr('text-anchor', 'middle')
-        .style('font-size', width*0.05+'px')
+        .style('font-size', width*0.05 +'px')
         .text(' Self      ← Focus →     Others');
 
     svg.append('g')
         .append('text') 
         .attr('class', 'y label')
         .attr('text-anchor', 'middle')
-        .attr('x', -width *0.48)
+        .attr('x', -width* 0.48)
         .attr('y', height* 0.04)
-        .style('font-size', height*0.05+'px')
+        .style('font-size', height*0.05 +'px')
         .attr('transform', 'rotate(-90)')
         .text('Complicate ← Challenge → Facilitate ');
 
@@ -874,13 +888,13 @@ var buildScatterInteractionPlot  = function(canvasId, data){
     // Add X axis
     var x = d3.scaleLinear()
         .domain([-3, 3])
-        .range([14, width-10]);
+        .range([35, width-30]);
 
 
     // Add Y axis
     var y = d3.scaleLinear()
         .domain([-3, 3])
-        .range([height-25, 12]);
+        .range([height-65, 30]);
 
     // Add dots
     svg.append('g')
