@@ -258,6 +258,8 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 				characteristics = characteristics, 
 				dist=state['dist'], 
 				quality=state['quality'])
+			
+			playerState.creationTime = -1
 			states.append(playerState)
 
 		trimAlg = json.loads(json.dumps(pastModelIncreasesDataFrame['trimAlg']))
@@ -1053,7 +1055,6 @@ class Views(): #acts as a namespace
 
 			userInfo = json.dumps(userInfo, default=lambda o: o.__dict__, sort_keys=True)
 			return HttpResponse(userInfo)
-			# return userInfo
 		return HttpResponse('error')
 	
 

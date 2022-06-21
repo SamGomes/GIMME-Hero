@@ -115,7 +115,7 @@ var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined){
 }
 
 
-var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates){
+var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
 
     // used to correctly generate user colors
     var abMax = 0;
@@ -319,7 +319,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
             
             for(var j=0;j<group.length; j++){
                 var userId = group[j];
-                userState = selectedUsersStates[userId];
+                userState = userStates[userId];
                 userNodes.push({'plotIndex': currPlotIndex++, 'userId': userId, 'userState': unformattedStringToObj(userState), 'groupId': i, 'centerOfMass': groupCenterOfMass});
             }
             colors[i] = "#778caa";
@@ -333,7 +333,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
             
             for(var j=0;j<group.length; j++){
                 var userId = group[j];
-                userState = selectedUsersStates[userId];
+                userState = userStates[userId];
                 userNodes.push({'plotIndex': currPlotIndex++, 'userId': userId, 'userState': unformattedStringToObj(userState), 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
             }
             colors[i] = generateGroupColor(profile);

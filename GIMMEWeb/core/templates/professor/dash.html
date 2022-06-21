@@ -718,12 +718,8 @@ crossorigin='anonymous'></script>
 
 
 
-		var objChanged = function(obj1, obj2){
-			return !(JSON.stringify(obj1) === JSON.stringify(obj2));
-		};
 		var canComputeAdaptation = function(newServerState){
-			newServerState.studentsStates = currServerState.studentsStates
-			return objChanged(currServerState, newServerState);
+			return !(JSON.stringify(currServerState) === JSON.stringify(newServerState));
 		}
 		
 		
@@ -866,143 +862,150 @@ crossorigin='anonymous'></script>
 						success: 
 						function (newServerState) {	
 							
-							if(!canComputeAdaptation(newServerState)){
-								return;
-							}
-
-							
-							readyForNewActivity = newServerState.readyForNewActivity;
-							if(readyForNewActivity){
-
-								$('#adaptationInfo_professor_dash').hide(500); 
-
-								$('#forceStartAdaptation_professor_dash').removeClass('is-loading');
-								$('#loadAndStartAdaptation_professor_dash').removeClass('is-loading');
-								$('#rebuildPlot_professor_dash').removeClass('is-loading');
-								
-								$('#groupsPlotLegend_professor_dash').show(500);
-								$('#groupsPlot_professor_dash').show(500);
-								$('#interactionsProfilePlot_professor_dash').show(500);
-								$('#learningStatePlot_professor_dash').show(500);
-								
-								$('#groupsPlotLoadingImage_professor_dash').hide(500);
-								$('#interactionsProfilePlotLoadingImage_professor_dash').hide(500);
-								$('#learningStatePlotLoadingImage_professor_dash').hide(500);
-
-							}else{
-								
-								$('#adaptationInfoTitle_professor_dash').html('<br></br>Watch out, it is Big Brain Time!');
-								$('#adaptationInfoText_professor_dash').html('<br></br>Please wait some moments until groups are organized according to the students\' preferences...');
-								$('#adaptationInfo_professor_dash').show(500);
-
-
-								$('#rebuildPlot_professor_dash').addClass('is-loading');
-								$('#forceStartAdaptation_professor_dash').addClass('is-loading');
-								$('#loadAndStartAdaptation_professor_dash').addClass('is-loading');
-
-								$('#groupsPlotLegend_professor_dash').hide(500);
-								$('#groupsPlot_professor_dash').hide(500);
-								$('#interactionsProfilePlot_professor_dash').hide(500);
-								$('#learningStatePlot_professor_dash').hide(500);
-								
-								$('#groupsPlotLoadingImage_professor_dash').show(500);
-								$('#interactionsProfilePlotLoadingImage_professor_dash').show(500);
-								$('#learningStatePlotLoadingImage_professor_dash').show(500);
-
-							}
-
-							$('#groupsPlotLegendTrigger_professor_dash').hide();
-							$('#groupsPlotLegend_professor_dash').click(function(){
-									$('#groupsPlotLegend_professor_dash').hide(500);
-									$('#groupsPlotLegendTrigger_professor_dash').show(500);
-							});
-							$('#groupsPlotLegendTrigger_professor_dash').click(function(){
-									$('#groupsPlotLegend_professor_dash').show(500);
-									$('#groupsPlotLegendTrigger_professor_dash').hide(500);
-							});
-
-
-							var currSelectedUsers = newServerState.currSelectedUsers;
-							var currFreeUsers = newServerState.currFreeUsers;
-							var fuTable = generateDashTableFromArray(
-									true, currFreeUsers, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
-									'{% url 'addSelectedUser' %}', 'username',
-									'', 'username',
-									'','usernameToDelete',
-									'{% url 'manuallyManageStudent' %}','usernameToUpdate'
-								);
-							var suTable = generateDashTableFromArray(
-									false, currSelectedUsers, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
-									'{% url 'removeSelectedUser' %}', 'username',
-									'', 'username',
-									'','usernameToDelete',
-									'{% url 'manuallyManageStudent' %}','usernameToUpdate'
-								);
-							$('#freeUsersTable_professor_dash').empty();
-							$('#freeUsersTable_professor_dash').append(fuTable);
-
-							$('#selectedUsersTable_professor_dash').empty();
-							$('#selectedUsersTable_professor_dash').append(suTable);
-
-							var currFreeTasks = unformattedStringToObj(newServerState.currFreeTasks);
-							var currSelectedTasks = unformattedStringToObj(newServerState.currSelectedTasks);
-
-
-							var currFreeTaskIds = [];
-							var currSelectedTaskIds = [];
-
-							for (i=0; i< currFreeTasks.length; i++){
-								currFreeTaskIds[i] = currFreeTasks[i].taskId;
-							}
-							for (i=0; i< currSelectedTasks.length; i++){
-								currSelectedTaskIds[i] = currSelectedTasks[i].taskId;
-							}
-
-							ftTable = generateDashTableFromArray(
-								true, currFreeTaskIds, currFreeTaskIds, 'is-danger', 'fa-arrow-circle-right', 
-								'{% url 'addSelectedTask' %}', 'taskId',
-								'{% url 'taskRegistration' %}', 'taskId',
-								'{% url 'taskDeletion' %}','taskIdToDelete',
-								'{% url 'taskUpdate' %}','taskIdToUpdate'
-							);
-
-							stTable = generateDashTableFromArray(
-								false, currSelectedTaskIds, currSelectedTaskIds, 'is-danger', 'fa-arrow-circle-left', 
-								'{% url 'removeSelectedTask' %}', 'taskId',
-								'{% url 'taskRegistration' %}', 'taskId',
-								'{% url 'taskDeletion' %}','taskIdToDelete',
-								'{% url 'taskUpdate' %}','taskIdToUpdate'
-							);
-
-							$('#freeTasksTable_professor_dash').empty();
-							$('#freeTasksTable_professor_dash').append(ftTable);
-
-							$('#selectedTasksTable_professor_dash').empty();
-							$('#selectedTasksTable_professor_dash').append(stTable);
-
-
-							currServerState = newServerState;
-
-							// var studentsStates = {}
-							// for(var i=0; i<currSelectedUsers; i++){
-							// 	currUserId = currSelectedUsers[i];
-							// 	studentsStates[currUserId] = fetchUserStateCallBack(currUserId)
-							// }
-							
-
+							//this has to be computed before, 
+							//for the case that some student altered their state
 							$.ajax({
 								type: 'POST',
 								url: '/fetchStudentStates/',
 								success: 
 								function(studentsStates)
 								{
+									newServerState.studentsStates = JSON.parse(studentsStates);
+									
+									
+									if(studentsStates!= undefined && 
+									   currServerState!={} && 
+									   !canComputeAdaptation(newServerState)){
+										return;
+									}
+
+									
+									readyForNewActivity = newServerState.readyForNewActivity;
+									if(readyForNewActivity){
+
+										$('#adaptationInfo_professor_dash').hide(500); 
+
+										$('#forceStartAdaptation_professor_dash').removeClass('is-loading');
+										$('#loadAndStartAdaptation_professor_dash').removeClass('is-loading');
+										$('#rebuildPlot_professor_dash').removeClass('is-loading');
+										
+										$('#groupsPlotLegend_professor_dash').show(500);
+										$('#groupsPlot_professor_dash').show(500);
+										$('#interactionsProfilePlot_professor_dash').show(500);
+										$('#learningStatePlot_professor_dash').show(500);
+										
+										$('#groupsPlotLoadingImage_professor_dash').hide(500);
+										$('#interactionsProfilePlotLoadingImage_professor_dash').hide(500);
+										$('#learningStatePlotLoadingImage_professor_dash').hide(500);
+
+									}else{
+										
+										$('#adaptationInfoTitle_professor_dash').html('<br></br>Watch out, it is Big Brain Time!');
+										$('#adaptationInfoText_professor_dash').html('<br></br>Please wait some moments until groups are organized according to the students\' preferences...');
+										$('#adaptationInfo_professor_dash').show(500);
+
+
+										$('#rebuildPlot_professor_dash').addClass('is-loading');
+										$('#forceStartAdaptation_professor_dash').addClass('is-loading');
+										$('#loadAndStartAdaptation_professor_dash').addClass('is-loading');
+
+										$('#groupsPlotLegend_professor_dash').hide(500);
+										$('#groupsPlot_professor_dash').hide(500);
+										$('#interactionsProfilePlot_professor_dash').hide(500);
+										$('#learningStatePlot_professor_dash').hide(500);
+										
+										$('#groupsPlotLoadingImage_professor_dash').show(500);
+										$('#interactionsProfilePlotLoadingImage_professor_dash').show(500);
+										$('#learningStatePlotLoadingImage_professor_dash').show(500);
+
+									}
+
+									$('#groupsPlotLegendTrigger_professor_dash').hide();
+									$('#groupsPlotLegend_professor_dash').click(function(){
+											$('#groupsPlotLegend_professor_dash').hide(500);
+											$('#groupsPlotLegendTrigger_professor_dash').show(500);
+									});
+									$('#groupsPlotLegendTrigger_professor_dash').click(function(){
+											$('#groupsPlotLegend_professor_dash').show(500);
+											$('#groupsPlotLegendTrigger_professor_dash').hide(500);
+									});
+
+
+									var currSelectedUsers = newServerState.currSelectedUsers;
+									var currFreeUsers = newServerState.currFreeUsers;
+									var fuTable = generateDashTableFromArray(
+											true, currFreeUsers, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
+											'{% url 'addSelectedUser' %}', 'username',
+											'', 'username',
+											'','usernameToDelete',
+											'{% url 'manuallyManageStudent' %}','usernameToUpdate'
+										);
+									var suTable = generateDashTableFromArray(
+											false, currSelectedUsers, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
+											'{% url 'removeSelectedUser' %}', 'username',
+											'', 'username',
+											'','usernameToDelete',
+											'{% url 'manuallyManageStudent' %}','usernameToUpdate'
+										);
+									$('#freeUsersTable_professor_dash').empty();
+									$('#freeUsersTable_professor_dash').append(fuTable);
+
+									$('#selectedUsersTable_professor_dash').empty();
+									$('#selectedUsersTable_professor_dash').append(suTable);
+
+									var currFreeTasks = unformattedStringToObj(newServerState.currFreeTasks);
+									var currSelectedTasks = unformattedStringToObj(newServerState.currSelectedTasks);
+
+
+									var currFreeTaskIds = [];
+									var currSelectedTaskIds = [];
+
+									for (i=0; i< currFreeTasks.length; i++){
+										currFreeTaskIds[i] = currFreeTasks[i].taskId;
+									}
+									for (i=0; i< currSelectedTasks.length; i++){
+										currSelectedTaskIds[i] = currSelectedTasks[i].taskId;
+									}
+
+									ftTable = generateDashTableFromArray(
+										true, currFreeTaskIds, currFreeTaskIds, 'is-danger', 'fa-arrow-circle-right', 
+										'{% url 'addSelectedTask' %}', 'taskId',
+										'{% url 'taskRegistration' %}', 'taskId',
+										'{% url 'taskDeletion' %}','taskIdToDelete',
+										'{% url 'taskUpdate' %}','taskIdToUpdate'
+									);
+
+									stTable = generateDashTableFromArray(
+										false, currSelectedTaskIds, currSelectedTaskIds, 'is-danger', 'fa-arrow-circle-left', 
+										'{% url 'removeSelectedTask' %}', 'taskId',
+										'{% url 'taskRegistration' %}', 'taskId',
+										'{% url 'taskDeletion' %}','taskIdToDelete',
+										'{% url 'taskUpdate' %}','taskIdToUpdate'
+									);
+
+									$('#freeTasksTable_professor_dash').empty();
+									$('#freeTasksTable_professor_dash').append(ftTable);
+
+									$('#selectedTasksTable_professor_dash').empty();
+									$('#selectedTasksTable_professor_dash').append(stTable);
+
+									newServerState.studentsStates = JSON.parse(studentsStates);
+									if(currServerState.studentStates != undefined)
+										console.log(currServerState.studentsStates["Ash"])
+									console.log(newServerState.studentsStates["Ash"])
+									currServerState = newServerState;
+									console.log("------")
+
+									
 									$('#groupsPlot_professor_dash').empty();
-									currServerState.studentsStates = JSON.parse(studentsStates);
+									
 									buildPlots(currServerState);
+									
+									
 								}
 							});
-
-
+							
+							
 						}
 
 					}
@@ -1010,7 +1013,7 @@ crossorigin='anonymous'></script>
 		};
 
 		fetchServerData();
-		setInterval(fetchServerData, 500);
+		setInterval(fetchServerData, 1000);
 
 
 		var buildPlots = function(currServerState){
