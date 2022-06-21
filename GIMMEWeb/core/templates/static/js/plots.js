@@ -838,21 +838,7 @@ var buildScatterInteractionPlot  = function(canvasId, data){
     var width = 500;
     var height = 500;
 
-//     console.log(data);
-//     data=[{
-//             "ID": 3,
-//             "focus": -3,
-//             "challenge": -3,
-//             "timestamp": 1
-//             },
-//             {
-//             "ID": 3,
-//             "focus": 3,
-//             "challenge": 3,
-//             "timestamp": 1
-//             }]
-//             ;
-
+    
     // append the svg object to the body of the page
     svg = canvas
         .append('svg')
