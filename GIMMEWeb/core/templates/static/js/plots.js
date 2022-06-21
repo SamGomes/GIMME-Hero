@@ -31,88 +31,6 @@ var responsivefy = function(svg, targetWidthClamp, leftPaddingRatio) {
     }
 }
 
-var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined){
-
-    var canvas = d3.select('#'+canvasId);
-    var canvasContainer = canvas.node().parentNode;
-
-    var width = 900;
-    var height = 150;
-
-    var margin = {
-        top: height * 0.1,
-        right: width * 0.1,
-        bottom: height * 0.1,
-        left: width * 0.3
-    };
-
-    var svg = canvas.append('svg');
-
-    svg.attr('width', width + margin.left + margin.right)
-        .attr('display', 'block')
-        .attr('margin', 'auto')
-        .attr('height', height + margin.top + margin.bottom + 200)
-        .call(responsivefy, 1000, 0.15);
-
-
-    if(maxValue == undefined){
-        for(var i=0; i < data.length; i++){
-            var currValue = parseFloat(data[i].value);
-            if(maxValue == undefined || currValue > maxValue){
-                maxValue = currValue;
-            }
-        }
-        maxValue += 0.1*maxValue;
-    }
-
-    var x = d3.scaleLinear()
-        .range([margin.left, width])
-        .domain([minValue, maxValue]);
-
-    var y = d3.scaleBand()
-        .range([margin.bottom, height])
-        .domain(data.map(function(d) {
-            return d.name;
-        }));
-
-    var xAxis = d3.axisBottom(x)
-        .tickSize(maxValue / 5.0);
-
-    var yAxis = d3.axisLeft(y)
-        .tickSize(0);
-
-
-    var bars = svg.selectAll('.bar')
-        .data(data)
-        .enter()
-        .append('g');
-
-
-    bars.append('rect')
-        .attr('class', 'bar')
-        .attr('y', function (d) {
-            return y(d.name) + y.bandwidth()*3/16;
-        })
-        .attr('height', y.bandwidth()*1/2)
-        .attr('x', margin.left)
-        .attr('width', function (d) {
-            return  x(d.value) - margin.left;
-        })
-        .attr('fill', '#50C2E3');
-
-    var gy = svg.append('g')
-        .attr('class', 'y axis label')
-        .call(yAxis) 
-        .attr('transform', 'translate(' + margin.left + ',0)')
-        .style('font-size','30px');
-
-
-    var gx = svg.append('g')
-        .attr('class', 'x axis')
-        .call(xAxis)
-        .attr('transform', 'translate(0,' + height + ')')
-        .style('font-size','30px');
-}
 
 
 var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
@@ -913,31 +831,12 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
 }
 
 
-
 var buildScatterInteractionPlot  = function(canvasId, data){
     //originally from https://www.d3-graph-gallery.com/graph/scatter_basic.html
 
     var canvas = d3.select('#'+canvasId);
-    
-    var width = 200;
-    var height = 200;
-
-    var svg = canvas.append('svg');
-
-    svg.attr('width', width)
-        .attr('display', 'block')
-        .attr('margin', 'auto')
-        .attr('height', height)
-        .style('background', 'url("../media/images/plots/interactionSpaceBckgrd.png") no-repeat')
-        .style('background-size', '100%')
-        .style('background-position', 'center')
-        .call(responsivefy, 1000, 200);
-    
-    /*
-    var canvas = d3.select('#'+canvasId);
-    var canvasContainer = canvas.node().parentNode.parentNode;
-    var width = 200;
-    var height = 200;
+    var width = 500;
+    var height = 500;
 
 
     // append the svg object to the body of the page
@@ -948,7 +847,9 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .style('background', 'url("../media/images/plots/interactionSpaceBckgrd.png") no-repeat')
         .style('background-size', '100%')
         .style('background-position', 'center')
-        .call(responsivefy, 500, 0);*/
+        .attr('display', 'block')
+        .attr('margin', 'auto')
+        .call(responsivefy, 500, 0.25);
     
     svg.append('g')
         .append('text') 
@@ -998,3 +899,99 @@ var buildScatterInteractionPlot  = function(canvasId, data){
 }
 
 
+var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined){
+
+    var canvas = d3.select('#'+canvasId);
+
+    var width = 1000;
+    var height = 150;
+
+    var margin = {
+        top: height * 0.1,
+        right: width * 0.1,
+        bottom: height * 0.1,
+        left: width * 0.3
+    };
+
+    var svg = canvas.append('svg');
+
+    svg.attr('width', width + margin.left + margin.right)
+        .attr('display', 'block')
+        .attr('margin', 'auto')
+        .attr('height', height + margin.top + margin.bottom + 200)
+        .call(responsivefy, 1000, 0.15);
+
+
+    if(maxValue == undefined){
+        for(var i=0; i < data.length; i++){
+            var currValue = parseFloat(data[i].value);
+            if(maxValue == undefined || currValue > maxValue){
+                maxValue = currValue;
+            }
+        }
+        maxValue += 0.1*maxValue;
+    }
+
+    var x = d3.scaleLinear()
+        .range([margin.left, width])
+        .domain([minValue, maxValue]);
+
+    var y = d3.scaleBand()
+        .range([margin.bottom, height])
+        .domain(data.map(function(d) {
+            return d.name;
+        }));
+
+    var xAxis = d3.axisBottom(x)
+        .tickSize(-width);
+        
+    var yAxis = d3.axisLeft(y)
+        .tickSize(0);
+
+
+    var bars = svg.selectAll('.bar')
+        .data(data)
+        .enter()
+        .append('g');
+
+
+    bars.append('rect')
+        .attr('class', 'bar')
+        .attr('y', function (d) {
+            return y(d.name) + y.bandwidth()*3/16;
+        })
+        .attr('height', y.bandwidth()*1/2)
+        .attr('x', margin.left)
+        .attr('width', function (d) {
+            return  x(d.value) - margin.left;
+        })
+        .attr('fill', '#50C2E3');
+
+    var gy = svg.append('g')
+                .attr('class', 'y axis label')
+                .call(yAxis) 
+                .attr('transform', 'translate(' + margin.left + ',0)')
+                    .style('font-size','30px');
+
+    gy.selectAll("text")
+        .attr("transform", "translate(-35,0)");
+
+    
+    var gx = svg.append('g')
+                .attr('class', 'x axis')
+                .call(xAxis)
+                .attr('transform', 'translate(0,' + height + ')')
+                .style('font-size','25px');
+    
+    gx.selectAll('.tick line')
+        .attr('opacity', 0.5)
+     
+    gx.selectAll("text")
+        .attr("transform", "rotate(70), translate(35,-15)");
+        
+    
+    svg.append('g')
+        .call(xAxis)
+        .selectAll("text")
+            .attr("visibility","hidden");
+}

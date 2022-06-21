@@ -439,7 +439,7 @@
 				<div class='panel-block' style='display: block;'>
 					<p>Overall Preferences Distribution</p>
 					<div class='columns is-mobile is-centered is-mobile'>
-						<div class='column is-4 loading-anim' id='interactionsProfilePlot_professor_dash'></div>
+						<div class='column is-7' id='interactionsProfilePlot_professor_dash'></div>
 					</div>
 
 					<div class='columns is-mobile is-centered is-mobile'>
@@ -890,9 +890,9 @@ crossorigin='anonymous'></script>
 										$('#rebuildPlot_professor_dash').removeClass('is-loading');
 										
 										$('#groupsPlotLegend_professor_dash').show(500);
-										$('#groupsPlot_professor_dash').show(500);
-										$('#interactionsProfilePlot_professor_dash').show(500);
-										$('#learningStatePlot_professor_dash').show(500);
+										$('#groupsPlot_professor_dash').show();
+										$('#interactionsProfilePlot_professor_dash').show();
+										$('#learningStatePlot_professor_dash').show();
 										
 										$('#groupsPlotLoadingImage_professor_dash').hide(500);
 										$('#interactionsProfilePlotLoadingImage_professor_dash').hide(500);
@@ -990,11 +990,11 @@ crossorigin='anonymous'></script>
 									$('#selectedTasksTable_professor_dash').append(stTable);
 
 									newServerState.studentsStates = JSON.parse(studentsStates);
-									if(currServerState.studentStates != undefined)
-										console.log(currServerState.studentsStates["Ash"])
-									console.log(newServerState.studentsStates["Ash"])
+// 									if(currServerState.studentStates != undefined)
+// 										console.log(currServerState.studentsStates["Ash"])
+// 									console.log(newServerState.studentsStates["Ash"])
 									currServerState = newServerState;
-									console.log("------")
+// 									console.log("------")
 
 									
 									$('#groupsPlot_professor_dash').empty();
