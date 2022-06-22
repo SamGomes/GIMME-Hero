@@ -795,7 +795,8 @@ crossorigin='anonymous'></script>
 				type: "text", id: id, name: id
 			});
 			addLineButton.click(function(){
-				addSynergyTableLine(0, table, colElems, true);
+				var lineDoms = $(domTable.children()[0]).children();
+				addSynergyTableLine(lineDoms.length, table, colElems, true);
 			});
 			addLineButtonRow.append(addLineButton);
 		}
@@ -803,13 +804,12 @@ crossorigin='anonymous'></script>
 		var sngTableDomToStr = function(domTable){
 			var lineDoms = $(domTable.children()[0]).children();
 			var retStr = "";
-			console.log($(domTable.children()[0]).children());
 			for(var line=0; line<lineDoms.length; line++){
 				var colDoms = $(lineDoms[line]).children();
 				for(var col=1;col<colDoms.length; col++){
 					colStr = $(colDoms[col]).val();
-					console.log(col < (colDoms.length) - 1)
-					retStr +=  (col < (colDoms.length) - 1)? colStr+",": colStr+"\n"; 
+					retStr +=  (col < (colDoms.length) - 1)? colStr+",": 
+						(line < (lineDoms.length) - 1)? colStr+"\n": colStr; 
 				}
 			}
 			return retStr;
