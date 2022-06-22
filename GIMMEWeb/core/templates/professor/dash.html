@@ -740,8 +740,10 @@ crossorigin='anonymous'></script>
 				removeButton.click(function(){
 					($(this)).parent().hide(500, function(){ ($(this)).remove(); });
 				});
-			}else{
-				rowContent.append($("<div class=\'column is-1 \'></div>"));
+			}
+			else{
+// 				rowContent.append($("<div class=\'column is-1 \'></div>"));
+				rowContent.append($("<div></div>"));
 			}
 			for(var col=0; col<colElems.length; col++){
 				id = "table_"+col+"_"+line;
@@ -753,7 +755,7 @@ crossorigin='anonymous'></script>
 				
 				lineElem = colElems[col];
 					
-				if(line == 0){
+				if(line == 0 || col < 2){
 					textInputBox.addClass("is-light")
 					textInputBox.attr("readonly", "readonly");
 					textInputBox.attr("background-color", "gray");
@@ -781,24 +783,25 @@ crossorigin='anonymous'></script>
 			for(var line=0; line<structuredSngTbl.length; line++){
 				var colElems = undefined;
 				colElems = structuredSngTbl[line];	
-				addSynergyTableLine(line, table, colElems, line > 0);
+// 				addSynergyTableLine(line, table, colElems, line > 0);
+				addSynergyTableLine(line, table, colElems, false);
 			}
 			domTable.append(table);
 			
 			
-			var addLineButtonRow = $('<div class=\'column columns is-variable\'></div>');
-			domTable.append(addLineButtonRow);
-			colElems = new Array(structuredSngTbl[0].length).fill("<NA>");
-			var addLineButton = $(`<button class=\'column is-1 button is-info\'>
-				<i class="fas fa-plus-circle" aria-hidden="true"></i>
-			</button>`).attr({
-				type: "text", id: id, name: id
-			});
-			addLineButton.click(function(){
-				var lineDoms = $(domTable.children()[0]).children();
-				addSynergyTableLine(lineDoms.length, table, colElems, true);
-			});
-			addLineButtonRow.append(addLineButton);
+// 			var addLineButtonRow = $('<div class=\'column columns is-variable\'></div>');
+// 			domTable.append(addLineButtonRow);
+// 			colElems = new Array(structuredSngTbl[0].length).fill("<NA>");
+// 			var addLineButton = $(`<button class=\'column is-1 button is-info\'>
+// 				<i class="fas fa-plus-circle" aria-hidden="true"></i>
+// 			</button>`).attr({
+// 				type: "text", id: id, name: id
+// 			});
+// 			addLineButton.click(function(){
+// 				var lineDoms = $(domTable.children()[0]).children();
+// 				addSynergyTableLine(lineDoms.length, table, colElems, true);
+// 			});
+// 			addLineButtonRow.append(addLineButton);
 		}
 		
 		var sngTableDomToStr = function(domTable){
