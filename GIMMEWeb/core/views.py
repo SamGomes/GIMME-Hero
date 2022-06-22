@@ -1,12 +1,15 @@
-import json
 import sys
+import os
+import json
 
 import random
 import string
 import copy
 import time
+
 from datetime import datetime, date, time, timedelta
 
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.views.generic import View
 
@@ -15,22 +18,20 @@ from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse, HttpResponseServerError
 
 from django.contrib.auth.models import User
-
-from GIMMEWeb.core.models import UserProfile
-from GIMMEWeb.core.models import Task
-from GIMMEWeb.core.models import ServerState
-
 from django.views.decorators.csrf import csrf_protect
-
-from GIMMECore import *
-
 
 
 from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
 from django.contrib import messages
 
+from GIMMEWeb.core.models import UserProfile
+from GIMMEWeb.core.models import Task
+from GIMMEWeb.core.models import ServerState
 from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm
+
+from GIMMECore import *
+
 
 
 
@@ -1173,21 +1174,6 @@ class Views(): #acts as a namespace
 		return HttpResponse('error')
 
 
-	# (FOR DEBUG) IF YOU WANT TO GENERATE STATES FOR ALL PLAYERS
-	# def uploadTaskResults(request):
-
-	# 	if request.method == 'POST':
-	# 		for username in playerBridge.getAllStoredStudentUsernames():
-	# 			characteristicsDelta = json.loads(request.POST['characteristicsDelta'])
-
-	# 			characteristics = playerBridge.getPlayerCurrCharacteristics(username)
-	# 			characteristics.ability = random.uniform(0.5, 3)
-	# 			characteristics.engagement = random.uniform(0.5, 3)
-	# 			playerBridge.setPlayerCharacteristics(username, characteristics)
-
-	# 	return HttpResponse('ok')
-
-
 	def manuallyChangeStudentGroup(request):
 		if request.method == 'POST':
 			adaptState = serverStateModelBridge.getCurrAdaptationState()
@@ -1234,4 +1220,31 @@ class Views(): #acts as a namespace
 		if request.method == 'GET':
 			return render(request, 'manuallyManageStudent.html')
 			
-				
+
+	def fetchSynergiesTable(request):
+		if request.method == 'POST':
+			
+			tblFile = open(os.path.join(settings.BASE_DIR, 'synergyTable.txt'), "r")
+			
+			returnedTable = {}
+			returnedTable["textualTbl"] = tblFile.read()
+			
+			tblFile.close()
+		
+			return HttpResponse(json.dumps(returnedTable, 
+				default=lambda o: o.__dict__, sort_keys=True))
+		return HttpResponse('error')
+		
+		
+	def saveSynergiesTable(request):
+		if request.method == 'POST':
+			
+			tblFile = open(os.path.join(settings.BASE_DIR, 'synergyTable.txt'), "w")
+			
+			returnedTable = {}
+			tblFile.write(request.POST["textualTbl"])
+			
+			tblFile.close()
+		
+			return HttpResponse('ok')		
+		return HttpResponse('error')		

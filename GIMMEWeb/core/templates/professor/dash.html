@@ -327,7 +327,7 @@
 											Heuristic Synergy Between Students
 											<div class='column'></div>
 											<div class='form-group'>
-												<button class="button modal-button" data-target="modal-synergies">Configure...</button>
+												<button class="button modal-button" id='modal-synergies-button' data-target="modal-synergies">Configure...</button>
 											</div>
 										</a>
 									</div>
@@ -618,9 +618,13 @@
 					<label class='column is-4 control-label' for='textinput'>Synergies Table</label>  
 					<div class='control' style='margin: auto' id="modal-synergies-table"></div>
 				</div>
+				<div class="column">
+					<button class='button is-fullwidth is-fullheight is-info' id='modal-synergies-table-save'>Save Table</button>
+				</div>
 			</div>
 			
 			<button class="modal-close is-large" aria-label="close"></button>
+			
 		</div>
 		
 		
@@ -763,7 +767,7 @@ crossorigin='anonymous'></script>
 			rowContent.show(500);
 		}
 		
-		var parseSynergiesTable = function(sngTbl, domTable){
+		var sngTableStrToDom = function(sngTbl, domTable){
 			
 			sngTbl = sngTbl.replaceAll('\t','');
 			sngTbl = sngTbl.split("\n");
@@ -785,43 +789,64 @@ crossorigin='anonymous'></script>
 			var addLineButtonRow = $('<div class=\'column columns is-variable\'></div>');
 			domTable.append(addLineButtonRow);
 			colElems = new Array(structuredSngTbl[0].length).fill("<NA>");
-			var addLineButton = $('<button class=\'column is-1 button is-info\'/>').attr({
+			var addLineButton = $(`<button class=\'column is-1 button is-info\'>
+				<i class="fas fa-plus-circle" aria-hidden="true"></i>
+			</button>`).attr({
 				type: "text", id: id, name: id
 			});
-			addLineButton.text("+");
 			addLineButton.click(function(){
 				addSynergyTableLine(0, table, colElems, true);
 			});
 			addLineButtonRow.append(addLineButton);
 		}
-// 		var generateSynergiesTableFromFile = function(){
-// 			$.ajax(
-// 			{
-// 				type: 'POST',
-// 				url: '/fetchSynergiesTable/',
-// 				success: 
-// 					function(textualTbl) {
-						
-						var domTable = $('#modal-synergies-table');
-						var textualTbl = 
-						`agent_1,agent_2,synergy
-								00,00,0
-								00,01,0
-								00,10,0
-								00,11,0
-								01,01,0
-								01,10,1
-								01,11,0
-								10,10,0
-								10,11,0
-								11,11,0`;
-						parseSynergiesTable(textualTbl, domTable);
-						
-// 					}
-// 			}
-// 			);
-// 		}();
+		
+		var sngTableDomToStr = function(domTable){
+			var lineDoms = $(domTable.children()[0]).children();
+			var retStr = "";
+			console.log($(domTable.children()[0]).children());
+			for(var line=0; line<lineDoms.length; line++){
+				var colDoms = $(lineDoms[line]).children();
+				for(var col=1;col<colDoms.length; col++){
+					colStr = $(colDoms[col]).val();
+					console.log(col < (colDoms.length) - 1)
+					retStr +=  (col < (colDoms.length) - 1)? colStr+",": colStr+"\n"; 
+				}
+			}
+			return retStr;
+			
+		}
+		
+		
+		var generateSynergiesTableFromFile = function(){
+			$.ajax(
+				{
+					type: 'POST',
+					url: '/fetchSynergiesTable/',
+					dataType: 'json',
+					success: 
+						function(response) {
+							var textualTbl = response['textualTbl'];
+							$('#modal-synergies-table').empty();
+							sngTableStrToDom(textualTbl, $('#modal-synergies-table'));
+						}
+				}
+			);
+		};
 
+		$('#modal-synergies-table-save').click(function(){
+			$.ajax(
+				{
+					type: 'POST',
+					url: '/saveSynergiesTable/',
+					dataType: 'json',
+					data: {'textualTbl': sngTableDomToStr($('#modal-synergies-table'))}
+				}
+			);
+		});
+		
+		$('#modal-synergies-button').click(function(){
+			generateSynergiesTableFromFile();
+		});
 
 
 		var generateDashTableFromArray = function(canAdd, idArray, nameArray, tagClass, moveButtonIconClass, moveElementUrl, moveElementArg, addElementURL, addElementArg, deleteElementUrl, deleteElementArg, editElementUrl, editElementArg){
@@ -892,158 +917,155 @@ crossorigin='anonymous'></script>
 			$.ajax(
 			{
 				url: '/fetchServerState/',
-						dataType: 'json',
-						success: 
-						function (newServerState) {	
-							
-							//this has to be computed before, 
-							//for the case that some student altered their state
-							$.ajax({
-								type: 'POST',
-								url: '/fetchStudentStates/',
-								success: 
-								function(studentsStates)
-								{
-									newServerState.studentsStates = JSON.parse(studentsStates);
+				dataType: 'json',
+				success: 
+					function (newServerState) {	
+						
+						//this has to be computed before, 
+						//for the case that some student altered their state
+						$.ajax({
+							type: 'POST',
+							url: '/fetchStudentStates/',
+							success: 
+							function(studentsStates)
+							{
+								newServerState.studentsStates = JSON.parse(studentsStates);
+								
+								
+								if(studentsStates!= undefined && 
+									currServerState!={} && 
+									!canComputeAdaptation(newServerState)){
+									return;
+								}
+
+								
+								readyForNewActivity = newServerState.readyForNewActivity;
+								if(readyForNewActivity){
+
+									$('#adaptationInfo_professor_dash').hide(500); 
+
+									$('#forceStartAdaptation_professor_dash').removeClass('is-loading');
+									$('#loadAndStartAdaptation_professor_dash').removeClass('is-loading');
+									$('#rebuildPlot_professor_dash').removeClass('is-loading');
 									
+									$('#groupsPlotLegend_professor_dash').show(500);
+									$('#groupsPlot_professor_dash').show();
+									$('#interactionsProfilePlot_professor_dash').show();
+									$('#learningStatePlot_professor_dash').show();
 									
-									if(studentsStates!= undefined && 
-									   currServerState!={} && 
-									   !canComputeAdaptation(newServerState)){
-										return;
-									}
+									$('#groupsPlotLoadingImage_professor_dash').hide(500);
+									$('#interactionsProfilePlotLoadingImage_professor_dash').hide(500);
+									$('#learningStatePlotLoadingImage_professor_dash').hide(500);
 
+								}else{
 									
-									readyForNewActivity = newServerState.readyForNewActivity;
-									if(readyForNewActivity){
-
-										$('#adaptationInfo_professor_dash').hide(500); 
-
-										$('#forceStartAdaptation_professor_dash').removeClass('is-loading');
-										$('#loadAndStartAdaptation_professor_dash').removeClass('is-loading');
-										$('#rebuildPlot_professor_dash').removeClass('is-loading');
-										
-										$('#groupsPlotLegend_professor_dash').show(500);
-										$('#groupsPlot_professor_dash').show();
-										$('#interactionsProfilePlot_professor_dash').show();
-										$('#learningStatePlot_professor_dash').show();
-										
-										$('#groupsPlotLoadingImage_professor_dash').hide(500);
-										$('#interactionsProfilePlotLoadingImage_professor_dash').hide(500);
-										$('#learningStatePlotLoadingImage_professor_dash').hide(500);
-
-									}else{
-										
-										$('#adaptationInfoTitle_professor_dash').html('<br></br>Watch out, it is Big Brain Time!');
-										$('#adaptationInfoText_professor_dash').html('<br></br>Please wait some moments until groups are organized according to the students\' preferences...');
-										$('#adaptationInfo_professor_dash').show(500);
+									$('#adaptationInfoTitle_professor_dash').html('<br></br>Watch out, it is Big Brain Time!');
+									$('#adaptationInfoText_professor_dash').html('<br></br>Please wait some moments until groups are organized according to the students\' preferences...');
+									$('#adaptationInfo_professor_dash').show(500);
 
 
-										$('#rebuildPlot_professor_dash').addClass('is-loading');
-										$('#forceStartAdaptation_professor_dash').addClass('is-loading');
-										$('#loadAndStartAdaptation_professor_dash').addClass('is-loading');
+									$('#rebuildPlot_professor_dash').addClass('is-loading');
+									$('#forceStartAdaptation_professor_dash').addClass('is-loading');
+									$('#loadAndStartAdaptation_professor_dash').addClass('is-loading');
 
+									$('#groupsPlotLegend_professor_dash').hide(500);
+									$('#groupsPlot_professor_dash').hide(500);
+									$('#interactionsProfilePlot_professor_dash').hide(500);
+									$('#learningStatePlot_professor_dash').hide(500);
+									
+									$('#groupsPlotLoadingImage_professor_dash').show(500);
+									$('#interactionsProfilePlotLoadingImage_professor_dash').show(500);
+									$('#learningStatePlotLoadingImage_professor_dash').show(500);
+
+								}
+
+								$('#groupsPlotLegendTrigger_professor_dash').hide();
+								$('#groupsPlotLegend_professor_dash').click(function(){
 										$('#groupsPlotLegend_professor_dash').hide(500);
-										$('#groupsPlot_professor_dash').hide(500);
-										$('#interactionsProfilePlot_professor_dash').hide(500);
-										$('#learningStatePlot_professor_dash').hide(500);
-										
-										$('#groupsPlotLoadingImage_professor_dash').show(500);
-										$('#interactionsProfilePlotLoadingImage_professor_dash').show(500);
-										$('#learningStatePlotLoadingImage_professor_dash').show(500);
-
-									}
-
-									$('#groupsPlotLegendTrigger_professor_dash').hide();
-									$('#groupsPlotLegend_professor_dash').click(function(){
-											$('#groupsPlotLegend_professor_dash').hide(500);
-											$('#groupsPlotLegendTrigger_professor_dash').show(500);
-									});
-									$('#groupsPlotLegendTrigger_professor_dash').click(function(){
-											$('#groupsPlotLegend_professor_dash').show(500);
-											$('#groupsPlotLegendTrigger_professor_dash').hide(500);
-									});
+										$('#groupsPlotLegendTrigger_professor_dash').show(500);
+								});
+								$('#groupsPlotLegendTrigger_professor_dash').click(function(){
+										$('#groupsPlotLegend_professor_dash').show(500);
+										$('#groupsPlotLegendTrigger_professor_dash').hide(500);
+								});
 
 
-									var currSelectedUsers = newServerState.currSelectedUsers;
-									var currFreeUsers = newServerState.currFreeUsers;
-									var fuTable = generateDashTableFromArray(
-											true, currFreeUsers, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
-											'{% url 'addSelectedUser' %}', 'username',
-											'', 'username',
-											'','usernameToDelete',
-											'{% url 'manuallyManageStudent' %}','usernameToUpdate'
-										);
-									var suTable = generateDashTableFromArray(
-											false, currSelectedUsers, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
-											'{% url 'removeSelectedUser' %}', 'username',
-											'', 'username',
-											'','usernameToDelete',
-											'{% url 'manuallyManageStudent' %}','usernameToUpdate'
-										);
-									$('#freeUsersTable_professor_dash').empty();
-									$('#freeUsersTable_professor_dash').append(fuTable);
-
-									$('#selectedUsersTable_professor_dash').empty();
-									$('#selectedUsersTable_professor_dash').append(suTable);
-
-									var currFreeTasks = unformattedStringToObj(newServerState.currFreeTasks);
-									var currSelectedTasks = unformattedStringToObj(newServerState.currSelectedTasks);
-
-
-									var currFreeTaskIds = [];
-									var currSelectedTaskIds = [];
-
-									for (i=0; i< currFreeTasks.length; i++){
-										currFreeTaskIds[i] = currFreeTasks[i].taskId;
-									}
-									for (i=0; i< currSelectedTasks.length; i++){
-										currSelectedTaskIds[i] = currSelectedTasks[i].taskId;
-									}
-
-									ftTable = generateDashTableFromArray(
-										true, currFreeTaskIds, currFreeTaskIds, 'is-danger', 'fa-arrow-circle-right', 
-										'{% url 'addSelectedTask' %}', 'taskId',
-										'{% url 'taskRegistration' %}', 'taskId',
-										'{% url 'taskDeletion' %}','taskIdToDelete',
-										'{% url 'taskUpdate' %}','taskIdToUpdate'
+								var currSelectedUsers = newServerState.currSelectedUsers;
+								var currFreeUsers = newServerState.currFreeUsers;
+								var fuTable = generateDashTableFromArray(
+										true, currFreeUsers, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
+										'{% url 'addSelectedUser' %}', 'username',
+										'', 'username',
+										'','usernameToDelete',
+										'{% url 'manuallyManageStudent' %}','usernameToUpdate'
 									);
-
-									stTable = generateDashTableFromArray(
-										false, currSelectedTaskIds, currSelectedTaskIds, 'is-danger', 'fa-arrow-circle-left', 
-										'{% url 'removeSelectedTask' %}', 'taskId',
-										'{% url 'taskRegistration' %}', 'taskId',
-										'{% url 'taskDeletion' %}','taskIdToDelete',
-										'{% url 'taskUpdate' %}','taskIdToUpdate'
+								var suTable = generateDashTableFromArray(
+										false, currSelectedUsers, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
+										'{% url 'removeSelectedUser' %}', 'username',
+										'', 'username',
+										'','usernameToDelete',
+										'{% url 'manuallyManageStudent' %}','usernameToUpdate'
 									);
+								$('#freeUsersTable_professor_dash').empty();
+								$('#freeUsersTable_professor_dash').append(fuTable);
 
-									$('#freeTasksTable_professor_dash').empty();
-									$('#freeTasksTable_professor_dash').append(ftTable);
+								$('#selectedUsersTable_professor_dash').empty();
+								$('#selectedUsersTable_professor_dash').append(suTable);
 
-									$('#selectedTasksTable_professor_dash').empty();
-									$('#selectedTasksTable_professor_dash').append(stTable);
+								var currFreeTasks = unformattedStringToObj(newServerState.currFreeTasks);
+								var currSelectedTasks = unformattedStringToObj(newServerState.currSelectedTasks);
 
-									newServerState.studentsStates = JSON.parse(studentsStates);
+
+								var currFreeTaskIds = [];
+								var currSelectedTaskIds = [];
+
+								for (i=0; i< currFreeTasks.length; i++){
+									currFreeTaskIds[i] = currFreeTasks[i].taskId;
+								}
+								for (i=0; i< currSelectedTasks.length; i++){
+									currSelectedTaskIds[i] = currSelectedTasks[i].taskId;
+								}
+
+								ftTable = generateDashTableFromArray(
+									true, currFreeTaskIds, currFreeTaskIds, 'is-danger', 'fa-arrow-circle-right', 
+									'{% url 'addSelectedTask' %}', 'taskId',
+									'{% url 'taskRegistration' %}', 'taskId',
+									'{% url 'taskDeletion' %}','taskIdToDelete',
+									'{% url 'taskUpdate' %}','taskIdToUpdate'
+								);
+
+								stTable = generateDashTableFromArray(
+									false, currSelectedTaskIds, currSelectedTaskIds, 'is-danger', 'fa-arrow-circle-left', 
+									'{% url 'removeSelectedTask' %}', 'taskId',
+									'{% url 'taskRegistration' %}', 'taskId',
+									'{% url 'taskDeletion' %}','taskIdToDelete',
+									'{% url 'taskUpdate' %}','taskIdToUpdate'
+								);
+
+								$('#freeTasksTable_professor_dash').empty();
+								$('#freeTasksTable_professor_dash').append(ftTable);
+
+								$('#selectedTasksTable_professor_dash').empty();
+								$('#selectedTasksTable_professor_dash').append(stTable);
+
+								newServerState.studentsStates = JSON.parse(studentsStates);
 // 									if(currServerState.studentStates != undefined)
 // 										console.log(currServerState.studentsStates["Ash"])
 // 									console.log(newServerState.studentsStates["Ash"])
-									currServerState = newServerState;
+								currServerState = newServerState;
 // 									console.log("------")
 
-									
-									$('#groupsPlot_professor_dash').empty();
-									
-									buildPlots(currServerState);
-									
-									
-								}
-							});
-							
-							
-						}
-
+								
+								$('#groupsPlot_professor_dash').empty();
+								
+								buildPlots(currServerState);
+								
+								
+							}
+						});
 					}
-				);
+			}
+		);
 		};
 
 		fetchServerData();

@@ -54,7 +54,11 @@ urlpatterns = [
     re_path(r'^uploadTaskResults/', Views.uploadTaskResults, name='uploadTaskResults'),
     
     re_path(r'^manuallyChangeStudentGroup/', Views.manuallyChangeStudentGroup, name='manuallyChangeStudentGroup'),
-    re_path(r'^manuallyManageStudent/', Views.manuallyManageStudent, name='manuallyManageStudent')
+    re_path(r'^manuallyManageStudent/', Views.manuallyManageStudent, name='manuallyManageStudent'),
+    
+    
+    re_path(r'^fetchSynergiesTable/', Views.fetchSynergiesTable, name='fetchSynergiesTable'),
+    re_path(r'^saveSynergiesTable/', Views.saveSynergiesTable, name='saveSynergiesTable')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
