@@ -762,7 +762,7 @@ class Views(): #acts as a namespace
 		if (selectedRegAlgId =='KNN'):
 			selectedRegAlg = selectedRegAlgSwitcherKNN(request)
 			persEstRegAlg = selectedRegAlg
-		elif (selectedRegAlgId =='Synergy Between Students'):
+		elif (selectedRegAlgId == 'Synergy Between Students'):
 			selectedRegAlg = selectedRegAlgSwitcherSynergy(request)
 			persEstRegAlg = selectedRegAlgSwitcherKNN(request)
 
