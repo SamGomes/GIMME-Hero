@@ -722,6 +722,9 @@ class Views(): #acts as a namespace
 
 			currAdaptationState = adaptation.iterate()
 
+			# for username in serverStateModelBridge.getCurrSelectedUsers():
+			# 	print(playerBridge.getPlayerPreferencesEst(username).dimensions)
+
 		except (Exception, ArithmeticError, ValueError) as e:
 			template = 'An exception of type {0} occurred. Arguments:\n{1!r}'
 			message = template.format(type(e).__name__, e.args)
@@ -749,7 +752,8 @@ class Views(): #acts as a namespace
 		def selectedRegAlgSwitcherKNN(request):
 			return KNNRegression( 
 				playerBridge, 
-				int(newConfigParams['numNNs'])
+				int(newConfigParams['numNNs']),
+				qualityWeights = PlayerCharacteristics(ability = float(newConfigParams['qualityWeightsAb']), engagement = float(newConfigParams['qualityWeightsEng']))
 			)
 		def selectedRegAlgSwitcherSynergy(request):
 			return TabularAgentSynergies(
@@ -762,7 +766,7 @@ class Views(): #acts as a namespace
 		if (selectedRegAlgId =='KNN'):
 			selectedRegAlg = selectedRegAlgSwitcherKNN(request)
 			persEstRegAlg = selectedRegAlg
-		elif (selectedRegAlgId =='Synergy Between Students'):
+		elif (selectedRegAlgId == 'Synergy Between Students'):
 			selectedRegAlg = selectedRegAlgSwitcherSynergy(request)
 			persEstRegAlg = selectedRegAlgSwitcherKNN(request)
 
@@ -786,13 +790,11 @@ class Views(): #acts as a namespace
 							playerModelBridge = playerBridge, 
 							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
 							regAlg = persEstRegAlg,
-							numTestedPlayerProfiles = 100, 
-							qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng']))),
+							numTestedPlayerProfiles = 100),
 						numberOfConfigChoices = int(newConfigParams['numberOfConfigChoices']), 
 						# minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
 						# maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
-						preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
-						qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng']))
+						preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup'])
 					)
 
 		def selectedGenAlgSwitcherAnnealedPRS(request):
@@ -804,13 +806,11 @@ class Views(): #acts as a namespace
 							playerModelBridge = playerBridge, 
 							interactionsProfileTemplate = intProfTemplate.generateCopy(), 
 							regAlg = persEstRegAlg,
-							numTestedPlayerProfiles = 100, 
-							qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng']))),
+							numTestedPlayerProfiles = 100),
 						numberOfConfigChoices = int(newConfigParams['numberOfConfigChoices']), 
 						# minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
 						# maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
 						preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
-						qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng'])),
 						temperatureDecay = float(newConfigParams['temperatureDecay'])
 					)
 
@@ -819,10 +819,14 @@ class Views(): #acts as a namespace
 				playerModelBridge = playerBridge, 
 				interactionsProfileTemplate = intProfTemplate.generateCopy(), 
 				regAlg = selectedRegAlg, 
+				persEstAlg = ExplorationPreferencesEstAlg(
+					playerModelBridge = playerBridge, 
+					interactionsProfileTemplate = intProfTemplate.generateCopy(), 
+					regAlg = persEstRegAlg,
+					numTestedPlayerProfiles = 100),
 
 				preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']), 
 				
-				qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng'])),
 				initialPopulationSize = int(newConfigParams['initialPopulationSize']), 
 				numberOfEvolutionsPerIteration = int(newConfigParams['numberOfEvolutionsPerIteration']), 
 				
@@ -846,12 +850,10 @@ class Views(): #acts as a namespace
 					playerModelBridge = playerBridge, 
 					interactionsProfileTemplate = intProfTemplate.generateCopy(), 
 					regAlg = persEstRegAlg,
-					numTestedPlayerProfiles = 100, 
-					qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng']))),
+					numTestedPlayerProfiles = 100),
 
 				preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
 
-				qualityWeights = PlayerCharacteristics(ability = float(newConfigParams['qualityWeightsAb']), engagement = float(newConfigParams['qualityWeightsEng'])),
 				taskModelBridge = taskBridge,
 				jointPlayerConstraints = newConfigParams['jointPlayerConstraints'],
 				separatedPlayerConstraints = newConfigParams['separatedPlayerConstraints']
@@ -866,12 +868,10 @@ class Views(): #acts as a namespace
 					playerModelBridge = playerBridge, 
 					interactionsProfileTemplate = intProfTemplate.generateCopy(), 
 					regAlg = persEstRegAlg,
-					numTestedPlayerProfiles = 100, 
-					qualityWeights = PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']), engagement=float(newConfigParams['qualityWeightsEng']))),
+					numTestedPlayerProfiles = 100),
 
 				preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
 
-				qualityWeights = PlayerCharacteristics(ability = float(newConfigParams['qualityWeightsAb']), engagement = float(newConfigParams['qualityWeightsEng'])),
 				taskModelBridge = taskBridge
 			) 
 
