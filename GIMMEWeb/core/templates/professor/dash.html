@@ -565,7 +565,27 @@
 				<div class="is-size-2">Configuration Options: ODPIP Search</div>
 				<div class="column"></div>
 				
-				<div class='form-group'>
+				<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Constraint Options</div>
+				<div class='panel-block dash-cell-box'>
+					<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Constraint Students</div>
+					<div class='table-container'>
+						<div class='table' style='margin:2em;' id='cstUsersODPIPTable_professor_dash'></div>
+					</div>
+				</div>
+				<div class='panel-block dash-cell-box'>	
+					<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Constraint Type</div>
+					<div class='table-container'>
+						<div class='table' style='margin:2em;' id='cstTypeODPIPTable_professor_dash'></div>
+					</div>
+				</div>
+				<div class='panel-block dash-cell-box'>
+					<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Student Constraints</div>
+					<div class='table-container'>
+						<div class='table' style='margin:2em;' id='cstODPIPTable_professor_dash'></div>
+					</div>
+				</div>
+				
+				<!--<div class='form-group'>
 					<label class='column is-4 control-label' for='textinput'>Joint Player Constraints</label>  
 					<div class='control' data-tooltip='Optional, Format: [id1, id2]; [id3, id4]'>
 						<input id='jointPlayerConstraintsId_professor_dash' class='input' type='text'>
@@ -575,7 +595,7 @@
 					<div class='control' data-tooltip='Optional, Format: [id1, id2]; [id3, id4]'>
 						<input id='separatedPlayerConstraintsId_professor_dash' class='input' type='text'>
 					</div>
-				</div>
+				</div>-->
 			</div>
 			
 			<button class="modal-close is-large" aria-label="close"></button>
@@ -614,12 +634,12 @@
 			<div class="modal-content">
 				<div class="is-size-2">Configuration Options: Heuristic Synergy Between Students</div>
 				<div class="column"></div>
-				<div class='form-group'>
+				<div class='column form-group has-tooltip has-tooltip-arrow' data-tooltip="This table relates each pair of students' preferences quadrants to a value, which can be modified via a cell click. The higher the value, the better the pair is considered to work together.">
 					<label class='column is-4 control-label' for='textinput'>Synergies Table</label>  
-					<div class='control' style='margin: auto' id="modalSynergies-table_professor_dash"></div>
+					<div class='control' style='margin: auto' id="modalSynergiesTable_professor_dash"></div>
 				</div>
-				<div class="column">
-					<button class='button is-fullwidth is-fullheight is-info' id='modalSynergies-table-save-button_professor_dash'>Save Table</button>
+				<div class="column" >
+					<button class='button is-fullwidth is-fullheight is-info' id='modalSynergiesTable-save-button_professor_dash'>Save Table</button>
 				</div>
 			</div>
 			
@@ -642,7 +662,6 @@
 src='https://code.jquery.com/jquery-3.2.1.min.js'
 integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='
 crossorigin='anonymous'></script>
-<script src="https://kit.fontawesome.com/cdbfc7205f.js" crossorigin="anonymous"></script>
 <script src='https://d3js.org/d3.v5.js' crossorigin='anonymous'></script>
 <script src='https://unpkg.com/d3-force-attract@latest' crossorigin='anonymous'></script>
 <!-- <script src='{% static 'js/color.js' %}' crossorigin='anonymous'></script> -->
@@ -728,6 +747,8 @@ crossorigin='anonymous'></script>
 		
 		
 		
+		
+		//synergy tables stuff
 		var addSynergyTableLine = function(line, domTable, colElems, isRemovable){
 			var rowContent = $('<div class=\'row columns is-variable\'></div>');
 			if(isRemovable){
@@ -829,20 +850,20 @@ crossorigin='anonymous'></script>
 					success: 
 						function(response) {
 							var textualTbl = response['textualTbl'];
-							$('#modalSynergies-table_professor_dash').empty();
-							sngTableStrToDom(textualTbl, $('#modalSynergies-table_professor_dash'));
+							$('#modalSynergiesTable_professor_dash').empty();
+							sngTableStrToDom(textualTbl, $('#modalSynergiesTable_professor_dash'));
 						}
 				}
 			);
 		};
 
-		$('#modalSynergies-table-save-button_professor_dash').click(function(){
+		$('#modalSynergiesTable-save-button_professor_dash').click(function(){
 			$.ajax(
 				{
 					type: 'POST',
 					url: '/saveSynergiesTable/',
 					dataType: 'json',
-					data: {'textualTbl': sngTableDomToStr($('#modalSynergies-table_professor_dash'))}
+					data: {'textualTbl': sngTableDomToStr($('#modalSynergiesTable_professor_dash'))}
 				}
 			);
 		});
@@ -852,8 +873,133 @@ crossorigin='anonymous'></script>
 		});
 
 
+		var currConstraintId = 0;
+		var usersSelectedForConstraint = [];
+		var currConstraintType = 0;
+		var currCsts = [];
+		var generateODPIPUsrTableFromArray = function(idArray, tagClass, highlightedTabClass){
+		    var table = $('<div></div>');
+		    for(var i=0; i < idArray.length; i++){
+		        
+		        var tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>").text(idArray[i]);
+		        tag.click(function(){
+					if($(this).hasClass(tagClass)){
+						$(this).removeClass(tagClass);
+						$(this).addClass(highlightedTabClass);
+						usersSelectedForConstraint.push($(this).text());
+					}else{
+						$(this).addClass(tagClass);
+						$(this).removeClass(highlightedTabClass);
+						usersSelectedForConstraint.splice(
+							usersSelectedForConstraint.indexOf($(this).text())
+						, 1);
+					}
+		        })
+		        
+				tag.attr('elemID', idArray[i]);
+				tag.addClass('tag');
+				tag.addClass(tagClass);
+				tag.addClass('is-medium');
+				tag.addClass('is-rounded');
+				table.append(tag);
+				tag.show(135);
+		    }
+		    return table;
+		};
+		var generateODPIPTypeTableFromArray = function(tagClass, highlightedTabClass){
+		    var table = $('<div></div>');
+		    var elemArray = [
+				`<i class="fa-solid fa-people-group"></i>`,
+				`<i class="fa-solid fa-people-arrows-left-right"></i>`
+		    ];
+		    for(var i=0; i < elemArray.length; i++){
+		        var tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>")
+		        tag.append(elemArray[i]);
+		        
+		        tag.attr('elemID',i);
+		        tag.click(function(){
+					var buttons = $(tag).children();
+					for(var j=0; j< buttons.length; j++){
+						var currElem = buttons[j];
+						$(currElem).removeClass(tagClass);
+						
+					}
+					
+					$(this).addClass(highlightedTabClass);
+					currConstraintType = $(this).attr("elemID");
+		        })
+		        
+				tag.addClass('tag');
+				tag.addClass(tagClass);
+				tag.addClass('is-medium');
+				tag.addClass('is-rounded');
+				table.append(tag);
+				tag.show(135);
+		    }
+		    return table;
+		};
+		var generateODPIPCstTableFromArray = function(idArray, tagClass){
+		    var table = $('<div></div>');
+		    for(var i=0; i < idArray.length+1; i++){
+		        
+		        var tag = undefined;
+		        if(i<idArray.length){
+		        	tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>").text(idArray[i]);
+		        	tag.append("<br></br>")
+			            var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this task'></div>");
+			            deleteButton.append('<button style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash pointer\'></i></button>');
+			            tag.append(deleteButton);
+		            
+		        }else{
+					tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'>").text(idArray[i]);
+					var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Add new task'></div>");
+					addButton.append('<button style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-plus-circle\'></i></button>');
+					addButton.click(function(){
+					
+						if($(this).hasClass(tagClass)){
+							$(this).removeClass(tagClass);
+							$(this).addClass(highlightedTabClass);
+							
+							var newCst = {'type': currConstraintType, 'students': usersSelectedForConstraint};
+							currCsts.push(newCst);
+							
+							var csTag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'>").text(newCst);
+							if(currConstraintType==0){
+								csTag.append(`<i class=\'fas fa-people-group\'></i>`);
+							}else{
+								csTag.append(`<i class=\'fas fa-people-arrows-left-right\'></i>`);
+							}
+							$('constODPIPTable_professor_dash').append(csTag);
+							
+						}else{
+							$(this).addClass(tagClass);
+							$(this).removeClass(highlightedTabClass);
+						}
+						
+					});
+				
+					tag.append(addButton);
+		        }
+
+		        if(tag != undefined){
+			        tag.attr('elemID', idArray[i]);
+			        tag.addClass('tag');
+			        tag.addClass(tagClass);
+			        tag.addClass('is-medium');
+			        tag.addClass('is-rounded');
+			        table.append(tag);
+			        tag.show(135);
+			    }
+		    }
+		    return table;
+		};
+
+
+		
+		
+		
 		var generateDashTableFromArray = function(canAdd, idArray, nameArray, tagClass, moveButtonIconClass, moveElementUrl, moveElementArg, addElementURL, addElementArg, deleteElementUrl, deleteElementArg, editElementUrl, editElementArg){
-		    var table = $('<div>');
+		    var table = $('<div></div>');
 		    for(var i=0; i < idArray.length+1; i++){
 		        
 		        var tag = undefined;
@@ -914,7 +1060,7 @@ crossorigin='anonymous'></script>
 		};
 
 
-
+		
 
 		var fetchServerData = function(){
 			$.ajax(
@@ -1015,6 +1161,29 @@ crossorigin='anonymous'></script>
 								$('#selectedUsersTable_professor_dash').empty();
 								$('#selectedUsersTable_professor_dash').append(suTable);
 
+								
+								
+								
+								var odpipUsrTable = generateODPIPUsrTableFromArray(
+												currSelectedUsers, 'is-white', 'is-info'
+											);
+								$('#cstUsersODPIPTable_professor_dash').empty();
+								$('#cstUsersODPIPTable_professor_dash').append(odpipUsrTable);
+								
+								var odpipTypeTable = generateODPIPTypeTableFromArray(
+												'is-white', 'is-info'
+											);
+								$('#cstTypeODPIPTable_professor_dash').empty();
+								$('#cstTypeODPIPTable_professor_dash').append(odpipTypeTable);
+									
+								var odpipCstTable = generateODPIPCstTableFromArray(
+												currCsts, 'is-info'
+											);
+								$('#cstODPIPTable_professor_dash').empty();
+								$('#cstODPIPTable_professor_dash').append(odpipCstTable);
+								
+								
+								
 								var currFreeTasks = unformattedStringToObj(newServerState.currFreeTasks);
 								var currSelectedTasks = unformattedStringToObj(newServerState.currSelectedTasks);
 
