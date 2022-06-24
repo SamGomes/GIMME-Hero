@@ -585,7 +585,7 @@
 				
 				<div class='panel-block dash-cell-box'>
 					<div class='column'>
-						<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Student Constraints</div>
+						<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Constraints</div>
 						<div class='table-container'>
 							<div class='table' style='margin:2em;' id='cstODPIPTable_professor_dash'></div>
 						</div>
@@ -883,7 +883,7 @@ crossorigin='anonymous'></script>
 		var currConstraintId = 0;
 		var usersSelectedDOMElems = [];
 		var currCstTypeDOMElem = undefined;
-		var currCsts = [];
+		var currCsts = { 'joint': [], 'separated': [] };
 		
 		var cstsToStr = function(currCstr){
 		};
@@ -929,7 +929,7 @@ crossorigin='anonymous'></script>
 		        var tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>")
 		        tag.append(elemArray[i]);
 		        
-		        tag.attr('elemID',i);
+		        tag.attr('cstType', (i==0)? 'joint': 'separated');
 		        tag.attr('tagClass',tagClass);
 		        tag.attr('highlightedTagClass',highlightedTagClass);
 		        tag.click(function(){
@@ -948,17 +948,23 @@ crossorigin='anonymous'></script>
 				tag.addClass('is-rounded');
 				table.append(tag);
 				tag.show(135);
+				
+				if(i==0){
+					currCstTypeDOMElem = tag;
+				}
 		    }
 		    return table;
 		};
-		var generateODPIPCstTableFromArray = function(idArray, tagClass){
+		var generateODPIPCstTableFromArray = function(cstArray, tagClass){
 		    var table = $('<div></div>');
-		    for(var i=0; i < idArray.length+1; i++){
+		    
+		    var allCst = cstArray['joint'].concat(cstArray['separated']);
+		    for(var i=0; i < allCst.length+1; i++){
 		        var tag = undefined;
-		        if(i<idArray.length){
-		        	tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>").text(idArray[i]);
+		        if(i < allCst.length){
+		        	tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>").text(allCst[i]);
 		        }else{
-					tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'>").text(idArray[i]);
+					tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>").text(allCst[i]);
 					var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Add new task'></div>");
 					addButton.append('<button style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-plus-circle\'></i></button>');
 					addButton.click(function(){
@@ -967,31 +973,25 @@ crossorigin='anonymous'></script>
 						}
 						
 						var usersSelectedForConstraint = [];
-						for(u=0; u<usersSelectedDOMElems.length; u++){
+						for(var u=0; u<usersSelectedDOMElems.length; u++){
 							var currElem = usersSelectedDOMElems[u];
 							usersSelectedForConstraint.push(currElem.text());
 							$(currElem).removeClass(currElem.attr('highlightedTagClass'));
 							$(currElem).addClass(currElem.attr('tagClass'));
 						}
 						
-						var buttons = $($(currCstTypeDOMElem).parent()).children();
-						for(var j=0; j< buttons.length; j++){
-							var currElem = buttons[j];
-							$(currElem).removeClass(currElem.attr('highlightedTagClass'));
-							$(currElem).addClass(currElem.attr('tagClass'));
-						}
-						$(currCstTypeDOMElem).addClass($(currCstTypeDOMElem).attr('highlightedTagClass'));
-						var currConstraintType = $(currCstTypeDOMElem).attr('elemID');
-						
-						var newCst = {'type': currConstraintType, 'students': usersSelectedForConstraint};
-						currCsts.push(newCst);
+// 						var buttons = $($(currCstTypeDOMElem).parent()).children();
+// 						for(var j=0; j< buttons.length; j++){
+// 							var currElem = buttons[j];
+// 							$(currElem).removeClass(currElem.attr('highlightedTagClass'));
+// 							$(currElem).addClass(currElem.attr('tagClass'));
+// 						}
+// 						$(currCstTypeDOMElem).addClass($(currCstTypeDOMElem).attr('highlightedTagClass'));
+						var currConstraintType = $(currCstTypeDOMElem).attr('cstType');
+						currCsts[currConstraintType].push(usersSelectedForConstraint);
 
-						var csTag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'>")
-						if(currConstraintType==0){
-							csTag.append(`<i class=\'fas fa-people-group\'></i>`);
-						}else{
-							csTag.append(`<i class=\'fas fa-people-arrows-left-right\'></i>`);
-						}
+						var csTag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>");
+						csTag.append($($(currCstTypeDOMElem).children()[0]).clone());
 						csTag.append("<p>&nbsp;&nbsp;"+usersSelectedForConstraint+"</p>");
 						csTag.attr('elemID', i);
 						csTag.addClass('tag');
@@ -1001,18 +1001,26 @@ crossorigin='anonymous'></script>
 						$('#cstODPIPTable_professor_dash').append(csTag);
 						csTag.show(135);
 						
+						var deleteButton = $('<button style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash\'></i></button>');
+						deleteButton.click(function(){
+							var cstArray = currCsts[$($(this).parent()).attr('cstType')];
+							currCsts[$(this).attr('cstType')] = 
+								cstArray.splice(
+									cstArray.indexOf(currCsts[$(this).text()])
+								, 1);
+						});
+						csTag.append(deleteButton);
 						
+						
+						console.log(currCsts);
 						currConstraintId = 0;
 						usersSelectedDOMElems = [];
 						currConstraintType = 0;
-						
-						
-			        
 					});
 					tag.append(addButton);
 		        }
 
-		        if(tag != undefined){
+				if(tag != undefined){
 			        tag.attr('elemID', i);
 			        tag.addClass('tag');
 			        tag.addClass(tagClass);
