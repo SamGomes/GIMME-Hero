@@ -587,7 +587,11 @@
 					<div class='column'>
 						<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Constraints</div>
 						<div class='table-container'>
-							<div class='table' style='margin:2em;' id='cstODPIPTable_professor_dash'></div>
+							<div class='table' style='margin:2em;'>
+								<div id='jointCstODPIPTable_professor_dash'></div>
+								<div id='separatedCstODPIPTable_professor_dash'></div>
+								<div id='cstODPIPTable_professor_dash'></div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -880,13 +884,24 @@ crossorigin='anonymous'></script>
 		});
 
 
-		var currConstraintId = 0;
+		
+		
+		
 		var usersSelectedDOMElems = [];
 		var currCstTypeDOMElem = undefined;
 		var currCsts = { 'joint': [], 'separated': [] };
 		
-		var cstsToStr = function(currCstr){
+		var processCstArray = function(cst){
+			return JSON.stringify(cst)
+				.replace('[[','[')
+				.replace(']]',']')
+				.replace('],[','];[');
 		};
+		
+		var processedCsts = function(currCstr){
+			return { 'joint': processCstArray(currCstr['joint']), 'separated': processCstArray(currCstr['separated']) };
+		};
+		
 		
 		var generateODPIPUsrTableFromArray = function(idArray, tagClass, highlightedTagClass){
 		    var table = $('<div></div>');
@@ -980,40 +995,45 @@ crossorigin='anonymous'></script>
 							$(currElem).addClass(currElem.attr('tagClass'));
 						}
 						
-// 						var buttons = $($(currCstTypeDOMElem).parent()).children();
-// 						for(var j=0; j< buttons.length; j++){
-// 							var currElem = buttons[j];
-// 							$(currElem).removeClass(currElem.attr('highlightedTagClass'));
-// 							$(currElem).addClass(currElem.attr('tagClass'));
-// 						}
-// 						$(currCstTypeDOMElem).addClass($(currCstTypeDOMElem).attr('highlightedTagClass'));
+						
 						var currConstraintType = $(currCstTypeDOMElem).attr('cstType');
 						currCsts[currConstraintType].push(usersSelectedForConstraint);
 
 						var csTag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>");
+						csTag.attr('cstType', currConstraintType);
 						csTag.append($($(currCstTypeDOMElem).children()[0]).clone());
 						csTag.append("<p>&nbsp;&nbsp;"+usersSelectedForConstraint+"</p>");
-						csTag.attr('elemID', i);
+						csTag.attr('elemID', usersSelectedForConstraint);
 						csTag.addClass('tag');
 						csTag.addClass(tagClass);
 						csTag.addClass('is-medium');
 						csTag.addClass('is-rounded');
-						$('#cstODPIPTable_professor_dash').append(csTag);
+						if(currConstraintType == 'joint'){
+							$('#jointCstODPIPTable_professor_dash').append(csTag);
+						}else if(currConstraintType == 'separated'){
+							$('#separatedCstODPIPTable_professor_dash').append(csTag);
+						}else{
+							$('#cstODPIPTable_professor_dash').append(csTag);
+						}
 						csTag.show(135);
 						
 						var deleteButton = $('<button style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash\'></i></button>');
 						deleteButton.click(function(){
-							var cstArray = currCsts[$($(this).parent()).attr('cstType')];
-							currCsts[$(this).attr('cstType')] = 
-								cstArray.splice(
-									cstArray.indexOf(currCsts[$(this).text()])
-								, 1);
+							var cstDOMElem = $(this).parent();
+							var cstArray = currCsts[$(cstDOMElem).attr('cstType')];
+							
+							var index = $(cstDOMElem).eq();
+							
+							cstArray.splice(index, 1);
+							$(cstDOMElem).remove();
+							
+							console.log(index);
+							console.log(processCstArray(currCsts));
 						});
 						csTag.append(deleteButton);
 						
+						console.log(processCstArray(currCsts));
 						
-						console.log(currCsts);
-						currConstraintId = 0;
 						usersSelectedDOMElems = [];
 						currConstraintType = 0;
 					});
@@ -1034,6 +1054,10 @@ crossorigin='anonymous'></script>
 		};
 
 
+		
+		
+		
+		
 		
 		
 		
@@ -1260,11 +1284,7 @@ crossorigin='anonymous'></script>
 								$('#selectedTasksTable_professor_dash').append(stTable);
 
 								newServerState.studentsStates = JSON.parse(studentsStates);
-// 									if(currServerState.studentStates != undefined)
-// 										console.log(currServerState.studentsStates["Ash"])
-// 									console.log(newServerState.studentsStates["Ash"])
 								currServerState = newServerState;
-// 									console.log("------")
 
 								
 								$('#groupsPlot_professor_dash').empty();
@@ -1357,6 +1377,9 @@ crossorigin='anonymous'></script>
 
 
 		var loadAndStartAdaptation = function(){
+			
+			var processedCtrs = processedCsts(currCsts)
+			
 			newAdaptationConfig = {
 				'selectedGenAlgId': $('#selectedGenAlgId_professor_dash').text(), 
 				'selectedRegAlgId': $('#selectedRegAlgId_professor_dash').text(),
@@ -1382,8 +1405,9 @@ crossorigin='anonymous'></script>
 				'numberOfEvolutionsPerIteration': $('#numberOfEvolutionsPerIteration_professor_dash').val(),
 				'numChildrenPerIteration': $('#numChildrenPerIteration_professor_dash').val(),
 				'numSurvivors': $('#numSurvivors_professor_dash').val(),
-				'jointPlayerConstraints': $('#jointPlayerConstraintsId_professor_dash').val(),
-				'separatedPlayerConstraints': $('#separatedPlayerConstraintsId_professor_dash').val(),
+				
+				'jointPlayerConstraints': processedCtrs['joint'],
+				'separatedPlayerConstraints': processedCtrs['separated'],
 
 
 
