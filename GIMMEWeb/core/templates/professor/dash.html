@@ -1008,6 +1008,7 @@ crossorigin='anonymous'></script>
 						csTag.addClass(tagClass);
 						csTag.addClass('is-medium');
 						csTag.addClass('is-rounded');
+						
 						if(currConstraintType == 'joint'){
 							$('#jointCstODPIPTable_professor_dash').append(csTag);
 						}else if(currConstraintType == 'separated'){
@@ -1015,6 +1016,7 @@ crossorigin='anonymous'></script>
 						}else{
 							$('#cstODPIPTable_professor_dash').append(csTag);
 						}
+						
 						csTag.show(135);
 						
 						var deleteButton = $('<button style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash\'></i></button>');
@@ -1022,7 +1024,7 @@ crossorigin='anonymous'></script>
 							var cstDOMElem = $(this).parent();
 							var cstArray = currCsts[$(cstDOMElem).attr('cstType')];
 							
-							var index = $(cstDOMElem).eq();
+							var index = $(cstDOMElem).index();
 							
 							cstArray.splice(index, 1);
 							$(cstDOMElem).remove();
@@ -1032,6 +1034,7 @@ crossorigin='anonymous'></script>
 						});
 						csTag.append(deleteButton);
 						
+						console.log(currCsts);
 						console.log(processCstArray(currCsts));
 						
 						usersSelectedDOMElems = [];
