@@ -587,10 +587,10 @@
 					<div class='column'>
 						<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Constraints</div>
 						<div class='table-container'>
-							<div class='table' style='margin:2em;'>
-								<div id='jointCstODPIPTable_professor_dash'></div>
-								<div id='separatedCstODPIPTable_professor_dash'></div>
-								<div id='cstODPIPTable_professor_dash'></div>
+							<div class='table' style='margin:2em;' id='cstODPIPTable_professor_dash'>
+								<div class='table' style='margin:2em;' id='jointCstODPIPTable_professor_dash'></div>
+								<div class='table' style='margin:2em;' id='separatedCstODPIPTable_professor_dash'></div>
+								<div class='table' style='margin:2em;' id='addCstODPIPTable_professor_dash'></div>
 							</div>
 						</div>
 					</div>
@@ -970,19 +970,91 @@ crossorigin='anonymous'></script>
 		    }
 		    return table;
 		};
+		
+		var appendCstTag = function(tagClass, usersSelectedForConstraint, currConstraintType, jointTable, sepTable){
+			
+			var csTag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>");
+			csTag.attr('cstType', currConstraintType);
+			
+			var tagArray = [
+				`<i class="fa-solid fa-people-group"></i>`,
+				`<i class="fa-solid fa-people-arrows-left-right"></i>`
+			];
+			
+			csTag.append(tagArray[(currConstraintType == 'joint')? 0: 1]);
+			csTag.append("<p>&nbsp;&nbsp;"+usersSelectedForConstraint+"</p>");
+			csTag.attr('elemID', usersSelectedForConstraint);
+			csTag.addClass('tag');
+			csTag.addClass(tagClass);
+			csTag.addClass('is-medium');
+			csTag.addClass('is-rounded');
+			
+			if(currConstraintType == 'joint'){
+				$('#jointCstODPIPTable_professor_dash').append(csTag);
+			}else if(currConstraintType == 'separated'){
+				$('#separatedCstODPIPTable_professor_dash').append(csTag);
+			}
+			
+			csTag.show(135);
+			
+			var deleteButton = $('<button style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash\'></i></button>');
+			deleteButton.click(function(){
+				var cstDOMElem = $(this).parent();
+				var cstArray = currCsts[$(cstDOMElem).attr('cstType')];
+				
+				var index = $(cstDOMElem).index();
+				
+				cstArray.splice(index, 1);
+				$(cstDOMElem).remove();
+				/*
+				console.log(index);
+				console.log(processCstArray(currCsts));*/
+			});
+			csTag.append(deleteButton);
+			/*
+			console.log(currCsts);
+			console.log(processCstArray(currCsts));*/
+			
+			
+			csTag.attr('elemID', i);
+			csTag.addClass('tag');
+			csTag.addClass(tagClass);
+			csTag.addClass('is-medium');
+			csTag.addClass('is-rounded');
+			if(currConstraintType == 'joint'){
+				$(jointTable).append(csTag);
+			}else if(currConstraintType == 'separated'){
+				$(sepTable).append(csTag);
+			}else{
+				console.log("errorrrrrrrrrrrrrrrr")
+			}
+			csTag.show(135);
+			return csTag
+		}
+		
 		var generateODPIPCstTableFromArray = function(cstArray, tagClass){
-		    var table = $('<div></div>');
+		    var table = $(`<div></div>`);
+		    
+		    var jointTable = $('#jointCstODPIPTable_professor_dash');
+		    var sepTable = $('#separatedCstODPIPTable_professor_dash');
+		    var addButtonTable = $('#addCstODPIPTable_professor_dash');
+		    
+// 		    table.append(jointTable);
+// 		    table.append(sepTable);
+// 		    table.append(addButtonTable);
 		    
 		    var allCst = cstArray['joint'].concat(cstArray['separated']);
 		    for(var i=0; i < allCst.length+1; i++){
 		        var tag = undefined;
 		        if(i < allCst.length){
-		        	tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>").text(allCst[i]);
+					var currConstraintType = (i < cstArray['joint'].length)? 'joint': 'separated';
+					appendCstTag(tagClass, allCst[i], currConstraintType, jointTable, sepTable);
 		        }else{
 					tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>").text(allCst[i]);
 					var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Add new task'></div>");
 					addButton.append('<button style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-plus-circle\'></i></button>');
 					addButton.click(function(){
+						
 						if(usersSelectedDOMElems.length < 2){
 							return;
 						}
@@ -995,63 +1067,24 @@ crossorigin='anonymous'></script>
 							$(currElem).addClass(currElem.attr('tagClass'));
 						}
 						
-						
 						var currConstraintType = $(currCstTypeDOMElem).attr('cstType');
 						currCsts[currConstraintType].push(usersSelectedForConstraint);
 
-						var csTag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>");
-						csTag.attr('cstType', currConstraintType);
-						csTag.append($($(currCstTypeDOMElem).children()[0]).clone());
-						csTag.append("<p>&nbsp;&nbsp;"+usersSelectedForConstraint+"</p>");
-						csTag.attr('elemID', usersSelectedForConstraint);
-						csTag.addClass('tag');
-						csTag.addClass(tagClass);
-						csTag.addClass('is-medium');
-						csTag.addClass('is-rounded');
-						
-						if(currConstraintType == 'joint'){
-							$('#jointCstODPIPTable_professor_dash').append(csTag);
-						}else if(currConstraintType == 'separated'){
-							$('#separatedCstODPIPTable_professor_dash').append(csTag);
-						}else{
-							$('#cstODPIPTable_professor_dash').append(csTag);
-						}
-						
-						csTag.show(135);
-						
-						var deleteButton = $('<button style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash\'></i></button>');
-						deleteButton.click(function(){
-							var cstDOMElem = $(this).parent();
-							var cstArray = currCsts[$(cstDOMElem).attr('cstType')];
-							
-							var index = $(cstDOMElem).index();
-							
-							cstArray.splice(index, 1);
-							$(cstDOMElem).remove();
-							
-							console.log(index);
-							console.log(processCstArray(currCsts));
-						});
-						csTag.append(deleteButton);
-						
-						console.log(currCsts);
-						console.log(processCstArray(currCsts));
+						appendCstTag(tagClass, usersSelectedForConstraint, currConstraintType, jointTable, sepTable);
 						
 						usersSelectedDOMElems = [];
-						currConstraintType = 0;
+						currConstraintType = 'joint';
 					});
 					tag.append(addButton);
-		        }
-
-				if(tag != undefined){
-			        tag.attr('elemID', i);
+					
+					tag.attr('elemID', i);
 			        tag.addClass('tag');
 			        tag.addClass(tagClass);
 			        tag.addClass('is-medium');
 			        tag.addClass('is-rounded');
-			        table.append(tag);
+					$(addButtonTable).append(tag);
 			        tag.show(135);
-			    }
+		        }
 		    }
 		    return table;
 		};
@@ -1147,11 +1180,12 @@ crossorigin='anonymous'></script>
 								newServerState.studentsStates = JSON.parse(studentsStates);
 								
 								
-								if(studentsStates!= undefined && 
-									currServerState!={} && 
-									!canComputeAdaptation(newServerState)){
-									return;
-								}
+								
+// 								if(studentsStates!= undefined && 
+// 									currServerState!={} && 
+// 									!canComputeAdaptation(newServerState)){
+// 									return;
+// 								}
 
 								
 								readyForNewActivity = newServerState.readyForNewActivity;
@@ -1242,13 +1276,17 @@ crossorigin='anonymous'></script>
 								$('#cstTypeODPIPTable_professor_dash').empty();
 								$('#cstTypeODPIPTable_professor_dash').append(odpipTypeTable);
 									
+								
+// 								$('#cstODPIPTable_professor_dash').empty();
+								$('#jointCstODPIPTable_professor_dash').empty();
+								$('#separatedCstODPIPTable_professor_dash').empty();
+								$('#addCstODPIPTable_professor_dash').empty();
+								usersSelectedDOMElems = [];
+								currConstraintType = 'joint';
 								var odpipCstTable = generateODPIPCstTableFromArray(
 												currCsts, 'is-info'
 											);
-								$('#cstODPIPTable_professor_dash').empty();
-								$('#jointCstODPIPTable_professor_dash').empty();
-								$('#separatedCstODPIPTable_professor_dash').empty();
-								$('#cstODPIPTable_professor_dash').append(odpipCstTable);
+// 								$('#cstODPIPTable_professor_dash').append(odpipCstTable);
 								
 								
 								
@@ -1305,7 +1343,7 @@ crossorigin='anonymous'></script>
 		};
 
 		fetchServerData();
-		setInterval(fetchServerData, 1000);
+		setInterval(fetchServerData, 5000);
 
 
 		var buildPlots = function(currServerState){
