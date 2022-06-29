@@ -588,9 +588,6 @@
 						<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Constraints</div>
 						<div class='table-container'>
 							<div class='table' style='margin:2em;' id='cstODPIPTable_professor_dash'>
-								<div class='table' style='margin:2em;' id='jointCstODPIPTable_professor_dash'></div>
-								<div class='table' style='margin:2em;' id='separatedCstODPIPTable_professor_dash'></div>
-								<div class='table' style='margin:2em;' id='addCstODPIPTable_professor_dash'></div>
 							</div>
 						</div>
 					</div>
@@ -1035,13 +1032,13 @@ crossorigin='anonymous'></script>
 		var generateODPIPCstTableFromArray = function(cstArray, tagClass){
 		    var table = $(`<div></div>`);
 		    
-		    var jointTable = $('#jointCstODPIPTable_professor_dash');
-		    var sepTable = $('#separatedCstODPIPTable_professor_dash');
-		    var addButtonTable = $('#addCstODPIPTable_professor_dash');
+		    var jointTable = $(`<div class='table' style='margin:2em;' id='jointCstODPIPTable_professor_dash'></div>`);
+		    var sepTable = $(`<div class='table' style='margin:2em;' id='separatedCstODPIPTable_professor_dash'></div>`);
+		    var addButtonTable = $(`<div class='table' style='margin:2em;' id='addCstODPIPTable_professor_dash'></div>`);
 		    
-// 		    table.append(jointTable);
-// 		    table.append(sepTable);
-// 		    table.append(addButtonTable);
+		    table.append(jointTable);
+		    table.append(sepTable);
+		    table.append(addButtonTable);
 		    
 		    var allCst = cstArray['joint'].concat(cstArray['separated']);
 		    for(var i=0; i < allCst.length+1; i++){
@@ -1179,14 +1176,11 @@ crossorigin='anonymous'></script>
 							{
 								newServerState.studentsStates = JSON.parse(studentsStates);
 								
-								
-								
-// 								if(studentsStates!= undefined && 
-// 									currServerState!={} && 
-// 									!canComputeAdaptation(newServerState)){
-// 									return;
-// 								}
-
+								if(studentsStates!= undefined && 
+									currServerState!={} && 
+									!canComputeAdaptation(newServerState)){
+									return;
+								}
 								
 								readyForNewActivity = newServerState.readyForNewActivity;
 								if(readyForNewActivity){
@@ -1277,16 +1271,13 @@ crossorigin='anonymous'></script>
 								$('#cstTypeODPIPTable_professor_dash').append(odpipTypeTable);
 									
 								
-// 								$('#cstODPIPTable_professor_dash').empty();
-								$('#jointCstODPIPTable_professor_dash').empty();
-								$('#separatedCstODPIPTable_professor_dash').empty();
-								$('#addCstODPIPTable_professor_dash').empty();
+								$('#cstODPIPTable_professor_dash').empty();
 								usersSelectedDOMElems = [];
 								currConstraintType = 'joint';
 								var odpipCstTable = generateODPIPCstTableFromArray(
 												currCsts, 'is-info'
 											);
-// 								$('#cstODPIPTable_professor_dash').append(odpipCstTable);
+								$('#cstODPIPTable_professor_dash').append(odpipCstTable);
 								
 								
 								
@@ -1343,7 +1334,7 @@ crossorigin='anonymous'></script>
 		};
 
 		fetchServerData();
-		setInterval(fetchServerData, 5000);
+		setInterval(fetchServerData, 1000);
 
 
 		var buildPlots = function(currServerState){
