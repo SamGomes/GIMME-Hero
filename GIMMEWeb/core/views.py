@@ -763,17 +763,24 @@ class Views(): #acts as a namespace
 
 		selectedRegAlgId = newConfigParams['selectedRegAlgId']
 		# selectedRegAlg = None
-		if (selectedRegAlgId =='KNN'):
+		print(newConfigParams)
+		if (selectedRegAlgId =='K-Nearest-Neighbors (KNN)'):
 			selectedRegAlg = selectedRegAlgSwitcherKNN(request)
 			persEstRegAlg = selectedRegAlg
-		elif (selectedRegAlgId == 'Synergy Between Students'):
+		elif (selectedRegAlgId == 'KNN w/ Synergy Between Students'):
 			selectedRegAlg = selectedRegAlgSwitcherSynergy(request)
-			persEstRegAlg = selectedRegAlgSwitcherKNN(request)
+			persEstRegAlg = KNNRegression( 
+				playerBridge, 
+				int(newConfigParams['synergiesNumNNs']),
+				qualityWeights = PlayerCharacteristics(
+					ability = float(newConfigParams['synergiesQualityWeightsAb']), 
+					engagement = float(newConfigParams['synergiesQualityWeightsEng'])
+				)
+			)
 
 
 		selectedGenAlg = {}
 		def selectedGenAlgSwitcherRandom(request):
-			# print('RRRRRRRRRRRRRRRRR')
 			return RandomConfigsGen(
 				playerModelBridge = playerBridge, 
 				interactionsProfileTemplate = intProfTemplate.generateCopy(),
