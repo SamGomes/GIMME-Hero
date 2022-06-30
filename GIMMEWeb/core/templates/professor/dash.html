@@ -311,7 +311,7 @@
 												</div>
 											</div>
 											<div>
-												<button class="button modal-button" data-target="modalPRS_professor_dash">Configure...</button>
+												<button class="button modal-button is-small is-rounded" data-target="modalPRS_professor_dash">Configure...</button>
 											</div>
 										</a>
 										<!--<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
@@ -333,7 +333,7 @@
 												</div>
 											</div>
 											<div>
-												<button class="button modal-button" data-target="modalAnnealedPRS_professor_dash">Configure...</button>
+												<button class="button modal-button is-small is-rounded" data-target="modalAnnealedPRS_professor_dash">Configure...</button>
 											</div>
 										</a>-->
 										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
@@ -363,7 +363,7 @@
 												</div>
 											</div>
 											<div>
-												<button class="button modal-button" data-target="modalEvolutionary_professor_dash">Configure...</button>
+												<button class="button modal-button is-small is-rounded" data-target="modalEvolutionary_professor_dash">Configure...</button>
 											</div>
 										</a>
 										<a class='dropdown-item is-active' data-tooltip='See GIMME-API for details'>
@@ -393,7 +393,7 @@
 												</div>
 											</div>
 											<div>
-												<button class="button modal-button" data-target="modalODPIP_professor_dash">Configure...</button>
+												<button class="button modal-button is-small is-rounded" data-target="modalODPIP_professor_dash">Configure...</button>
 											</div>
 										</a>
 										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
@@ -446,7 +446,7 @@
 											KNN
 											<div class='column'></div>
 											<div class='form-group'>
-												<button class="button modal-button" data-target="modalKNN_professor_dash">Configure...</button>
+												<button class="button modal-button is-small is-rounded" data-target="modalKNN_professor_dash">Configure...</button>
 											</div>
 										</a>
 										<a class='dropdown-item'>
@@ -459,7 +459,7 @@
 											Synergy Between Students
 											<div class='column'></div>
 											<div class='form-group'>
-												<button class="button modal-button" id='modalSynergies-button_professor_dash' data-target="modalSynergies_professor_dash">Configure...</button>
+												<button class="button modal-button is-small is-rounded" id='modalSynergies-button_professor_dash' data-target="modalSynergies_professor_dash">Configure...</button>
 											</div>
 										</a>
 									</div>
@@ -533,15 +533,15 @@
 
 				<div class='panel-block panel-block-borderless'>
 					<div id='adaptationError_professor_dash' class='section hero is-danger is-centered has-text-centered' style='width:100%'>
-						<label class='label subtitle is-4 is-white'>Adaptation Error! Tip: verify if enough players are selected. 
+						<label class='label subtitle is-4 is-white'>Group Formation Error! Tip: verify if enough students are selected. 
 						Maintaining old state...</label>
 					</div>
 					<div id='adaptationIssues_professor_dash' class='section hero is-warning is-centered has-text-centered' style='width:100%'>
-						<label class='label subtitle is-4 is-white'>Adaptation Issues Found: </label>
+						<label class='label subtitle is-4 is-white'>Group Formation Issues Found: </label>
 						<label id='adaptationIssuesText_professor_dash'></label>
 					</div>
 					<div id='adaptationInfo_professor_dash' class='section hero is-info is-centered has-text-centered' style='width:100%'>
-						<label id='adaptationInfoTitle_professor_dash' class='label subtitle is-4 is-white'>Adaptation Info: </label>
+						<label id='adaptationInfoTitle_professor_dash' class='label subtitle is-4 is-white'>Group Formation Info: </label>
 						<label id='adaptationInfoText_professor_dash'></label>
 					</div>
 				</div>
@@ -667,7 +667,6 @@
 								<input id='probOfMutationGIPs_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.4'>
 							</div>
 						</div>
-
 					</div>
 
 					<label class='column is-4 control-label' for='textinput'>Num. Evolutions Per Iteration</label>  
@@ -691,15 +690,19 @@
 		</div>
 		
 		
-		<div class="modal" id="modalODPIP_professor_dash">
-			<div class="modal-background"></div>
-			<div class="modal-content">
-				<div class="is-size-2">Configuration Options: ODPIP Search</div>
-				<div class="column"></div>
+		<div class='modal' id='modalODPIP_professor_dash'>
+			<div class='modal-background'></div>
+			<div class='modal-content'>
+				<div class='is-size-2'>Configuration Options: ODPIP Search</div>
+				<div class='column'></div>
 				
-				<div class='subtitle has-tooltip-arrow' style='color:gray;'>Constraint Options</div>
+				<div class='subtitle' style='color:gray;'>Constraint Options</div>
 				
-				<div class='panel-block dash-cell-box'>	
+				<div id='constraintsError_professor_dash' class='section hero is-danger is-centered has-text-centered' style='width:100%'>
+					<label class='label subtitle is-4 is-white'>Constraint Creation Error! Please verify if at least two students are selected.</label>
+				</div>
+				
+				<div class='panel-block dash-cell-box has-tooltip-arrow' data-tooltip="To create a constraint, first select two or more students, and then the type of constraint (if they must be joint or separated). Afterwards, click on the '+' button to add the new constraint.">
 					<div class='column is-two-thirds'>
 						<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Students</div>
 						<div class='table-container'>
@@ -837,6 +840,9 @@ crossorigin='anonymous'></script>
 		$("#adaptationInfo_professor_dash").hide();
 		$("#adaptationIssuesText_professor_dash").html('');
 
+		$("#constraintsError_professor_dash").hide();
+
+				
 		var currServerState = {};
 		var currAdaptationConfig = {
 							'selectedGenAlgId': '',
@@ -1066,8 +1072,8 @@ crossorigin='anonymous'></script>
 		var generateODPIPTypeTableFromArray = function(tagClass, highlightedTagClass){
 		    var table = $('<div></div>');
 		    var elemArray = [
-				`<i class="fa-solid fa-people-group"></i>`,
-				`<i class="fa-solid fa-people-arrows-left-right"></i>`
+				`<i class="fa-solid fa-people-group" data-tooltip="Students must be joint."></i>`,
+				`<i class="fa-solid fa-people-arrows-left-right" data-tooltip="Students must be separated."></i>`
 		    ];
 		    for(var i=0; i < elemArray.length; i++){
 		        var tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>")
@@ -1180,11 +1186,14 @@ crossorigin='anonymous'></script>
 					appendCstTag(tagClass, allCst[i], currConstraintType, jointTable, sepTable);
 		        }else{
 					tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>").text(allCst[i]);
-					var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Add new task'></div>");
+					var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Create constraint.'></div>");
 					addButton.append('<button style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-plus-circle\'></i></button>');
 					addButton.click(function(){
 						
 						if(usersSelectedDOMElems.length < 2){
+							$('#constraintsError_professor_dash').show(500);
+							setTimeout(function(){ $('#constraintsError_professor_dash').hide(500); }, 5000);
+							
 							return;
 						}
 						
