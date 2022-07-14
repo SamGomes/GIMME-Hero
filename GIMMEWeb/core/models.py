@@ -1,3 +1,4 @@
+from email.policy import default
 import os
 import uuid
 from uuid import uuid4
@@ -61,11 +62,11 @@ class UserProfile(models.Model):
     fullName = models.CharField(max_length=1020)
     age = models.IntegerField()
     gender = MultiSelectField(choices=GENDER, max_choices=1)
-    description = models.TextField(max_length=1020)
+    description = models.TextField(max_length=3072)
 
 
-    currState = models.CharField(max_length=1500)
-    pastModelIncreasesDataFrame = models.CharField(max_length=1020)
+    currState = models.TextField(max_length=3072)
+    pastModelIncreasesDataFrame = models.TextField(max_length=3072)
     preferences = models.CharField(max_length=1020)
 
     
@@ -73,7 +74,7 @@ class UserProfile(models.Model):
     grade = models.CharField(max_length=1020)
 
 
-    avatar = models.ImageField(upload_to=ModelAuxMethods.pathAndRename('images/userAvatars/'))
+    avatar = models.ImageField(upload_to=ModelAuxMethods.pathAndRename('images/userAvatars/'), default='images/userAvatars/avatarPH.png')
 
 
     def __str__(self):
@@ -87,7 +88,7 @@ class Task(models.Model):
 
     creator = models.CharField(max_length=1020)
     creationTime = models.CharField(max_length=1020)
-    description = models.TextField(max_length=1020)
+    description = models.TextField(max_length=3072)
     minReqAbility = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
     profile = models.CharField(max_length=1020)
     
@@ -99,20 +100,20 @@ class Task(models.Model):
     finalDate = models.DateField()
 
 
-    files = models.FileField(upload_to=ModelAuxMethods.pathAndRename('taskFiles/'))
+    files = models.FileField(upload_to=ModelAuxMethods.pathAndRename('taskFiles/'), default='taskFiles/undefined2.pdf')
 
 
     def __str__(self):
         return self.taskId
 
 class ServerState(models.Model):
-    currAdaptationState = models.CharField(max_length=1020, default="[]")
+    currAdaptationState = models.TextField(max_length=3072, default="[]")
 
-    currSelectedUsers = models.CharField(max_length=1020, default="[]")
-    currFreeUsers = models.CharField(max_length=1020, default="[]")
+    currSelectedUsers = models.TextField(max_length=3072, default="[]")
+    currFreeUsers = models.TextField(max_length=3072, default="[]")
 
-    currSelectedTasks = models.CharField(max_length=1020, default="[]")
-    currFreeTasks = models.CharField(max_length=1020, default="[]")
+    currSelectedTasks = models.TextField(max_length=3072, default="[]")
+    currFreeTasks = models.TextField(max_length=3072, default="[]")
 
     readyForNewActivity = models.CharField(max_length=1020, default="false")
 

@@ -899,7 +899,7 @@ var buildScatterInteractionPlot  = function(canvasId, data){
 }
 
 
-var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined){
+var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined, step=undefined){
 
     var canvas = d3.select('#'+canvasId);
 
@@ -932,6 +932,8 @@ var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined){
         maxValue += 0.1*maxValue;
     }
 
+  
+
     var x = d3.scaleLinear()
         .range([margin.left, width])
         .domain([minValue, maxValue]);
@@ -942,9 +944,15 @@ var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined){
             return d.name;
         }));
 
-    var xAxis = d3.axisBottom(x)
-        .tickSize(-width);
+    var xAxis = d3.axisBottom(x);
         
+    if(step == undefined){
+        xAxis.tickSize(-width);
+    }
+    else{
+        xAxis.tickSize(step);
+    }
+
     var yAxis = d3.axisLeft(y)
         .tickSize(0);
 

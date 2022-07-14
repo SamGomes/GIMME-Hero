@@ -17,8 +17,70 @@
 			</div>
 		</section>
 	</div>
-
+	
+	{% if debug %}
 	<div id='dashboard'>
+		<section class='section' style="position: relative; z-index: 1000">
+			<div class='panel animated zoomIn'>
+				<div class='panel-heading'>
+					<div class='columns is-mobile is-vcentered'>
+						<div class='column'>
+							Simulations
+							<div class='is-pulled-right'>
+								<div class='button minimizerButton'></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class='panel-block'>
+					<div class='column is-half is-offset1 is-mobile'>
+						<div class='dash-cell-box'>
+							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='placeholder'>Dashboard</div>
+							<p>Simulation State</p>
+							<div class='columns is-mobile is-centered is-mobile'>
+								<div class='column is-7' id='simulationState_professor_dash'></div>
+							</div>
+							<div class='button' id='advanceSimulationButton_professor_dash'> Advance Simulation</div>
+							<div class='button' id='resetSimulationButton_professor_dash'> Reset Simulation</div>
+
+						</div>
+					</div>
+					<div class='column is-half is-offset1 is-mobile'>
+						<div class='dash-cell-box' style="overflow: visible;">
+							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='placeholder'>Storyline</div>
+							<div class='columns is-mobile is-multiline is-mobile'>
+								<div class='column'>
+								<div class='table' style='margin:2em;' id='storylineLog_professor_dash'>
+									<div id="simulationLog_professor_dash">
+
+									</div>
+									<div class="dropdown">
+										<div class="dropdown-trigger">
+											<button class='button' aria-haspopup='true' aria-controls='dropdownMenu1'>
+												<span>
+													Simulation Actions
+												</span>
+												<span class='icon is-small' >
+													<i class='fas fa-angle-down' aria-hidden='true'></i>
+												</span>
+											</button>
+										</div>
+										<div id="simulationAction_professor_dash">
+
+										</div>
+
+									</div>
+								</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>				
+		</section>
+		
+		{% endif %}
+
+
 		<section class='section danger'>
 			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
@@ -903,7 +965,13 @@ crossorigin='anonymous'></script>
 		});
 
 
-
+		buildStatePlot('simulationState_professor_dash', 
+				[
+					{ "name": "Week" , "value": 3 },
+				],
+				1,
+				10
+			);
 
 		$("#adaptationError_professor_dash").hide();
 		$("#adaptationIssues_professor_dash").hide();
@@ -958,9 +1026,93 @@ crossorigin='anonymous'></script>
 		$('#qualityWeightsEng_professor_dash').change(function(){
 			$('#qualityWeightsAb_professor_dash').val(1.0 - $(this).val())
 		});
+		
+		simulationWeekMessages = ["Create and register the tasks for the course. Share the platform link with the students, so they can sign up in the platform.",
+									"Select all students that will be considered when forming the groups. Select all tasks relating to week 1. Do an iteration of the algorithm and verify the formed groups. Evaluate Student_E and simulate evaluation for the rest.",
+									"Student_A will not be available this week, remove them from the selection. Select week 2's tasks. Iterate and simulate reaction.",
+									"Student_X cannot be in the same group as Student_Y, create the restriction so that Student_X and Student_Y are separated. Student_Y was misevaluated from last week, correct their ability value. Iterate and simulate reaction.",
+									"Student_Y was very engaged in the group project when working with Student_Z, create the restriction so that Student_Y and Student_Z are put together. Iterate and simulate reaction.",
+									"From this week onward, the course will accept new students from similar courses. Select the most appropriate grouping method to generate the groups for this week. Iterate and simulate reaction."]
 
 
+		dropdownItemsText = [["<a class=\'dropdown-item\'> Share link </a>","<a class=\'dropdown-item\'> Simulate task registration </a>"], ["<a class=\'dropdown-item\'> Simulate evaluation of students </a>"], ["<div class=\'dropdown-item\'> No actions available </div>"], ["<div class=\'dropdown-item\'> No actions available </div>"], ["<div class=\'dropdown-item\'> No actions available </div>"], ["<div class=\'dropdown-item\'> No actions available </div>"]];
+		dropdownItemsUrls = [['/shareLinkSim/', '/taskRegistrationSim/'], ['/evaluateSim/'], [],[],[],[]]
+		var changeSimulationWeek = function(newServerState)
+		{
+			week = newServerState.simWeek
+			console.log(week)
+			
+			if (week == 1){
+				console.log(simulationWeekMessages[week].replace("Student_E", newServerState.studentToEvaluate))
+				simulationWeekMessages[week] = simulationWeekMessages[week].replace("Student_E", newServerState.studentToEvaluate)
+			}	
 
+			if (week == 2){
+				console.log(newServerState.unavailableStudent)
+				simulationWeekMessages[week] = simulationWeekMessages[week].replace("Student_A", newServerState.unavailableStudent)
+			}
+
+			if (week == 3){
+				simulationWeekMessages[week] = simulationWeekMessages[week].replaceAll("Student_X", newServerState.studentX)
+				simulationWeekMessages[week] = simulationWeekMessages[week].replaceAll("Student_Y", newServerState.studentY)
+			}
+
+			if (week == 4){
+				simulationWeekMessages[week] = simulationWeekMessages[week].replaceAll("Student_Y", newServerState.studentY)
+				simulationWeekMessages[week] = simulationWeekMessages[week].replaceAll("Student_Z", newServerState.studentZ)
+			}
+		
+			var simulationLog = $("<div class=\'list\'> </div>");
+			for (var i = 0; i <= week; i++){
+				simulationLog.append("<div class=\'list-item\'>" + simulationWeekMessages[i] + "</div>");
+				simulationLog.show(135)
+			}
+			return simulationLog;
+		}
+
+		var changeSimulationDropdownActions = function(week)
+		{
+			var simulationDropdown = $("<div class=\'dropdown-menu\' role=\'menu\' style=\"height:5em; width:10em; overflow-y:scroll; display:block\"> </div>");
+			var simulationDropdownContent = $("<div class=\'dropdown-content\'> </div>");
+			for (var i = 0; i < dropdownItemsText[week].length; i++) {
+				var dropdownItem = $(dropdownItemsText[week][i]);
+				simulationDropdownContent.append(dropdownItem);
+				if (dropdownItemsText[week][i] == "<a class=\'dropdown-item\'> Share link </a>") {
+					dropdownItem.click(function(){
+						$.ajax(
+						{
+							type: 'POST',
+							url: '/shareLinkSim/',
+							data: {"numUsersToGenerate": 20, "minDelay": 1, "maxDelay": 5}
+						}
+						);
+					});
+				}
+				else if (dropdownItemsText[week][i] == "<a class=\'dropdown-item\'> Simulate task registration </a>") {
+					dropdownItem.click(function(){
+						$.ajax(
+						{
+							type: 'POST',
+							url: '/taskRegistrationSim/'
+						}
+						);
+					});
+				}
+				else if (dropdownItemsText[week][i] == "<a class=\'dropdown-item\'> Simulate evaluation of students </a>") {
+					dropdownItem.click(function(){
+						$.ajax(
+						{
+							type: 'POST',
+							url: '/evaluateSim/'
+						}
+						);
+					});
+				}
+			}
+			simulationDropdown.append(simulationDropdownContent);
+			return simulationDropdown;
+		}
+	
 		var canComputeAdaptation = function(newServerState){
 			return !(JSON.stringify(currServerState) === JSON.stringify(newServerState));
 		}
@@ -1378,12 +1530,11 @@ crossorigin='anonymous'></script>
 							{
 								newServerState.studentsStates = JSON.parse(studentsStates);
 								
-								if(studentsStates!= undefined && 
-									currServerState!={} && 
+								if(currServerState!={} && 
+									studentsStates != undefined && 
 									!canComputeAdaptation(newServerState)){
 									return;
 								}
-								
 								readyForNewActivity = newServerState.readyForNewActivity;
 								if(readyForNewActivity){
 
@@ -1434,6 +1585,11 @@ crossorigin='anonymous'></script>
 										$('#groupsPlotLegendTrigger_professor_dash').hide(500);
 								});
 
+								$('#simulationLog_professor_dash').empty();
+								$('#simulationLog_professor_dash').append(changeSimulationWeek(newServerState));
+
+								$('#simulationAction_professor_dash').empty();
+								$('#simulationAction_professor_dash').append(changeSimulationDropdownActions(newServerState.simWeek));
 
 								var currSelectedUsers = newServerState.currSelectedUsers;
 								var currFreeUsers = newServerState.currFreeUsers;
@@ -1482,10 +1638,11 @@ crossorigin='anonymous'></script>
 								$('#cstODPIPTable_professor_dash').append(odpipCstTable);
 								
 								
+								console.log(newServerState.currFreeTasks)
 								
 								var currFreeTasks = unformattedStringToObj(newServerState.currFreeTasks);
 								var currSelectedTasks = unformattedStringToObj(newServerState.currSelectedTasks);
-
+								
 
 								var currFreeTaskIds = [];
 								var currSelectedTaskIds = [];
@@ -1525,7 +1682,14 @@ crossorigin='anonymous'></script>
 								
 								$('#groupsPlot_professor_dash').empty();
 								
+<<<<<<< Updated upstream
 								buildPlots(currServerState);
+=======
+								if (currServerState.currAdaptationState != [])
+									buildPlots(currServerState);
+								
+								
+>>>>>>> Stashed changes
 							}
 						});
 					}
@@ -1729,6 +1893,25 @@ crossorigin='anonymous'></script>
 				buildGroupsPlot(false, 'groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
 			}
 		})
+
+		$('#advanceSimulationButton_professor_dash').click(function(){
+			$.ajax(
+			{
+				type: 'POST',
+				url: '/advanceSimWeek/'
+			}
+			);
+		});
+
+		$('#resetSimulationButton_professor_dash').click(function(){
+			$.ajax(
+			{
+				type: 'POST',
+				url: '/resetSimWeek/'
+			}
+			);
+		});
+
 	});
 	
 

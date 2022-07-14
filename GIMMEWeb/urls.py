@@ -58,7 +58,17 @@ urlpatterns = [
     
     
     re_path(r'^fetchSynergiesTable/', Views.fetchSynergiesTable, name='fetchSynergiesTable'),
-    re_path(r'^saveSynergiesTable/', Views.saveSynergiesTable, name='saveSynergiesTable')
+    re_path(r'^saveSynergiesTable/', Views.saveSynergiesTable, name='saveSynergiesTable'),
+
+    re_path(r'^resetSimWeek/', Views.resetSimWeek, name='resetSimWeek'),
+    re_path(r'^advanceSimWeek/', Views.advanceSimWeek, name='advanceSimWeek'),
+    re_path(r'^shareLinkSim/', Views.shareLinkSim, name='shareLinkSim'),
+    re_path(r'^taskRegistrationSim/', Views.taskRegistrationSim, name='taskRegistrationSim'),
+    re_path(r'^evaluateSim/', Views.evaluateSim, name='evaluateSim'),
+
+
+
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
