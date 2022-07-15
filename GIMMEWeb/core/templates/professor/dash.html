@@ -1256,7 +1256,7 @@ crossorigin='anonymous'></script>
 			return JSON.stringify(cst)
 				.replace('[[','[')
 				.replace(']]',']')
-				.replace('],[','];[');
+				.replaceAll('],[','];[');
 		};
 		
 		var processedCsts = function(currCstr){

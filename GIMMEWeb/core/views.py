@@ -935,6 +935,7 @@ class Views(): #acts as a namespace
 		def selectedGenAlgSwitcherODPIP(request):
 			print(newConfigParams['separatedPlayerConstraints'])
 			print(newConfigParams["jointPlayerConstraints"])
+			
 			return ODPIP(
 				playerModelBridge = playerBridge,
 				interactionsProfileTemplate = intProfTemplate.generateCopy(),
@@ -1441,6 +1442,7 @@ class Views(): #acts as a namespace
 
 				Views.userRegistration(httpRequest)
 
+			Views.initServer(request)
 			return HttpResponse('ok')
 
 		return HttpResponse('error')
@@ -1490,6 +1492,8 @@ class Views(): #acts as a namespace
 
 				Views.taskRegistration(httpRequest)
 
+
+			Views.initServer(request)
 			return HttpResponse('ok')
 
 		return HttpResponse('error')
