@@ -385,6 +385,12 @@ defaultConfigsAlg = RandomConfigsGen(
 				preferredNumberOfPlayersPerGroup = 4)
 adaptation.init(playerBridge, taskBridge, configsGenAlg = defaultConfigsAlg, name='GIMME')
 
+# sim flags
+
+isTaskCreated = False
+simWeekOneUsersEvaluated = False
+simSimulateReaction = False
+
 simulationWeek = 0
 simStudentToEvaluate = ""
 simUnavailableStudent = ""
@@ -492,6 +498,8 @@ class Views(): #acts as a namespace
 
 			Views.savePlayerCharacteristics(playerId, newState.characteristics.ability, newState.characteristics.engagement)
 
+		global simSimulateReaction
+		simSimulateReaction = True
 		return HttpResponse('ok')
 
 
@@ -801,6 +809,7 @@ class Views(): #acts as a namespace
 		global simStudentX
 		global simStudentY
 		global simStudentZ
+
 		if simulationWeek == 2:
 			simStudentX = currAdaptationState["groups"][0][0]
 			simStudentY = currAdaptationState["groups"][0][1]
@@ -1022,6 +1031,9 @@ class Views(): #acts as a namespace
 					currFreeTasks.append(str(task.taskId))
 					serverStateModelBridge.setCurrFreeTasks(currFreeTasks)
 
+					global isTaskCreated
+					isTaskCreated = True
+
 					return redirect('/dash')
 				else:
 					context = { 'form' : form }
@@ -1168,6 +1180,9 @@ class Views(): #acts as a namespace
 			newSessionState['studentY'] = simStudentY
 			newSessionState['studentZ'] = simStudentZ
 
+			newSessionState['isTaskCreated'] = isTaskCreated
+			newSessionState['simSimulateReaction'] = simSimulateReaction
+			newSessionState['simWeekOneUsersEvaluated'] = simWeekOneUsersEvaluated
 
 			newSessionState['currSelectedUsers'] = serverStateModelBridge.getCurrSelectedUsers()
 			newSessionState['currFreeUsers'] = serverStateModelBridge.getCurrFreeUsers()
@@ -1356,6 +1371,9 @@ class Views(): #acts as a namespace
 	
 	def resetSimWeek(request):
 		global simulationWeek
+		global isTaskCreated
+		global simWeekOneUsersEvaluated
+		global simSimulateReaction
 		if request.method == 'POST':
 			simulationWeek = 0
 			playersIds = playerBridge.getAllStoredStudentUsernames()
@@ -1366,6 +1384,9 @@ class Views(): #acts as a namespace
 			for taskId in taskIds:
 				Views.deleteTask(taskId)
 
+			isTaskCreated = False
+			simWeekOneUsersEvaluated = False
+			simSimulateReaction = False
 			return HttpResponse('ok')
 		
 		return HttpResponse('error')
@@ -1374,6 +1395,7 @@ class Views(): #acts as a namespace
 		global simulationWeek
 		global simStudentToEvaluate
 		global simUnavailableStudent
+		global simSimulateReaction
 		if request.method == 'POST':
 			if (simulationWeek > 5):
 				simulationWeek = 6
@@ -1381,21 +1403,40 @@ class Views(): #acts as a namespace
 				simulationWeek += 1 
 
 			if (simulationWeek == 1):
-				simStudentToEvaluate = playerBridge.getAllStoredStudentUsernames()[0]
+				players = playerBridge.getAllStoredStudentUsernames()
+				tasks = taskBridge.getAllStoredTaskIds()
+				if (len(players) >= 20 and len(tasks) >= 20):
+					simStudentToEvaluate = players[0]
+				else:
+					simulationWeek -= 1
+
 
 			if (simulationWeek == 2):
-				simUnavailableStudent = playerBridge.getAllStoredStudentUsernames()[10]
+				if (simWeekOneUsersEvaluated):
+					simUnavailableStudent = playerBridge.getAllStoredStudentUsernames()[10]
+				else:
+					simulationWeek -= 1
+
+			if (simulationWeek == 3 or simulationWeek == 4):
+				if (not simSimulateReaction):
+					simulationWeek -= 1
+				else:
+					simSimulateReaction = False
 
 			if (simulationWeek == 5):
-				httpRequest = HttpRequest()
-				httpRequest.method = 'POST'
+				if (simSimulateReaction):
+					httpRequest = HttpRequest()
+					httpRequest.method = 'POST'
 
-				httpRequest.POST['numUsersToGenerate'] = 180
-				httpRequest.POST['minDelay'] = 0.1
-				httpRequest.POST['maxDelay'] = 0.5
+					httpRequest.POST['numUsersToGenerate'] = 180
+					httpRequest.POST['minDelay'] = 0.1
+					httpRequest.POST['maxDelay'] = 0.5
 
-				httpRequest.user = request.user
-				Views.shareLinkSim(httpRequest)
+					httpRequest.user = request.user
+					Views.shareLinkSim(httpRequest)
+					simSimulateReaction = False
+				else:
+					simulationWeek -= 1
 
 			return HttpResponse('ok')
 		
@@ -1511,6 +1552,9 @@ class Views(): #acts as a namespace
 					playerId = playerId)
 
 				Views.savePlayerCharacteristics(playerId, newState.characteristics.ability, newState.characteristics.engagement)
+
+			global simWeekOneUsersEvaluated
+			simWeekOneUsersEvaluated = True
 			return HttpResponse('ok')
 
 		return HttpResponse('error')

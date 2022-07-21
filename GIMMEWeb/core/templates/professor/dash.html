@@ -1035,8 +1035,8 @@ crossorigin='anonymous'></script>
 									"From this week onward, the course will accept new students from similar courses. Select the most appropriate grouping method to generate the groups for this week. Iterate and simulate reaction."]
 
 
-		dropdownItemsText = [["<a class=\'dropdown-item\'> Share link </a>","<a class=\'dropdown-item\'> Simulate task registration </a>"], ["<a class=\'dropdown-item\'> Simulate evaluation of students </a>"], ["<div class=\'dropdown-item\'> No actions available </div>"], ["<div class=\'dropdown-item\'> No actions available </div>"], ["<div class=\'dropdown-item\'> No actions available </div>"], ["<div class=\'dropdown-item\'> No actions available </div>"]];
-		dropdownItemsUrls = [['/shareLinkSim/', '/taskRegistrationSim/'], ['/evaluateSim/'], [],[],[],[]]
+		dropdownItemsText = [["<a class=\'dropdown-item\'> Share link </a>","<a class=\'dropdown-item\'> Simulate task registration </a>"], ["<a class=\'dropdown-item\'> Simulate evaluation of students </a>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> No actions available </div>"]];
+		dropdownItemsUrls = [['/shareLinkSim/', '/taskRegistrationSim/'], ['/evaluateSim/'], ['/simulateReaction/'],['/simulateReaction/'],['/simulateReaction/'],['/simulateReaction/']]
 		var changeSimulationWeek = function(newServerState)
 		{
 			week = newServerState.simWeek
@@ -1070,14 +1070,18 @@ crossorigin='anonymous'></script>
 			return simulationLog;
 		}
 
-		var changeSimulationDropdownActions = function(week)
+		var changeSimulationDropdownActions = function(newServerState)
 		{
+			week = newServerState.simWeek
+
 			var simulationDropdown = $("<div class=\'dropdown-menu\' role=\'menu\' style=\"height:5em; width:10em; overflow-y:scroll; display:block\"> </div>");
 			var simulationDropdownContent = $("<div class=\'dropdown-content\'> </div>");
+			console.log(newServerState.isTaskCreated)
 			for (var i = 0; i < dropdownItemsText[week].length; i++) {
 				var dropdownItem = $(dropdownItemsText[week][i]);
-				simulationDropdownContent.append(dropdownItem);
+
 				if (dropdownItemsText[week][i] == "<a class=\'dropdown-item\'> Share link </a>") {
+					simulationDropdownContent.append(dropdownItem);
 					dropdownItem.click(function(){
 						$.ajax(
 						{
@@ -1088,7 +1092,9 @@ crossorigin='anonymous'></script>
 						);
 					});
 				}
-				else if (dropdownItemsText[week][i] == "<a class=\'dropdown-item\'> Simulate task registration </a>") {
+
+				else if (dropdownItemsText[week][i] == "<a class=\'dropdown-item\'> Simulate task registration </a>" && newServerState.isTaskCreated) {
+					simulationDropdownContent.append(dropdownItem);
 					dropdownItem.click(function(){
 						$.ajax(
 						{
@@ -1098,17 +1104,37 @@ crossorigin='anonymous'></script>
 						);
 					});
 				}
+
 				else if (dropdownItemsText[week][i] == "<a class=\'dropdown-item\'> Simulate evaluation of students </a>") {
-					dropdownItem.click(function(){
-						$.ajax(
-						{
-							type: 'POST',
-							url: '/evaluateSim/'
-						}
-						);
-					});
+					simulationDropdownContent.append(dropdownItem);
+					if (!newServerState.simWeekOneUsersEvaluated){
+						dropdownItem.click(function(){
+							$.ajax(
+							{
+								type: 'POST',
+								url: '/evaluateSim/'
+							}
+							);
+						});
+					}
+				}
+
+				else if (dropdownItemsText[week][i] == "<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"){
+					simulationDropdownContent.append(dropdownItem);
+					if (!newServerState.simSimulateReaction){
+						dropdownItem.click(function(){
+							$.ajax(
+								{
+									type: 'POST',
+									url: '/simulateReaction/'
+								}
+							)
+						})
+					}
+				
 				}
 			}
+			
 			simulationDropdown.append(simulationDropdownContent);
 			return simulationDropdown;
 		}
@@ -1589,7 +1615,7 @@ crossorigin='anonymous'></script>
 								$('#simulationLog_professor_dash').append(changeSimulationWeek(newServerState));
 
 								$('#simulationAction_professor_dash').empty();
-								$('#simulationAction_professor_dash').append(changeSimulationDropdownActions(newServerState.simWeek));
+								$('#simulationAction_professor_dash').append(changeSimulationDropdownActions(newServerState));
 
 								var currSelectedUsers = newServerState.currSelectedUsers;
 								var currFreeUsers = newServerState.currFreeUsers;
