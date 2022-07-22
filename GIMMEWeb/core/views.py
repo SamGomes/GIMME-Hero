@@ -1297,21 +1297,17 @@ class Views(): #acts as a namespace
 		if request.method == 'POST':
 			adaptState = serverStateModelBridge.getCurrAdaptationState()
 			
-			g1i = int(request.POST['student1[groupId]'])
-			g2i = int(request.POST['student2[groupId]'])
+			gi = int(request.POST['student[groupId]'])
+			gf = int(request.POST['group[groupId]'])
 
-			u1n = str(request.POST['student1[userId]'])
-			u2n = str(request.POST['student2[userId]'])
+			u = str(request.POST['student[userId]'])
 
 			# change groups
-			adaptState['groups'][g1i].remove(u1n)
-			adaptState['groups'][g2i].remove(u2n)
+			adaptState['groups'][gi].remove(u)
+			adaptState['groups'][gf].append(u)
 
-			adaptState['groups'][g1i].append(u2n)
-			adaptState['groups'][g2i].append(u1n)
-
-			for gi in [g1i, g2i]:
-				g = adaptState['groups'][gi]
+			for gIndex in [gi, gf]:
+				g = adaptState['groups'][gIndex]
 
 				# recalculate averages
 				currAvgCharacteristics = PlayerCharacteristics()
@@ -1322,14 +1318,14 @@ class Views(): #acts as a namespace
 					currAvgCharacteristics.ability += currPlayerChars.ability / groupSize
 					currAvgCharacteristics.engagement += currPlayerChars.engagement / groupSize
 
-					adaptState['avgCharacteristics'][gi] = currAvgCharacteristics		
+					adaptState['avgCharacteristics'][gIndex] = currAvgCharacteristics		
 
 					serverStateModelBridge.setCurrAdaptationState(adaptState)
 
 					# change student information
-					playerBridge.setPlayerProfile(currPlayerI, adaptState['profiles'][gi])
+					playerBridge.setPlayerProfile(currPlayerI, adaptState['profiles'][gIndex])
 					playerBridge.setPlayerGroup(currPlayerI, g)
-					playerBridge.setPlayerTasks(currPlayerI, adaptState['tasks'][gi])
+					playerBridge.setPlayerTasks(currPlayerI, adaptState['tasks'][gIndex])
 
 
 			return render(request, 'manuallyManageStudent.html')

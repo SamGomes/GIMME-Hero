@@ -340,7 +340,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
         .attr('dy', 5)
         .attr('font-size', 15)
         .attr('font-family', 'Calibri,sans-serif')
-        .attr('color', function(node){ return 'black'; })
+        .attr('color', function(node){ return 'gray'; })
         .text('');
 
 
@@ -521,58 +521,105 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
         htmlFromJSON(node, currTooltip, 0, 0, 0, 40, 0);
     });
 
-
-    if(!isForStudent){
+    var expandNodeViz = function(d){
+        $(groupIndicators._groups[0])
+            .each(function(i,e){
+                d3.select(e).attr('opacity', node => (node.groupId == d.groupId)? '1.0': '0.2');
+            });
+        $(nodeElements._groups[0])
+            .each(function(i,e){
+                d3.select(e).attr('r', node => (node.groupId == d.groupId)? '1.8%': '1%');
+                d3.select(e).attr('opacity', node => (node.groupId == d.groupId)? '1.0': '0.2');
+            });
+        $(nodeTextElements._groups[0])
+            .each(function(i,e){
+                d3.select(e).text(node => {
+                    if(node.groupId == d.groupId){
+                        var fullName = node.userState.fullName.split(' ');
+                        var nameInitials = '';
+                        if(fullName.length == 1){
+                            nameInitials = fullName[0][0];
+                        }else{
+                            nameInitials = fullName[0][0] + fullName[fullName.length - 1][0];
+                        }
+                        return nameInitials;
+                    }
+                    else{
+                        return '';
+                    }
+                    
+                });
+            });
+    };
     
+    var contractNodeViz = function(d){
+        $(groupIndicators._groups[0])
+            .each(function(i,e){
+                d3.select(e).attr('opacity', '1.0');
+            });
+            
+        $(nodeElements._groups[0])
+            .each(function(i,e){
+                d3.select(e).attr('r', '1%');
+                d3.select(e).attr('opacity', '1.0');
+            });
+            
+        $(nodeTextElements._groups[0])
+            .each(function(i,e){
+                d3.select(e).text('');
+            });
+    };
+
+    
+    
+    
+    var mouseX = 0;
+    var mouseY = 0;
+
+    var studentForChange = undefined;
+    var groupForChange = undefined;
+
+    var resetChangeState = function(){
+        nodeElements.attr('r', '1%');
+
+        studentForChange = undefined;
+        groupForChange = undefined;
+
+        d3.select('#'+canvasId).select('line').remove();
+    }
+    
+    
+    
+    
+    if(!isForStudent){
         groupIndicators.on('mouseover', function(d){
             d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'visible');
-            $(groupIndicators._groups[0])
-                .each(function(i,e){
-                    d3.select(e).attr('opacity', node => (node.groupId == d.groupId)? '1.0': '0.2');
-                });
-            $(nodeElements._groups[0])
-                .each(function(i,e){
-                    d3.select(e).attr('r', node => (node.groupId == d.groupId)? '1.8%': '1%');
-                    d3.select(e).attr('opacity', node => (node.groupId == d.groupId)? '1.0': '0.2');
-                });
-            $(nodeTextElements._groups[0])
-                .each(function(i,e){
-                    d3.select(e).text(node => {
-                        if(node.groupId == d.groupId){
-                            var fullName = node.userState.fullName.split(' ');
-                            var nameInitials = '';
-                            if(fullName.length == 1){
-                                nameInitials = fullName[0][0];
-                            }else{
-                                nameInitials = fullName[0][0] + fullName[fullName.length - 1][0];
-                            }
-                            return nameInitials;
-                        }
-                        else{
-                            return '';
-                        }
-                        
-                    });
-                });
+            expandNodeViz(d);
+            
+            if(studentForChange != undefined){
 
+                thisElem = d3.select(this);
+                
+                groupForChange = d;
+
+                d3.select('#' + canvasId).select('line')
+                    .attr('x2', thisElem.attr('cx'))
+                    .attr('y2', thisElem.attr('cy'));
+                
+               
+            }
+            
         });
         groupIndicators.on('mouseout', function(d){
             d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'hidden');
-            $(groupIndicators._groups[0])
-                .each(function(i,e){
-                    d3.select(e).attr('opacity', '1.0');
-                });
-                
-            $(nodeElements._groups[0])
-                .each(function(i,e){
-                    d3.select(e).attr('r', '1%');
-                    d3.select(e).attr('opacity', '1.0');
-                });
-                
-            $(nodeTextElements._groups[0])
-                .each(function(i,e){
-                    d3.select(e).text('');
-                });
+            contractNodeViz(d);
+        });
+        
+        
+        
+
+        d3.select('#'+canvasId).on('dbclick',function(d){
+            resetChangeState();
         });
 
     }
@@ -590,7 +637,8 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
         .append('path')
         .attr('d', function(d) {
             if(!isForStudent){
-                return rightRoundedRect(5, 5, 600, 320, 7);
+                return rightRoundedRect(5, 5, 600, 280, 7);
+//                 return rightRoundedRect(5, 5, 600, 320, 7);
             }else{
                 return rightRoundedRect(5, 5, 500, 200, 7);
             }
@@ -635,7 +683,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
-            node['(External) Grade'] = originalNode.userState.grade;
+//             node['(External) Grade'] = originalNode.userState.grade;
         }
 
         htmlFromJSON(node, currTooltip, 0, 0, 0, 50, 0);
@@ -678,95 +726,46 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
 
 
 
-    var mouseX = 0;
-    var mouseY = 0;
-
-    var studentForChange1 = undefined;
-    var studentForChange2 = undefined;
-
-    var resetChangeState = function(){
-        nodeElements.attr('r', '1%');
-
-        studentForChange1 = undefined;
-        studentForChange2 = undefined;
-
-        d3.select('#'+canvasId).select('line').remove();
-    }
-
-    d3.select('#'+canvasId).on('dbclick',function(d){
-        resetChangeState();
-    });
 
     // only professors can perform changes in groups
     if(!isForStudent){
         nodeElements.on('click', function(d){ 
 
-            if(studentForChange2 == undefined){
+           
+            var coordinates = d3.mouse(this);
+            var mouseX = coordinates[0];
+            var mouseY = coordinates[1];
 
-                var coordinates = d3.mouse(this);
-                var mouseX = coordinates[0];
-                var mouseY = coordinates[1];
+            thisElem = d3.select(this);
+            thisElem.attr('r', '2%');
+            studentForChange = d;
+            
+            d3.select(this.parentNode.parentNode)
 
-                thisElem = d3.select(this);
-                thisElem.attr('r', '2%');
-                studentForChange1 = d;
-                
-                d3.select(this.parentNode)
+                .append('line')
+                .attr('class', 'arrow')
+                .attr('marker-start', 'url(#arrowFront)')
+                .attr('marker-end', 'url(#arrow)')
 
-                    .append('line')
-                    .attr('class', 'arrow')
-                    .attr('marker-start', 'url(#arrowFront)')
-                    .attr('marker-end', 'url(#arrow)')
+                .attr('x1', thisElem.attr('cx'))
+                .attr('y1', thisElem.attr('cy'))
+                .attr('x2', mouseX)
+                .attr('y2', mouseY)
+                .attr('stroke-width', '0.5%')
+                .attr('stroke-dasharray', '2%')
+                .attr('stroke', 'gray');
 
-                    .attr('x1', thisElem.attr('cx'))
-                    .attr('y1', thisElem.attr('cy'))
-                    .attr('x2', mouseX)
-                    .attr('y2', mouseY)
-                    .attr('stroke-width', '0.5%')
-                    .attr('stroke-dasharray', '2%')
-                    .attr('stroke', 'gray');
-
-            }else{
-                //perform change
-                //deploy confirmation box?
-                $.ajax({
-                    type: 'POST',
-                    url: '/manuallyChangeStudentGroup/',
-                    data: {'student1': studentForChange1, 'student2': studentForChange2},
-                    success: 
-                    function(){}
-                });
-
-                resetChangeState();
-            }
         });
     }
 
     nodeElements.on('mouseover', function(d){
-
+        expandNodeViz(d);
         d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'visible');
-        if(studentForChange1 != undefined){
-
-            thisElem = d3.select(this);
-            thisElem.attr('r', '2%');
-
-            if(d.groupId == studentForChange1.groupId){
-                resetChangeState();
-                return;
-            }
-            studentForChange2 = d;
-
-            d3.select('#'+canvasId).select('line')
-                .attr('x2', thisElem.attr('cx'))
-                .attr('y2', thisElem.attr('cy'));
-        }
+        
     });
     nodeElements.on('mouseout', function(d){
+        contractNodeViz(d);
         d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'hidden');
-        if(studentForChange2!=undefined){
-            thisElem = d3.select(this);
-            thisElem.attr('r', '1%');
-        }  
     });
 
 
@@ -845,6 +844,24 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
                     currNode.fy = currNode.centerOfMass.y;
                 }
             }
+            
+            if(studentForChange != undefined){
+                if(studentForChange.groupId != node.groupId){
+                    //perform change
+                    //deploy confirmation box?
+                    $.ajax({
+                        type: 'POST',
+                        url: '/manuallyChangeStudentGroup/',
+                        data: {'student': studentForChange, 'group': groupForChange},
+                        success: 
+                        function(){
+//                             info('student ')
+                        }
+                    });
+                }
+                resetChangeState();
+            }
+            
         })
         .on('drag', node => {
             if (!d3.event.active)
