@@ -327,7 +327,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
             .attr('stroke', function(node){
                     return isForStudent? (data.myStudentId == node.userId? "red": colors[0]): colors[node.groupId];
                 })
-            .attr('stroke-width', '0.3%')
+            .attr('stroke-width', '0.3%');
          
 
     var nodeTextElements = 
@@ -336,11 +336,13 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
         .data(userNodes)
         .enter()
         .append('text')
-        .attr('dx', -5)
-        .attr('dy', 5)
-        .attr('font-size', 15)
+        .attr('dy', 7)
+        .attr('font-size', 20)
         .attr('font-family', 'Calibri,sans-serif')
-        .attr('color', function(node){ return 'gray'; })
+        .attr('text-anchor', 'middle')
+        .style("stroke-width", 0.5)
+        .style("stroke", "black")
+        .style("fill", "white")
         .text('');
 
 
@@ -438,6 +440,204 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
     };
 
 
+
+    
+    
+    var mouseX = 0;
+    var mouseY = 0;
+
+    var studentForChange = undefined;
+    var groupForChange = undefined;
+
+    var resetChangeState = function(){
+        nodeElements.attr('r', '1%');
+
+        studentForChange = undefined;
+        groupForChange = undefined;
+
+        d3.select('#'+canvasId).select('line').remove();
+    }
+    
+    
+    var canNodeBeExpanded = function(selection, node){
+        return (node.groupId == selection.groupId || (studentForChange != undefined && node.userId == studentForChange.userId))
+    };
+    
+    var expandNodeViz = function(d){
+        $(groupIndicators._groups[0])
+            .each(function(i,e){
+                d3.select(e).attr('opacity', node => canNodeBeExpanded(d, node)? '1.0': '0.2');
+            });
+        $(nodeElements._groups[0])
+            .each(function(i,e){
+                d3.select(e).attr('r', node => canNodeBeExpanded(d, node)? '1.8%': '1%');
+                d3.select(e).attr('opacity', node => canNodeBeExpanded(d, node)? '1.0': '0.2');
+            });
+        $(nodeTextElements._groups[0])
+            .each(function(i,e){
+                d3.select(e).text(node => {
+                    if(canNodeBeExpanded(d, node)){
+                        var fullName = node.userState.fullName.split(' ');
+                        var nameInitials = '';
+                        if(fullName.length == 1){
+                            nameInitials = fullName[0][0];
+                        }else{
+                            nameInitials = fullName[0][0] + fullName[fullName.length - 1][0];
+                        }
+                        return nameInitials;
+                    }
+                    else{
+                        return '';
+                    }
+                    
+                });
+            });
+    };
+    
+    var contractNodeViz = function(d){
+        if(studentForChange!=undefined){
+            return;
+        }
+        $(groupIndicators._groups[0])
+            .each(function(i,e){
+                d3.select(e).attr('opacity', '1.0');
+            });
+            
+        $(nodeElements._groups[0])
+            .each(function(i,e){
+                d3.select(e).attr('r', '1%');
+                d3.select(e).attr('opacity', '1.0');
+            });
+            
+        $(nodeTextElements._groups[0])
+            .each(function(i,e){
+                d3.select(e).text('');
+            });
+    };
+
+    
+    
+    
+    
+    
+    if(!isForStudent){
+        groupIndicators.on('mouseover', function(d){
+            d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'visible');
+            expandNodeViz(d);
+            
+            if(studentForChange != undefined){
+
+                thisElem = d3.select(this);
+                
+                groupForChange = d;
+
+                d3.select('#' + canvasId).select('line')
+                    .attr('x2', thisElem.attr('cx'))
+                    .attr('y2', thisElem.attr('cy'));
+                
+               
+            }
+            d3.event.stopPropagation();
+            
+        });
+        groupIndicators.on('mouseout', function(d){
+            d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'hidden');
+            contractNodeViz(d);
+            d3.event.stopPropagation();
+        });
+        
+        
+        
+
+        d3.select('#'+canvasId).on('click',function(d){
+            resetChangeState();
+            contractNodeViz(d);
+            d3.event.stopPropagation();
+        });
+
+    }
+
+
+    
+
+    // define arrow points paths
+    var defs = svg.append('defs');
+
+    defs.append('marker')
+        .attr('id', 'arrow')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 5)
+        .attr('refY', 0)
+        .attr('markerWidth', 4)
+        .attr('markerHeight', 4)
+        .attr('orient', 'auto')
+        .attr('stroke', 'gray')
+        .attr('fill', 'white')
+
+        .append('path')
+            .attr('d', 'M0,-5 L10,0 L0,5')
+            .attr('class', 'arrowHead');
+
+    defs.append('marker')
+        .attr('id', 'arrowFront')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 5)
+        .attr('refY', 0)
+        .attr('markerWidth', 4)
+        .attr('markerHeight', 4)
+        .attr('orient', 'auto')
+        .attr('stroke', 'gray')
+        .attr('fill', 'white')
+
+        .append('path')
+            .attr('d', 'M10,-5 L0,0 L10,5')
+            .attr('class', 'arrowHead');
+
+
+
+
+    // only professors can perform changes in groups
+    if(!isForStudent){
+        nodeElements.on('click', function(d){ 
+
+            resetChangeState();
+            
+            var coordinates = d3.mouse(this);
+            var mouseX = coordinates[0];
+            var mouseY = coordinates[1];
+
+            thisElem = d3.select(this);
+            thisElem.attr('r', '2%');
+            studentForChange = d;
+            
+            d3.select(this.parentNode.parentNode)
+
+                .append('line')
+                .attr('class', 'arrow')
+                .attr('marker-start', 'url(#arrowFront)')
+                .attr('marker-end', 'url(#arrow)')
+
+                .attr('x1', thisElem.attr('cx'))
+                .attr('y1', thisElem.attr('cy'))
+                .attr('x2', mouseX)
+                .attr('y2', mouseY)
+                .attr('stroke-width', '0.5%')
+                .attr('stroke-dasharray', '2%')
+                .attr('stroke', 'gray');
+            
+            d3.event.stopPropagation();
+
+        });
+    }
+
+    
+    
+
+    
+    
+    
+    
+    
     // adapted from: https://stackoverflow.com/questions/12115691/svg-d3-js-rounded-corner-on-one-corner-of-a-rectangle
     // Returns path data for a rectangle with rounded right corners.
     // The top-left corner is ⟨x,y⟩.
@@ -466,7 +666,8 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
                                 return '#' +  baseColor + transparency.toString(16);
                             })
         .attr('stroke', 'gray')
-        .attr('stroke-width', '0.15%');
+        .attr('stroke-width', '0.15%')
+        .attr('z-index','7000');
     
 
     groupInfoTooltips.each(function(originalNode){ 
@@ -520,118 +721,22 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
 
         htmlFromJSON(node, currTooltip, 0, 0, 0, 40, 0);
     });
-
-    var expandNodeViz = function(d){
-        $(groupIndicators._groups[0])
-            .each(function(i,e){
-                d3.select(e).attr('opacity', node => (node.groupId == d.groupId)? '1.0': '0.2');
-            });
-        $(nodeElements._groups[0])
-            .each(function(i,e){
-                d3.select(e).attr('r', node => (node.groupId == d.groupId)? '1.8%': '1%');
-                d3.select(e).attr('opacity', node => (node.groupId == d.groupId)? '1.0': '0.2');
-            });
-        $(nodeTextElements._groups[0])
-            .each(function(i,e){
-                d3.select(e).text(node => {
-                    if(node.groupId == d.groupId){
-                        var fullName = node.userState.fullName.split(' ');
-                        var nameInitials = '';
-                        if(fullName.length == 1){
-                            nameInitials = fullName[0][0];
-                        }else{
-                            nameInitials = fullName[0][0] + fullName[fullName.length - 1][0];
-                        }
-                        return nameInitials;
-                    }
-                    else{
-                        return '';
-                    }
-                    
-                });
-            });
-    };
-    
-    var contractNodeViz = function(d){
-        $(groupIndicators._groups[0])
-            .each(function(i,e){
-                d3.select(e).attr('opacity', '1.0');
-            });
-            
-        $(nodeElements._groups[0])
-            .each(function(i,e){
-                d3.select(e).attr('r', '1%');
-                d3.select(e).attr('opacity', '1.0');
-            });
-            
-        $(nodeTextElements._groups[0])
-            .each(function(i,e){
-                d3.select(e).text('');
-            });
-    };
-
-    
-    
-    
-    var mouseX = 0;
-    var mouseY = 0;
-
-    var studentForChange = undefined;
-    var groupForChange = undefined;
-
-    var resetChangeState = function(){
-        nodeElements.attr('r', '1%');
-
-        studentForChange = undefined;
-        groupForChange = undefined;
-
-        d3.select('#'+canvasId).select('line').remove();
-    }
     
     
     
     
-    if(!isForStudent){
-        groupIndicators.on('mouseover', function(d){
-            d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'visible');
-            expandNodeViz(d);
-            
-            if(studentForChange != undefined){
-
-                thisElem = d3.select(this);
-                
-                groupForChange = d;
-
-                d3.select('#' + canvasId).select('line')
-                    .attr('x2', thisElem.attr('cx'))
-                    .attr('y2', thisElem.attr('cy'));
-                
-               
-            }
-            
-        });
-        groupIndicators.on('mouseout', function(d){
-            d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'hidden');
-            contractNodeViz(d);
-        });
-        
-        
-        
-
-        d3.select('#'+canvasId).on('dbclick',function(d){
-            resetChangeState();
-        });
-
-    }
-
-
+    
+    
+    
+    
     var userInfoTooltips =
         svg.append('g')
             .selectAll('text')
             .data(userNodes)
             .enter()
             .append('g')
-            .style('visibility','hidden');
+            .style('visibility','hidden')
+            .attr('z-index','7000');
 
     userInfoTooltips
         .append('path')
@@ -689,86 +794,25 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
         htmlFromJSON(node, currTooltip, 0, 0, 0, 50, 0);
     });
 
-
-
-    // define arrow points paths
-    var defs = svg.append('defs');
-
-    defs.append('marker')
-        .attr('id', 'arrow')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 5)
-        .attr('refY', 0)
-        .attr('markerWidth', 4)
-        .attr('markerHeight', 4)
-        .attr('orient', 'auto')
-        .attr('stroke', 'gray')
-        .attr('fill', 'white')
-
-        .append('path')
-            .attr('d', 'M0,-5 L10,0 L0,5')
-            .attr('class', 'arrowHead');
-
-    defs.append('marker')
-        .attr('id', 'arrowFront')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 5)
-        .attr('refY', 0)
-        .attr('markerWidth', 4)
-        .attr('markerHeight', 4)
-        .attr('orient', 'auto')
-        .attr('stroke', 'gray')
-        .attr('fill', 'white')
-
-        .append('path')
-            .attr('d', 'M10,-5 L0,0 L10,5')
-            .attr('class', 'arrowHead');
-
-
-
-
-    // only professors can perform changes in groups
-    if(!isForStudent){
-        nodeElements.on('click', function(d){ 
-
-           
-            var coordinates = d3.mouse(this);
-            var mouseX = coordinates[0];
-            var mouseY = coordinates[1];
-
-            thisElem = d3.select(this);
-            thisElem.attr('r', '2%');
-            studentForChange = d;
-            
-            d3.select(this.parentNode.parentNode)
-
-                .append('line')
-                .attr('class', 'arrow')
-                .attr('marker-start', 'url(#arrowFront)')
-                .attr('marker-end', 'url(#arrow)')
-
-                .attr('x1', thisElem.attr('cx'))
-                .attr('y1', thisElem.attr('cy'))
-                .attr('x2', mouseX)
-                .attr('y2', mouseY)
-                .attr('stroke-width', '0.5%')
-                .attr('stroke-dasharray', '2%')
-                .attr('stroke', 'gray');
-
-        });
-    }
-
+   
     nodeElements.on('mouseover', function(d){
         expandNodeViz(d);
         d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'visible');
+        d3.event.stopPropagation();
         
     });
     nodeElements.on('mouseout', function(d){
         contractNodeViz(d);
         d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'hidden');
+        d3.event.stopPropagation();
     });
 
 
+    
+    
+    
+
+    
 
     var simulation = d3.forceSimulation();
     var resetSim = function(){
