@@ -1303,22 +1303,27 @@ class Views(): #acts as a namespace
 		if request.method == 'POST':
 			adaptState = serverStateModelBridge.getCurrAdaptationState()
 			
-			g1i = int(request.POST['student1[groupId]'])
-			g2i = int(request.POST['student2[groupId]'])
+			giIndex = int(request.POST['student[groupId]'])
+			gfIndex = int(request.POST['group[groupId]'])
 
-			u1n = str(request.POST['student1[userId]'])
-			u2n = str(request.POST['student2[userId]'])
+
+			u = str(request.POST['student[userId]'])
 
 			# change groups
-			adaptState['groups'][g1i].remove(u1n)
-			adaptState['groups'][g2i].remove(u2n)
+			gi = adaptState['groups'][giIndex]
+			gf = adaptState['groups'][gfIndex]
+			
 
-			adaptState['groups'][g1i].append(u2n)
-			adaptState['groups'][g2i].append(u1n)
-
-			for gi in [g1i, g2i]:
-				g = adaptState['groups'][gi]
-
+			if(len(gi) == adaptation.configsGenAlg.minNumberOfPlayersPerGroup or 
+				len(gf) == adaptation.configsGenAlg.maxNumberOfPlayersPerGroup):
+				return HttpResponse('error')
+			
+			gi.remove(u)
+			gf.append(u)
+			
+			for gIndex in [giIndex, gfIndex]:
+				g = adaptState['groups'][gIndex]
+				
 				# recalculate averages
 				currAvgCharacteristics = PlayerCharacteristics()
 				currAvgCharacteristics.reset()
@@ -1328,14 +1333,14 @@ class Views(): #acts as a namespace
 					currAvgCharacteristics.ability += currPlayerChars.ability / groupSize
 					currAvgCharacteristics.engagement += currPlayerChars.engagement / groupSize
 
-					adaptState['avgCharacteristics'][gi] = currAvgCharacteristics		
+					adaptState['avgCharacteristics'][gIndex] = currAvgCharacteristics		
 
 					serverStateModelBridge.setCurrAdaptationState(adaptState)
 
 					# change student information
-					playerBridge.setPlayerProfile(currPlayerI, adaptState['profiles'][gi])
+					playerBridge.setPlayerProfile(currPlayerI, adaptState['profiles'][gIndex])
 					playerBridge.setPlayerGroup(currPlayerI, g)
-					playerBridge.setPlayerTasks(currPlayerI, adaptState['tasks'][gi])
+					playerBridge.setPlayerTasks(currPlayerI, adaptState['tasks'][gIndex])
 
 
 			return render(request, 'manuallyManageStudent.html')
@@ -1448,8 +1453,6 @@ class Views(): #acts as a namespace
 		
 		return HttpResponse('error')
 
-# {'csrfmiddlewaretoken': ['3GuQuFgTG1tPLHK0bvD4kO5H0c4F2keftFkiQRIcpyDbrxlEEWmjazhfmCEx0p80'], 'username': ['s17'], 'role': ['student'], 'email': ['s17@s17.com'], 'password1': ['VW8fiAUkGs7QLwn'], 'password2': ['VW8fiAUkGs7QLwn'], 'fullName': ['s17'], 'age': ['20'], 'gender': ['Male'], 'description': ['.'], 'Create User': ['Register']}
-# {'avatar': [<InMemoryUploadedFile: transferir.jpg (image/jpeg)>]}
 
 	def shareLinkSim(request):
 		if request.method == 'POST':
@@ -1494,8 +1497,7 @@ class Views(): #acts as a namespace
 
 		return HttpResponse('error')
 
-#<QueryDict: {'csrfmiddlewaretoken': ['4CaVMCovQl2IbysucPRCKrUxuVNRe4Tcr6LUcSxhaftsnuHiO8HXlGZW3gTx4tkF'], 'taskId': ['week 1'], 'description': ['test'], 'minReqAbility': ['0.3'], 'profileWeight': ['0.5'], 'difficultyWeight': ['0.5'], 'initDate': ['2022-07-20'], 'finalDate': ['2022-07-27'], 'profileDim0': ['0'], 'profileDim1': ['0']}>
-#<MultiValueDict: {'files': [<InMemoryUploadedFile: testTask_BBn7DVn.png (image/png)>]}>
+
 	def taskRegistrationSim(request):
 		if request.method == 'POST':
 			today = date.today()
