@@ -226,7 +226,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
 
     var currPlotIndex = 0;
 
-    svg.call(responsivefy,5000,0);
+    svg.call(responsivefy, 5000, 0);
 
     for (i=0; i<data.groups.length; i++){
         var group = data.groups[i];
@@ -674,9 +674,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
 
         var currTooltip = d3.select(groupInfoTooltips._groups[0][originalNode.groupId]);
         if(originalNode.tasks == -1){
-            $('#adaptationIssuesText_professor_dash').html($('#adaptationIssuesText_professor_dash').html() + ('<br></br>Could not compute task for group '+node.groupId+'... Maybe no tasks are available?'));
-            $('#adaptationIssues_professor_dash').show(500);
-            setTimeout(function(){ $('#adaptationIssues_professor_dash').hide(500); }, 10000);
+            generatePlotWarningMessage('Could not compute task for group ' + originalNode.groupId + '... Maybe no tasks are selected?');
         }
         node = $.extend({}, originalNode); //performs a shallow copy
         node.tasks = originalNode.tasks == -1 ? '<No computed tasks>' : originalNode.tasks;
@@ -819,11 +817,13 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
         simulation.nodes(userNodes)
         .force('collide', d3.forceCollide()
             .radius(width*0.015)
-            .strength(0.1))
+//             .radius((node) => {return (node.attr('r') == '1%')? width*0.015: width*0.03;})
+            .strength(0.1)
+        )
         .force('attract', d3.forceAttract()
-                    .target((node) => {return [node.centerOfMass.x, node.centerOfMass.y];})
-                    .strength(3)
-                    );
+            .target((node) => {return [node.centerOfMass.x, node.centerOfMass.y];})
+            .strength(3)
+        );
     }
 
 
@@ -897,16 +897,20 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
                         type: 'POST',
                         url: '/manuallyChangeStudentGroup/',
                         data: {'student': studentForChange, 'group': groupForChange},
-                        success: 
-                        function(){
-//                             info('student ')
+                        complete: 
+                        function(response){
+                            if(response.responseText == 'error'){
+                                generatePlotErrorMessage(
+                                    'Adaptation Error! Group size violation. Maintaining old state...'
+                                );
+                            }
                         }
                     });
                 }
                 resetChangeState();
             }
-            
         })
+        
         .on('drag', node => {
             if (!d3.event.active)
                 simulation.alphaTarget(1.0).restart();

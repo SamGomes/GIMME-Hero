@@ -1297,18 +1297,27 @@ class Views(): #acts as a namespace
 		if request.method == 'POST':
 			adaptState = serverStateModelBridge.getCurrAdaptationState()
 			
-			gi = int(request.POST['student[groupId]'])
-			gf = int(request.POST['group[groupId]'])
+			giIndex = int(request.POST['student[groupId]'])
+			gfIndex = int(request.POST['group[groupId]'])
+
 
 			u = str(request.POST['student[userId]'])
 
 			# change groups
-			adaptState['groups'][gi].remove(u)
-			adaptState['groups'][gf].append(u)
+			gi = adaptState['groups'][giIndex]
+			gf = adaptState['groups'][gfIndex]
+			
 
-			for gIndex in [gi, gf]:
+			if(len(gi) == adaptation.configsGenAlg.minNumberOfPlayersPerGroup or 
+				len(gf) == adaptation.configsGenAlg.maxNumberOfPlayersPerGroup):
+				return HttpResponse('error')
+			
+			gi.remove(u)
+			gf.append(u)
+			
+			for gIndex in [giIndex, gfIndex]:
 				g = adaptState['groups'][gIndex]
-
+				
 				# recalculate averages
 				currAvgCharacteristics = PlayerCharacteristics()
 				currAvgCharacteristics.reset()
@@ -1438,8 +1447,6 @@ class Views(): #acts as a namespace
 		
 		return HttpResponse('error')
 
-# {'csrfmiddlewaretoken': ['3GuQuFgTG1tPLHK0bvD4kO5H0c4F2keftFkiQRIcpyDbrxlEEWmjazhfmCEx0p80'], 'username': ['s17'], 'role': ['student'], 'email': ['s17@s17.com'], 'password1': ['VW8fiAUkGs7QLwn'], 'password2': ['VW8fiAUkGs7QLwn'], 'fullName': ['s17'], 'age': ['20'], 'gender': ['Male'], 'description': ['.'], 'Create User': ['Register']}
-# {'avatar': [<InMemoryUploadedFile: transferir.jpg (image/jpeg)>]}
 
 	def shareLinkSim(request):
 		if request.method == 'POST':
@@ -1484,8 +1491,7 @@ class Views(): #acts as a namespace
 
 		return HttpResponse('error')
 
-#<QueryDict: {'csrfmiddlewaretoken': ['4CaVMCovQl2IbysucPRCKrUxuVNRe4Tcr6LUcSxhaftsnuHiO8HXlGZW3gTx4tkF'], 'taskId': ['week 1'], 'description': ['test'], 'minReqAbility': ['0.3'], 'profileWeight': ['0.5'], 'difficultyWeight': ['0.5'], 'initDate': ['2022-07-20'], 'finalDate': ['2022-07-27'], 'profileDim0': ['0'], 'profileDim1': ['0']}>
-#<MultiValueDict: {'files': [<InMemoryUploadedFile: testTask_BBn7DVn.png (image/png)>]}>
+
 	def taskRegistrationSim(request):
 		if request.method == 'POST':
 			today = date.today()

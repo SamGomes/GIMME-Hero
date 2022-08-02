@@ -631,12 +631,11 @@
 
 				<div class='panel-block panel-block-borderless'>
 					<div id='adaptationError_professor_dash' class='section hero is-danger is-centered has-text-centered' style='width:100%'>
-						<label class='label subtitle is-4 is-white'>Adaptation Error! Tip: verify if enough students are selected. 
-						Maintaining old state...</label>
+						<label id='adaptationErrorText_professor_dash' class='label subtitle is-4 is-white'></label>
 					</div>
-					<div id='adaptationIssues_professor_dash' class='section hero is-warning is-centered has-text-centered' style='width:100%'>
+					<div id='adaptationWarning_professor_dash' class='section hero is-warning is-centered has-text-centered' style='width:100%'>
 						<label class='label subtitle is-4 is-white'>Adaptation Issues Found: </label>
-						<label id='adaptationIssuesText_professor_dash'></label>
+						<label id='adaptationWarningText_professor_dash'></label>
 					</div>
 					<div id='adaptationInfo_professor_dash' class='section hero is-info is-centered has-text-centered' style='width:100%'>
 						<label id='adaptationInfoTitle_professor_dash' class='label subtitle is-4 is-white'>Adaptation Info: </label>
@@ -940,11 +939,28 @@ crossorigin='anonymous'></script>
 <script src='https://d3js.org/d3.v5.js' crossorigin='anonymous'></script>
 <script src='https://unpkg.com/d3-force-attract@latest' crossorigin='anonymous'></script>
 <!-- <script src='{% static 'js/color.js' %}' crossorigin='anonymous'></script> -->
+<!-- Common code to both plots used here and interface -->
+<script>
+	var generatePlotErrorMessage = function(message){
+		$('#adaptationErrorText_professor_dash').html($('#adaptationErrorText_professor_dash').html() + ('<br></br>' + message));
+		$('#adaptationError_professor_dash').show(500);
+		setTimeout(function(){ $('#adaptationError_professor_dash').hide(500); }, 5000);
+	}
+	
+	var generatePlotWarningMessage = function(message){
+		$('#adaptationWarningText_professor_dash').html($('#adaptationWarningText_professor_dash').html() + ('<br></br>' + message));
+		$('#adaptationWarning_professor_dash').show(500);
+		setTimeout(function(){ $('#adaptationWarning_professor_dash').hide(500); }, 10000);
+	}
+</script>
 <script src='{% static 'js/plots.js' %}'></script>
 
 <script>
 
 	$(document).ready(function(){
+		
+		
+		
 		
 		// CSRF protection setup 
 		// (from: 
@@ -974,9 +990,9 @@ crossorigin='anonymous'></script>
 			);
 
 		$("#adaptationError_professor_dash").hide();
-		$("#adaptationIssues_professor_dash").hide();
+		$("#adaptationWarning_professor_dash").hide();
 		$("#adaptationInfo_professor_dash").hide();
-		$("#adaptationIssuesText_professor_dash").html('');
+		$("#adaptationWarningText_professor_dash").html('');
 
 		$("#constraintsError_professor_dash").hide();
 
@@ -1271,6 +1287,8 @@ crossorigin='anonymous'></script>
 		});
 
 
+		
+		
 		
 		
 		
@@ -1664,8 +1682,7 @@ crossorigin='anonymous'></script>
 								$('#cstODPIPTable_professor_dash').append(odpipCstTable);
 								
 								
-								console.log(newServerState.currFreeTasks)
-								
+
 								var currFreeTasks = unformattedStringToObj(newServerState.currFreeTasks);
 								var currSelectedTasks = unformattedStringToObj(newServerState.currSelectedTasks);
 								
@@ -1776,14 +1793,11 @@ crossorigin='anonymous'></script>
 					dataType: 'json',
 					complete:
 					function(newServerState){
-						// $('#loadAndStartAdaptation_professor_dash').removeClass("is-loading");
-						// $('#forceStartAdaptation_professor_dash').removeClass("is-loading");
-
 						$('#groupsPlot_professor_dash').empty();
-						console.log(newServerState);
 						if(newServerState.responseText.localeCompare("error")==0){
-							$('#adaptationError_professor_dash').show(500);
-							setTimeout(function(){ $('#adaptationError_professor_dash').hide(500); }, 5000);
+							generatePlotErrorMessage(
+								'Adaptation Error! Please verify if enough students are selected. Maintaining old state...'
+							);
 							currServerState = "error";
 							return;
 						}
@@ -1939,4 +1953,5 @@ crossorigin='anonymous'></script>
 
 
 </script>
+
 </html>
