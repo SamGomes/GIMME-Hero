@@ -416,7 +416,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
                 .append('rect')
                 .attr('x', x + 140)
                 .attr('y', y - 5)
-                .attr('width', 180)
+                .attr('width', 250)
                 .attr('height', 20)
                 .attr('fill', function(node){ return 'white'; })
                 .attr('stroke', 'black');
@@ -598,19 +598,21 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
 
     // only professors can perform changes in groups
     if(!isForStudent){
-        nodeElements.on('click', function(d){ 
-
+        
+        var nodeClickCallback = function(d, i){
             resetChangeState();
             
-            var coordinates = d3.mouse(this);
+            var elem = nodeElements._groups[0][i];
+            
+            var coordinates = d3.mouse(elem);
             var mouseX = coordinates[0];
             var mouseY = coordinates[1];
 
-            thisElem = d3.select(this);
+            var thisElem = d3.select(elem);
             thisElem.attr('r', '2%');
             studentForChange = d;
             
-            d3.select(this.parentNode.parentNode)
+            d3.select(elem.parentNode.parentNode)
 
                 .append('line')
                 .attr('class', 'arrow')
@@ -626,7 +628,13 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
                 .attr('stroke', 'gray');
             
             d3.event.stopPropagation();
-
+        }
+        
+        nodeTextElements.on('click', function(d, i){
+            nodeClickCallback(d, i);
+        });
+        nodeElements.on('click', function(d){ 
+            nodeClickCallback(d, i);
         });
     }
 
@@ -799,17 +807,32 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
         htmlFromJSON(node, currTooltip, 0, 0, 0, 50, 0);
     });
 
-   
-    nodeElements.on('mouseover', function(d){
-        expandNodeViz(d);
-        d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'visible');
+    
+    
+    var nodeMouseOverCallback = function(i){
+        node = userNodes[i];
+        expandNodeViz(node);
+        d3.select(userInfoTooltips._groups[0][node.plotIndex]).style('visibility', 'visible');
         d3.event.stopPropagation();
-        
+    }
+    var nodeMouseOutCallback = function(i){
+        node = userNodes[i];
+        contractNodeViz(node);
+        d3.select(userInfoTooltips._groups[0][node.plotIndex]).style('visibility', 'hidden');
+        d3.event.stopPropagation();
+    }
+    
+    nodeTextElements.on('mouseover', function(_, i){
+        nodeMouseOverCallback(i);
     });
-    nodeElements.on('mouseout', function(d){
-        contractNodeViz(d);
-        d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'hidden');
-        d3.event.stopPropagation();
+    nodeElements.on('mouseover', function(_, i){
+        nodeMouseOverCallback(i);
+    });
+    nodeTextElements.on('mouseout', function(_, i){ 
+        nodeMouseOutCallback(i);
+    });
+    nodeElements.on('mouseout', function(_, i){
+        nodeMouseOutCallback(i);
     });
 
 
@@ -823,19 +846,22 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
     var resetSim = function(){
         simulation.nodes(userNodes)
         .force('collide', d3.forceCollide()
-            .radius(width*0.015)
-//             .radius((node) => {return (node.attr('r') == '1%')? width*0.015: width*0.03;})
+//             .radius(width*0.015)
+            .radius((_, i) => {
+                return (d3.select(nodeElements._groups[0][i]).attr('r')== '1%')? width*0.015: width*0.03;
+            })
             .strength(0.1)
         )
         .force('attract', d3.forceAttract()
             .target((node) => {return [node.centerOfMass.x, node.centerOfMass.y];})
-            .strength(3)
+            .strength(5)
         );
     }
 
 
     resetSim();
     simulation.on('tick', () => {
+            resetSim();
 
             nodeElements
                 .attr('cx', node => node.x)
