@@ -941,16 +941,22 @@ crossorigin='anonymous'></script>
 <!-- <script src='{% static 'js/color.js' %}' crossorigin='anonymous'></script> -->
 <!-- Common code to both plots used here and interface -->
 <script>
-	var generatePlotErrorMessage = function(message){
-		$('#adaptationErrorText_professor_dash').html($('#adaptationErrorText_professor_dash').html() + ('<br></br>' + message));
+	var generatePlotErrorMessage = function(message, delay){
+		$('#adaptationErrorText_professor_dash').html(message);
 		$('#adaptationError_professor_dash').show(500);
-		setTimeout(function(){ $('#adaptationError_professor_dash').hide(500); }, 5000);
+		setTimeout(function(){ 
+// 			$('#adaptationErrorText_professor_dash').html(plotErrorsStr);
+			$('#adaptationError_professor_dash').hide(500); 
+		}, delay);
 	}
 	
-	var generatePlotWarningMessage = function(message){
-		$('#adaptationWarningText_professor_dash').html($('#adaptationWarningText_professor_dash').html() + ('<br></br>' + message));
+	var generatePlotWarningMessage = function(message, delay){
+		$('#adaptationWarningText_professor_dash').html(message);
 		$('#adaptationWarning_professor_dash').show(500);
-		setTimeout(function(){ $('#adaptationWarning_professor_dash').hide(500); }, 10000);
+		setTimeout(function(){ 
+// 			$('#adaptationWarningText_professor_dash').html(plotWarnStr);
+			$('#adaptationWarning_professor_dash').hide(500); 
+		}, delay);
 	}
 </script>
 <script src='{% static 'js/plots.js' %}'></script>
@@ -958,9 +964,6 @@ crossorigin='anonymous'></script>
 <script>
 
 	$(document).ready(function(){
-		
-		
-		
 		
 		// CSRF protection setup 
 		// (from: 
@@ -1287,9 +1290,6 @@ crossorigin='anonymous'></script>
 		});
 
 
-		
-		
-		
 		
 		
 		var usersSelectedDOMElems = [];
@@ -1796,7 +1796,8 @@ crossorigin='anonymous'></script>
 						$('#groupsPlot_professor_dash').empty();
 						if(newServerState.responseText.localeCompare("error")==0){
 							generatePlotErrorMessage(
-								'Adaptation Error! Please verify if enough students are selected. Maintaining old state...'
+								'Adaptation Error! Please verify if enough students are selected. Maintaining old state...',
+								5000
 							);
 							currServerState = "error";
 							return;

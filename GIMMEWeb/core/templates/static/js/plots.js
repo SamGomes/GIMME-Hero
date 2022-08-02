@@ -670,11 +670,14 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
         .attr('z-index','7000');
     
 
+    var warningMsg = 'Could not compute task for group(s) ';
+    var displayWarn = false;
     groupInfoTooltips.each(function(originalNode){ 
 
         var currTooltip = d3.select(groupInfoTooltips._groups[0][originalNode.groupId]);
         if(originalNode.tasks == -1){
-            generatePlotWarningMessage('Could not compute task for group ' + originalNode.groupId + '... Maybe no tasks are selected?');
+            displayWarn = true;
+            warningMsg += originalNode.groupId + ',';
         }
         node = $.extend({}, originalNode); //performs a shallow copy
         node.tasks = originalNode.tasks == -1 ? '<No computed tasks>' : originalNode.tasks;
@@ -719,8 +722,12 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
 
         htmlFromJSON(node, currTooltip, 0, 0, 0, 40, 0);
     });
-    
-    
+    if(displayWarn){
+        generatePlotWarningMessage(
+            warningMsg.slice(0, -2) + ' and ' + warningMsg.slice(-2, -1)  + '... Maybe no tasks are selected?',
+            5000
+        );
+    }
     
     
     
@@ -901,7 +908,8 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
                         function(response){
                             if(response.responseText == 'error'){
                                 generatePlotErrorMessage(
-                                    'Adaptation Error! Group size violation. Maintaining old state...'
+                                    'Adaptation Error! Group size violation. Maintaining old state...',
+                                    5000
                                 );
                             }
                         }

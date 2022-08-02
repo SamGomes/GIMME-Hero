@@ -1307,9 +1307,10 @@ class Views(): #acts as a namespace
 			gi = adaptState['groups'][giIndex]
 			gf = adaptState['groups'][gfIndex]
 			
-
-			if(len(gi) == adaptation.configsGenAlg.minNumberOfPlayersPerGroup or 
-				len(gf) == adaptation.configsGenAlg.maxNumberOfPlayersPerGroup):
+			#print("limits: "+str(adaptation.configsGenAlg.minNumberOfPlayersPerGroup)+"; "+str(adaptation.configsGenAlg.maxNumberOfPlayersPerGroup))
+			#print(str(len(gi))+"; "+str(len(gf)))
+			if(len(gi) == (adaptation.configsGenAlg.minNumberOfPlayersPerGroup - 1) or 
+				len(gf) == (adaptation.configsGenAlg.maxNumberOfPlayersPerGroup + 1)):
 				return HttpResponse('error')
 			
 			gi.remove(u)
