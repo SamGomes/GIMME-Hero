@@ -36,7 +36,7 @@
 					<div class='column is-half is-offset1 is-mobile'>
 						<div class='dash-cell-box'>
 							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='placeholder'>Dashboard</div>
-							<p>Simulation State</p>
+							<p id='simulationCurrentWeek_professor_dash'> </p>
 							<div class='columns is-mobile is-centered is-mobile'>
 								<div class='column is-7' id='simulationState_professor_dash'></div>
 							</div>
@@ -112,10 +112,10 @@
 					</div>
 				</div>
 				<div class='panel-block'>
-					<div class='column is-offset-5'>
-						<div class='button' type='submit' id='addSpecificPlayer_professor_dash'>Add specific player</div>
+					<div class="column is-offset-1">
+						<button class='button modal-button is-rounded' data-target="modalODPIP_professor_dash">Add pairing restrictions</button>
 					</div>
-					<div class='column is-offset-1'>
+					<div class='column is-offset-5'>
 						<div class='button' type='submit' id='addAllUsers_professor_dash'>Select all</div>
 					</div>
 					<div class='column is-offset-1'>
@@ -221,9 +221,13 @@
 							<!-- <p>Groups</p> -->
 							
 							<div class='has-tooltip-arrow' data-tooltip='Sets the preferred amount of students per group.'>
-								<label class='control-label' for='quantity'>Preferred Group Size</label>  
+								<!-- <label class='control-label' for='quantity'>Preferred Group Size</label>  
 								<div class='control'>
 									<input id='preferredNumberOfPlayersPerGroupId_professor_dash' class='input' type='number' min='2' max='100' placeholder='4'>
+								</div> -->
+								<input type="text" id="groupSizeText_professor_dash" readonly style="width: 300px;margin: 20px; border: 0;"></input> 
+								<div class="control" id="groupSizeSlider_professor_dash">
+									
 								</div>
 							</div>
 						</div>
@@ -937,6 +941,13 @@
 src='https://code.jquery.com/jquery-3.2.1.min.js'
 integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='
 crossorigin='anonymous'></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"
+	integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA=="
+	crossorigin="anonymous"
+	referrerpolicy="no-referrer"
+></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src='https://d3js.org/d3.v5.js' crossorigin='anonymous'></script>
 <script src='https://unpkg.com/d3-force-attract@latest' crossorigin='anonymous'></script>
 <!-- <script src='{% static 'js/color.js' %}' crossorigin='anonymous'></script> -->
@@ -1027,12 +1038,29 @@ crossorigin='anonymous'></script>
 			$('#qualityWeightsAb_professor_dash').val(1.0 - $(this).val())
 		});
 		
+		$(function(){
+			$("#groupSizeSlider_professor_dash").slider({
+				range: true,
+				min: 2,
+				max: 10,
+				values: [3, 4],
+				step: 1,
+				slide: function(event, ui){
+					$("#groupSizeText_professor_dash").val("Min Group Size:" + ui.values[0] + " Max Group Size:" + ui.values[1]);
+				}
+			});
+			$("#groupSizeText_professor_dash").val("Min Group Size: " + $("#groupSizeSlider_professor_dash").slider("values", 0) + "   Max Group Size: " + $("#groupSizeSlider_professor_dash").slider("values", 1));
+
+		}
+		);
+
+
 		simulationWeekMessages = ["Create and register the tasks for the course. Share the platform link with the students, so they can sign up in the platform.",
 									"Select all students that will be considered when forming the groups. Select all tasks relating to week 1. Do an iteration of the algorithm and verify the formed groups. Evaluate Student_E and simulate evaluation for the rest.",
 									"Student_A will not be available this week, remove them from the selection. Select week 2's tasks. Iterate and simulate reaction.",
-									"Student_X cannot be in the same group as Student_Y, create the restriction so that Student_X and Student_Y are separated. Student_Y was misevaluated from last week, correct their ability value. Iterate and simulate reaction.",
-									"Student_Y was very engaged in the group project when working with Student_Z, create the restriction so that Student_Y and Student_Z are put together. Iterate and simulate reaction.",
-									"From this week onward, the course will accept new students from similar courses. Select the most appropriate grouping method to generate the groups for this week. Iterate and simulate reaction."]
+									"Student_X cannot be in the same group as Student_Y, create the restriction so that Student_X and Student_Y are separated. Student_Y was misevaluated from last week, correct their ability value. Student_W was very engaged in the group project when working with Student_Z, create the restriction so that Student_W and Student_Z are in the same group. Iterate and simulate reaction.",
+									"From this week onward, the course will accept new students from similar courses. Select the most appropriate grouping method to generate the groups for this week. Iterate and simulate reaction.",
+									"From this point on, you can experiment iterating the algorithm with any setting you want, create group constraints and even change the algorithm, you will just need to press the \"Simulate evaluation of all students\" after generating the groups."]
 
 
 		dropdownItemsText = [["<a class=\'dropdown-item\'> Share link </a>","<a class=\'dropdown-item\'> Simulate task registration </a>"], ["<a class=\'dropdown-item\'> Simulate evaluation of students </a>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> No actions available </div>"]];
@@ -1040,8 +1068,6 @@ crossorigin='anonymous'></script>
 		var changeSimulationWeek = function(newServerState)
 		{
 			week = newServerState.simWeek
-			console.log(week)
-			
 			if (week == 1){
 				console.log(simulationWeekMessages[week].replace("Student_E", newServerState.studentToEvaluate))
 				simulationWeekMessages[week] = simulationWeekMessages[week].replace("Student_E", newServerState.studentToEvaluate)
@@ -1055,18 +1081,18 @@ crossorigin='anonymous'></script>
 			if (week == 3){
 				simulationWeekMessages[week] = simulationWeekMessages[week].replaceAll("Student_X", newServerState.studentX)
 				simulationWeekMessages[week] = simulationWeekMessages[week].replaceAll("Student_Y", newServerState.studentY)
-			}
-
-			if (week == 4){
-				simulationWeekMessages[week] = simulationWeekMessages[week].replaceAll("Student_Y", newServerState.studentY)
+				simulationWeekMessages[week] = simulationWeekMessages[week].replaceAll("Student_W", newServerState.studentW)
 				simulationWeekMessages[week] = simulationWeekMessages[week].replaceAll("Student_Z", newServerState.studentZ)
 			}
-		
+
 			var simulationLog = $("<div class=\'list\'> </div>");
 			for (var i = 0; i <= week; i++){
 				simulationLog.append("<div class=\'list-item\'>" + simulationWeekMessages[i] + "</div>");
 				simulationLog.show(135)
 			}
+
+			$("#simulationCurrentWeek_professor_dash").empty()
+			$("#simulationCurrentWeek_professor_dash").append("Current week: " + newServerState.simWeek)
 			return simulationLog;
 		}
 
@@ -1142,7 +1168,6 @@ crossorigin='anonymous'></script>
 		var canComputeAdaptation = function(newServerState){
 			return !(JSON.stringify(currServerState) === JSON.stringify(newServerState));
 		}
-		
 		
 		
 		
@@ -1814,6 +1839,8 @@ crossorigin='anonymous'></script>
 				// 'minNumberOfPlayersPerGroup': $('#minNumberOfPlayersPerGroupId_professor_dash').val(),
 				// 'maxNumberOfPlayersPerGroup': $('#maxNumberOfPlayersPerGroupId_professor_dash').val(),
 				'preferredNumberOfPlayersPerGroup': $('#preferredNumberOfPlayersPerGroupId_professor_dash').val(),
+				'minNumberOfPlayersPerGroup': $('#groupSizeSlider_professor_dash').slider("values", 0),
+				'maxNumberOfPlayersPerGroup': $('#groupSizeSlider_professor_dash').slider("values", 1),
 				'qualityWeightsAb': $('#qualityWeightsAbId_professor_dash').val(),
 				'qualityWeightsEng': $('#qualityWeightsEngId_professor_dash').val(),
 				'playerWindow': $('#playerWindowId_professor_dash').val(),

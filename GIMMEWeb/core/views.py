@@ -396,6 +396,7 @@ simStudentToEvaluate = ""
 simUnavailableStudent = ""
 simStudentX = ""
 simStudentY = ""
+simStudentW = ""
 simStudentZ = ""
 # {'csrfmiddlewaretoken': ['3GuQuFgTG1tPLHK0bvD4kO5H0c4F2keftFkiQRIcpyDbrxlEEWmjazhfmCEx0p80'], 'username': ['s17'], 'role': ['student'], 'email': ['s17@s17.com'], 'password1': ['VW8fiAUkGs7QLwn'], 'password2': ['VW8fiAUkGs7QLwn'], 'fullName': ['s17'], 'age': ['20'], 'gender': ['Male'], 'description': ['.'], 'Create User': ['Register']}
 role = 'student'
@@ -437,6 +438,7 @@ class Views(): #acts as a namespace
 		global simUnavailableStudent
 		global simStudentX
 		global simStudentY
+		global simStudentW
 		global simStudentZ
 
 		simulationWeek = 0
@@ -445,6 +447,7 @@ class Views(): #acts as a namespace
 
 		simStudentX = ""
 		simStudentY = ""
+		simStudentW = ""
 		simStudentZ = ""
 
 		return HttpResponse('ok')
@@ -487,8 +490,7 @@ class Views(): #acts as a namespace
 					newState.characteristics.ability /= 3
 					newState.characteristics.engagement /= 3
 
-			if simulationWeek == 3:
-				if playerId == simStudentY:
+				elif playerId == simStudentW:
 					newState.characteristics.engagement = 0.95
 				
 				elif playerId == simStudentZ:
@@ -808,18 +810,18 @@ class Views(): #acts as a namespace
 			
 		global simStudentX
 		global simStudentY
+		global simStudentW
 		global simStudentZ
 
 		if simulationWeek == 2:
 			simStudentX = currAdaptationState["groups"][0][0]
 			simStudentY = currAdaptationState["groups"][0][1]
 
-
-		if simulationWeek == 3:
 			for group in currAdaptationState["groups"]:
 				for i in range(len(group)):
 					if group[i] == simStudentY:
-						simStudentZ = group[(i + 1) % len(group)]
+						simStudentW = group[(i + 1) % len(group)]
+						simStudentZ = group[(i + 2) % len(group)]
 
 
 		serverStateModelBridge.setCurrAdaptationState(currAdaptationState)
@@ -955,7 +957,10 @@ class Views(): #acts as a namespace
 					regAlg = persEstRegAlg,
 					numTestedPlayerProfiles = 100),
 
-				preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
+				#preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
+				minNumberOfPlayersPerGroup= int(newConfigParams['minNumberOfPlayersPerGroup']),
+				maxNumberOfPlayersPerGroup= int(newConfigParams['maxNumberOfPlayersPerGroup']),
+
 
 				taskModelBridge = taskBridge,
 				jointPlayerConstraints = newConfigParams['jointPlayerConstraints'],
@@ -1178,6 +1183,7 @@ class Views(): #acts as a namespace
 
 			newSessionState['studentX'] = simStudentX
 			newSessionState['studentY'] = simStudentY
+			newSessionState['studentW'] = simStudentW
 			newSessionState['studentZ'] = simStudentZ
 
 			newSessionState['isTaskCreated'] = isTaskCreated
@@ -1417,13 +1423,13 @@ class Views(): #acts as a namespace
 				else:
 					simulationWeek -= 1
 
-			if (simulationWeek == 3 or simulationWeek == 4):
+			if (simulationWeek == 3):
 				if (not simSimulateReaction):
 					simulationWeek -= 1
 				else:
 					simSimulateReaction = False
 
-			if (simulationWeek == 5):
+			if (simulationWeek == 4):
 				if (simSimulateReaction):
 					httpRequest = HttpRequest()
 					httpRequest.method = 'POST'
