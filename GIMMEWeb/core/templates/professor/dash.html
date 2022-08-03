@@ -651,7 +651,7 @@
 				</div>
 
 				<div class='panel-block'>
-					<div class="columns is-mobile is-centered">
+					<div class="columns is-mobile is-centered" id='groupsPlotAuxPanel_professor_dash'>
 						<div class='column is-3'>
 							<div class='panel-block panel-block-borderless columns is-mobile'>
 								<p>Student Performance Scale (Color of Dots)</p>
@@ -1665,7 +1665,7 @@ crossorigin='anonymous'></script>
 									$('#loadAndStartAdaptation_professor_dash').removeClass('is-loading');
 									$('#rebuildPlot_professor_dash').removeClass('is-loading');
 									
-									$('#groupsPlotLegend_professor_dash').show(500);
+									$('#groupsPlotAuxPanel_professor_dash').show(500);
 									$('#groupsPlot_professor_dash').show();
 									$('#interactionsProfilePlot_professor_dash').show();
 									$('#learningStatePlot_professor_dash').show();
@@ -1685,7 +1685,7 @@ crossorigin='anonymous'></script>
 									$('#forceStartAdaptation_professor_dash').addClass('is-loading');
 									$('#loadAndStartAdaptation_professor_dash').addClass('is-loading');
 
-									$('#groupsPlotLegend_professor_dash').hide(500);
+									$('#groupsPlotAuxPanel_professor_dash').hide(500);
 									$('#groupsPlot_professor_dash').hide(500);
 									$('#interactionsProfilePlot_professor_dash').hide(500);
 									$('#learningStatePlot_professor_dash').hide(500);

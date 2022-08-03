@@ -128,7 +128,12 @@ var updateGroupsPlotNodeColors = function(canvasId, newScaleType){
     
 
 var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleType){
+    abMax = 0;
+    engMax = 0; 
 
+    abMin = Infinity;
+    engMin = Infinity; 
+    
     groupsPlotScaleType = scaleType;
     
     $('#adaptationIssues_professor_dash').hide();
