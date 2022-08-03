@@ -505,7 +505,14 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
         return (node.groupId == selection.groupId || (studentForChange != undefined && node.userId == studentForChange.userId))
     };
     
+//     var mouseOverCallbacks = 0;
+   
     var expandNodeViz = function(d){
+//         if(mouseOverCallbacks == 0){
+//             simulation.alpha(0.1).restart();
+//         }
+//         mouseOverCallbacks++;
+        
         $(groupIndicators._groups[0])
             .each(function(i,e){
                 d3.select(e).attr('opacity', node => canNodeBeExpanded(d, node)? '1.0': '0.2');
@@ -540,6 +547,8 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
         if(studentForChange!=undefined){
             return;
         }
+        
+        
         $(groupIndicators._groups[0])
             .each(function(i,e){
                 d3.select(e).attr('opacity', '1.0');
@@ -775,7 +784,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
     if(displayWarn){
         generatePlotWarningMessage(
             warningMsg.slice(0, -2) + ' and ' + warningMsg.slice(-2, -1)  + '... Maybe no tasks are selected?',
-            5000
+            3000
         );
     }
     
@@ -851,9 +860,6 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
 
     
     var nodeMouseOverCallback = function(i){
-        simulation.alphaTarget(0.3);
-        simulation.alphaTarget(0).restart();
-        
         node = userNodes[i];
         expandNodeViz(node);
         d3.select(userInfoTooltips._groups[0][node.plotIndex]).style('visibility', 'visible');
@@ -886,10 +892,10 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
     var resetSim = function(){
         simulation.nodes(userNodes)
         .force('collide', d3.forceCollide()
-//             .radius(width*0.015)
-            .radius((_, i) => {
-                return (d3.select(nodeElements._groups[0][i]).attr('r') == '1%')? width*0.015: width*0.03;
-            })
+            .radius(width*0.015)
+//             .radius((_, i) => {
+//                 return (d3.select(nodeElements._groups[0][i]).attr('r') == '1%')? width*0.015: width*0.03;
+//             })
             .strength(0.1)
         )
         .force('attract', d3.forceAttract()
@@ -902,6 +908,8 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
     resetSim();
     simulation.on('tick', () => {
             resetSim();
+            
+//             console.log(simulation.alpha());
 
             nodeElements
                 .attr('cx', node => node.x)
@@ -945,7 +953,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
     const dragDrop = d3.drag()
         .on('start', node => {
             if (!d3.event.active)
-                simulation.alphaTarget(1.0).restart();
+                simulation.alpha(0.1);
 
             node.centerOfMass.x = d3.event.x;
             node.centerOfMass.y = d3.event.y;
@@ -975,7 +983,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
                             if(response.responseText == 'error'){
                                 generatePlotErrorMessage(
                                     'Adaptation Error! Group size violation. Maintaining old state...',
-                                    5000
+                                    3000
                                 );
                             }
                         }
@@ -987,7 +995,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
         
         .on('drag', node => {
             if (!d3.event.active)
-                simulation.alphaTarget(1.0).restart();
+                simulation.alpha(0.1);
             node.centerOfMass.x = d3.event.x;
             node.centerOfMass.y = d3.event.y;
             node.fx = node.centerOfMass.x;
