@@ -665,18 +665,19 @@
 									border-color: black; 
 									border-radius: 1em;
 									border-style: solid;
-									border-width: 0.25em;'>
+									border-width: 0.25em;
+									margin: 1em;'>
 										<div class='column is-half is-centered fancy-plot-text' id='groupsPlotScaleMin_professor_dash' style='font-size:2em; text-align:left;'>0%</div>
 										<div class='column is-half is-centered fancy-plot-text' id='groupsPlotScaleMax_professor_dash' style='font-size:2em; text-align:right;'>100%</div>		
 									</div>
 								</div>
 							</div>
 							<div class='panel-block panel-block-borderless columns is-mobile is-centered'>
-								<div class='column is-half'>
+								<div class='column is-half' style='text-align:center;'>
 									<input type="radio" name="studentPerformanceScaleType" value="relative" checked="checked">
 									<label class='has-text-weight-bold' for="relative">Relative</label>
 								</div>
-								<div class='column is-half'>
+								<div class='column is-half' style='text-align:center;'>
 									<input type="radio" name="studentPerformanceScaleType" value="absolute">
 									<label class='has-text-weight-bold' for="absolute">Absolute</label>
 								</div>
@@ -1610,19 +1611,26 @@ crossorigin='anonymous'></script>
 		    return table;
 		};
 
-
-		$('input[name=\'studentPerformanceScaleType\']').change(function(){
+		var updateGroupsPlotScaleCallback = function(){
 			var scaleType = $('input[name="studentPerformanceScaleType"]:checked').val();
             updateGroupsPlotNodeColors('groupsPlot_professor_dash', scaleType);
             
 			if(scaleType=='relative'){
-				$('#groupsPlotScaleMin_professor_dash').hide(500).html(((abMin + engMin)/2).toFixed(2)*100 + '%').show(500); 
-				$('#groupsPlotScaleMax_professor_dash').hide(500).html(((abMax + engMax)/2).toFixed(2)*100 + '%').show(500); 
+				$('#groupsPlotScaleMin_professor_dash').hide(500).show(500);
+				setTimeout(function(){$('#groupsPlotScaleMin_professor_dash').html(((abMin + engMin)/2).toFixed(2)*100 + '%'); },500)
+				$('#groupsPlotScaleMax_professor_dash').hide(500).show(500);
+				setTimeout(function(){$('#groupsPlotScaleMax_professor_dash').html(((abMax + engMax)/2).toFixed(2)*100 + '%'); },500)
 			}else{
-				$('#groupsPlotScaleMin_professor_dash').hide(500).html('0%').show(500); 
-				$('#groupsPlotScaleMax_professor_dash').hide(500).html('100%').show(500);
+				$('#groupsPlotScaleMin_professor_dash').hide(500).show(500);
+				setTimeout(function(){$('#groupsPlotScaleMin_professor_dash').html('0%'); },500)
+				$('#groupsPlotScaleMax_professor_dash').hide(500).show(500);
+				setTimeout(function(){$('#groupsPlotScaleMax_professor_dash').html('100%'); },500)
 			}
-			
+		};
+		
+
+		$('input[name=\'studentPerformanceScaleType\']').change(function(){
+			updateGroupsPlotScaleCallback();
         });
 
 		var fetchServerData = function(){
@@ -1859,6 +1867,7 @@ crossorigin='anonymous'></script>
 					{ "name": "Engagement" , "value": avgChars[1] }
 				]
 			);
+			updateGroupsPlotScaleCallback();
 		}
 
 		var startAdaptation = function(){
