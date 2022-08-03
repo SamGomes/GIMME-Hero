@@ -191,3 +191,12 @@ body {
 .dropdown-item {
   z-index: 1000;
 }
+
+
+.fancy-plot-text{
+    font-family: Calibri,sans-serif;
+    color: white;
+            font-size: 50px;
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: black;
+}

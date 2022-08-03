@@ -37,7 +37,7 @@
 						<div class='dash-cell-box'>
 							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='placeholder'>Dashboard</div>
 							<p id='simulationCurrentWeek_professor_dash'> </p>
-							<div class='columns is-mobile is-centered is-mobile'>
+							<div class='columns is-mobile is-centered'>
 								<div class='column is-7' id='simulationState_professor_dash'></div>
 							</div>
 							<div class='button' id='advanceSimulationButton_professor_dash'> Advance Simulation</div>
@@ -225,8 +225,8 @@
 								<div class='control'>
 									<input id='preferredNumberOfPlayersPerGroupId_professor_dash' class='input' type='number' min='2' max='100' placeholder='4'>
 								</div> -->
-								<input type="text" id="groupSizeText_professor_dash" readonly style="width: 300px;margin: 20px; border: 0;"></input> 
-								<div class="control" id="groupSizeSlider_professor_dash">
+								<label class='control-label m-2' id='groupSizeText_professor_dash'></label> 
+								<div class='control' id='groupSizeSlider_professor_dash'>
 									
 								</div>
 							</div>
@@ -612,6 +612,9 @@
 				</div>
 				
 				
+				
+				
+				
 				<div class='panel-block panel-block-borderless'>
 					<div class='columns is-mobile is-fullwidth'>
 						<div class='column is-full'>
@@ -648,15 +651,45 @@
 				</div>
 
 				<div class='panel-block'>
-					<div class="columns is-mobile is-centered is-mobile">
+					<div class="columns is-mobile is-centered">
 						<div class='column is-3'>
-							<div id='groupsPlotLegendTrigger_professor_dash'>
-								<div class='button has-tooltip-top has-tooltip-arrow' data-tooltip='Show caption.'>
-									<i class="fa fa-window-maximize" aria-hidden="true"></i>
+							<div class='panel-block panel-block-borderless columns is-mobile'>
+								<p>Student Performance Scale (Color of Dots)</p>
+							</div>
+							<div class='panel-block panel-block-borderless columns is-mobile is-centered'>
+								<div class='column is-7'>
+									<div class='columns is-mobile is-centered' 
+									style='width:100%; 
+									height:5em; 
+									background-image: linear-gradient(to right, red, yellow, green); 
+									border-color: black; 
+									border-radius: 1em;
+									border-style: solid;
+									border-width: 0.25em;'>
+										<div class='column is-half is-centered fancy-plot-text' id='groupsPlotScaleMin_professor_dash' style='font-size:2em; text-align:left;'>0%</div>
+										<div class='column is-half is-centered fancy-plot-text' id='groupsPlotScaleMax_professor_dash' style='font-size:2em; text-align:right;'>100%</div>		
+									</div>
 								</div>
 							</div>
-							<div class='has-text-right has-tooltip-top has-tooltip-arrow' id='groupsPlotLegend_professor_dash' data-tooltip='Click on this caption to hide it.'>
-								<img src="{% static "media/images/groupPlotLegend.png" %}"></img>
+							<div class='panel-block panel-block-borderless columns is-mobile is-centered'>
+								<div class='column is-half'>
+									<input type="radio" name="studentPerformanceScaleType" value="relative" checked="checked">
+									<label class='has-text-weight-bold' for="relative">Relative</label>
+								</div>
+								<div class='column is-half'>
+									<input type="radio" name="studentPerformanceScaleType" value="absolute">
+									<label class='has-text-weight-bold' for="absolute">Absolute</label>
+								</div>
+							</div>
+							<div class='panel-block panel-block-borderless'>
+								<div id='groupsPlotLegendTrigger_professor_dash'>
+									<div class='button has-tooltip-top has-tooltip-arrow' data-tooltip='Show caption.'>
+										<i class="fa fa-window-maximize" aria-hidden="true"></i>
+									</div>
+								</div>
+								<div class='has-text-right has-tooltip-top has-tooltip-arrow' id='groupsPlotLegend_professor_dash' data-tooltip='Click on this caption to hide it.'>
+									<img src="{% static "media/images/groupPlotLegend.png" %}"></img>
+								</div>
 							</div>
 						</div>
 						<div class='column is-9'>
@@ -664,29 +697,29 @@
 						</div>
 					</div>
 
-					<div class='columns is-mobile is-centered is-mobile'>
+					<div class='columns is-mobile is-centered'>
 						<img class='column is-2 loading-anim' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>
 				</div>
 
 				<div class='panel-block' style='display: block;'>
 					<p>Overall Preferences Distribution</p>
-					<div class='columns is-mobile is-centered is-mobile'>
+					<div class='columns is-mobile is-centered'>
 						<div class='column is-7' id='interactionsProfilePlot_professor_dash'></div>
 					</div>
 
-					<div class='columns is-mobile is-centered is-mobile'>
+					<div class='columns is-mobile is-centered'>
 						<img class='column is-2 loading-anim' id='interactionsProfilePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>
 				</div>
 
 				<div class='panel-block' style='display: block;'>
 					<p>Average Class Learning State</p>
-					<div class='columns is-mobile is-centered is-mobile'>
+					<div class='columns is-mobile is-centered'>
 						<div class='column is-7' id='learningStatePlot_professor_dash'></div>
 					</div>
 
-					<div class='columns is-mobile is-centered is-mobile'>
+					<div class='columns is-mobile is-centered'>
 						<img class='column is-2 loading-anim' id='learningStatePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>
 				</div>
@@ -1065,13 +1098,12 @@ crossorigin='anonymous'></script>
 				values: [3, 4],
 				step: 1,
 				slide: function(event, ui){
-					$("#groupSizeText_professor_dash").val("Min Group Size:" + ui.values[0] + " Max Group Size:" + ui.values[1]);
+					$("#groupSizeText_professor_dash").html("Consider groups sized between " + ui.values[0] + " and " + ui.values[1]+".");
 				}
 			});
-			$("#groupSizeText_professor_dash").val("Min Group Size: " + $("#groupSizeSlider_professor_dash").slider("values", 0) + "   Max Group Size: " + $("#groupSizeSlider_professor_dash").slider("values", 1));
-
-		}
-		);
+			$("#groupSizeText_professor_dash").html("Consider groups sized between" + $("#groupSizeSlider_professor_dash").slider("values", 0)
+				+ " and " + $("#groupSizeSlider_professor_dash").slider("values", 1));
+		});
 
 
 		simulationWeekMessages = ["Create and register the tasks for the course. Share the platform link with the students, so they can sign up in the platform.",
@@ -1579,7 +1611,19 @@ crossorigin='anonymous'></script>
 		};
 
 
-		
+		$('input[name=\'studentPerformanceScaleType\']').change(function(){
+			var scaleType = $('input[name="studentPerformanceScaleType"]:checked').val();
+            updateGroupsPlotNodeColors('groupsPlot_professor_dash', scaleType);
+            
+			if(scaleType=='relative'){
+				$('#groupsPlotScaleMin_professor_dash').hide(500).html(((abMin + engMin)/2).toFixed(2)*100 + '%').show(500); 
+				$('#groupsPlotScaleMax_professor_dash').hide(500).html(((abMax + engMax)/2).toFixed(2)*100 + '%').show(500); 
+			}else{
+				$('#groupsPlotScaleMin_professor_dash').hide(500).html('0%').show(500); 
+				$('#groupsPlotScaleMax_professor_dash').hide(500).html('100%').show(500);
+			}
+			
+        });
 
 		var fetchServerData = function(){
 			$.ajax(
@@ -1766,7 +1810,13 @@ crossorigin='anonymous'></script>
 
 
 		var buildPlots = function(currServerState){
-			buildGroupsPlot(false, 'groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
+			buildGroupsPlot(
+				false, 
+				'groupsPlot_professor_dash', 
+				currServerState.currAdaptationState, 
+				currServerState.studentsStates,
+				$('input[name="studentPerformanceScaleType"]:checked').val()
+			);
 
 			$('#interactionsProfilePlot_professor_dash').empty()
 			$('#learningStatePlot_professor_dash').empty()
@@ -1954,7 +2004,13 @@ crossorigin='anonymous'></script>
 		$('#rebuildPlot_professor_dash').click(function(){
 			$('#groupsPlot_professor_dash').empty();
 			if(currServerState.currAdaptationState != undefined && currServerState.currAdaptationState.groups != undefined){
-				buildGroupsPlot(false, 'groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
+				buildGroupsPlot(
+					false, 
+					'groupsPlot_professor_dash', 
+					currServerState.currAdaptationState, 
+					currServerState.studentsStates,
+					$('input[name="studentPerformanceScaleType"]:checked').val()
+				);
 			}
 		})
 

@@ -33,16 +33,104 @@ var responsivefy = function(svg, targetWidthClamp, leftPaddingRatio) {
 
 
 
-var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
-
-    // used to correctly generate user colors
-    var abMax = 0;
-    var engMax = 0; 
-
-    var abMin = Infinity;
-    var engMin = Infinity; 
 
 
+
+
+
+
+groupsPlotNodeElements = undefined;
+groupsPlotScaleType = undefined;
+
+// used to correctly generate user colors
+var abMax = 0;
+var engMax = 0; 
+
+var abMin = Infinity;
+var engMin = Infinity; 
+
+var generateGroupColor = function(profile) {
+    var focus = profile.dimensions.Focus;
+    var challenge = profile.dimensions.Challenge;
+
+    if (focus >= 0 && focus < 0.33){
+        if (challenge >= 0 && challenge < 0.33){
+            return '#dd6c02'
+        }
+        else if (challenge >= 0.33 && challenge < 0.66){
+            return '#ddb502'
+        }
+        else if (challenge >= 0.66 && challenge <= 1.0){
+            return '#b5dd02'
+        }
+    }
+    else if (focus >= 0.33 && focus < 0.66){
+        if (challenge >= 0 && challenge < 0.33){
+            return '#dd1402'
+        }
+        else if (challenge >= 0.33 && challenge < 0.66){
+            return '#a3a1a1'
+        }
+        else if (challenge >= 0.66 && challenge <= 1.0){
+            return '#19c151'
+        }
+    }
+    else if (focus >= 0.66 && focus <= 1.0){
+        if (challenge >= 0 && challenge < 0.33){
+            return '#89150b'
+        }
+        else if (challenge >= 0.33 && challenge < 0.66){
+            return '#cd7dce'
+        }
+        else if (challenge >= 0.66 && challenge <= 1.0){
+            return '#7724d6'
+        }
+    }
+    return '#a3a1a1'
+}
+
+
+
+var generatePlayerColor = function(node){
+
+    var userChar = node.userState.characteristics;
+    
+    //groupsPlotScaleType == 'absolute'
+    var abRatio = userChar.ability;
+    var engRatio = userChar.engagement;
+    if(groupsPlotScaleType =='relative'){
+        abRatio = abMax > 0.0? ((userChar.ability - abMin) / (abMax - abMin)): 0.0;
+        engRatio = engMax > 0.0? ((userChar.engagement - engMin) / (engMax - engMin)): 0.0;
+    }
+
+    ratio = (abRatio + engRatio) / 2.0;
+
+    return d3.scaleLinear()
+    .domain([0.0, 0.5, 1.0])
+    .range(['#FF0000', '#FFFF00', '#00FF00'])(ratio)
+
+}
+    
+var updateGroupsPlotNodeColors = function(canvasId, newScaleType){
+    groupsPlotScaleType = newScaleType;
+    
+    var nodes = groupsPlotNodeElements._groups[0];
+    for(var i=0; i<nodes.length; i++){
+        d3.select(nodes[i])
+            .transition()
+            .duration(1000)
+            .attr('fill', function(){
+                    return nodes[i].isForStudent? colors[0]: generatePlayerColor(nodes[i].__data__);
+                });
+    }
+    
+}
+    
+
+var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleType){
+
+    groupsPlotScaleType = scaleType;
+    
     $('#adaptationIssues_professor_dash').hide();
     $('#adaptationIssuesText_professor_dash').html('');
 
@@ -90,62 +178,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
     }
 
 
-    var generateGroupColor = function(profile) {
-        var focus = profile.dimensions.Focus;
-        var challenge = profile.dimensions.Challenge;
-
-        if (focus >= 0 && focus < 0.33){
-            if (challenge >= 0 && challenge < 0.33){
-                return '#dd6c02'
-            }
-            else if (challenge >= 0.33 && challenge < 0.66){
-                return '#ddb502'
-            }
-            else if (challenge >= 0.66 && challenge <= 1.0){
-                return '#b5dd02'
-            }
-        }
-        else if (focus >= 0.33 && focus < 0.66){
-            if (challenge >= 0 && challenge < 0.33){
-                return '#dd1402'
-            }
-            else if (challenge >= 0.33 && challenge < 0.66){
-                return '#a3a1a1'
-            }
-            else if (challenge >= 0.66 && challenge <= 1.0){
-                return '#19c151'
-            }
-        }
-        else if (focus >= 0.66 && focus <= 1.0){
-            if (challenge >= 0 && challenge < 0.33){
-                return '#89150b'
-            }
-            else if (challenge >= 0.33 && challenge < 0.66){
-                return '#cd7dce'
-            }
-            else if (challenge >= 0.66 && challenge <= 1.0){
-                return '#7724d6'
-            }
-        }
-        return '#a3a1a1'
-    }
     
-
-
-    var generatePlayerColor = function(node){
-
-        var userChar = node.userState.characteristics;
-        abRatio = abMax > 0.0? ((userChar.ability - abMin) / (abMax - abMin)): 0.0;
-        engRatio = engMax > 0.0? ((userChar.engagement - engMin) / (engMax - engMin)): 0.0;
-
-
-        ratio = (abRatio + engRatio) / 2.0;
-
-        return d3.scaleLinear()
-        .domain([0.0, 0.5, 1.0])
-        .range(['#FF0000', '#FFFF00', '#00FF00'])(ratio)
-
-    }
 
 
     // from: https://stackoverflow.com/questions/35969656/how-can-i-generate-the-opposite-color-according-to-current-color
@@ -297,6 +330,9 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
       return num <= min ? min : num >= max ? max : num;
     }
 
+    
+    
+    
     var nodeElements =
         svg.append('g')
             .selectAll('circle')
@@ -329,7 +365,8 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
                 })
             .attr('stroke-width', '0.3%');
          
-
+    groupsPlotNodeElements = nodeElements;
+            
     var nodeTextElements = 
         svg.append('g')
         .selectAll('text')
@@ -337,7 +374,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
         .enter()
         .append('text')
         .attr('dy', 7)
-        .attr('font-size', 20)
+//         .attr('class', 'fancy-plot-text')
         .attr('font-family', 'Calibri,sans-serif')
         .attr('text-anchor', 'middle')
         .style("stroke-width", 0.5)
@@ -808,8 +845,10 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
     });
 
     
-    
     var nodeMouseOverCallback = function(i){
+        simulation.alphaTarget(0.3);
+        simulation.alphaTarget(0).restart();
+        
         node = userNodes[i];
         expandNodeViz(node);
         d3.select(userInfoTooltips._groups[0][node.plotIndex]).style('visibility', 'visible');
@@ -837,10 +876,6 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
 
 
     
-    
-    
-
-    
 
     var simulation = d3.forceSimulation();
     var resetSim = function(){
@@ -848,7 +883,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
         .force('collide', d3.forceCollide()
 //             .radius(width*0.015)
             .radius((_, i) => {
-                return (d3.select(nodeElements._groups[0][i]).attr('r')== '1%')? width*0.015: width*0.03;
+                return (d3.select(nodeElements._groups[0][i]).attr('r') == '1%')? width*0.015: width*0.03;
             })
             .strength(0.1)
         )
@@ -905,7 +940,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
     const dragDrop = d3.drag()
         .on('start', node => {
             if (!d3.event.active)
-                simulation.alphaTarget(0.3).restart();
+                simulation.alphaTarget(1.0).restart();
 
             node.centerOfMass.x = d3.event.x;
             node.centerOfMass.y = d3.event.y;
@@ -964,9 +999,8 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates){
             }
         })
         .on('end', node => {
-            if (!d3.event.active) {
+            if (!d3.event.active)
                 simulation.alphaTarget(0);
-            }
             node.fx = null;
             node.fy = null;
             for(i=0; i<userNodes.length; i++){
