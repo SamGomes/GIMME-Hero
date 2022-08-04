@@ -616,33 +616,19 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
 
     defs.append('marker')
         .attr('id', 'arrow')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 5)
+        .attr('viewBox', '0 -10 20 20')
+        .attr('refX', 10)
         .attr('refY', 0)
-        .attr('markerWidth', 4)
-        .attr('markerHeight', 4)
+        .attr('markerWidth', 6)
+        .attr('markerHeight', 6)
         .attr('orient', 'auto')
-        .attr('stroke', 'gray')
-        .attr('fill', 'white')
+        .attr('stroke', 'black')
+        .attr('fill', 'black')
 
         .append('path')
             .attr('d', 'M0,-5 L10,0 L0,5')
             .attr('class', 'arrowHead');
 
-    defs.append('marker')
-        .attr('id', 'arrowFront')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 5)
-        .attr('refY', 0)
-        .attr('markerWidth', 4)
-        .attr('markerHeight', 4)
-        .attr('orient', 'auto')
-        .attr('stroke', 'gray')
-        .attr('fill', 'white')
-
-        .append('path')
-            .attr('d', 'M10,-5 L0,0 L10,5')
-            .attr('class', 'arrowHead');
 
 
 
@@ -667,16 +653,15 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
 
                 .append('line')
                 .attr('class', 'arrow')
-                .attr('marker-start', 'url(#arrowFront)')
+//                 .attr('marker-start', 'url(#arrowFront)')
                 .attr('marker-end', 'url(#arrow)')
-
                 .attr('x1', thisElem.attr('cx'))
                 .attr('y1', thisElem.attr('cy'))
                 .attr('x2', mouseX)
                 .attr('y2', mouseY)
                 .attr('stroke-width', '0.5%')
                 .attr('stroke-dasharray', '2%')
-                .attr('stroke', 'gray');
+                .attr('stroke', 'black');
             
             d3.event.stopPropagation();
         }
