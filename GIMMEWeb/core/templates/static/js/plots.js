@@ -519,7 +519,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             });
         $(nodeElements._groups[0])
             .each(function(i,e){
-                d3.select(e).attr('r', node => canNodeBeExpanded(d, node)? '1.8%': '1%');
+                d3.select(e).attr('r', node => canNodeBeExpanded(d, node)? '1.5%': '1%');
                 d3.select(e).attr('opacity', node => canNodeBeExpanded(d, node)? '1.0': '0.2');
             });
         $(nodeTextElements._groups[0])
@@ -953,7 +953,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
     const dragDrop = d3.drag()
         .on('start', node => {
             if (!d3.event.active)
-                simulation.alpha(0.1);
+                simulation.alphaTarget(0.1).restart();
 
             node.centerOfMass.x = d3.event.x;
             node.centerOfMass.y = d3.event.y;
@@ -995,7 +995,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
         
         .on('drag', node => {
             if (!d3.event.active)
-                simulation.alpha(0.1);
+                simulation.alphaTarget(0.1).restart();
             node.centerOfMass.x = d3.event.x;
             node.centerOfMass.y = d3.event.y;
             node.fx = node.centerOfMass.x;
