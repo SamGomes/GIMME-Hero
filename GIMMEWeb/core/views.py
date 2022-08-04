@@ -483,12 +483,12 @@ class Views(): #acts as a namespace
 
 			if simulationWeek == 2:
 				if playerId == simStudentX:
-					newState.characteristics.ability /= 2
-					newState.characteristics.engagement /= 2
+					newState.characteristics.ability = 0.3
+					newState.characteristics.engagement = 0.3
 
 				elif playerId == simStudentY:
-					newState.characteristics.ability /= 3
-					newState.characteristics.engagement /= 3
+					newState.characteristics.ability = 0.2
+					newState.characteristics.engagement = 0.2
 
 				elif playerId == simStudentW:
 					newState.characteristics.engagement = 0.95
@@ -813,15 +813,12 @@ class Views(): #acts as a namespace
 		global simStudentW
 		global simStudentZ
 
-		if simulationWeek == 2:
+		if simulationWeek == 2 and currAdaptationState != []:
 			simStudentX = currAdaptationState["groups"][0][0]
 			simStudentY = currAdaptationState["groups"][0][1]
 
-			for group in currAdaptationState["groups"]:
-				for i in range(len(group)):
-					if group[i] == simStudentY:
-						simStudentW = group[(i + 1) % len(group)]
-						simStudentZ = group[(i + 2) % len(group)]
+			simStudentW = currAdaptationState["groups"][1][0]
+			simStudentZ = currAdaptationState["groups"][1][1]
 
 
 		serverStateModelBridge.setCurrAdaptationState(currAdaptationState)
@@ -879,9 +876,11 @@ class Views(): #acts as a namespace
 			return RandomConfigsGen(
 				playerModelBridge = playerBridge, 
 				interactionsProfileTemplate = intProfTemplate.generateCopy(),
-				# minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
-				# maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
-				preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']))
+				minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
+				maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
+				# preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
+				jointPlayerConstraints = newConfigParams['jointPlayerConstraints'],
+				separatedPlayerConstraints = newConfigParams['separatedPlayerConstraints'])
 
 		def selectedGenAlgSwitcherPRS(request):
 			return PureRandomSearchConfigsGen(
@@ -894,9 +893,11 @@ class Views(): #acts as a namespace
 							regAlg = persEstRegAlg,
 							numTestedPlayerProfiles = 100),
 						numberOfConfigChoices = int(newConfigParams['numberOfConfigChoices']), 
-						# minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
-						# maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
-						preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup'])
+						minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
+						maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
+						# preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
+						jointPlayerConstraints = newConfigParams['jointPlayerConstraints'],
+						separatedPlayerConstraints = newConfigParams['separatedPlayerConstraints']
 					)
 
 		def selectedGenAlgSwitcherAnnealedPRS(request):
@@ -910,10 +911,12 @@ class Views(): #acts as a namespace
 							regAlg = persEstRegAlg,
 							numTestedPlayerProfiles = 100),
 						numberOfConfigChoices = int(newConfigParams['numberOfConfigChoices']), 
-						# minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
-						# maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
-						preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
-						temperatureDecay = float(newConfigParams['temperatureDecay'])
+						minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
+						maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
+						# preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
+						temperatureDecay = float(newConfigParams['temperatureDecay']),
+						jointPlayerConstraints = newConfigParams['jointPlayerConstraints'],
+						separatedPlayerConstraints = newConfigParams['separatedPlayerConstraints']
 					)
 
 		def selectedGenAlgSwitcherEvolutionary(request):
@@ -927,7 +930,9 @@ class Views(): #acts as a namespace
 					regAlg = persEstRegAlg,
 					numTestedPlayerProfiles = 100),
 
-				preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']), 
+				minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
+				maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
+				# preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']), 
 				
 				initialPopulationSize = int(newConfigParams['initialPopulationSize']), 
 				numberOfEvolutionsPerIteration = int(newConfigParams['numberOfEvolutionsPerIteration']), 
@@ -941,7 +946,9 @@ class Views(): #acts as a namespace
 				numChildrenPerIteration = int(newConfigParams['numChildrenPerIteration']),
 				numSurvivors = int(newConfigParams['numSurvivors']),
 
-				cxOp = "order")
+				cxOp = "order",
+				jointPlayerConstraints = newConfigParams['jointPlayerConstraints'],
+				separatedPlayerConstraints = newConfigParams['separatedPlayerConstraints'])
 
 		def selectedGenAlgSwitcherODPIP(request):
 			print(newConfigParams['separatedPlayerConstraints'])
@@ -978,8 +985,9 @@ class Views(): #acts as a namespace
 					regAlg = persEstRegAlg,
 					numTestedPlayerProfiles = 100),
 
-				preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
-
+				#preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
+				minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
+				maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
 				taskModelBridge = taskBridge
 			) 
 
@@ -1435,12 +1443,12 @@ class Views(): #acts as a namespace
 				else:
 					simSimulateReaction = False
 
-			if (simulationWeek == 4):
+			if (simulationWeek == 5):
 				if (simSimulateReaction):
 					httpRequest = HttpRequest()
 					httpRequest.method = 'POST'
 
-					httpRequest.POST['numUsersToGenerate'] = 180
+					httpRequest.POST['numUsersToGenerate'] = 30
 					httpRequest.POST['minDelay'] = 0.1
 					httpRequest.POST['maxDelay'] = 0.5
 

@@ -1102,8 +1102,8 @@ crossorigin='anonymous'></script>
 					$("#groupSizeText_professor_dash").html("Consider groups sized between " + ui.values[0] + " and " + ui.values[1]+".");
 				}
 			});
-			$("#groupSizeText_professor_dash").html("Consider groups sized between" + $("#groupSizeSlider_professor_dash").slider("values", 0)
-				+ " and " + $("#groupSizeSlider_professor_dash").slider("values", 1));
+			$("#groupSizeText_professor_dash").html("Consider groups sized between " + $("#groupSizeSlider_professor_dash").slider("values", 0)
+				+ " and " + $("#groupSizeSlider_professor_dash").slider("values", 1) + ".");
 		});
 
 
@@ -1111,6 +1111,7 @@ crossorigin='anonymous'></script>
 									"Select all students that will be considered when forming the groups. Select all tasks relating to week 1. Do an iteration of the algorithm and verify the formed groups. Evaluate Student_E and simulate evaluation for the rest.",
 									"Student_A will not be available this week, remove them from the selection. Select week 2's tasks. Iterate and simulate reaction.",
 									"Student_X cannot be in the same group as Student_Y, create the restriction so that Student_X and Student_Y are separated. Student_Y was misevaluated from last week, correct their ability value. Student_W was very engaged in the group project when working with Student_Z, create the restriction so that Student_W and Student_Z are in the same group. Iterate and simulate reaction.",
+									"This will be a free week, where you can experiment with the different group formation and evaluation algorithms, and group constraints. Iterate and the evaluate as many times as you wish and, when you are ready, advance to the final week.",
 									"From this week onward, the course will accept new students from similar courses. Select the most appropriate grouping method to generate the groups for this week. Iterate and simulate reaction.",
 									"From this point on, you can experiment iterating the algorithm with any setting you want, create group constraints and even change the algorithm, you will just need to press the \"Simulate evaluation of all students\" after generating the groups."]
 
