@@ -852,7 +852,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
-//             node['(External) Grade'] = originalNode.userState.grade;
+            node['(External) Grade'] = originalNode.userState.grade;
         }
 
         htmlFromJSON(node, currTooltip, 0, 0, 0, 50, 0);
@@ -1134,8 +1134,6 @@ var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined, st
         maxValue += 0.1*maxValue;
     }
 
-  
-
     var x = d3.scaleLinear()
         .range([margin.left, width])
         .domain([minValue, maxValue]);
@@ -1148,11 +1146,9 @@ var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined, st
 
     var xAxis = d3.axisBottom(x);
         
-    if(step == undefined){
-        xAxis.tickSize(-width);
-    }
-    else{
-        xAxis.tickSize(step);
+    xAxis.tickSize(-width);
+    if(step != undefined){
+        xAxis.ticks(maxValue - minValue / step);
     }
 
     var yAxis = d3.axisLeft(y)
@@ -1204,4 +1200,96 @@ var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined, st
         .call(xAxis)
         .selectAll("text")
             .attr("visibility","hidden");
+}
+
+
+var buildPieChart = function(canvasId, numWeeks, currWeek = 0){
+
+    
+    // set the dimensions and margins of the graph
+    var width = 350
+    height = 300;
+    
+    var margin = {
+        top: height * 0.1,
+        right: width * 0.1,
+        bottom: height * 0.1,
+        left: width * 0.3
+    };
+    
+    // var svg = canvas.append('svg');
+    
+    // // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
+    var radius = Math.min(width, height) / 2 
+    
+    // svg.attr('width', width + margin.left + margin.right)
+    //     .attr('display', 'block')
+    //     .attr('margin', 'auto')
+    //     .attr('height', height + margin.top + margin.bottom + 200)
+    //     .call(responsivefy, 1000, 0.15);
+    
+    var svg = d3.select('#'+canvasId)
+        .append('svg')
+        .attr('width', width + margin.left + margin.right)
+        .attr('display', 'block')
+        .attr('margin', 'auto')
+        .attr('height', height + margin.top + margin.bottom)
+        .append('g').attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+
+    
+    // Create dummy data
+    var weekValue = 100 / numWeeks;
+    var data = {}
+    colorArray = []
+    for (var i = 0; i <= numWeeks; i++){
+        data[i] = weekValue;
+
+        if (i < currWeek)
+            colorArray.push('#19e64d')
+        
+        else if (i == currWeek)
+            colorArray.push('#00ff00')
+
+        else
+            colorArray.push('#808080')
+    }
+
+
+    console.log(data)
+    // set the color scale
+    var color = d3.scaleOrdinal()
+    .domain(data)
+    .range(colorArray)
+
+    // Compute the position of each group on the pie:
+    var pie = d3.pie()
+    .value(function(d) {return d.value; })
+    var data_ready = pie(d3.entries(data))
+
+    var arcGenerator = d3.arc()
+    .innerRadius(0)
+    .outerRadius(radius);
+
+
+    // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+    svg
+    .selectAll('mySlices')
+    .data(data_ready)
+    .enter()
+    .append('path')
+    .attr('d', arcGenerator)
+    .attr('fill', function(d){ return(color(d.data.key)) })
+    .attr("stroke", "black")
+    .style("stroke-width", "2px")
+    .style("opacity", 0.7)
+
+    svg
+    .selectAll('mySlices')
+    .data(data_ready)
+    .enter()
+    .append('text')
+    .text(function(d){ return "week " + d.data.key})
+    .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
+    .style("text-anchor", "middle")
+    .style("font-size", 17)
 }

@@ -390,6 +390,7 @@ adaptation.init(playerBridge, taskBridge, configsGenAlg = defaultConfigsAlg, nam
 isTaskCreated = False
 simWeekOneUsersEvaluated = False
 simSimulateReaction = False
+simWeekFourDoneOnce = False
 
 simulationWeek = 0
 simStudentToEvaluate = ""
@@ -561,6 +562,8 @@ class Views(): #acts as a namespace
 					currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
 					currFreeUsers.append(user.username)
 					serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
+					playerBridge.setPlayerGrade(user.username, 0)
+					
 
 				if(not request.user.is_authenticated):
 					login(request, user)
@@ -784,8 +787,9 @@ class Views(): #acts as a namespace
 
 	def savePlayerCharacteristics(username, ability, engagement):
 		characteristics = playerBridge.getPlayerStatesDataFrame(username).states[-1].characteristics
-		characteristics = PlayerCharacteristics(ability=float(ability) - characteristics.ability, engagement=float(engagement))
+		characteristics = PlayerCharacteristics(ability=(float(ability) - characteristics.ability), engagement=float(engagement))
 		playerBridge.setPlayerCharacteristics(username, characteristics)
+		playerBridge.setPlayerGrade(username=username, grade=float(playerBridge.getPlayerGrade(username=username)) + characteristics.ability / 5.0)
 
 	# professor methods
 	
