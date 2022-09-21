@@ -25,7 +25,7 @@
 				<div class='panel-heading'>
 					<div class='columns is-mobile is-vcentered'>
 						<div class='column'>
-							Simulations
+							Tutorial
 							<div class='is-pulled-right'>
 								<div class='button minimizerButton'></div>
 							</div>
@@ -33,46 +33,47 @@
 					</div>
 				</div>
 				<div class='panel-block'>
-					<div class='column is-half is-offset1 is-mobile'>
-						<div class='dash-cell-box' style="overflow: visible;">
-							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='placeholder'>Dashboard</div>
-							<p id='simulationCurrentWeek_professor_dash'> </p>
-							<div class='columns is-mobile is-centered'>
-								<div class='column is-7' id='simulationState_professor_dash'></div>
-							</div>
-							<div class='button' id='advanceSimulationButton_professor_dash'> Advance Simulation</div>
-							<div class='button' id='resetSimulationButton_professor_dash'> Reset Simulation</div>
-							
 
-						</div>
+					
+					
+					<!-- <div class='columns is-mobile is-centered' style="width: 100%;">
+						<div class='column subtitle is-fullwidth has-tooltip-arrow' style='color:gray;' data-tooltip='placeholder'>Course Timeline</div>
+					</div> -->
+					<div class=' is-mobile is-centered' style="width: 100%;">
+						<div class='column' id='simulationState_professor_dash'></div>
 					</div>
-					<div class='column is-half is-offset1 is-mobile'>
-						<div class='dash-cell-box' style="overflow: visible;">
-							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='placeholder'>Storyline</div>
-							<div class='columns is-mobile is-multiline is-mobile'>
-								<div class='column'>
-								<div class='table' style='margin:2em;' id='storylineLog_professor_dash'>
-									<div id="simulationLog_professor_dash">
+					<!-- <div class='button' id='advanceSimulationButton_professor_dash'> Advance Simulation</div>
+					<div class='button' id='resetSimulationButton_professor_dash'> Reset Simulation</div> -->
+						
 
+					<div class='dash-cell-box' id='storylineLog_professor_dash' style="overflow: visible; width: 60%;">
+						<div class='is-mobile is-multiline is-mobile'>
+							<div class='table' style='margin:0.5em;'>
+								<div id="simulationWeek_professor_dash">
+
+								</div>
+								<div id="simulationLog_professor_dash">
+
+								</div>
+								<div class="dropdown">
+									<div class="dropdown-toggle">
+										<button class='button' id='simulationActionDropdown_professor_dash' aria-haspopup='true' aria-controls='dropdownMenu1'>
+											<span>
+												Simulation Actions
+											</span>
+											<span class='icon is-small' >
+												<i class='fas fa-angle-down' aria-hidden='true'></i>
+											</span>
+										</button>
+										
 									</div>
-									<div class="dropdown">
-										<div class="dropdown-trigger">
-											<button class='button' aria-haspopup='true' aria-controls='dropdownMenu1'>
-												<span>
-													Simulation Actions
-												</span>
-												<span class='icon is-small' >
-													<i class='fas fa-angle-down' aria-hidden='true'></i>
-												</span>
-											</button>
-										</div>
-										<div id="simulationAction_professor_dash">
-
-										</div>
+									<div id="simulationAction_professor_dash">
 
 									</div>
 								</div>
-								</div>
+								<div class='button' id='advanceSimulationButton_professor_dash'> Advance Simulation</div>
+								<div class='button' id='resetSimulationButton_professor_dash'> Reset Simulation</div>
+								<div class='button' id='closeSimulationButton_professor_dash' style="display:none"> Close Simulation</div>
 							</div>
 						</div>
 					</div> 
@@ -1108,13 +1109,12 @@ crossorigin='anonymous'></script>
 		});
 
 
-		simulationWeekMessages = ["In this simulation, you will be the professor for a 5 week course. Before the course starts, share the platform link with the students, so they can sign up in the platform. Create and register the tasks for the course.",
-									"Select all students that will be considered when forming the groups. Select all tasks relating to week 1. Do an iteration of the algorithm and verify the formed groups. Evaluate Student_E and simulate evaluation for the rest. You will be able to see now, how every student did, relative to each other or in a scale of 0% to 100%.",
-									"Student_A will not be available this week, remove them from the selection. Select week 2's tasks. Iterate and simulate reaction.",
-									"Student_X cannot be in the same group as Student_Y, create the restriction so that Student_X and Student_Y are separated. Student_Y was misevaluated from last week, correct their ability value, so it is equal to Student_X. Student_W was very engaged in the group project when working with Student_Z, create the restriction so that Student_W and Student_Z are in the same group. Register the tasks for week 3, iterate and simulate reaction.",
+		simulationWeekMessages = ["In this simulation, you will be the professor of a 5 week course. Before the course starts, <b>share the platform link</b> with the students, so they can sign up in the platform. <b>Create and register the tasks</b> for the course.",
+									"<b>Select all students</b> that will be considered when forming the groups. <b>Select all tasks</b> relating to week 1. <b>Do an iteration of the algorithm</b> and verify the formed groups. <b>Evaluate</b> Student_E and <b>simulate evaluation</b> for the rest. You will be able to see now how every student did, relative to each other or in a scale of 0% to 100%.",
+									"Student_A will not be available this week, <b>remove the student</b> from the selection. Select week 2's tasks. Iterate and simulate reaction.",
+									"Student_Y was misevaluated from last week, <b>correct this student's ability value</b>, so it is equal to Student_X. Student_X cannot be in the same group as Student_Y. <b>Create the restriction</b> so that Student_X and Student_Y are <b>separated</b>. Student_W was very engaged in the group project when working with Student_Z, <b>create the restriction</b> so that Student_W and Student_Z <b>are joined in the same group</b>. Register the tasks for week 3, iterate and simulate reaction.",
 									"This will be a free week, where you can experiment with the different group formation, evaluation algorithms, and group constraints. Select week 4's tasks, iterate and then evaluate as many times as you wish and, when you are ready, advance to the final week.",
-									"From this week onward, the course will accept new students from similar courses. Select the most appropriate grouping method to generate the groups for this week. Iterate and simulate reaction.",
-									"You can experiment from this week on iterating the algorithm with any setting you want, create group constraints and even change the algorithm, you will just need to press the \"Simulate evaluation of all students\" after generating the groups."]
+									"Congratulations! You have completed the tutorial. You can now choose to reset the simulation and start over, or close this tab."]
 
 
 		dropdownItemsText = [["<a class=\'dropdown-item\'> Share link </a>","<a class=\'dropdown-item\'> Simulate task registration </a>"], ["<a class=\'dropdown-item\'> Simulate evaluation of students </a>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> No actions available </div>"]];
@@ -1122,9 +1122,26 @@ crossorigin='anonymous'></script>
 		var changeSimulationWeek = function(newServerState)
 		{
 			week = newServerState.simWeek
+
+			if (week >= 1){
+				simulationWeekMessages[1] = simulationWeekMessages[1].replace("Student_E", "<b>" + newServerState.studentToEvaluate + "</b>")
+				
+			}	
+
+			if (week >= 2){
+				simulationWeekMessages[2] = simulationWeekMessages[2].replace("Student_A", "<b>" + newServerState.unavailableStudent + "</b>")
+			}
+
+			if (week >= 3){
+				simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_X", "<b>" + newServerState.studentX + "</b>")
+				simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_Y", "<b>" + newServerState.studentY + "</b>")
+				simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_W", "<b>" + newServerState.studentW + "</b>")
+				simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_Z", "<b>" + newServerState.studentZ + "</b>")
+			}
+			
 			if (week <= 10){
 				$('#simulationState_professor_dash').empty();
-				buildPieChart('simulationState_professor_dash', 5, week
+				buildPieChart('simulationState_professor_dash', 5, week, simulationWeekMessages
 				// 	[
 				// 		{ "name": "Week" , "value": week },
 				// 	],
@@ -1134,57 +1151,78 @@ crossorigin='anonymous'></script>
 				);
 			}
 
-			if (week == 1){
-				console.log(simulationWeekMessages[week].replace("Student_E", newServerState.studentToEvaluate))
-				simulationWeekMessages[week] = simulationWeekMessages[week].replace("Student_E", newServerState.studentToEvaluate)
-			}	
+			// var advanceSimulationButton = $("#advanceSimulationButton_professor_dash");
+			// 	advanceSimulationButton.empty();
+			// 	advanceSimulationButton.append("ola")
 
-			if (week == 2){
-				console.log(newServerState.unavailableStudent)
-				simulationWeekMessages[week] = simulationWeekMessages[week].replace("Student_A", newServerState.unavailableStudent)
-			}
 
-			if (week == 3){
-				simulationWeekMessages[week] = simulationWeekMessages[week].replaceAll("Student_X", newServerState.studentX)
-				simulationWeekMessages[week] = simulationWeekMessages[week].replaceAll("Student_Y", newServerState.studentY)
-				simulationWeekMessages[week] = simulationWeekMessages[week].replaceAll("Student_W", newServerState.studentW)
-				simulationWeekMessages[week] = simulationWeekMessages[week].replaceAll("Student_Z", newServerState.studentZ)
-			}
-
-			var simulationLog = $("<div class=\'list\'> </div>");
-			for (var i = 0; i <= week; i++){
-				simulationLog.append("<div class=\'list-item\'>" + simulationWeekMessages[i] + "</div>");
-				simulationLog.show(135)
-			}
-
-			return simulationLog;
+			return changeSimulationMessagePosition(week, week, simulationWeekMessages);
 		}
+
+		var changeSimulationMessagePosition = function(currWeek, selectedWeek, simulationWeekMessages)
+		{
+			leftXPosition = -document.getElementById("storylineLog_professor_dash").parentElement.clientWidth * 0.6
+			//yPosition = document.getElementById("storylineLog_professor_dash").parentElement.clientHeight * 0.6
+
+			positionArray = [[0,-70],[0,0],[0,70],[leftXPosition,70],[leftXPosition,0],[leftXPosition,-70]]
+
+			if (selectedWeek <= currWeek) {
+
+				$("#simulationWeek_professor_dash").empty();
+				$("#simulationWeek_professor_dash").append("<p>Week " + selectedWeek + "</p>");
+
+				var simulationLog = $("<div class=\'list\'> </div>");
+
+				simulationLog.append("<div class=\'list-item\'>" + simulationWeekMessages[selectedWeek] + "</div>");
+				simulationLog.show(135)
+
+
+				$('#simulationLog_professor_dash').empty();
+				$('#simulationLog_professor_dash').append(simulationLog);
+
+				$("#storylineLog_professor_dash").css({'transform': 'translate(' + positionArray[selectedWeek][0] + 'px,' + positionArray[selectedWeek][1] + 'px)'}).animate(500)
+
+				return simulationLog
+			}
+		}
+
 
 		var changeSimulationDropdownActions = function(newServerState)
 		{
 			week = newServerState.simWeek
 
-			var simulationDropdown = $("<div class=\'dropdown-menu\' role=\'menu\' style=\"height:5em; width:10em; overflow-y:scroll; display:block\"> </div>");
+			var simulationDropdown = $("<div class=\'dropdown-menu\' style=\"height:6em; width:15em;  display:block\"> </div>");
 			var simulationDropdownContent = $("<div class=\'dropdown-content\'> </div>");
-			console.log(newServerState.isTaskCreated)
-			for (var i = 0; i < dropdownItemsText[week].length; i++) {
-				var dropdownItem = $(dropdownItemsText[week][i]);
+			
+			if (week == 0) {
+				var button = $("#simulationActionDropdown_professor_dash").parent().parent();
+				button.css("display", "inline-flex");
+				
+				button = $("#advanceSimulationButton_professor_dash");
+				button.css("display", "inline-flex");
 
-				if (dropdownItemsText[week][i] == "<a class=\'dropdown-item\'> Share link </a>") {
-					simulationDropdownContent.append(dropdownItem);
-					dropdownItem.click(function(){
-						$.ajax(
-						{
-							type: 'POST',
-							url: '/shareLinkSim/',
-							data: {"numUsersToGenerate": 20, "minDelay": 1, "maxDelay": 5}
-						}
-						);
-					});
-				}
+				button = $("#closeSimulationButton_professor_dash");
+				button.css("display", "none");
 
-				else if (dropdownItemsText[week][i] == "<a class=\'dropdown-item\'> Simulate task registration </a>" && newServerState.isTaskCreated) {
-					simulationDropdownContent.append(dropdownItem);
+				var dropdownItem  = $("<div class=\'dropdown-item button\'> Share link </div>")
+				simulationDropdownContent.append(dropdownItem);
+				dropdownItem.click(function(){
+					$.ajax(
+					{
+						type: 'POST',
+						url: '/shareLinkSim/',
+						data: {"numUsersToGenerate": 20, "minDelay": 1, "maxDelay": 5}
+					}
+					);
+				});
+				
+				if (newServerState.isTaskCreated)
+					dropdownItem = $("<div class=\'dropdown-item button\'> Simulate task registration </div>");
+				else
+					dropdownItem = $("<div class=\'dropdown-item button\' disabled> Simulate task registration </div>");
+
+				simulationDropdownContent.append(dropdownItem);
+				if (newServerState.isTaskCreated)
 					dropdownItem.click(function(){
 						$.ajax(
 						{
@@ -1193,36 +1231,55 @@ crossorigin='anonymous'></script>
 						}
 						);
 					});
-				}
 
-				else if (dropdownItemsText[week][i] == "<a class=\'dropdown-item\'> Simulate evaluation of students </a>") {
-					simulationDropdownContent.append(dropdownItem);
-					if (!newServerState.simWeekOneUsersEvaluated){
-						dropdownItem.click(function(){
-							$.ajax(
+			}
+
+			else if (week == 1){
+				if (!newServerState.simWeekOneUsersEvaluated)
+					var dropdownItem = $("<div class=\'button dropdown-item\'> Simulate evaluation of students </div>");
+				else
+					var dropdownItem = $("<div class=\'button dropdown-item\' disabled> Simulate evaluation of students </div>");
+
+				console.log(newServerState.simWeekOneUsersEvaluated)
+				simulationDropdownContent.append(dropdownItem);
+				if (!newServerState.simWeekOneUsersEvaluated)
+					dropdownItem.click(function(){
+						$.ajax(
+						{
+							type: 'POST',
+							url: '/evaluateSim/'
+						}
+						);
+					});
+			}
+
+			else if (week == 5) {
+				var button = $("#simulationActionDropdown_professor_dash").parent().parent();
+				button.css("display", "none");
+				
+				button = $("#advanceSimulationButton_professor_dash");
+				button.css("display", "none");
+
+				button = $("#closeSimulationButton_professor_dash");
+				button.css("display", "inline-flex");
+			}
+
+			else if (week > 1 && week < 5){
+				if (!newServerState.simSimulateReaction || week == 4)
+					var dropdownItem = $("<div class=\'dropdown-item button\'> Simulate evaluation of all students </div>");
+				else
+					var dropdownItem = $("<div class=\'dropdown-item button\' disabled> Simulate evaluation of all students </div>");
+
+				simulationDropdownContent.append(dropdownItem);
+				if (!newServerState.simSimulateReaction || week == 4)
+					dropdownItem.click(function(){
+						$.ajax(
 							{
 								type: 'POST',
-								url: '/evaluateSim/'
+								url: '/simulateReaction/'
 							}
-							);
-						});
-					}
-				}
-
-				else if (dropdownItemsText[week][i] == "<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"){
-					simulationDropdownContent.append(dropdownItem);
-					if (!newServerState.simSimulateReaction){
-						dropdownItem.click(function(){
-							$.ajax(
-								{
-									type: 'POST',
-									url: '/simulateReaction/'
-								}
-							)
-						})
-					}
-				
-				}
+						)
+					})
 			}
 			
 			simulationDropdown.append(simulationDropdownContent);
@@ -1409,11 +1466,11 @@ crossorigin='anonymous'></script>
 		    }
 		    return table;
 		};
-		var generateODPIPTypeTableFromArray = function(tagClass, highlightedTagClass){
+		var generateODPIPTypeTableFromArray = function(tagClass, highlightedTagClass, otherTagClass){
 		    var table = $('<div></div>');
 		    var elemArray = [
-				`<i class="fa-solid fa-people-group" data-tooltip="Students must be joint."></i>`,
-				`<i class="fa-solid fa-people-arrows-left-right" data-tooltip="Students must be separated."></i>`
+				`<i class="fa-solid fa-user-group" data-tooltip="Students must be joint."></i>`,
+				`<i class="fa-solid fa-ban" data-tooltip="Students must be separated."></i>`
 		    ];
 		    for(var i=0; i < elemArray.length; i++){
 		        var tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>")
@@ -1421,20 +1478,20 @@ crossorigin='anonymous'></script>
 		        
 		        tag.attr('cstType', (i==0)? 'joint': 'separated');
 		        tag.attr('tagClass',tagClass);
-		        tag.attr('highlightedTagClass',highlightedTagClass);
+		        tag.attr('highlightedTagClass',(i==0)? highlightedTagClass: otherTagClass);
 		        tag.click(function(){
 					var buttons = $($(this).parent()).children();
 					for(var j=0; j< buttons.length; j++){
 						var currElem = buttons[j];
-						$(currElem).removeClass(highlightedTagClass);
+						$(currElem).removeClass((j==0)? highlightedTagClass: otherTagClass);
 					}
-					$(this).addClass(highlightedTagClass);
+					$(this).addClass((this==buttons[0])? highlightedTagClass: otherTagClass);
 					currCstTypeDOMElem = $(this);
 		        })
 		        
 				tag.addClass('tag');
 				tag.addClass((i==0)? highlightedTagClass: tagClass);
-				tag.addClass('is-medium');
+				tag.addClass('is-large');
 				tag.addClass('is-rounded');
 				table.append(tag);
 				tag.show(135);
@@ -1448,12 +1505,13 @@ crossorigin='anonymous'></script>
 		
 		var appendCstTag = function(tagClass, usersSelectedForConstraint, currConstraintType, jointTable, sepTable){
 			
-			var csTag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>");
+			var backgroundColor = ["#23d160", "#ff3860"];
+			var csTag = $("<span class='context-menu' style='margin:0.1em; z-index:1000; background-color: " + backgroundColor[(currConstraintType == 'joint')? 0: 1] + "'></span>");
 			csTag.attr('cstType', currConstraintType);
 			
 			var tagArray = [
-				`<i class="fa-solid fa-people-group"></i>`,
-				`<i class="fa-solid fa-people-arrows-left-right"></i>`
+				`<i class="fa-solid fa-user-group"></i>`,
+				`<i class="fa-solid fa-ban"></i>`
 			];
 			
 			csTag.append(tagArray[(currConstraintType == 'joint')? 0: 1]);
@@ -1629,9 +1687,9 @@ crossorigin='anonymous'></script>
             
 			if(scaleType=='relative'){
 				$('#groupsPlotScaleMin_professor_dash').hide(500).show(500);
-				setTimeout(function(){$('#groupsPlotScaleMin_professor_dash').html(((abMin + engMin)/2).toFixed(2)*100 + '%'); },500)
+				setTimeout(function(){$('#groupsPlotScaleMin_professor_dash').html(Math.round(((abMin + engMin)/2).toFixed(2)*100) + '%'); },500)
 				$('#groupsPlotScaleMax_professor_dash').hide(500).show(500);
-				setTimeout(function(){$('#groupsPlotScaleMax_professor_dash').html(((abMax + engMax)/2).toFixed(2)*100 + '%'); },500)
+				setTimeout(function(){$('#groupsPlotScaleMax_professor_dash').html(Math.round(((abMax + engMax)/2).toFixed(2)*100) + '%'); },500)
 			}else{
 				$('#groupsPlotScaleMin_professor_dash').hide(500).show(500);
 				setTimeout(function(){$('#groupsPlotScaleMin_professor_dash').html('0%'); },500)
@@ -1756,7 +1814,7 @@ crossorigin='anonymous'></script>
 								$('#cstUsersODPIPTable_professor_dash').append(odpipUsrTable);
 								
 								var odpipTypeTable = generateODPIPTypeTableFromArray(
-												'is-white', 'is-info'
+												'is-white', 'is-success', 'is-danger'
 											);
 								$('#cstTypeODPIPTable_professor_dash').empty();
 								$('#cstTypeODPIPTable_professor_dash').append(odpipTypeTable);
@@ -2052,7 +2110,16 @@ crossorigin='anonymous'></script>
 			}
 			);
 		});
-
+		
+		$("#closeSimulationButton_professor_dash").parent().parent().parent().parent().parent().find(".panel-block").show();
+    	$("#closeSimulationButton_professor_dash").click(function(){
+        	var content = $(this).parent().parent().parent().parent().parent().find(".panel-block");
+			if(content.is(":hidden")){
+				content.show(350);
+			}else{
+				content.hide(350);
+    	}
+		});
 	});
 	
 

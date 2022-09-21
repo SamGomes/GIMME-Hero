@@ -472,7 +472,6 @@ class Views(): #acts as a namespace
 
 	def simulateReaction(request):
 		allUsers = playerBridge.getAllPlayerIds()
-		print(allUsers)
 		for playerId in allUsers:
 			
 			prevState = playerBridge.getPlayerStatesDataFrame(playerId).states[-1]
@@ -555,8 +554,6 @@ class Views(): #acts as a namespace
 				profile.preferences = json.dumps(intProfTemplate.generateCopy().reset(), default=lambda o: o.__dict__, sort_keys=True)
 
 				profile.save() 
-
-				print(len(str(serverStateModelBridge.getCurrFreeUsers())))
 
 				if 'student' in profile.role:
 					currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
@@ -787,9 +784,16 @@ class Views(): #acts as a namespace
 
 	def savePlayerCharacteristics(username, ability, engagement):
 		characteristics = playerBridge.getPlayerStatesDataFrame(username).states[-1].characteristics
-		characteristics = PlayerCharacteristics(ability=(float(ability) - characteristics.ability), engagement=float(engagement))
+
+		abilityToSave = (float(ability) - characteristics.ability)
+		if username == simStudentX and simulationWeek == 2:
+			abilityToSave = 0.3
+		elif username == simStudentY and simulationWeek == 2:
+			abilityToSave = 0.2
+
+		characteristics = PlayerCharacteristics(ability=abilityToSave, engagement=float(engagement))
 		playerBridge.setPlayerCharacteristics(username, characteristics)
-		playerBridge.setPlayerGrade(username=username, grade=float(playerBridge.getPlayerGrade(username=username)) + characteristics.ability / 5.0)
+		playerBridge.setPlayerGrade(username=username, grade=round(float(playerBridge.getPlayerGrade(username=username)) + characteristics.ability / 5.0, 2))
 
 	# professor methods
 	
@@ -838,7 +842,6 @@ class Views(): #acts as a namespace
 		global currConfigParams
 
 		newConfigParams = request.POST
-		print(currConfigParams == newConfigParams)
 		if(currConfigParams == newConfigParams):
 			return HttpResponse('ok')
 
@@ -859,7 +862,6 @@ class Views(): #acts as a namespace
 
 		selectedRegAlgId = newConfigParams['selectedRegAlgId']
 		# selectedRegAlg = None
-		print(newConfigParams)
 		if (selectedRegAlgId =='K-Nearest-Neighbors (KNN)'):
 			selectedRegAlg = selectedRegAlgSwitcherKNN(request)
 			persEstRegAlg = selectedRegAlg
@@ -955,9 +957,6 @@ class Views(): #acts as a namespace
 				separatedPlayerConstraints = newConfigParams['separatedPlayerConstraints'])
 
 		def selectedGenAlgSwitcherODPIP(request):
-			print(newConfigParams['separatedPlayerConstraints'])
-			print(newConfigParams["jointPlayerConstraints"])
-			
 			return ODPIP(
 				playerModelBridge = playerBridge,
 				interactionsProfileTemplate = intProfTemplate.generateCopy(),
@@ -1292,7 +1291,6 @@ class Views(): #acts as a namespace
 		return HttpResponse('error')
 
 	def uploadTaskResults(request):
-		print("method: "+request.method)
 		if request.method == 'POST':
 			username = request.POST['username']
 			characteristicsDelta = json.loads(request.POST['characteristicsDelta'])
@@ -1449,15 +1447,15 @@ class Views(): #acts as a namespace
 
 			if (simulationWeek == 5):
 				if (simSimulateReaction):
-					httpRequest = HttpRequest()
-					httpRequest.method = 'POST'
+					# httpRequest = HttpRequest()
+					# httpRequest.method = 'POST'
 
-					httpRequest.POST['numUsersToGenerate'] = 30
-					httpRequest.POST['minDelay'] = 0.1
-					httpRequest.POST['maxDelay'] = 0.5
+					# httpRequest.POST['numUsersToGenerate'] = 30
+					# httpRequest.POST['minDelay'] = 0.1
+					# httpRequest.POST['maxDelay'] = 0.5
 
-					httpRequest.user = request.user
-					Views.shareLinkSim(httpRequest)
+					# httpRequest.user = request.user
+					# Views.shareLinkSim(httpRequest)
 					simSimulateReaction = False
 				else:
 					simulationWeek -= 1
