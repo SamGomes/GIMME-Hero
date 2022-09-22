@@ -387,6 +387,7 @@ adaptation.init(playerBridge, taskBridge, configsGenAlg = defaultConfigsAlg, nam
 
 # sim flags
 
+linkShared = False
 isTaskCreated = False
 simWeekOneUsersEvaluated = False
 simSimulateReaction = False
@@ -1197,6 +1198,7 @@ class Views(): #acts as a namespace
 			newSessionState['studentW'] = simStudentW
 			newSessionState['studentZ'] = simStudentZ
 
+			newSessionState['linkShared'] = linkShared
 			newSessionState['isTaskCreated'] = isTaskCreated
 			newSessionState['simSimulateReaction'] = simSimulateReaction
 			newSessionState['simWeekOneUsersEvaluated'] = simWeekOneUsersEvaluated
@@ -1392,6 +1394,7 @@ class Views(): #acts as a namespace
 
 	
 	def resetSimWeek(request):
+		global linkShared
 		global simulationWeek
 		global isTaskCreated
 		global simWeekOneUsersEvaluated
@@ -1406,6 +1409,7 @@ class Views(): #acts as a namespace
 			for taskId in taskIds:
 				Views.deleteTask(taskId)
 
+			linkShared = False
 			isTaskCreated = False
 			simWeekOneUsersEvaluated = False
 			simSimulateReaction = False
@@ -1467,6 +1471,8 @@ class Views(): #acts as a namespace
 
 	def shareLinkSim(request):
 		if request.method == 'POST':
+			global linkShared
+			linkShared = True
 			for _ in range(int(request.POST['numUsersToGenerate'])):
 				time.sleep(random.uniform(float(request.POST['minDelay']), float(request.POST['maxDelay'])))
 
@@ -1504,6 +1510,9 @@ class Views(): #acts as a namespace
 				Views.userRegistration(httpRequest)
 
 			Views.initServer(request)
+			
+
+
 			return HttpResponse('ok')
 
 		return HttpResponse('error')
