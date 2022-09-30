@@ -40,30 +40,106 @@ class ServerStateModelBridge():
 
 	def getCurrAdaptationState(self):
 		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+			
 		currAdaptationState = json.loads(serverState.currAdaptationState)
 		return currAdaptationState
+		
 	def isReadyForNewActivity(self):
 		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+			
 		readyForNewActivity = json.loads(serverState.readyForNewActivity)
 		return readyForNewActivity
 	
 	def getCurrSelectedUsers(self):
 		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+			
 		currSelectedUsers = json.loads(serverState.currSelectedUsers)
 		return currSelectedUsers
+		
 	def getCurrFreeUsers(self):
 		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+			
 		currFreeUsers = json.loads(serverState.currFreeUsers)
 		return currFreeUsers
 		
 	def getCurrSelectedTasks(self):
 		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+			
 		currSelectedTasks = json.loads(serverState.currSelectedTasks)
 		return currSelectedTasks
+	
 	def getCurrFreeTasks(self):
 		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+			
 		currFreeTasks = json.loads(serverState.currFreeTasks)
 		return currFreeTasks
+	
+	def getSimulationWeek(self):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		return serverState.simulationWeek
+	def getSimSimulateReaction(self):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		return serverState.simSimulateReaction
+	def getSimWeekOneUsersEvaluated(self):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		return serverState.simWeekOneUsersEvaluated
+	def getSimStudentX(self):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		return serverState.simStudentX
+	def getSimStudentY(self):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		return serverState.simStudentY
+	def getSimStudentW(self):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		return serverState.simStudentW
+	def getSimStudentZ(self):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		return serverState.simStudentZ
+		
+	def getSimFlags(self):
+		serverState = ServerState.objects.first()
+		serverStateSimData = {
+			"simIsLinkShared" : serverState.simIsLinkShared,
+			"simIsTaskCreated" : serverState.simIsTaskCreated,
+			"simWeekOneUsersEvaluated" : serverState.simWeekOneUsersEvaluated,
+			"simSimulateReaction" : serverState.simSimulateReaction,
+			"simWeekFourDoneOnce" : serverState.simWeekFourDoneOnce,
+			"simulationWeek" : serverState.simulationWeek,
+			"simStudentToEvaluate" : serverState.simStudentToEvaluate,
+			"simUnavailableStudent" : serverState.simUnavailableStudent,
+			"simStudentX" : serverState.simStudentX,
+			"simStudentY" : serverState.simStudentY,
+			"simStudentW" : serverState.simStudentW,
+			"simStudentZ" : serverState.simStudentZ,
+		}
+		return serverStateSimData
+
 
 	def setCurrAdaptationState(self, currAdaptationState):
 		serverState = ServerState.objects.first()
@@ -82,7 +158,7 @@ class ServerStateModelBridge():
 			readyForNewActivity = json.dumps(readyForNewActivity, default=lambda o: o.__dict__, sort_keys=True)
 			serverState.readyForNewActivity = readyForNewActivity
 		serverState.save()
-
+		
 
 	def setCurrSelectedUsers(self, currSelectedUsers):
 		serverState = ServerState.objects.first()
@@ -119,6 +195,93 @@ class ServerStateModelBridge():
 			currFreeTasks = json.dumps(currFreeTasks, default=lambda o: o.__dict__, sort_keys=True)
 			serverState.currFreeTasks = currFreeTasks
 		serverState.save()
+		
+		
+	def setSimIsLinkShared(self, simIsLinkShared):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		else:
+			serverState.simIsLinkShared = simIsLinkShared
+		serverState.save()
+	def setSimIsTaskCreated(self, simIsTaskCreated):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		else:
+			serverState.simIsTaskCreated = simIsTaskCreated
+		serverState.save()
+	def setSimWeekOneUsersEvaluated(self, simWeekOneUsersEvaluated):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		else:
+			serverState.simWeekOneUsersEvaluated = simWeekOneUsersEvaluated
+		serverState.save()
+	def setSimSimulateReaction(self, simSimulateReaction):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		else:
+			serverState.simSimulateReaction = simSimulateReaction
+		serverState.save()
+	def setSimWeekFourDoneOnce(self, simWeekFourDoneOnce):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		else:
+			serverState.simWeekFourDoneOnce = simWeekFourDoneOnce
+		serverState.save()
+	def setSimulationWeek(self, simulationWeek):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		else:
+			serverState.simulationWeek = simulationWeek
+		serverState.save()
+	def setSimStudentToEvaluate(self, simStudentToEvaluate):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		else:
+			serverState.simStudentToEvaluate = simStudentToEvaluate
+		serverState.save()
+	def setSimUnavailableStudent(self, simUnavailableStudent):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		else:
+			serverState.simUnavailableStudent = simUnavailableStudent
+		serverState.save()
+	def setSimStudentX(self, simStudentX):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		else:
+			serverState.simStudentX = simStudentX
+		serverState.save()
+	def setSimStudentY(self, simStudentY):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		else:
+			serverState.simStudentY = simStudentY
+		serverState.save()
+	def setSimStudentZ(self, simStudentZ):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		else:
+			serverState.simStudentZ = simStudentZ
+		serverState.save()
+	def setSimStudentW(self, simStudentW):
+		serverState = ServerState.objects.first()
+		if serverState == None:
+			serverState = ServerState()
+		else:
+			serverState.simStudentW = simStudentW
+		serverState.save()
+		
 
 serverStateModelBridge = ServerStateModelBridge()
 
@@ -128,7 +291,6 @@ class CustomTaskModelBridge(TaskModelBridge):
 	
 
 	def saveTask(self, task):
-		breakpoint()
 		task.save()
 
 	def getTask(self, taskId):
@@ -385,21 +547,8 @@ defaultConfigsAlg = RandomConfigsGen(
 				preferredNumberOfPlayersPerGroup = 4)
 adaptation.init(playerBridge, taskBridge, configsGenAlg = defaultConfigsAlg, name='GIMME')
 
-# sim flags
+# sim stuff
 
-linkShared = False
-isTaskCreated = False
-simWeekOneUsersEvaluated = False
-simSimulateReaction = False
-simWeekFourDoneOnce = False
-
-simulationWeek = 0
-simStudentToEvaluate = ""
-simUnavailableStudent = ""
-simStudentX = ""
-simStudentY = ""
-simStudentW = ""
-simStudentZ = ""
 # {'csrfmiddlewaretoken': ['3GuQuFgTG1tPLHK0bvD4kO5H0c4F2keftFkiQRIcpyDbrxlEEWmjazhfmCEx0p80'], 'username': ['s17'], 'role': ['student'], 'email': ['s17@s17.com'], 'password1': ['VW8fiAUkGs7QLwn'], 'password2': ['VW8fiAUkGs7QLwn'], 'fullName': ['s17'], 'age': ['20'], 'gender': ['Male'], 'description': ['.'], 'Create User': ['Register']}
 role = 'student'
 password = 'VW8fiAUkGs7QLwn'
@@ -424,6 +573,7 @@ profileDim1 = ['1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', 
 class Views(): #acts as a namespace
 
 	def initServer(request):
+		
 		serverStateModelBridge.setCurrAdaptationState([])
 		serverStateModelBridge.setReadyForNewActivity(True)
 		serverStateModelBridge.setCurrSelectedUsers([])
@@ -431,26 +581,25 @@ class Views(): #acts as a namespace
 		serverStateModelBridge.setCurrSelectedTasks([])
 		serverStateModelBridge.setCurrFreeTasks(taskBridge.getAllStoredTaskIds())
 
+
+		serverStateModelBridge.setSimIsLinkShared(False)
+		serverStateModelBridge.setSimIsTaskCreated(False)
+		serverStateModelBridge.setSimWeekOneUsersEvaluated(False)
+		serverStateModelBridge.setSimSimulateReaction(False)
+		serverStateModelBridge.setSimWeekFourDoneOnce(False)
+
+		serverStateModelBridge.setSimulationWeek(0)
+		serverStateModelBridge.setSimStudentToEvaluate("")
+		serverStateModelBridge.setSimUnavailableStudent("")
+		serverStateModelBridge.setSimStudentX("")
+		serverStateModelBridge.setSimStudentY("")
+		serverStateModelBridge.setSimStudentZ("")
+		serverStateModelBridge.setSimStudentW("")
+
+
 		for player in playerBridge.getAllStoredStudentUsernames():
 			playerBridge.resetPlayerCurrState(player)
 			playerBridge.resetPlayerPastModelIncreases(player)
-
-		global simulationWeek
-		global simStudentToEvaluate
-		global simUnavailableStudent
-		global simStudentX
-		global simStudentY
-		global simStudentW
-		global simStudentZ
-
-		simulationWeek = 0
-		simStudentToEvaluate = ""
-		simUnavailableStudent = ""
-
-		simStudentX = ""
-		simStudentY = ""
-		simStudentW = ""
-		simStudentZ = ""
 
 		return HttpResponse('ok')
 
@@ -473,6 +622,9 @@ class Views(): #acts as a namespace
 
 	def simulateReaction(request):
 		allUsers = playerBridge.getAllPlayerIds()
+		
+		simFlags = serverStateModelBridge.getSimFlags()
+		
 		for playerId in allUsers:
 			
 			prevState = playerBridge.getPlayerStatesDataFrame(playerId).states[-1]
@@ -482,27 +634,26 @@ class Views(): #acts as a namespace
 				state = prevState, 
 				playerId = playerId)
 
-			if simulationWeek == 2:
-				if playerId == simStudentX:
+			if simFlags['simulationWeek'] == 2:
+				if playerId == simFlags['simStudentX']:
 					newState.characteristics.ability = 0.3
 					newState.characteristics.engagement = 0.3
 
-				elif playerId == simStudentY:
+				elif playerId == simFlags['simStudentY']:
 					newState.characteristics.ability = 0.2
 					newState.characteristics.engagement = 0.2
 
-				elif playerId == simStudentW:
+				elif playerId == simFlags['simStudentW']:
 					newState.characteristics.engagement = 0.95
 				
-				elif playerId == simStudentZ:
+				elif playerId == simFlags['simStudentZ']:
 					newState.characteristics.engagement = 0.95
 					
 
 
 			Views.savePlayerCharacteristics(playerId, newState.characteristics.ability, newState.characteristics.engagement)
 
-		global simSimulateReaction
-		simSimulateReaction = True
+		serverStateModelBridge.setSimSimulateReaction(True)
 		return HttpResponse('ok')
 
 
@@ -785,11 +936,13 @@ class Views(): #acts as a namespace
 
 	def savePlayerCharacteristics(username, ability, engagement):
 		characteristics = playerBridge.getPlayerStatesDataFrame(username).states[-1].characteristics
-
 		abilityToSave = (float(ability) - characteristics.ability)
-		if username == simStudentX and simulationWeek == 2:
+		
+		
+		simFlags = serverStateModelBridge.getSimFlags()
+		if username == simFlags['simStudentX'] and simFlags['simulationWeek'] == 2:
 			abilityToSave = 0.3
-		elif username == simStudentY and simulationWeek == 2:
+		elif username == simFlags['simStudentY'] and simFlags['simulationWeek'] == 2:
 			abilityToSave = 0.2
 
 		characteristics = PlayerCharacteristics(ability=abilityToSave, engagement=float(engagement))
@@ -817,12 +970,12 @@ class Views(): #acts as a namespace
 			serverStateModelBridge.setReadyForNewActivity(True)
 			return HttpResponse('error')
 			
-		global simStudentX
-		global simStudentY
-		global simStudentW
-		global simStudentZ
+		simStudentX = ''
+		simStudentY = ''
+		simStudentW = ''
+		simStudentZ = ''
 
-		if simulationWeek == 2 and currAdaptationState != []:
+		if serverStateModelBridge.getSimulationWeek() == 2 and currAdaptationState != []:
 			simStudentX = currAdaptationState["groups"][0][0]
 			simStudentY = currAdaptationState["groups"][0][1]
 
@@ -833,7 +986,10 @@ class Views(): #acts as a namespace
 		serverStateModelBridge.setCurrAdaptationState(currAdaptationState)
 		serverStateModelBridge.setReadyForNewActivity(True)
 
-
+		serverStateModelBridge.setSimStudentX(simStudentX)
+		serverStateModelBridge.setSimStudentY(simStudentY)
+		serverStateModelBridge.setSimStudentW(simStudentW)
+		serverStateModelBridge.setSimStudentZ(simStudentZ)
 
 		return Views.fetchServerState(request)
 
@@ -1048,8 +1204,7 @@ class Views(): #acts as a namespace
 					currFreeTasks.append(str(task.taskId))
 					serverStateModelBridge.setCurrFreeTasks(currFreeTasks)
 
-					global isTaskCreated
-					isTaskCreated = True
+					serverStateModelBridge.setSimIsTaskCreated(True)
 
 					return redirect('/dash')
 				else:
@@ -1188,20 +1343,23 @@ class Views(): #acts as a namespace
 	def fetchServerState(request):
 		if request.method == 'GET':
 			newSessionState = {}
+			newSessionState['timestamp'] = time.time()
 			
-			newSessionState['simWeek'] = simulationWeek
-			newSessionState['studentToEvaluate'] = simStudentToEvaluate
-			newSessionState['unavailableStudent'] = simUnavailableStudent
+			simState = serverStateModelBridge.getSimFlags()
+			
+			newSessionState['simWeek'] = simState['simulationWeek']
+			newSessionState['studentToEvaluate'] = simState['simStudentToEvaluate']
+			newSessionState['unavailableStudent'] = simState['simUnavailableStudent']
 
-			newSessionState['studentX'] = simStudentX
-			newSessionState['studentY'] = simStudentY
-			newSessionState['studentW'] = simStudentW
-			newSessionState['studentZ'] = simStudentZ
+			newSessionState['studentX'] = simState['simStudentX']
+			newSessionState['studentY'] = simState['simStudentY']
+			newSessionState['studentW'] = simState['simStudentW']
+			newSessionState['studentZ'] = simState['simStudentZ']
 
-			newSessionState['linkShared'] = linkShared
-			newSessionState['isTaskCreated'] = isTaskCreated
-			newSessionState['simSimulateReaction'] = simSimulateReaction
-			newSessionState['simWeekOneUsersEvaluated'] = simWeekOneUsersEvaluated
+			newSessionState['linkShared'] = simState['simIsLinkShared']
+			newSessionState['isTaskCreated'] = simState['simIsTaskCreated']
+			newSessionState['simSimulateReaction'] = simState['simSimulateReaction']
+			newSessionState['simWeekOneUsersEvaluated'] = simState['simWeekOneUsersEvaluated']
 
 			newSessionState['currSelectedUsers'] = serverStateModelBridge.getCurrSelectedUsers()
 			newSessionState['currFreeUsers'] = serverStateModelBridge.getCurrFreeUsers()
@@ -1234,6 +1392,7 @@ class Views(): #acts as a namespace
 				newSessionState['currAdaptationState'] = serverStateModelBridge.getCurrAdaptationState()
 
 			newSession = json.dumps(newSessionState, default=lambda o: o.__dict__, sort_keys=True)
+			
 
 			return HttpResponse(newSession)
 		return HttpResponse('error')
@@ -1394,13 +1553,8 @@ class Views(): #acts as a namespace
 
 	
 	def resetSimWeek(request):
-		global linkShared
-		global simulationWeek
-		global isTaskCreated
-		global simWeekOneUsersEvaluated
-		global simSimulateReaction
 		if request.method == 'POST':
-			simulationWeek = 0
+			serverStateModelBridge.setSimulationWeek(0)
 			playersIds = playerBridge.getAllStoredStudentUsernames()
 			for playerId in playersIds:
 				Views.deleteUser(playerId)
@@ -1409,19 +1563,20 @@ class Views(): #acts as a namespace
 			for taskId in taskIds:
 				Views.deleteTask(taskId)
 
-			linkShared = False
-			isTaskCreated = False
-			simWeekOneUsersEvaluated = False
-			simSimulateReaction = False
+			serverStateModelBridge.setSimIsLinkShared(False)
+			serverStateModelBridge.setSimIsTaskCreated(False)
+			serverStateModelBridge.setSimWeekOneUsersEvaluated(False)
+			serverStateModelBridge.setSimSimulateReaction(False)
 			return HttpResponse('ok')
 		
 		return HttpResponse('error')
 
 	def advanceSimWeek(request):
-		global simulationWeek
-		global simStudentToEvaluate
-		global simUnavailableStudent
-		global simSimulateReaction
+		simulationWeek = serverStateModelBridge.getSimulationWeek()
+		simStudentToEvaluate = ''
+		simUnavailableStudent = ''
+		simSimulateReaction = serverStateModelBridge.getSimSimulateReaction()
+		simWeekOneUsersEvaluated = serverStateModelBridge.getSimWeekOneUsersEvaluated()
 		if request.method == 'POST':
 			if (simulationWeek > 5):
 				simulationWeek = 6
@@ -1451,19 +1606,14 @@ class Views(): #acts as a namespace
 
 			if (simulationWeek == 5):
 				if (simSimulateReaction):
-					# httpRequest = HttpRequest()
-					# httpRequest.method = 'POST'
-
-					# httpRequest.POST['numUsersToGenerate'] = 30
-					# httpRequest.POST['minDelay'] = 0.1
-					# httpRequest.POST['maxDelay'] = 0.5
-
-					# httpRequest.user = request.user
-					# Views.shareLinkSim(httpRequest)
 					simSimulateReaction = False
 				else:
 					simulationWeek -= 1
 
+			serverStateModelBridge.setSimulationWeek(simulationWeek)
+			serverStateModelBridge.setSimUnavailableStudent(simUnavailableStudent)
+			serverStateModelBridge.setSimStudentToEvaluate(simStudentToEvaluate)
+			serverStateModelBridge.setSimSimulateReaction(simSimulateReaction)
 			return HttpResponse('ok')
 		
 		return HttpResponse('error')
@@ -1471,8 +1621,7 @@ class Views(): #acts as a namespace
 
 	def shareLinkSim(request):
 		if request.method == 'POST':
-			global linkShared
-			linkShared = True
+			serverStateModelBridge.setSimIsLinkShared(True)
 			for _ in range(int(request.POST['numUsersToGenerate'])):
 				time.sleep(random.uniform(float(request.POST['minDelay']), float(request.POST['maxDelay'])))
 
@@ -1511,8 +1660,6 @@ class Views(): #acts as a namespace
 
 			Views.initServer(request)
 			
-
-
 			return HttpResponse('ok')
 
 		return HttpResponse('error')
@@ -1581,8 +1728,8 @@ class Views(): #acts as a namespace
 
 				Views.savePlayerCharacteristics(playerId, newState.characteristics.ability, newState.characteristics.engagement)
 
-			global simWeekOneUsersEvaluated
-			simWeekOneUsersEvaluated = True
+			
+			serverStateModelBridge.setSimWeekOneUsersEvaluated(True)
 			return HttpResponse('ok')
 
 		return HttpResponse('error')

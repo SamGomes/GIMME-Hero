@@ -93,6 +93,7 @@ var generateGroupColor = function(profile) {
 
 var generatePlayerColor = function(node){
 
+    console.log("here")
     var userChar = node.userState.characteristics;
     
     //groupsPlotScaleType == 'absolute'

@@ -18,7 +18,7 @@
 		</section>
 	</div>
 	
-	{% if debug %}
+	
 	<div id='dashboard'>
 		<section class='section' style="position: relative; z-index: 1000">
 			<div class='panel animated zoomIn'>
@@ -80,7 +80,6 @@
 				</div>				
 		</section>
 		
-		{% endif %}
 
 
 		<section class='section danger'>
@@ -1045,7 +1044,8 @@ crossorigin='anonymous'></script>
 		$("#constraintsError_professor_dash").hide();
 
 				
-		var currServerState = {};
+		var currServerState = undefined;
+		var currTimestamp = -1;
 		var currAdaptationConfig = {
 							'selectedGenAlgId': '',
 							'selectedRegAlgId': '',
@@ -1290,7 +1290,15 @@ crossorigin='anonymous'></script>
 		}
 	
 		var canComputeAdaptation = function(newServerState){
-			return !(JSON.stringify(currServerState) === JSON.stringify(newServerState));
+			var newTimestamp = newServerState['timestamp'];
+			delete newServerState.timestamp;
+			
+			var res = (currServerState == undefined || 
+			(!(JSON.stringify(currServerState) === JSON.stringify(newServerState)) && 
+			   newTimestamp > currTimestamp));
+			   
+			currTimestamp = res? newTimestamp: currTimestamp;
+			return res;
 		}
 		
 		
@@ -1725,11 +1733,11 @@ crossorigin='anonymous'></script>
 							{
 								newServerState.studentsStates = JSON.parse(studentsStates);
 								
-								if(currServerState!={} && 
-									studentsStates != undefined && 
+								if(studentsStates != undefined && 
 									!canComputeAdaptation(newServerState)){
 									return;
 								}
+								
 								readyForNewActivity = newServerState.readyForNewActivity;
 								if(readyForNewActivity){
 

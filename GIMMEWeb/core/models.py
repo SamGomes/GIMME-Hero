@@ -55,14 +55,15 @@ class UserProfile(models.Model):
   
     user = models.OneToOneField(User, 
         on_delete=models.CASCADE,
-        primary_key=True)
+        primary_key=True,
+        db_constraint=False)
 
-    role = MultiSelectField(choices=ROLE, max_choices=1)
+    role = MultiSelectField(choices=ROLE, max_choices=1, max_length=9)
     
     fullName = models.CharField(max_length=1020)
     age = models.IntegerField()
-    gender = MultiSelectField(choices=GENDER, max_choices=1)
-    description = models.TextField(max_length=3072)
+    gender = MultiSelectField(choices=GENDER, max_choices=1, max_length=6)
+    description = models.TextField(blank=True, max_length=3072)
 
 
     currState = models.TextField(max_length=3072)
@@ -84,7 +85,7 @@ class UserProfile(models.Model):
 
 
 class Task(models.Model):
-    taskId = models.CharField(max_length=1020,primary_key=True)
+    taskId = models.CharField(max_length=100,primary_key=True)
 
     creator = models.CharField(max_length=1020)
     creationTime = models.CharField(max_length=1020)
@@ -119,3 +120,18 @@ class ServerState(models.Model):
 
     initDate = models.CharField(max_length=1020, default="[]")
     finalDate = models.CharField(max_length=1020, default="[]")
+    
+    
+    simIsLinkShared = models.BooleanField(default=False)
+    simIsTaskCreated = models.BooleanField(default=False)
+    simWeekOneUsersEvaluated = models.BooleanField(default=False)
+    simSimulateReaction = models.BooleanField(default=False)
+    simWeekFourDoneOnce = models.BooleanField(default=False)
+
+    simulationWeek = models.IntegerField(default=0)
+    simStudentToEvaluate = models.CharField(max_length=1020)
+    simUnavailableStudent = models.CharField(max_length=1020)
+    simStudentX = models.CharField(max_length=1020)
+    simStudentY = models.CharField(max_length=1020)
+    simStudentW = models.CharField(max_length=1020)
+    simStudentZ = models.CharField(max_length=1020)
