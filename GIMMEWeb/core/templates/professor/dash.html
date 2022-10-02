@@ -66,6 +66,7 @@
 										<div id='simulationAction_professor_dash'></div>
 									</div>
 									<div class='column button is-info' id='advanceSimulationButton_professor_dash' disabled>Advance to the Next Week</div>
+									<div class='column button is-info' id='closeSimulationButton_professor_dash' hidden> Close Tutorial</div>	
 								</div>
 
 							</div>
@@ -73,8 +74,7 @@
 					</div> 
 				</div>
 				<div class='panel-block'>
-					<div class='button' id='resetSimulationButton_professor_dash'> Reset Tutorial</div>	
-					<div class='button' id='closeSimulationButton_professor_dash' hidden> Close Tutorial</div>		
+					<div class='button' id='resetSimulationButton_professor_dash'> Reset Tutorial</div>		
 				</div>		
 		</section>
 		
@@ -1123,7 +1123,7 @@ crossorigin='anonymous'></script>
 			buildPieChart('simulationState_professor_dash', 6, week, changeSimulationDisplay);
 			
 			$('#simulationAction_professor_dash').empty();
-			$('#simulationAction_professor_dash').append(changeSimulationDropdownActions(newServerState));
+			$('#simulationAction_professor_dash').append(changeSimulationControls(newServerState));
 			
 			return changeSimulationDisplay(week, week, newServerState);
 		}
@@ -1158,22 +1158,20 @@ crossorigin='anonymous'></script>
 			
 			if(newServerState!=undefined){
 				
-				console.log('--------');
-				console.log(newServerState.studentToEvaluate);
-				console.log(newServerState.unavailableStudent);
-				console.log(newServerState.studentX);
-				console.log(newServerState.studentY);
-				console.log(newServerState.studentW);
-				console.log(newServerState.studentZ);
+				if(newServerState.studentToEvaluate.length > 0)
+					simulationWeekMessages[1] = simulationWeekMessages[1].replace("Student_E", "<b>" + newServerState.studentToEvaluate + "</b>");
 				
-				simulationWeekMessages[1] = simulationWeekMessages[1].replace("Student_E", "<b>" + newServerState.studentToEvaluate + "</b>");
+				if(newServerState.unavailableStudent.length > 0)
+					simulationWeekMessages[2] = simulationWeekMessages[2].replace("Student_A", "<b>" + newServerState.unavailableStudent + "</b>");
 				
-				simulationWeekMessages[2] = simulationWeekMessages[2].replace("Student_A", "<b>" + newServerState.unavailableStudent + "</b>");
-				
-				simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_X", "<b>" + newServerState.studentX + "</b>");
-				simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_Y", "<b>" + newServerState.studentY + "</b>");
-				simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_W", "<b>" + newServerState.studentW + "</b>");
-				simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_Z", "<b>" + newServerState.studentZ + "</b>");
+				if(newServerState.studentX.length > 0)
+					simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_X", "<b>" + newServerState.studentX + "</b>");
+				if(newServerState.studentY.length > 0)
+					simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_Y", "<b>" + newServerState.studentY + "</b>");
+				if(newServerState.studentW.length > 0)
+					simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_W", "<b>" + newServerState.studentW + "</b>");
+				if(newServerState.studentZ.length > 0)
+					simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_Z", "<b>" + newServerState.studentZ + "</b>");
 			}
 		
 			
@@ -1189,7 +1187,7 @@ crossorigin='anonymous'></script>
 		}
 
 
-		var changeSimulationDropdownActions = function(newServerState)
+		var changeSimulationControls = function(newServerState)
 		{
 			week = newServerState.simWeek
 
@@ -1198,8 +1196,8 @@ crossorigin='anonymous'></script>
 			
 			$("#advanceSimulationButton_professor_dash").attr('disabled', true);
 			if (week == 0) {
-				var button = $("#simulationActionDropdown_professor_dash").parent().parent().show();
-				
+				$("#simulationActionDropdown_professor_dash").parent().parent().show();
+				$("#advanceSimulationButton_professor_dash").show();
 				$("#closeSimulationButton_professor_dash").hide();
 
 
@@ -1263,17 +1261,15 @@ crossorigin='anonymous'></script>
 			}
 
 			else if (week == 5) {
-				var button = $("#simulationActionDropdown_professor_dash").parent().parent();
-				button.css("display", "none");
-				
-				button = $("#advanceSimulationButton_professor_dash");
-				button.css("display", "none");
-
-				button = $("#closeSimulationButton_professor_dash");
-				button.css("display", "inline-flex");
+				$("#simulationActionDropdown_professor_dash").parent().parent().hide();
+				$("#advanceSimulationButton_professor_dash").hide();
+				$("#closeSimulationButton_professor_dash").show();
 			}
 
 			else if (week > 1 && week < 5){
+				if(week==4)
+					$("#advanceSimulationButton_professor_dash").attr('disabled', false);
+
 				if (!newServerState.simSimulateReaction || week == 4)
 					var dropdownItem = $("<div class=\'dropdown-item button\'> Simulate evaluation of all students </div>");
 				else{
@@ -1890,7 +1886,7 @@ crossorigin='anonymous'></script>
 								
 								$('#groupsPlot_professor_dash').empty();
 								
-								if (currServerState.currAdaptationState != [])
+								if (currServerState.currAdaptationState != undefined)
 									buildPlots(currServerState);
 								
 								

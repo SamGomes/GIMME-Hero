@@ -957,6 +957,7 @@ class Views(): #acts as a namespace
 			for username in serverStateModelBridge.getCurrSelectedUsers():
 				playerBridge.setAndSavePlayerStateToDataFrame(username, playerBridge.getPlayerCurrState(username))
 
+			print(serverStateModelBridge.getCurrSelectedUsers())
 			currAdaptationState = adaptation.iterate()
 
 			# for username in serverStateModelBridge.getCurrSelectedUsers():
