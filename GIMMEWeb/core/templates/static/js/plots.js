@@ -92,8 +92,6 @@ var generateGroupColor = function(profile) {
 
 
 var generatePlayerColor = function(node){
-
-    console.log("here")
     var userChar = node.userState.characteristics;
     
     //groupsPlotScaleType == 'absolute'
@@ -109,7 +107,6 @@ var generatePlayerColor = function(node){
     return d3.scaleLinear()
     .domain([0.0, 0.5, 1.0])
     .range(['#FF0000', '#FFFF00', '#00FF00'])(ratio)
-
 }
     
 var updateGroupsPlotNodeColors = function(canvasId, newScaleType){
@@ -598,9 +595,6 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             d3.event.stopPropagation();
         });
         
-        
-        
-
         d3.select('#'+canvasId).on('click',function(d){
             resetChangeState();
             contractNodeViz(d);
@@ -1189,12 +1183,12 @@ var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined, st
 }
 
 
-var buildPieChart = function(canvasId, numWeeks, currWeek = 0, simulationWeekMessages){
+var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationDisplayCallback){
 
     
     // set the dimensions and margins of the graph
     var width = 300
-    height = 400;
+    height = 600;
     
     var margin = {
         top: height * 0.1,
@@ -1225,34 +1219,16 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, simulationWeekMes
     
     // Create dummy data
     var weekValue = 100 / numWeeks;
-    var data = {}
-    colorArray = []
-    
-    for (var i = 0; i <= numWeeks; i++){
+    var data = {};
+    for(i=0; i<numWeeks; i++)
         data[i] = weekValue;
 
-        if (i < currWeek)
-            colorArray.push('#91f4ff')
-        
-        else if (i == currWeek)
-            colorArray.push('#1ce9ff')
+    var leftXPosition = -document.getElementById("storylineLog_professor_dash").parentElement.clientWidth / 2;
 
-        else
-            colorArray.push('#808080')
-    }
+    var positionArray = [[0,-70],[0,0],[0,70],[leftXPosition,70],[leftXPosition,0],[leftXPosition,-70]];
+    var currSelectedWeek = currWeek;
+    $("#storylineLog_professor_dash").css({'transform': 'translate(' + positionArray[currSelectedWeek][0] + 'px,' + positionArray[currSelectedWeek][1] + 'px)'});
 
-    var leftXPosition = -document.getElementById("storylineLog_professor_dash").parentElement.clientWidth / 2
-
-    var positionArray = [[0,-70],[0,0],[0,70],[leftXPosition,70],[leftXPosition,0],[leftXPosition,-70]]
-    var currSelectedWeek = currWeek
-    $("#storylineLog_professor_dash").css({'transform': 'translate(' + positionArray[currSelectedWeek][0] + 'px,' + positionArray[currSelectedWeek][1] + 'px)'})
-
-
-
-    // set the color scale
-    var color = d3.scaleOrdinal()
-    .domain(data)
-    .range(colorArray)
 
     // Compute the position of each group on the pie:
     var pie = d3.pie()
@@ -1260,14 +1236,13 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, simulationWeekMes
     var data_ready = pie(d3.entries(data))
 
     var arcGenerator = d3.arc()
-    .innerRadius(0)
+    .innerRadius(radius*0.3)
     .outerRadius(radius);
 
-    
-    var g = svg.append('g');
-    
-    g.style("transform", "translate(" + width / 2 + "px," + height / 2 + "px)");
 
+    var g = svg.append('g');    
+    g.style("transform", "translate(" + width / 2 + "px," + height / 2 + "px)");
+    
     // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
     g
     .selectAll('mySlices')
@@ -1275,43 +1250,27 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, simulationWeekMes
     .enter()
     .append('path')
     .attr('d', arcGenerator)
-    .attr('fill', function(d){ return(color(d.data.key)) })
+    .attr('fill', 
+        function(d){
+            week = d.data.key;
+            if (week < currWeek)
+                return '#91f4ff';
+            else if (week == currWeek || week == currSelectedWeek)
+                return '#1ce9ff';
+            return '#808080';
+        })
     .attr("stroke", "white")
     .style("stroke-width", "10px")
     .style("opacity", 0.7)
     .on("mouseover", function (d) {
         currSelectedWeek = d.data.key;
-        changeSimulationMessagePosition(currWeek, currSelectedWeek, simulationWeekMessages);
+        changeSimulationDisplayCallback(currWeek, currSelectedWeek);
     })
     .on("mouseout", function (d) {
         currSelectedWeek = currWeek;
-        changeSimulationMessagePosition(currWeek, currSelectedWeek, simulationWeekMessages);
+        changeSimulationDisplayCallback(currWeek, currSelectedWeek);
 
     })
 
 }
 
-var changeSimulationMessagePosition = function(currWeek, selectedWeek, simulationWeekMessages)
-{
-    leftXPosition = -document.getElementById("storylineLog_professor_dash").parentElement.clientWidth * 0.6
-
-    positionArray = [[0,-70],[0,0],[0,70],[leftXPosition,70],[leftXPosition,0],[leftXPosition,-70]]
-
-    if (selectedWeek <= currWeek) {
-        $("#simulationWeek_professor_dash").empty();
-        $("#simulationWeek_professor_dash").append("<p>Week " + selectedWeek + "</p>");
-
-        var simulationLog = $("<div class=\'list\'> </div>");
-
-        simulationLog.append("<div class=\'list-item\'>" + simulationWeekMessages[selectedWeek] + "</div>");
-        simulationLog.show(135)
-
-
-        $('#simulationLog_professor_dash').empty();
-        $('#simulationLog_professor_dash').append(simulationLog);
-
-        $("#storylineLog_professor_dash").css({'transform': 'translate(' + positionArray[selectedWeek][0] + 'px,' + positionArray[selectedWeek][1] + 'px)'})
-
-        return simulationLog
-    }
-}

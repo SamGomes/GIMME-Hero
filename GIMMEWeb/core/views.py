@@ -1687,7 +1687,7 @@ class Views(): #acts as a namespace
 				strFinalDate.append(str(j + timedelta(days = 7)))
 
 			for i in range(len(taskIds)):
-				time.sleep(random.randrange(1, 5))
+				time.sleep(random.uniform(float(request.POST['minDelay']), float(request.POST['maxDelay'])))
 
 
 
