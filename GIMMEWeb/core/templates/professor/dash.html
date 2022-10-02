@@ -44,12 +44,12 @@
 					<div class='button' id='resetSimulationButton_professor_dash'> Reset Simulation</div> -->
 						
 
-					<div class='dash-cell-box' id='storylineLog_professor_dash' style="overflow: visible; width: 60%;">
+					<div class='dash-cell-box' id='storylineLog_professor_dash' style='overflow: visible; width: 60%;'>
 						<div class='is-mobile is-multiline is-mobile'>
-							<div class='table' style='margin:0.5em;'>
+							<div class='table' style='margin:0.5em; margin-bottom:3em;'>
 								
-								<div class='columns subtitle is-5' style='margin-bottom:5%' id="simulationWeek_professor_dash"></div>
-								<div class='columns' style='margin-bottom:5%' id="simulationLog_professor_dash"></div>
+								<div class='columns subtitle is-5' style='margin-bottom:1em' id='simulationWeek_professor_dash'></div>
+								<div class='columns' style='margin-bottom:1em' id='simulationLog_professor_dash'></div>
 								
 								<div class='columns' id='simulationControls_professor_dash'>
 									<div class='column dropdown'>
@@ -1103,21 +1103,24 @@ crossorigin='anonymous'></script>
 
 
 		simulationWeekMessages = ["In this tutorial, you will be the professor of a 4 week course. Below, you will find some controls to automate the tutorial. Before the course starts, <b>share the platform link</b> with the students, so they can sign up in the platform (simulate this by clicking <b>'Tutorial Controls' > 'Share link'</b>). Next, <b>register the first task</b> for the course (call it 'week1_00' and make sure it promotes a 'Self-Facilitation' interaction). After registering the first task, the other tasks will be automatically registered <b>by clicking 'Tutorial Controls' > 'Simulate task registration'</b>.",
-									"<b>Select all students</b> so that they are considered when forming groups. Also, <b>select the week 1 tasks (check their ids)</b>. <b>Do an iteration of the algorithm</b> and verify the formed groups. <b>Manually evaluate</b> Student_E and <b>simulate the evaluation</b> for the rest. You will be able to see now how every student fared in their respective group task.",
-									"Student_A will not be available this week, <b>remove the student</b> from the selection. Select week 2's tasks. Iterate and simulate reaction.",
-									"Student_Y was misevaluated from last week, <b>correct this student's ability value</b>, so it is equal to Student_X. Student_X cannot be in the same group as Student_Y. <b>Create the restriction</b> so that Student_X and Student_Y are <b>separated</b>. Student_W was very engaged in the group project when working with Student_Z, <b>create the restriction</b> so that Student_W and Student_Z <b>are joined in the same group</b>. Register the tasks for week 3, iterate and simulate reaction.",
-									"This is a free week, where you can experiment with the different group formation, evaluation algorithms, and group constraints. Select week 4's tasks, iterate and then evaluate as many times as you wish and, when you are ready, advance to the next week.",
-									"Congratulations! You have completed the tutorial. You can now choose to reset the simulation and start over, or close this tab."]
+		"<b>Select all students</b> so that they are considered when forming groups. Also, <b>select the week 1 tasks (check their ids)</b>. <b>Do an iteration of the algorithm</b> and verify the formed groups. <b>Manually evaluate</b> Student_E and <b>simulate the evaluation</b> for the rest. You will be able to see now how every student fared in their respective group task.",
+		"Student_A will not be available this week, <b>remove the student</b> from the selection. Select week 2's tasks, iterate and simulate reaction.",
+		"Student_Y was misevaluated from last week, <b>correct this student's ability value</b>, so it is equal to Student_X. Student_X cannot be in the same group as Student_Y. <b>Create the restriction</b> so that Student_X and Student_Y are <b>separated</b>. Student_W was very engaged in the group project when working with Student_Z, <b>create the restriction</b> so that Student_W and Student_Z <b>are joined in the same group</b>. Register the tasks for week 3, iterate and simulate reaction.",
+		"This is a free week, where you can experiment with the different group formation, evaluation algorithms, and group constraints. Select week 4's tasks, iterate and then evaluate as many times as you wish and, when you are ready, advance to the next week.",
+		"Congratulations! You have completed the tutorial. You can now choose to reset the simulation and start over, or close this tab."]
 
 
 		dropdownItemsText = [["<a class=\'dropdown-item\'> Share link between students</a>","<a class=\'dropdown-item\'> Simulate task registration </a>"], ["<a class=\'dropdown-item\'> Simulate evaluation of students </a>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> No actions available </div>"]];
 		dropdownItemsUrls = [['/shareLinkSim/', '/taskRegistrationSim/'], ['/evaluateSim/'], ['/simulateReaction/'],['/simulateReaction/'],['/simulateReaction/'],['/simulateReaction/']]
 		var changeSimulationWeek = function(newServerState)
 		{
+// 			if(currServerState.simWeek == newServerState.simWeek)
+// 				return;
+
 			week = newServerState.simWeek
 			
 			$('#simulationState_professor_dash').empty();
-			buildPieChart('simulationState_professor_dash', 5, week, changeSimulationDisplay);
+			buildPieChart('simulationState_professor_dash', 6, week, changeSimulationDisplay);
 			
 			$('#simulationAction_professor_dash').empty();
 			$('#simulationAction_professor_dash').append(changeSimulationDropdownActions(newServerState));
@@ -1127,47 +1130,55 @@ crossorigin='anonymous'></script>
 
 		var changeSimulationDisplay = function(currWeek, selectedWeek, newServerState = undefined)
 		{
-			leftXPosition = -document.getElementById("storylineLog_professor_dash").parentElement.clientWidth * 0.6
-			//yPosition = document.getElementById("storylineLog_professor_dash").parentElement.clientHeight * 0.6
-
-			positionArray = [[0,-70],[0,0],[0,70],[leftXPosition,70],[leftXPosition,0],[leftXPosition,-70]]
-
 			
-			if(newServerState!=undefined){
-				simulationWeekMessages[1] = simulationWeekMessages[1].replace("Student_E", "<b>" + newServerState.studentToEvaluate + "</b>")
-				
-				simulationWeekMessages[2] = simulationWeekMessages[2].replace("Student_A", "<b>" + newServerState.unavailableStudent + "</b>")
-				
-				simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_X", "<b>" + newServerState.studentX + "</b>")
-				simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_Y", "<b>" + newServerState.studentY + "</b>")
-				simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_W", "<b>" + newServerState.studentW + "</b>")
-				simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_Z", "<b>" + newServerState.studentZ + "</b>")
-				
-			}
-		
 			if(selectedWeek < currWeek){
 				$('#simulationControls_professor_dash').hide();
 			}else{
 				$('#simulationControls_professor_dash').show();
 			}
 			
+		
+			leftXPosition = -document.getElementById("storylineLog_professor_dash").parentElement.clientWidth * 0.6
+			positionArray = [[0,-70],[0,0],[0,70],[leftXPosition,70],[leftXPosition,0],[leftXPosition,-70]]
+
+			
+			
+			
 			var weekText = "<p>Week " + selectedWeek + "</p>";
 			if (selectedWeek == 0) {
 				weekText = "Course Preparation";
 			}
-			else if (selectedWeek == 6){
+			else if (selectedWeek == 5){
 				weekText = "Tutorial Finished!";
 			}
 		
 			$("#simulationWeek_professor_dash").empty();
-			$("#simulationWeek_professor_dash").append(weekText) ;
+			$("#simulationWeek_professor_dash").append(weekText);
+			
+			
+			if(newServerState!=undefined){
+				
+				console.log('--------');
+				console.log(newServerState.studentToEvaluate);
+				console.log(newServerState.unavailableStudent);
+				console.log(newServerState.studentX);
+				console.log(newServerState.studentY);
+				console.log(newServerState.studentW);
+				console.log(newServerState.studentZ);
+				
+				simulationWeekMessages[1] = simulationWeekMessages[1].replace("Student_E", "<b>" + newServerState.studentToEvaluate + "</b>");
+				
+				simulationWeekMessages[2] = simulationWeekMessages[2].replace("Student_A", "<b>" + newServerState.unavailableStudent + "</b>");
+				
+				simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_X", "<b>" + newServerState.studentX + "</b>");
+				simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_Y", "<b>" + newServerState.studentY + "</b>");
+				simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_W", "<b>" + newServerState.studentW + "</b>");
+				simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_Z", "<b>" + newServerState.studentZ + "</b>");
+			}
+		
+			
 
-			var simulationLog = $("<div class=\'list\'> </div>");
-
-			simulationLog.append("<div class=\'list-item\'>" + simulationWeekMessages[selectedWeek] + "</div>");
-			simulationLog.show(135)
-
-
+			var simulationLog = $("<div class=\'list\'><div class=\'list-item\'>" + simulationWeekMessages[selectedWeek] + "</div></div>");
 			$('#simulationLog_professor_dash').empty();
 			$('#simulationLog_professor_dash').append(simulationLog);
 

@@ -573,7 +573,6 @@ profileDim1 = ['1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', 
 class Views(): #acts as a namespace
 
 	def initServer(request):
-		
 		serverStateModelBridge.setCurrAdaptationState([])
 		serverStateModelBridge.setReadyForNewActivity(True)
 		serverStateModelBridge.setCurrSelectedUsers([])
@@ -970,11 +969,7 @@ class Views(): #acts as a namespace
 			serverStateModelBridge.setReadyForNewActivity(True)
 			return HttpResponse('error')
 			
-		simStudentX = ''
-		simStudentY = ''
-		simStudentW = ''
-		simStudentZ = ''
-
+		
 		if serverStateModelBridge.getSimulationWeek() == 2 and currAdaptationState != []:
 			simStudentX = currAdaptationState["groups"][0][0]
 			simStudentY = currAdaptationState["groups"][0][1]
@@ -982,14 +977,14 @@ class Views(): #acts as a namespace
 			simStudentW = currAdaptationState["groups"][1][0]
 			simStudentZ = currAdaptationState["groups"][1][1]
 
+			serverStateModelBridge.setSimStudentX(simStudentX)
+			serverStateModelBridge.setSimStudentY(simStudentY)
+			serverStateModelBridge.setSimStudentW(simStudentW)
+			serverStateModelBridge.setSimStudentZ(simStudentZ)
+
 
 		serverStateModelBridge.setCurrAdaptationState(currAdaptationState)
 		serverStateModelBridge.setReadyForNewActivity(True)
-
-		serverStateModelBridge.setSimStudentX(simStudentX)
-		serverStateModelBridge.setSimStudentY(simStudentY)
-		serverStateModelBridge.setSimStudentW(simStudentW)
-		serverStateModelBridge.setSimStudentZ(simStudentZ)
 
 		return Views.fetchServerState(request)
 
@@ -1563,18 +1558,17 @@ class Views(): #acts as a namespace
 			for taskId in taskIds:
 				Views.deleteTask(taskId)
 
-			serverStateModelBridge.setSimIsLinkShared(False)
-			serverStateModelBridge.setSimIsTaskCreated(False)
-			serverStateModelBridge.setSimWeekOneUsersEvaluated(False)
-			serverStateModelBridge.setSimSimulateReaction(False)
+			#serverStateModelBridge.setSimIsLinkShared(False)
+			#serverStateModelBridge.setSimIsTaskCreated(False)
+			#serverStateModelBridge.setSimWeekOneUsersEvaluated(False)
+			#serverStateModelBridge.setSimSimulateReaction(False)
+			Views.initServer(request)
 			return HttpResponse('ok')
 		
 		return HttpResponse('error')
 
 	def advanceSimWeek(request):
 		simulationWeek = serverStateModelBridge.getSimulationWeek()
-		simStudentToEvaluate = ''
-		simUnavailableStudent = ''
 		simSimulateReaction = serverStateModelBridge.getSimSimulateReaction()
 		simWeekOneUsersEvaluated = serverStateModelBridge.getSimWeekOneUsersEvaluated()
 		if request.method == 'POST':
@@ -1587,14 +1581,14 @@ class Views(): #acts as a namespace
 				players = playerBridge.getAllStoredStudentUsernames()
 				tasks = taskBridge.getAllStoredTaskIds()
 				if (len(players) >= 20 and len(tasks) >= 20):
-					simStudentToEvaluate = players[0]
+					serverStateModelBridge.setSimStudentToEvaluate(players[0])
 				else:
 					simulationWeek -= 1
 
 
 			if (simulationWeek == 2):
 				if (simWeekOneUsersEvaluated):
-					simUnavailableStudent = playerBridge.getAllStoredStudentUsernames()[10]
+					serverStateModelBridge.setSimUnavailableStudent(playerBridge.getAllStoredStudentUsernames()[10])
 				else:
 					simulationWeek -= 1
 
@@ -1611,8 +1605,6 @@ class Views(): #acts as a namespace
 					simulationWeek -= 1
 
 			serverStateModelBridge.setSimulationWeek(simulationWeek)
-			serverStateModelBridge.setSimUnavailableStudent(simUnavailableStudent)
-			serverStateModelBridge.setSimStudentToEvaluate(simStudentToEvaluate)
 			serverStateModelBridge.setSimSimulateReaction(simSimulateReaction)
 			return HttpResponse('ok')
 		
@@ -1658,7 +1650,6 @@ class Views(): #acts as a namespace
 
 				Views.userRegistration(httpRequest)
 
-			Views.initServer(request)
 			
 			return HttpResponse('ok')
 
@@ -1709,7 +1700,6 @@ class Views(): #acts as a namespace
 				Views.taskRegistration(httpRequest)
 
 
-			Views.initServer(request)
 			return HttpResponse('ok')
 
 		return HttpResponse('error')

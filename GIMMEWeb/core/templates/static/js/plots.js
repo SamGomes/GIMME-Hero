@@ -1242,35 +1242,48 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationD
 
     var g = svg.append('g');    
     g.style("transform", "translate(" + width / 2 + "px," + height / 2 + "px)");
-    
-    // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
-    g
+    var slices =  g
     .selectAll('mySlices')
     .data(data_ready)
-    .enter()
-    .append('path')
-    .attr('d', arcGenerator)
-    .attr('fill', 
+    .enter().append('path');
+    
+    var updatePieColors = function(){
+         slices
+        .attr('fill', 
         function(d){
             week = d.data.key;
-            if (week < currWeek)
-                return '#91f4ff';
-            else if (week == currWeek || week == currSelectedWeek)
-                return '#1ce9ff';
-            return '#808080';
-        })
+            if (week <= currWeek)
+                var color = '#91f4ff';
+                if (week == currWeek) 
+                    color = '#1ce9ff';
+                else if(week == currSelectedWeek)
+                    color = '#64dee0';
+                return color;
+            return '#404040';
+        });
+    };
+    updatePieColors();
+    
+    // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+    slices.attr('d', arcGenerator)
     .attr("stroke", "white")
     .style("stroke-width", "10px")
     .style("opacity", 0.7)
     .on("mouseover", function (d) {
         currSelectedWeek = d.data.key;
+        if(currSelectedWeek > currWeek)
+            return;
+        updatePieColors();
         changeSimulationDisplayCallback(currWeek, currSelectedWeek);
     })
     .on("mouseout", function (d) {
         currSelectedWeek = currWeek;
+        if(currSelectedWeek > currWeek)
+            return;
+        updatePieColors();
         changeSimulationDisplayCallback(currWeek, currSelectedWeek);
 
     })
-
+    
 }
 
