@@ -1197,16 +1197,9 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationD
         left: width * 0.1
     };
     
-    // var svg = canvas.append('svg');
     
     // // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
     var radius = Math.min(width, height) / 2 
-    
-    // svg.attr('width', width + margin.left + margin.right)
-    //     .attr('display', 'block')
-    //     .attr('margin', 'auto')
-    //     .attr('height', height + margin.top + margin.bottom + 200)
-    //     .call(responsivefy, 1000, 0.15);
     
     var svg = d3.select('#'+canvasId)
         .append('svg');
@@ -1215,7 +1208,7 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationD
         .attr('height', height + margin.bottom + margin.top)
         .attr('display', 'block')
         .attr('margin', 'auto')
-        .call(responsivefy, 300, 0.65);
+        .call(responsivefy, 300, 0.7);
     
     // Create dummy data
     var weekValue = 100 / numWeeks;
@@ -1223,11 +1216,8 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationD
     for(i=0; i<numWeeks; i++)
         data[i] = weekValue;
 
-    var leftXPosition = -document.getElementById("storylineLog_professor_dash").parentElement.clientWidth / 2;
-
-    var positionArray = [[0,-70],[0,0],[0,70],[leftXPosition,70],[leftXPosition,0],[leftXPosition,-70]];
+    var leftXPosition = -document.getElementById("storylineLog_professor_dash").parentElement.clientWidth / 1.8;
     var currSelectedWeek = currWeek;
-    $("#storylineLog_professor_dash").css({'transform': 'translate(' + positionArray[currSelectedWeek][0] + 'px,' + positionArray[currSelectedWeek][1] + 'px)'});
 
 
     // Compute the position of each group on the pie:
@@ -1241,7 +1231,7 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationD
 
 
     var g = svg.append('g');    
-    g.style("transform", "translate(" + width / 2 + "px," + height / 2 + "px)");
+    g.style("transform", "translate(" + (width / 2)*1.2 + "px," + height / 2 + "px)");
     var slices =  g
     .selectAll('mySlices')
     .data(data_ready)
@@ -1264,6 +1254,28 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationD
     };
     updatePieColors();
     
+    
+    
+    
+    var line = g.append('path')
+    .attr("stroke", "grey")
+    .style("stroke-width", "4px");
+    
+    var updateLine = function(){
+        var gen = d3.line();
+        var pos = $("#storylineLog_professor_dash").position();
+        var angle = (currSelectedWeek==0)? -data_ready[1].startAngle : data_ready[currSelectedWeek-1].startAngle;
+        var angleArray = [Math.cos(angle), Math.sin(angle)]
+        var pathOfLine = gen([
+                                [angleArray[0]*160,angleArray[1]*160],
+                                [angleArray[0]*200,angleArray[1]*200],
+                                [angleArray[0]*400,angleArray[1]*200]
+                            ]);
+        line.attr('d', pathOfLine)
+        .attr('fill', 'none');
+    }
+    updateLine();
+    
     // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
     slices.attr('d', arcGenerator)
     .attr("stroke", "white")
@@ -1275,6 +1287,7 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationD
             return;
         updatePieColors();
         changeSimulationDisplayCallback(currWeek, currSelectedWeek);
+        updateLine();
     })
     .on("mouseout", function (d) {
         currSelectedWeek = currWeek;
@@ -1282,8 +1295,12 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationD
             return;
         updatePieColors();
         changeSimulationDisplayCallback(currWeek, currSelectedWeek);
+        updateLine();
 
-    })
+    });
+    
+     
+    
     
 }
 

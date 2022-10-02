@@ -354,6 +354,8 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		return User.objects.get(username = username).userprofile
 
 	def setAndSavePlayerStateToDataFrame(self, username, newState):
+		
+		#print(json.dumps(newState,default=lambda o: o.__dict__, sort_keys=True))
 		self.setPlayerCharacteristics(username, newState.characteristics)
 		self.setPlayerProfile(username, newState.profile)
 
@@ -948,8 +950,8 @@ class Views(): #acts as a namespace
 		playerBridge.setPlayerCharacteristics(username, characteristics)
 		playerBridge.setPlayerGrade(username=username, grade=round(float(playerBridge.getPlayerGrade(username=username)) + characteristics.ability / 5.0, 2))
 
+
 	# professor methods
-	
 	def startAdaptation(request):
 		serverStateModelBridge.setReadyForNewActivity(False)
 		try:			
@@ -959,9 +961,6 @@ class Views(): #acts as a namespace
 
 			print(serverStateModelBridge.getCurrSelectedUsers())
 			currAdaptationState = adaptation.iterate()
-
-			# for username in serverStateModelBridge.getCurrSelectedUsers():
-			# 	print(playerBridge.getPlayerPreferencesEst(username).dimensions)
 
 		except (Exception, ArithmeticError, ValueError) as e:
 			template = 'An exception of type {0} occurred. Arguments:\n{1!r}'
@@ -1708,9 +1707,9 @@ class Views(): #acts as a namespace
 	def evaluateSim(request):
 		if request.method == 'POST':
 
-			allUsers = playerBridge.getAllPlayerIds()
-			allUsers.pop(0)
-			for playerId in allUsers:
+			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers()
+			currSelectedUsers.pop(0)
+			for playerId in currSelectedUsers:
 				prevState = playerBridge.getPlayerStatesDataFrame(playerId).states[-1]
 				newState = Views.calcReaction(
 					playerBridge = playerBridge, 
