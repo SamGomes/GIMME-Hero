@@ -1192,6 +1192,14 @@ class Views(): #acts as a namespace
 						 }
 					), default=lambda o: o.__dict__, sort_keys=True)
 
+					task.initDate = requestInfo['initDate']
+					task.finalDate = requestInfo['finalDate']
+					
+					task.profileWeight = requestInfo['taskSelectWeigths']
+					task.difficultyWeight = str(1.0 - float(requestInfo['taskSelectWeigths']))
+					
+					task.minReqAbility = requestInfo['difficulty']
+					
 					task.save()
 
 					# add task to free tasks
@@ -1206,7 +1214,7 @@ class Views(): #acts as a namespace
 					context = { 'form' : form }
 					return render(request, 'taskRegistration.html', context)
 
-			elif request.method == 'GET':				
+			elif request.method == 'GET':
 				form = CreateTaskForm()
 				context = { 'form' : form }
 				return render(request, 'taskRegistration.html', context)
@@ -1224,9 +1232,14 @@ class Views(): #acts as a namespace
 					_mutable = post._mutable
 					post._mutable = True
 					post['taskId'] = taskIdToUpdate
+					form = UpdateTaskForm(post, instance = instance)
+					breakpoint()
+					post['initDate'] = form.initDate
+					post['finalDate'] = form.finalDate
+					post['taskSelectWeigths'] = form.profileWeight
+					post['difficulty'] = form.minReqAbility
 					post._mutable = _mutable
 
-					form = UpdateTaskForm(request.POST, instance = instance)
 					if form.is_valid():
 						form.save()
 						return redirect('/dash')

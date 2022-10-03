@@ -89,7 +89,7 @@ class Task(models.Model):
 
     creator = models.CharField(max_length=1020)
     creationTime = models.CharField(max_length=1020)
-    description = models.TextField(max_length=3072)
+    description = models.TextField(blank=True, max_length=3072)
     minReqAbility = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
     profile = models.CharField(max_length=1020)
     
@@ -101,7 +101,7 @@ class Task(models.Model):
     finalDate = models.DateField()
 
 
-    files = models.FileField(upload_to=ModelAuxMethods.pathAndRename('taskFiles/'), default='taskFiles/undefined2.pdf')
+    files = models.FileField(upload_to=ModelAuxMethods.pathAndRename('taskFiles/'), default='taskFiles/placeholder')
 
 
     def __str__(self):

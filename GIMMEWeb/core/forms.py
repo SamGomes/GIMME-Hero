@@ -27,16 +27,16 @@ class CreateUserProfileForm(ModelForm):
 class CreateTaskForm(ModelForm):
 	initDate = forms.DateField(widget=DateInput)
 	finalDate = forms.DateField(widget=DateInput)
-	minReqAbility = forms.FloatField(required=False, max_value=1.0, min_value=0.0, 
-widget=forms.NumberInput(attrs={'id': 'form_homework', 'step': "0.01"})) 
-	difficultyWeight = forms.FloatField(required=False, max_value=1.0, min_value=0.0, 
-widget=forms.NumberInput(attrs={'id': 'form_homework', 'step': "0.01"})) 
-	profileWeight = forms.FloatField(required=False, max_value=1.0, min_value=0.0, 
-widget=forms.NumberInput(attrs={'id': 'form_homework', 'step': "0.01"})) 
+	#minReqAbility = forms.FloatField(required=False, max_value=1.0, min_value=0.0, 
+#widget=forms.NumberInput(attrs={'id': 'form_homework', 'step': "0.01"})) 
+	#difficultyWeight = forms.FloatField(required=False, max_value=1.0, min_value=0.0, 
+#widget=forms.NumberInput(attrs={'id': 'form_homework', 'step': "0.01"})) 
+	#profileWeight = forms.FloatField(required=False, max_value=1.0, min_value=0.0, 
+#widget=forms.NumberInput(attrs={'id': 'form_homework', 'step': "0.01"})) 
 	
 	class Meta:
 		model = Task
-		exclude = ['creator', 'creationTime', 'profile'] 
+		exclude = ['creator', 'creationTime', 'profile', 'initDate', 'finalDate', 'minReqAbility', 'difficultyWeight', 'profileWeight'] 
 
 
 
@@ -67,6 +67,6 @@ widget=forms.NumberInput(attrs={'id': 'form_homework', 'step': "0.01"}))
 	
 	class Meta:
 		model = Task
-		exclude = ['creator', 'creationTime', 'profile'] 
+		exclude = ['creator', 'creationTime'] 
 
 
