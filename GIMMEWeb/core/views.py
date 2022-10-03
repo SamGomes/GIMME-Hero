@@ -566,8 +566,7 @@ taskIds = ["week1_01", "week1_10", "week1_11", "week2_00", "week2_01", "week2_10
 description = '.'
 
 minReqAbility = ["0.2", "0.2", "0.2", "0.3", "0.3", "0.3", "0.3", "0.5", "0.5", "0.5", "0.5", "0.6", "0.6", "0.6", "0.6", "0.7", "0.7", "0.7", "0.7"]
-profileWeight = '0.5'
-difficultyWeight = '0.5'
+taskSelectWeigths = '0.5'
 
 profileDim0 = ['0', '1', '1', '0', '0', '1', '1', '0', '0', '1', '1', '0', '0', '1', '1', '0', '0', '1', '1']
 profileDim1 = ['1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1']
@@ -697,7 +696,7 @@ class Views(): #acts as a namespace
 				profile = profileForm.save(commit = False)
 				profile.user = user
 
-				profile.currState = json.dumps(PlayerState(), default=lambda o: o.__dict__, sort_keys=True)
+				profile.currState = json.dumps(PlayerState(profile=intProfTemplate.generateCopy()), default=lambda o: o.__dict__)
 				profile.pastModelIncreasesDataFrame = json.dumps(
 					PlayerStatesDataFrame(
 						interactionsProfileTemplate = intProfTemplate.generateCopy().reset(), 
@@ -959,7 +958,6 @@ class Views(): #acts as a namespace
 			for username in serverStateModelBridge.getCurrSelectedUsers():
 				playerBridge.setAndSavePlayerStateToDataFrame(username, playerBridge.getPlayerCurrState(username))
 
-			print(serverStateModelBridge.getCurrSelectedUsers())
 			currAdaptationState = adaptation.iterate()
 
 		except (Exception, ArithmeticError, ValueError) as e:
@@ -1147,7 +1145,6 @@ class Views(): #acts as a namespace
 			) 
 
 		# switch config. gen. algs
-		# print(newConfigParams['selectedGenAlgId'])
 		selectedGenAlgId = newConfigParams['selectedGenAlgId']
 		selectedGenAlg = defaultConfigsAlg
 		if (selectedGenAlgId =='Random (no search)'):
@@ -1232,13 +1229,14 @@ class Views(): #acts as a namespace
 					_mutable = post._mutable
 					post._mutable = True
 					post['taskId'] = taskIdToUpdate
-					form = UpdateTaskForm(post, instance = instance)
 					breakpoint()
-					post['initDate'] = form.initDate
-					post['finalDate'] = form.finalDate
-					post['taskSelectWeigths'] = form.profileWeight
-					post['difficulty'] = form.minReqAbility
+					post['initDate'] = instance.initDate
+					post['finalDate'] = instance.finalDate
+					post['taskSelectWeigths'] = instance.profileWeight
+					post['minReqAbility'] = instance.minReqAbility
+					post['profile'] = instance.profile
 					post._mutable = _mutable
+					form = UpdateTaskForm(post, instance = instance)
 
 					if form.is_valid():
 						form.save()
@@ -1700,9 +1698,8 @@ class Views(): #acts as a namespace
 
 				httpRequest.POST['taskId'] = taskIds[i]
 				httpRequest.POST['description'] = description
-				httpRequest.POST['minReqAbility'] = minReqAbility[i]
-				httpRequest.POST['profileWeight'] = profileWeight
-				httpRequest.POST['difficultyWeight'] = difficultyWeight
+				httpRequest.POST['difficulty'] = minReqAbility[i]
+				httpRequest.POST['taskSelectWeigths'] = taskSelectWeigths
 				httpRequest.POST['initDate'] = strInitDate[i]
 				httpRequest.POST['finalDate'] = strFinalDate[i]
 				httpRequest.POST['profileDim0'] = profileDim0[i]
