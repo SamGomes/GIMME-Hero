@@ -1468,7 +1468,7 @@ class Views(): #acts as a namespace
 			
 			playerBridge.setPlayerCharacteristics(username, characteristics)
 			
-			grade = int(playerBridge.getPlayerGrade(username))
+			grade = float(playerBridge.getPlayerGrade(username))
 			grade += characteristicsDelta['gradeInc']
 			playerBridge.setPlayerGrade(username, grade)
 			
