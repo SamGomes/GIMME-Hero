@@ -1222,6 +1222,7 @@ class Views(): #acts as a namespace
 		else:
 			if request.method == 'POST':
 				taskIdToUpdate = request.GET.get('taskIdToUpdate')
+				requestInfo = request.POST
 				try:
 					instance = Task.objects.get(taskId = taskIdToUpdate)
 					
@@ -1229,12 +1230,19 @@ class Views(): #acts as a namespace
 					_mutable = post._mutable
 					post._mutable = True
 					post['taskId'] = taskIdToUpdate
-					breakpoint()
-					post['initDate'] = instance.initDate
-					post['finalDate'] = instance.finalDate
-					post['taskSelectWeigths'] = instance.profileWeight
-					post['minReqAbility'] = instance.minReqAbility
-					post['profile'] = instance.profile
+					post['minReqAbility'] = requestInfo['difficulty']
+					post['profileWeight'] = requestInfo['taskSelectWeigths']
+					post['difficultyWeight'] = str(1.0 - float(requestInfo['taskSelectWeigths']))
+					post['initDate'] = requestInfo['initDate']
+					post['finalDate'] = requestInfo['finalDate']
+					
+					post['profile'] = json.dumps(InteractionsProfile(
+						{
+						'Challenge': float(requestInfo['profileDim0']),
+						'Focus': float(requestInfo['profileDim1'])
+						}
+					), default=lambda o: o.__dict__, sort_keys=True)
+					
 					post._mutable = _mutable
 					form = UpdateTaskForm(post, instance = instance)
 
@@ -1254,7 +1262,6 @@ class Views(): #acts as a namespace
 				taskIdToUpdate = request.GET.get('taskIdToUpdate')
 				try:
 					instance = Task.objects.get(taskId = taskIdToUpdate)
-
 					form = UpdateTaskForm(instance = instance)
 					context = { 'form' : form }
 					return render(request, 'taskUpdate.html',  context)
