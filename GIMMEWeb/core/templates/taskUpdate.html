@@ -54,9 +54,9 @@
 				
 				<hr></hr>
 				<div class='field requiredFormField'>
-					<label class='label has-tooltip-arrow' data-tooltip='This represents what the system will value when selecting the task for a given group.'>Selection Heuristic*</label>
+					<label class='label has-tooltip-arrow' data-tooltip='This represents what the system will value when selecting the task for a given group.'>The value of the task is obtained by its:*</label>
 					<div class='columns is-mobile is-centered control'>
-						Interaction&ensp;<input name='taskSelectWeigths' class='slider' type='range' value='{{form.profileWeight.value}}' min='0.0' max='1.0' step='0.01'> &ensp;Difficulty
+						Interaction profile&ensp;<input name='taskSelectWeigths' class='slider' type='range' value='{{form.profileWeight.value}}' min='0.0' max='1.0' step='0.01'> &ensp;Difficulty
 					</div>
 				</div>
 				
@@ -73,18 +73,21 @@
 				
 				<div class='field requiredFormField'>
 					<div class='columns is-mobile is-centered control'>
-						<img src='{% static "/media/images/interactionSpaceScheme.png" %}' alt='intProfileScheme' style='width:50%;'>
+						<div style="transform:scale(1) translateX(0%);">
+							<div id="interactionsProfilePlot_task_registration"></div>
+						</div>
+						<!-- <img src='{% static "/media/images/interactionSpaceScheme.png" %}' alt='intProfileScheme' style='width:50%;'> -->
 					</div> 
 				</div>
 
 				<div class='field requiredFormField'>
 					<div class='columns is-mobile is-centered control'>
-						Facilitate&ensp;<input id='profileDim0Input' name='profileDim0' class='slider' type='range' value='0' min='0.0' max='1.0' step='0.01'>&ensp;Complicate
+						&ensp;<input id='profileDim0Input' name='profileDim0' class='slider' type='range' value='0' min='0.0' max='1.0' step='0.01'>&ensp;
 					</div>
 				</div>
 				<div class='field requiredFormField'>
 					<div class='columns is-mobile is-centered control'>
-						Self&ensp;<input id='profileDim1Input' name='profileDim1' class='slider' type='range' value='0' min='0.0' max='1.0' step='0.01'>&ensp;Others
+						&ensp;<input id='profileDim1Input' name='profileDim1' class='slider' type='range' value='0' min='0.0' max='1.0' step='0.01'>&ensp;
 					</div>
 				</div>
 				
@@ -106,6 +109,8 @@ integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
 crossorigin="anonymous"></script>
 <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 {% include 'common/general.html' %}
+<script src='https://d3js.org/d3.v5.js' crossorigin='anonymous'></script>
+<script src='{% static 'js/plots.js' %}'></script>
 <script>
 	$(document).ready(function(){
 		$('#error_taskUpdate').hide();
@@ -113,8 +118,24 @@ crossorigin="anonymous"></script>
 		setTimeout(function(){ $('#error_taskUpdate').hide(500); }, 5000);
 		
 		var taskProfile = JSON.parse("{{form.profile.value}}".replaceAll('&quot;','\"'));
-		$('#profileDim0Input').val(taskProfile.dimensions["Focus"]);
-		$('#profileDim1Input').val(taskProfile.dimensions["Challenge"]);
+		$('#profileDim0Input').val(taskProfile.dimensions["Challenge"]);
+		$('#profileDim1Input').val(taskProfile.dimensions["Focus"]);
+
+		var interactionDatapoint = [{ 
+			"ID": 0, 
+			"focus": taskProfile.dimensions["Focus"]*6.0-3.0, 
+			"challenge": -taskProfile.dimensions["Challenge"]*6.0+3.0, 
+			"timestamp": 1 
+		}];
+
+		var mouseClickCallback = function(focus, challenge) {
+			$('#profileDim0Input').val(challenge);
+			$('#profileDim1Input').val(focus);
+		};
+		buildScatterInteractionPlot('interactionsProfilePlot_task_registration', interactionDatapoint, mouseClickCallback, 350, 350);
+		$('#profileDim0Input').hide();
+		$('#profileDim1Input').hide();
+		
 	});
 </script>
 <script src="{% static "js/formFunctionalities.js" %}"></script>

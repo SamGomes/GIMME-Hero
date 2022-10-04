@@ -697,7 +697,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
     groupInfoTooltips
         .append('path')
         .attr('d', function(d) {
-          return rightRoundedRect(15, 15, 600, 280, 7);
+          return rightRoundedRect(15, 15, 600, 310, 7);
         })
         .attr('fill', function(node){
                                 var baseColor = colors[node.groupId].split('#')[1];
@@ -755,9 +755,12 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             delete node.profile;
             delete node.characteristics;
         }
+        node['Task'] = node.tasks;
+        
         delete node.tasks;
         delete node.centerOfMass;
         delete node.groupId;
+
 
         htmlFromJSON(node, currTooltip, 0, 0, 0, 40, 0);
     });
@@ -832,7 +835,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
-            node['(External) Grade'] = originalNode.userState.grade;
+            //node['(External) Grade'] = originalNode.userState.grade;
         }
 
         htmlFromJSON(node, currTooltip, 0, 0, 0, 50, 0);
@@ -1013,13 +1016,10 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
 }
 
 
-var buildScatterInteractionPlot  = function(canvasId, data){
+var buildScatterInteractionPlot  = function(canvasId, data, mouseClickCallback = undefined, width=500, height=500){
     //originally from https://www.d3-graph-gallery.com/graph/scatter_basic.html
 
     var canvas = d3.select('#'+canvasId);
-    var width = 500;
-    var height = 500;
-
     
     // append the svg object to the body of the page
     svg = canvas
@@ -1065,8 +1065,16 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .range([height-65, 30]);
 
     // Add dots
-    svg.append('g')
-        .selectAll('dot')
+    var g = svg.append('g');
+    if (mouseClickCallback != undefined)
+        svg.on("click", function () {
+            let pos = d3.mouse(this);
+            mouseClickCallback(pos[0]/width, pos[1]/height);
+            
+            d3.select(d3.selectAll('circle')._groups[0][0]).attr('cx', pos[0]).attr('cy', pos[1]);
+        });
+        
+    g.selectAll('dot')
         .data(data)
         .enter()
         .append('circle')
