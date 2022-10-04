@@ -1598,7 +1598,7 @@ class Views(): #acts as a namespace
 			if (simulationWeek == 1):
 				players = playerBridge.getAllStoredStudentUsernames()
 				tasks = taskBridge.getAllStoredTaskIds()
-				if (len(players) >= 20 and len(tasks) >= 20):
+				if (len(players) >= 12 and len(tasks) >= 20):
 					serverStateModelBridge.setSimStudentToEvaluate(players[0])
 				else:
 					simulationWeek -= 1
