@@ -7,9 +7,10 @@
 
 	<section class="section columns">
 		<div class="column is-3"></div>
-		<div class='panel panel-block column'  id="manuallyManageStudent_currentActivityInfo">
+		<div class='panel panel-block column'  id="manuallyManageStudent_currentActivityInfo" data-tooltip="Ability: accumulated knowledge acquired by the student. Corresponds to the student's grade.&#10;Engagement: metric quantifying time spent engaged in activity, measured with questionnaires.">
 			<label>
-				<p class='has-text-weight-bold'>Correct "{{request.GET.usernameToUpdate}}" State:</p>
+				<p class='has-text-weight-bold'>Evaluate "{{request.GET.usernameToUpdate}}" State:</p>
+				
 				<br>
 				<div class='columns is-mobile is-centered control' style="margin-right: 1.0;">
 					<div class='column is-mobile is-centered is-half' id="currentAbility"></div>
@@ -23,6 +24,7 @@
 				<!-- <input class="control has-icons-left button" type="text" id="student_results_file" name="filename"> -->
 				<button class="button is-info" id="manuallyManageStudent_apply_results">Apply Changes</button>
 			</label>
+
 		</div>
 		<div class="column is-3"></div>
 	</section>
@@ -78,6 +80,7 @@
 			}
 
 			changePlaceholderAbilityAndEngagement();
+			
 			$('#manuallyManageStudent_apply_results').click(function() {
 				$.ajax(
 	    		{

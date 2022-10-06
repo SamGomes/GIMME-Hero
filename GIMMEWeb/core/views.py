@@ -1598,7 +1598,7 @@ class Views(): #acts as a namespace
 			if (simulationWeek == 1):
 				players = playerBridge.getAllStoredStudentUsernames()
 				tasks = taskBridge.getAllStoredTaskIds()
-				if (len(players) >= 12 and len(tasks) >= 20):
+				if (len(players) >= 12 and len(tasks) >= 16):
 					serverStateModelBridge.setSimStudentToEvaluate(players[0])
 				else:
 					simulationWeek -= 1
@@ -1680,17 +1680,15 @@ class Views(): #acts as a namespace
 			initWeek2 = today + timedelta(days=7)
 			initWeek3 = initWeek2 + timedelta(days=7)
 			initWeek4 = initWeek3 + timedelta(days=7)
-			initWeek5 = initWeek4 + timedelta(days=7)
 
 			strInitWeek1 = str(today)
 			strInitWeek2 = str(initWeek2)
 			strInitWeek3 = str(initWeek3)
 			strInitWeek4 = str(initWeek4)
-			strInitWeek5 = str(initWeek5)
 
-			initDate = [today, today, today, initWeek2, initWeek2, initWeek2, initWeek2, initWeek3, initWeek3, initWeek3, initWeek3, initWeek4, initWeek4, initWeek4, initWeek4, initWeek5, initWeek5, initWeek5, initWeek5]
+			initDate = [today, today, today, initWeek2, initWeek2, initWeek2, initWeek2, initWeek3, initWeek3, initWeek3, initWeek3, initWeek4, initWeek4, initWeek4, initWeek4]
 
-			strInitDate = [strInitWeek1, strInitWeek1, strInitWeek1, strInitWeek2, strInitWeek2, strInitWeek2, strInitWeek2, strInitWeek3, strInitWeek3, strInitWeek3, strInitWeek3, strInitWeek4, strInitWeek4, strInitWeek4, strInitWeek4, strInitWeek5, strInitWeek5, strInitWeek5, strInitWeek5]
+			strInitDate = [strInitWeek1, strInitWeek1, strInitWeek1, strInitWeek2, strInitWeek2, strInitWeek2, strInitWeek2, strInitWeek3, strInitWeek3, strInitWeek3, strInitWeek3, strInitWeek4, strInitWeek4, strInitWeek4, strInitWeek4]
 			strFinalDate = []
 			for j in initDate:
 				strFinalDate.append(str(j + timedelta(days = 7)))
