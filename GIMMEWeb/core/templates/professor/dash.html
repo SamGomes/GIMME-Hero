@@ -1008,11 +1008,6 @@ crossorigin='anonymous'></script>
 
 	$(document).ready(function(){
 		
-		// CSRF protection setup 
-		// (from: 
-		// https://docs.djangoproject.com/en/dev/ref/csrf/
-		// and https://stackoverflow.com/questions/54835849/django-how-to-send-csrf-token-with-ajax
-		// )
 		csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 		function csrfSafeMethod(method) {
     		// these HTTP methods do not require CSRF protection
@@ -1026,14 +1021,6 @@ crossorigin='anonymous'></script>
 		    }
 		});
 
-
-		// buildStatePlot('simulationState_professor_dash', 
-		// 		[
-		// 			{ "name": "Week" , "value": 0 },
-		// 		],
-		// 		0,
-		// 		10
-		// 	);
 
 		$("#adaptationError_professor_dash").hide();
 		$("#adaptationWarning_professor_dash").hide();
@@ -1221,10 +1208,10 @@ crossorigin='anonymous'></script>
 			var simulationDropdownContent = $("<div class=\'dropdown-content\'> </div>");
 			
 			$("#advanceSimulationButton_professor_dash").attr('disabled', true);
+			$("#closeSimulationButton_professor_dash").hide();
 			if (week == 0) {
 				$("#simulationActionDropdown_professor_dash").parent().parent().show();
 				$("#advanceSimulationButton_professor_dash").show();
-				$("#closeSimulationButton_professor_dash").hide();
 
 
 				if (!newServerState.linkShared)
@@ -1912,7 +1899,8 @@ crossorigin='anonymous'></script>
 								
 								$('#groupsPlot_professor_dash').empty();
 								
-								if (currServerState.currAdaptationState != undefined)
+								if (currServerState.currAdaptationState != undefined && currServerState.currAdaptationState != [])
+									console.log(currServerState.currAdaptationState)
 									buildPlots(currServerState);
 								
 								
@@ -1924,7 +1912,7 @@ crossorigin='anonymous'></script>
 		};
 
 		fetchServerData();
-		setInterval(fetchServerData, 1000);
+		setInterval(fetchServerData, 500);
 
 
 		var buildPlots = function(currServerState){
@@ -2151,14 +2139,9 @@ crossorigin='anonymous'></script>
 			);
 		});
 		
-		$("#closeSimulationButton_professor_dash").parent().parent().parent().parent().parent().find(".panel-block").show();
+		$("#closeSimulationButton_professor_dash").parent().parent().parent().parent().parent().parent().find(".panel-block").show();
     	$("#closeSimulationButton_professor_dash").click(function(){
-        	var content = $(this).parent().parent().parent().parent().parent().find(".panel-block");
-			if(content.is(":hidden")){
-				content.show(350);
-			}else{
-				content.hide(350);
-    	}
+        	var content = $(this).parent().parent().parent().parent().parent().parent().find(".panel-block").hide(350);
 		});
 	});
 	
