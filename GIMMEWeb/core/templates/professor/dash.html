@@ -95,7 +95,7 @@
 				<div class='panel-block'>
 					<div class='column is-half is-offset1 is-mobile'>
 						<div class='dash-cell-box'>
-							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Free Students</div>
+							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Registered Students</div>
 							<div class='table-container'>
 								<div class='table' style='margin:2em;' id='freeUsersTable_professor_dash'></div>
 							</div>
@@ -140,7 +140,7 @@
 				<div class='panel-block'>
 					<div class='column is-half is-offset1 is-mobile'>
 						<div class='dash-cell-box'>
-							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Free Tasks</div>
+							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Registered Tasks</div>
 							<div class='table-container'>
 								<div class='table' style='margin:2em;' id='freeTasksTable_professor_dash'></div>
 							</div>
@@ -266,14 +266,13 @@
 					</div>
 				</div> -->
 
-		<!--	</div>
+			</div>
 		 </section>
 
 
 		<section class='section' style='position: relative; z-index:10000'> 
-			<div> -->
-				<div>
-					<div class='panel-block' id='additionalAlgorithmsSection_1_professor_dash' style='display: block'>
+			<div class="panel animated zoomIn">
+				<div class="panel-heading">
 					<div class='columns is-mobile is-vcentered'>
 						<div class='column'>
 							Additional Adaptation Parameters
@@ -282,9 +281,10 @@
 							</div>
 						</div>
 					</div>
-				<!-- </div> -->
-		
+				</div>
+				
 				<!-- starts hidden -->
+				<div class='panel-block' id='additionalAlgorithmsSection_1_professor_dash' style='display: block'>
 					<div class='columns is-mobile is-multiline is-mobile'>
 						<div class='column is-full'>
 							<p>Algorithms</p>
@@ -300,7 +300,7 @@
 						</div>
 					</div>
 					<div class='columns is-mobile is-multiline is-mobile'>
-						<div class='column is-1'>
+						<div class='column is-half has-tooltip-arrow' data-tooltip="These algorithms are used to compute the group organizations" >
 							<div class='dropdown'>
 								<div class='dropdown-trigger'>
 									<button class='button' aria-haspopup='true' aria-controls='dropdownMenu1'>
@@ -487,8 +487,8 @@
 
 
 
-						<div class='column is-4'>
-							<div class='dropdown'>
+						<div class='column is-half'>
+							<div class='dropdown has-tooltip-arrow' data-tooltip="These algorithms are used to evaluate the quality of the groups that can be formed">
 								<div class='dropdown-trigger'>
 									<button class='button' aria-haspopup='true' aria-controls='dropdownMenu2'>
 										<span id='selectedRegAlgId_professor_dash' >Quality Estimation Alg.</span>
@@ -560,14 +560,14 @@
 							</div>
 						</div>
 
-						<div class="column is-1">
+						<!-- <div class="column is-1">
 							<div class='has-tooltip-arrow' data-tooltip="Sets the amount of stored past states, for when taking a decision about a student's group. This will only take effect whenever player states are updated.">
 								<label class='control-label' for='quantity'>Students Past Models Window</label>  
 								<div class='control'>
 									<input id='playerWindowId_professor_dash' class='input' type='number' min='2' max='100' placeholder='10'>
 								</div>
 							</div>
-						</div>
+						</div> -->
 					</div>
 				</div>
 
@@ -627,7 +627,7 @@
 					<!-- is-fullwidth only occupies a portion of the panel block -->
 					<div style="width:100%" class='columns is-mobile has-text-centered'>
 						<div class='column is-6 is-offset-1 has-tooltip-top  has-tooltip-arrow' data-tooltip='Loads the parameterization above iff the configuration changed, and computes a new adaptation state.'>
-							<button class='button is-fullwidth is-fullheight is-info' id='loadAndStartAdaptation_professor_dash'>Check Setup and Iterate</button>
+							<button class='button is-fullwidth is-fullheight is-info' id='loadAndStartAdaptation_professor_dash'>Check Setup and Compute Group Organization</button>
 						</div>
 						<div class='column is-3 is-offset-1'>
 							<button class='button is-fullwidth is-fullheight' id='rebuildPlot_professor_dash'>Rebuild Plot</button>
@@ -1108,14 +1108,14 @@ crossorigin='anonymous'></script>
 
 		simulationWeekMessages = [`In this tutorial, you will be the professor of a 4 week course. Below, you will find some controls to automate the tutorial. Before the course starts: 
 			<p>  <b>1. Share the platform link</b> with the students, so they can sign up in the platform (simulate this by clicking <b>'Tutorial Controls' > 'Share link'</b>); </p> 
-			<p>  <b>2.</b> Next, <b>register the first task</b> for the course (call it 'week1_00' and make sure it promotes a 'Self-Facilitation' interaction); </p>
+			<p>  <b>2.</b> Next, <b>register the first task</b> for the course (call it 'week1_00' and make sure it promotes a 'Self-Facilitation' interaction. Also, give the same priority to the task's interaction profile and difficulty when assigning it to a group and, since it is a task for week 1, make it on the easier side); </p>
 			<p>  <b>3.</b> After registering the first task, the other tasks will be automatically registered <b>by clicking 'Tutorial Controls' > 'Simulate task registration'</b>.`,
 		
 		`Perform the following actions: 
 			<p> <b>1. Select all students</b> so that they are considered when forming groups; </p>
 			<p> <b>2. Select the week 1 tasks (check their ids)</b>; </p>
 			<p> <b>3. Compute a group organization</b> and verify the formed groups; </p>
-			<p> <b>4. Manually evaluate</b> Student_E and <b>simulate the evaluation</b> for the rest. You will be able to see now how every student fared in their respective group task.`,
+			<p> <b>4. Manually evaluate</b> Student_E, with <b>ability and engagement equal to 0.3</b> and <b>simulate the evaluation</b> for the rest. You will be able to see now how every student fared in their respective group task. (Normally the students are evaluated automatically by system, but it is also possible to evaluate them manually)`,
 		
 		`Perform the following actions: 
 			<p> <b>1.</b> Student_A will not be available this week, <b>remove the student</b> from the selection; </p>
@@ -1662,7 +1662,7 @@ crossorigin='anonymous'></script>
 
 		
 		
-		var generateDashTableFromArray = function(canAdd, idArray, nameArray, tagClass, moveButtonIconClass, moveElementUrl, moveElementArg, addElementURL, addElementArg, deleteElementUrl, deleteElementArg, editElementUrl, editElementArg){
+		var generateDashTableFromArray = function(canAdd, idArray, nameArray, tagClass, moveButtonIconClass, moveElementUrl, moveElementArg, addElementURL, addElementArg, deleteElementUrl, deleteElementArg, editElementArg, editElementUrlTask, editElementUrlStudent){
 		    var table = $('<div></div>');
 		    for(var i=0; i < idArray.length+1; i++){
 		        
@@ -1679,9 +1679,15 @@ crossorigin='anonymous'></script>
 			            tag.append(deleteButton);
 		            }
 
-		        	if(editElementUrl!=""){
+		        	if(editElementUrlTask!=""){
 			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually edit state'></div>");
-			            editButton.append('<form method=\'GET\' action=\''+editElementUrl+'\'><input type=\'hidden\' name=\''+editElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-edit pointer\'></i></button></form>');
+			            editButton.append('<form method=\'GET\' action=\''+editElementUrlTask+'\'><input type=\'hidden\' name=\''+editElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-edit pointer\'></i></button></form>');
+			            tag.append(editButton);
+					}
+
+					else if(editElementUrlStudent!=""){
+			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually evaluate student'></div>");
+			            editButton.append('<form method=\'GET\' action=\''+editElementUrlStudent+'\'><input type=\'hidden\' name=\''+editElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-edit pointer\'></i></button></form>');
 			            tag.append(editButton);
 					}
 
@@ -1829,14 +1835,14 @@ crossorigin='anonymous'></script>
 										'{% url 'addSelectedUser' %}', 'username',
 										'', 'username',
 										'','usernameToDelete',
-										'{% url 'manuallyManageStudent' %}','usernameToUpdate'
+										'usernameToUpdate', "", '{% url 'manuallyManageStudent' %}'
 									);
 								var suTable = generateDashTableFromArray(
 										false, currSelectedUsers, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
 										'{% url 'removeSelectedUser' %}', 'username',
 										'', 'username',
 										'','usernameToDelete',
-										'{% url 'manuallyManageStudent' %}','usernameToUpdate'
+										'usernameToUpdate', "", '{% url 'manuallyManageStudent' %}'
 									);
 								$('#freeUsersTable_professor_dash').empty();
 								$('#freeUsersTable_professor_dash').append(fuTable);
@@ -1889,7 +1895,7 @@ crossorigin='anonymous'></script>
 									'{% url 'addSelectedTask' %}', 'taskId',
 									'{% url 'taskRegistration' %}', 'taskId',
 									'{% url 'taskDeletion' %}','taskIdToDelete',
-									'{% url 'taskUpdate' %}','taskIdToUpdate'
+									'taskIdToUpdate', editElementUrlTask='{% url 'taskUpdate' %}', ""
 								);
 
 								stTable = generateDashTableFromArray(
@@ -1897,7 +1903,7 @@ crossorigin='anonymous'></script>
 									'{% url 'removeSelectedTask' %}', 'taskId',
 									'{% url 'taskRegistration' %}', 'taskId',
 									'{% url 'taskDeletion' %}','taskIdToDelete',
-									'{% url 'taskUpdate' %}','taskIdToUpdate'
+									'taskIdToUpdate', editElementUrlTask='{% url 'taskUpdate' %}', ""
 								);
 
 								$('#freeTasksTable_professor_dash').empty();

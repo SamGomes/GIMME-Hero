@@ -1031,8 +1031,16 @@ var buildScatterInteractionPlot  = function(canvasId, data, mouseClickCallback =
         .style('background-position', 'center')
         .attr('display', 'block')
         .attr('margin', 'auto')
-        .call(responsivefy, 500, 0.25);
+        .call(responsivefy, width, 0);
     
+    if (mouseClickCallback != undefined)
+        svg.on("click", function () {
+            let pos = d3.mouse(this);
+            mouseClickCallback(pos[0]/width, pos[1]/height);
+            
+            d3.select(d3.selectAll('circle')._groups[0][0]).attr('cx', pos[0]).attr('cy', pos[1]);
+        });
+        
     svg.append('g')
         .append('text') 
         .attr('class', 'x label')
