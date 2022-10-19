@@ -1116,8 +1116,8 @@ crossorigin='anonymous'></script>
 		
 		`This is a free week, where you can further explore the platform, for example, you can:
 		<p> <b>1.</b> Select week 4's tasks; </p>
-		<p> <b>2.</b> Change group sizes, change restrictions, change the grouping algorithm, change quality estimation algorithm; </p>
-		<p> <b>3.</b> Compute new group organizations and evaluate them as many times as you wish; </p>
+		<p> <b>2.</b> Feel free to change group sizes, change restrictions, change the grouping algorithm, change quality estimation algorithm; </p>
+		<p> <b>3.</b> You can also compute new group organizations and evaluate them as many times as you wish; </p>
 		<p> <b>4.</b> When you are ready, advance to the next week. </p>`,
 		
 		"Congratulations! You have completed the tutorial! You can now choose to reset the simulation and start over, or close this tab."]
@@ -1257,7 +1257,6 @@ crossorigin='anonymous'></script>
 					var dropdownItem = $("<div class=\'button dropdown-item\'> Simulate evaluation of students </div>");
 				else{
 					$("#advanceSimulationButton_professor_dash").attr('disabled', false);
-					console.log('HERE!!!')
 					var dropdownItem = $("<div class=\'button dropdown-item\' disabled> Simulate evaluation of students </div>");
 				}
 				
@@ -1906,7 +1905,7 @@ crossorigin='anonymous'></script>
 								$('#groupsPlot_professor_dash').empty();
 								
 								if (currServerState.currAdaptationState != undefined && currServerState.currAdaptationState != [])
-									console.log(currServerState.currAdaptationState)
+// 									console.log(currServerState.currAdaptationState)
 									buildPlots(currServerState);
 								
 								

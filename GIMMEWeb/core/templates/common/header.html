@@ -17,8 +17,8 @@
   <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.1.20/jquery.fancybox.min.css' />
   <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css'/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma-tooltip/1.2.0/bulma-tooltip.min.css" integrity="sha512-eQONsEIU2JzPniggWsgCyYoASC8x8nS0w6+e5LQZbdvWzDUVfUh+vQZFmB2Ykj5uqGDIsY7tSUCdTxImWBShYg==" crossorigin="anonymous" referrerpolicy="no-referrer" />  <link rel='stylesheet' href='{% static 'css/site.css' %}'>
-
-
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/dist/css/bulma-extensions.min.css" integrity="sha256-RuPsE2zPsNWVhhvpOcFlMaZ1JrOYp2uxbFmOLBYtidc=" crossorigin="anonymous">
+  
   <nav class='navbar' role='navigation' aria-label='main navigation' style='background-color:#e5e5e5; z-index: 5000;'>
     <div class='navbar-brand'  id='logo_header'>
       <a class='navbar-item' href = {% url 'home' %}>
@@ -131,6 +131,7 @@
     crossorigin='anonymous'></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js" crossorigin="anonymous"></script>
 {% include 'common/general.html' %}
+
 <script type='text/javascript'>
   $(document).ready(function(){
 
