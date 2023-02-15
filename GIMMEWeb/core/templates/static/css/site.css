@@ -125,6 +125,27 @@ body {
 }
 
 
+.loading-anim{
+  max-width: 96px;
+}
+
+.modal{
+  z-index: 999999;
+}
+.modal-background {
+  border-color: rgba(10,10,10,0.86); 
+}
+.modal-content{
+  color: black;
+  background-color: rgba(255,255,255,.86);
+  border-color: rgba(10,10,10,1.0); 
+  border-radius: 3em; 
+  width: 50%;
+  height: 70%;
+  padding: 2em;
+  margin: auto;
+}
+
 
 .alias {cursor: alias;}
 .all-scroll {cursor: all-scroll;}
@@ -169,4 +190,13 @@ body {
 
 .dropdown-item {
   z-index: 1000;
+}
+
+
+.fancy-plot-text{
+    font-family: Calibri,sans-serif;
+    color: white;
+            font-size: 50px;
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: black;
 }

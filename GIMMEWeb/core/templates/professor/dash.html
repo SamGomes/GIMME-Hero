@@ -1,27 +1,85 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset='utf-8'>
-	<title>GIMME</title>
-</head>
 <body class='layout-default'>
 	{% include 'common/header.html' %}
 
+	
 	<div id='welcomeBanner'>
 		<section class='hero main_hero is-fullheight'>
 			<div class='hero-body'>
 				<div class='has-text-centered; slider-content animated zoomIn'>
 					<div>
 						<p class='title is-1 main-text'>Welcome to GIMME-Web, {{request.session.fullName}}</p>
-						<p class='subtitle is-4 main-text'>A sophisticated Group Interactions Management Tool</p>
+						<p class='subtitle is-4 main-text'>A Sophisticated Group Interactions Management Tool</p>
 					</div>
 				</div>
 			</div>
 		</section>
 	</div>
-
+	
+	
 	<div id='dashboard'>
+		<section class='section' style="position: relative; z-index: 1000">
+			<div class='panel animated zoomIn'>
+				<div class='panel-heading'>
+					<div class='columns is-mobile is-vcentered'>
+						<div class='column'>
+							Tutorial
+							<div class='is-pulled-right'>
+								<div class='button minimizerButton'></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class='panel-block'>
+					
+					<!-- <div class='columns is-mobile is-centered' style="width: 100%;">
+						<div class='column subtitle is-fullwidth has-tooltip-arrow' style='color:gray;' data-tooltip='placeholder'>Course Timeline</div>
+					</div> -->
+					<div class=' is-mobile is-centered' style="width: 100%;">
+						<div class='column' id='simulationState_professor_dash'></div>
+					</div>
+					<!-- <div class='button' id='advanceSimulationButton_professor_dash'> Advance Simulation</div>
+					<div class='button' id='resetSimulationButton_professor_dash'> Reset Simulation</div> -->
+						
+
+					<div class='dash-cell-box' id='storylineLog_professor_dash' style='overflow: visible; width: 60%;'>
+						<div class='is-mobile is-multiline is-mobile'>
+							<div class='table' style='margin:0.5em; margin-bottom:3em;'>
+								
+								<div class='columns subtitle is-5' style='margin-bottom:1em' id='simulationWeek_professor_dash'></div>
+								<div class='columns' style='margin-bottom:1em' id='simulationLog_professor_dash'></div>
+								
+								<div class='columns' id='simulationControls_professor_dash'>
+									<div class='column dropdown'>
+										<div class='dropdown-toggle is-fullwidth'>
+											<button class='button' id='simulationActionDropdown_professor_dash' aria-haspopup='true' aria-controls='dropdownMenu1'>
+												<span>
+													Tutorial Controls
+												</span>
+												<span class='icon is-small'>
+													<i class='fas fa-angle-down' aria-hidden='true'></i>
+												</span>
+											</button>
+										</div>
+										<div id='simulationAction_professor_dash'></div>
+									</div>
+									<div class='column button is-info' id='advanceSimulationButton_professor_dash' disabled>Advance to the Next Week</div>
+									<div class='column button is-info' id='closeSimulationButton_professor_dash' hidden> Close Tutorial</div>	
+								</div>
+
+							</div>
+						</div>
+					</div> 
+				</div>
+				<div class='panel-block'>
+					<div class='button' id='resetSimulationButton_professor_dash'> Reset Tutorial</div>		
+				</div>		
+		</section>
+		
+
+
 		<section class='section danger'>
 			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
@@ -37,7 +95,7 @@
 				<div class='panel-block'>
 					<div class='column is-half is-offset1 is-mobile'>
 						<div class='dash-cell-box'>
-							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the students, selected from all available students, to be considered for the next group management iteration.'>Free Students</div>
+							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Registered Students</div>
 							<div class='table-container'>
 								<div class='table' style='margin:2em;' id='freeUsersTable_professor_dash'></div>
 							</div>
@@ -53,8 +111,7 @@
 					</div>
 				</div>
 				<div class='panel-block'>
-					<div class='column is-offset-5'>
-						<div class='button' type='submit' id='addSpecificPlayer_professor_dash'>Add specific player</div>
+					<div class="column is-offset-5">
 					</div>
 					<div class='column is-offset-1'>
 						<div class='button' type='submit' id='addAllUsers_professor_dash'>Select all</div>
@@ -68,7 +125,7 @@
 			</div>
 		</section>
 
-		<section class='section'>
+		<section class='section danger'>
 			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
 					<div class='columns is-mobile is-vcentered'>
@@ -81,22 +138,19 @@
 					</div>
 				</div>
 				<div class='panel-block'>
-					<div class='columns'>
-						<div class='column is-half is-offset1 is-mobile'>
-							<div class='dash-cell-box'>
-								<div class='subtitle is-5' style='color:gray;'>Free Tasks</div>
-								<div class='table-container'>
-									<div class='table' id='freeTasksTable_professor_dash'>
-									</div>
-								</div>
+					<div class='column is-half is-offset1 is-mobile'>
+						<div class='dash-cell-box'>
+							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Registered Tasks</div>
+							<div class='table-container'>
+								<div class='table' style='margin:2em;' id='freeTasksTable_professor_dash'></div>
 							</div>
 						</div>
-						<div class='column is-half is-offset1 is-mobile'>
-							<div class='dash-cell-box'>
-								<div class='subtitle is-4 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the tasks, selected from all available tasks, to be considered for the next group management iteration.'>Selected Tasks</div>
-								<div class='table-container'>
-									<div class='table' id='selectedTasksTable_professor_dash'></div>
-								</div>
+					</div>
+					<div class='column is-half is-offset1 is-mobile'>
+						<div class='dash-cell-box'>
+							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the tasks, selected from all available tasks, to be considered for the next group management iteration.'>Selected Tasks</div>
+							<div class='table-container'>
+								<div class='table' style='margin:2em;' id='selectedTasksTable_professor_dash'></div>
 							</div>
 						</div>
 					</div>
@@ -162,9 +216,13 @@
 							<!-- <p>Groups</p> -->
 							
 							<div class='has-tooltip-arrow' data-tooltip='Sets the preferred amount of students per group.'>
-								<label class='control-label' for='quantity'>Preferred Group Size</label>  
+								<!-- <label class='control-label' for='quantity'>Preferred Group Size</label>  
 								<div class='control'>
 									<input id='preferredNumberOfPlayersPerGroupId_professor_dash' class='input' type='number' min='2' max='100' placeholder='4'>
+								</div> -->
+								<label class='control-label m-2' id='groupSizeText_professor_dash'></label> 
+								<div class='control' id='groupSizeSlider_professor_dash'>
+									
 								</div>
 							</div>
 						</div>
@@ -174,13 +232,9 @@
 
 						<div class='column is-3'>
 							<!-- <p>Students</p> -->
-						
-							<div class='has-tooltip-arrow' data-tooltip="Sets the amount of stored past states, for when taking a decision about a student's group. This will only take effect whenever player states are updated.">
-								<label class='control-label' for='quantity'>Students Past Models Window</label>  
-								<div class='control'>
-									<input id='playerWindowId_professor_dash' class='input' type='number' min='2' max='100' placeholder='10'>
-								</div>
-							</div>
+							<button class='button modal-button is-rounded' data-target="modalODPIP_professor_dash">Add/Remove Pairing Restrictions</button>
+							
+							
 						</div>
 
 					</div>
@@ -189,8 +243,8 @@
 
 
 
-				<div class='panel-block' style='display: block;'>
-					<div class='columns is-mobile is-multiline is-mobile  has-tooltip-arrow' data-tooltip='This feature is optional, and still does not function as it should.'>
+				<!-- <div class='panel-block' style='display: block;'>
+					<div class='columns is-mobile is-multiline is-mobile has-tooltip-arrow' data-tooltip='This feature is optional, and still does not function as it should.'>
 						<div class='column is-full'>
 							<p>Bootstrap</p>
 						</div>
@@ -198,7 +252,7 @@
 						<div class='column is-half'>
 							<label class='checkbox'>
 							  <input id='precomputeBootstrapId_professor_dash' type='checkbox'>
-							  	Pre-Compute Bootstrap
+								Pre-Compute Bootstrap
 							</label>
 						</div>
 
@@ -210,15 +264,15 @@
 						</div>
 						
 					</div>
-				</div>
+				</div> -->
 
 			</div>
-		</section>
+		 </section>
 
 
-		<section class='section' style='position: relative; z-index:10000'>
-			<div class='panel animated zoomIn'>
-				<div class='panel-heading'>
+		<section class='section' style='position: relative; z-index:10000'> 
+			<div class="panel animated zoomIn">
+				<div class="panel-heading">
 					<div class='columns is-mobile is-vcentered'>
 						<div class='column'>
 							Additional Adaptation Parameters
@@ -228,7 +282,7 @@
 						</div>
 					</div>
 				</div>
-		
+				
 				<!-- starts hidden -->
 				<div class='panel-block' id='additionalAlgorithmsSection_1_professor_dash' style='display: block'>
 					<div class='columns is-mobile is-multiline is-mobile'>
@@ -239,17 +293,17 @@
 
 					<div class='columns is-mobile is-multiline is-mobile'>
 						<div class='column is-half'>
-							<span>Grouping Alg.</span>
+							<span>Group Formation Alg.</span>
 						</div>
 						<div class='column is-half'>
-							<span>Regression Alg.</span>
+							<span>Quality Estimation Alg.</span>
 						</div>
 					</div>
 					<div class='columns is-mobile is-multiline is-mobile'>
-						<div class='column is-half'>
+						<div class='column is-half has-tooltip-arrow' data-tooltip="These algorithms are used to compute the group organizations" >
 							<div class='dropdown'>
 								<div class='dropdown-trigger'>
-									<button class='button' aria-haspopup='true' aria-controls='dropdown-menu3'>
+									<button class='button' aria-haspopup='true' aria-controls='dropdownMenu1'>
 										<span id='selectedGenAlgId_professor_dash'>
 											Grouping Alg.
 										</span>
@@ -258,79 +312,172 @@
 										</span>
 									</button>
 								</div>
-								<div class='dropdown-menu' id='dropdown-menu3_professor_dash' role='menu' style="height:35em; overflow-y:scroll">
+								<div class='dropdown-menu' id='dropdownMenu1_professor_dash' role='menu' style='height:35em; width:30em; overflow-y:scroll'>
 									<div class='dropdown-content'>
 										<a class='dropdown-item'>
 											Random (no search)
+											<div class='form-group columns' style='opacity: 0.8; font-weight:bold;'>
+												<div class='column is-1'>
+												</div>
+												<div class='column'>
+													<div>Comp. Efficiency (Scalability)</div>
+													<div>Solution Quality</div>
+												</div>
+												<div class='column'>
+													<div>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+													</div>
+													<div>
+														<i class='fa-regular fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+													</div>
+												</div>
+											</div>
 										</a>
 										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
 											Pure Random Search
-											<div class='form-group'>
-												<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
-												<div class='control'>
-													<input id='numberOfConfigChoicesId_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
+											<div class='form-group columns' style='opacity: 0.8; font-weight:bold;'>
+												<div class='column is-1'>
+												</div>
+												<div class='column'>
+													<div>Comp. Efficiency (Scalability)</div>
+													<div>Solution Quality</div>
+												</div>
+												<div class='column'>
+													<div>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+													</div>
+													<div>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+													</div>
 												</div>
 											</div>
+											<div>
+												<button class='button modal-button is-small is-rounded' data-target="modalPRS_professor_dash">Configure...</button>
+											</div>
 										</a>
-										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
+										<!--<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
 											Annealed Pure Random Search
-											<div class='form-group'>
-												<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
-												<div class='control'>
-													<input id='numberOfConfigChoicesId_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
+											<div class='form-group columns'>
+												<div class='column is-1'>
 												</div>
-
-												<label class='column is-4 control-label' for='textinput'>Temperature Decay</label>  
-												<div class='control'>
-													<input id='temperatureDecay_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.5'>
+												<div class='column'>
+													<div>Comp. Efficiency (Scalability)</div>
+													<div>Solution Quality</div>
 												</div>
+												<div class='column'>
+													<div>
+														N/A
+													</div>
+													<div>
+														N/A
+													</div>
+												</div>
+											</div>
+											<div>
+												<button class='button modal-button is-small is-rounded' data-target="modalAnnealedPRS_professor_dash">Configure...</button>
+											</div>
+										</a>-->
+										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
+											Evolutionary Search
+											<div class='form-group columns' style='opacity: 0.8; font-weight:bold;'>
+												<div class='column is-1'>
+												</div>
+												<div class='column'>
+													<div>Comp. Efficiency (Scalability)</div>
+													<div>Solution Quality</div>
+												</div>
+												<div class='column'>
+													<div>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+													</div>
+													<div>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+													</div>
+												</div>
+											</div>
+											<div>
+												<button class='button modal-button is-small is-rounded' data-target="modalEvolutionary_professor_dash">Configure...</button>
 											</div>
 										</a>
 										<a class='dropdown-item is-active' data-tooltip='See GIMME-API for details'>
-											Evolutionary Search
-											<div class='form-group'>
-												<label class='column is-4 control-label' for='textinput'>Initial Population Size</label>  
-												<div class='control'>
-													<input id='initialPopulationSize_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
+											ODPIP Search
+											<div class='form-group columns' style='opacity: 0.8; font-weight:bold;'>
+												<div class='column is-1'>
 												</div>
-												
-												<label class='column is-4 control-label' for='textinput'>Crossover Prob.</label>  
-												<div class='control'>
-													<input id='probOfCross_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.65'>
+												<div class='column'>
+													<div>Comp. Efficiency (Scalability)</div>
+													<div>Solution Quality</div>
 												</div>
-												
-												<label class='column is-4 control-label' for='textinput'>Mutation Prob.</label>  
-												<div class='control'>
-													<input id='probOfMutation_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.15'>
-
-													<div class='form-group'>
-														<label class='column is-4 control-label' for='textinput'>Config. Change Mutation Prob.</label>  
-														<div class='control'>
-															<input id='probOfMutationConfig_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.8'>
-														</div>
-														<label class='column is-4 control-label' for='textinput'>Profile Change Mutation Prob.</label>  
-														<div class='control'>
-															<input id='probOfMutationGIPs_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.4'>
-														</div>
+												<div class='column'>
+													<div>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+														<i class='fa-regular fa-star'></i>
 													</div>
-
+													<div>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+													</div>
 												</div>
-
-												<label class='column is-4 control-label' for='textinput'>Num. Evolutions Per Iteration</label>  
-												<div class='control'>
-													<input id='numberOfEvolutionsPerIteration_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='50'>
+											</div>
+											<div>
+												<button class='button modal-button is-small is-rounded' data-target="modalODPIP_professor_dash">Configure...</button>
+											</div>
+										</a>
+										<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
+											Coalition Link Search
+											<div class='form-group columns' style='opacity: 0.8; font-weight:bold;'>
+												<div class='column is-1'>
 												</div>
-
-												<label class='column is-4 control-label' for='textinput'>Num. Children Per Generation</label>  
-												<div class='control'>
-													<input id='numChildrenPerIteration_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='100'>
+												<div class='column'>
+													<div>Comp. Efficiency (Scalability)</div>
+													<div>Solution Quality</div>
 												</div>
-
-												<label class='column is-4 control-label' for='textinput'>Num. Survivors Per Generation</label>  
-												<div class='control'>
-													<input id='numSurvivors_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='10'>
+												<div class='column'>
+													<div>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+													</div>
+													<div>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+													</div>
 												</div>
-
 											</div>
 										</a>
 									</div>
@@ -341,40 +488,90 @@
 
 
 						<div class='column is-half'>
-							<div class='dropdown'>
+							<div class='dropdown has-tooltip-arrow' data-tooltip="These algorithms are used to evaluate the quality of the groups that can be formed">
 								<div class='dropdown-trigger'>
-									<button class='button' aria-haspopup='true' aria-controls='dropdown-menu4'>
-										<span id='selectedRegAlgId_professor_dash' >Regression Alg.</span>
+									<button class='button' aria-haspopup='true' aria-controls='dropdownMenu2'>
+										<span id='selectedRegAlgId_professor_dash' >Quality Estimation Alg.</span>
 										<span class='icon is-small'>
 											<i class='fas fa-angle-down' aria-hidden='true'></i>
 										</span>
 									</button>
 								</div>
-								<div class='dropdown-menu' id='dropdown-menu4_professor_dash' role='menu'>
+								<div class='dropdown-menu' id='dropdownMenu2_professor_dash' role='menu'>
 									<div class='dropdown-content'>
-										<a class='dropdown-item is-active'>
-											KNN
-											<div class='form-group'>
-												<label class='column is-4 control-label' for='textinput'>Num NNs</label>  
-												<div class='control'>
-													<input  id='numNNsId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>
+										<a class='dropdown-item'>
+											K-Nearest-Neighbors (KNN)
+											<div class='column'></div>
+											
+											<div class='form-group columns' style='opacity: 0.8; font-weight:bold;'>
+												<div class='column is-1'>
+												</div>
+												<div class='column'>
+													<div>Comp. Efficiency (Scalability)</div>
+												</div>
+												<div class='column'>
+													<div>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+													</div>
 												</div>
 											</div>
+											
+											<div class='form-group'>
+												<button class='button modal-button is-small is-rounded' data-target="modalKNN_professor_dash">Configure...</button>
+											</div>
 										</a>
-										<a class='dropdown-item'>
+										<!--<a class='dropdown-item'>
 											Neural Networks
 										</a>
 										<a class='dropdown-item'>
 											Reinf. Learn.
+										</a>-->
+										<a class='dropdown-item is-active'>
+											KNN w/ Synergy Between Students
+											<div class='column'></div>
+											
+											<div class='form-group columns' style='opacity: 0.8; font-weight:bold;'>
+												<div class='column is-1'>
+												</div>
+												<div class='column'>
+													<div>Comp. Efficiency (Scalability)</div>
+												</div>
+												<div class='column'>
+													<div>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+													</div>
+												</div>
+											</div>
+											
+											<div class='form-group'>
+												<button class='button modal-button is-small is-rounded' id='modalSynergiesConfigButton_professor_dash' data-target='modalSynergies_professor_dash'>Configure...</button>
+											</div>
 										</a>
 									</div>
 								</div>
 							</div>
 						</div>
+
+						<!-- <div class="column is-1">
+							<div class='has-tooltip-arrow' data-tooltip="Sets the amount of stored past states, for when taking a decision about a student's group. This will only take effect whenever player states are updated.">
+								<label class='control-label' for='quantity'>Students Past Models Window</label>  
+								<div class='control'>
+									<input id='playerWindowId_professor_dash' class='input' type='number' min='2' max='100' placeholder='10'>
+								</div>
+							</div>
+						</div> -->
 					</div>
 				</div>
 
-				<div class='panel-block' id='additionalAlgorithmsSection_2_professor_dash' style='display: block;'>
+				<!-- <div class='panel-block' id='additionalAlgorithmsSection_2_professor_dash' style='display: block;'>
 					<div class='columns is-mobile is-multiline'>
 						<div class='column is-full'>
 							<p>Quality Weights</p>
@@ -396,7 +593,7 @@
 					</div>
 				</div>
 
-				</div>
+				</div> -->
 			</div>
 		</section>
 
@@ -415,6 +612,9 @@
 				</div>
 				
 				
+				
+				
+				
 				<div class='panel-block panel-block-borderless'>
 					<div class='columns is-mobile is-fullwidth'>
 						<div class='column is-full'>
@@ -426,11 +626,11 @@
 				<div class='panel-block panel-block-borderless'>
 					<!-- is-fullwidth only occupies a portion of the panel block -->
 					<div style="width:100%" class='columns is-mobile has-text-centered'>
-						<div class='column is-6 is-offset-1'>
-							<a><button class='button is-fullwidth is-fullheight is-info has-tooltip-top has-tooltip-arrow' type='submit' id='loadAndStartAdaptation_professor_dash' data-tooltip='Loads the parameterization above iff the configuration changed, and computes a new adaptation state.'>Check Setup and Iterate</button></a>
+						<div class='column is-6 is-offset-1 has-tooltip-top  has-tooltip-arrow' data-tooltip='Loads the parameterization above iff the configuration changed, and computes a new adaptation state.'>
+							<button class='button is-fullwidth is-fullheight is-info' id='loadAndStartAdaptation_professor_dash'>Check Setup and Compute Group Organization</button>
 						</div>
 						<div class='column is-3 is-offset-1'>
-							<button class='button is-fullwidth is-fullheight' type='submit' id='rebuildPlot_professor_dash'>Rebuild Plot</button>
+							<button class='button is-fullwidth is-fullheight' id='rebuildPlot_professor_dash'>Rebuild Plot</button>
 						</div>
 					</div>
 				</div>
@@ -438,12 +638,11 @@
 
 				<div class='panel-block panel-block-borderless'>
 					<div id='adaptationError_professor_dash' class='section hero is-danger is-centered has-text-centered' style='width:100%'>
-						<label class='label subtitle is-4 is-white'>Adaptation Error! Tip: verify if enough players are selected. 
-						Maintaining old state...</label>
+						<label id='adaptationErrorText_professor_dash' class='label subtitle is-4 is-white'></label>
 					</div>
-					<div id='adaptationIssues_professor_dash' class='section hero is-warning is-centered has-text-centered' style='width:100%'>
+					<div id='adaptationWarning_professor_dash' class='section hero is-warning is-centered has-text-centered' style='width:100%'>
 						<label class='label subtitle is-4 is-white'>Adaptation Issues Found: </label>
-						<label id='adaptationIssuesText_professor_dash'></label>
+						<label id='adaptationWarningText_professor_dash'></label>
 					</div>
 					<div id='adaptationInfo_professor_dash' class='section hero is-info is-centered has-text-centered' style='width:100%'>
 						<label id='adaptationInfoTitle_professor_dash' class='label subtitle is-4 is-white'>Adaptation Info: </label>
@@ -452,15 +651,46 @@
 				</div>
 
 				<div class='panel-block'>
-					<div class="columns is-mobile is-centered is-mobile">
+					<div class="columns is-mobile is-centered" id='groupsPlotAuxPanel_professor_dash'>
 						<div class='column is-3'>
-							<div id='groupsPlotLegendTrigger_professor_dash'>
-								<div class='button has-tooltip-top has-tooltip-arrow' data-tooltip='Show caption.'>
-									<i class="fa fa-window-maximize" aria-hidden="true"></i>
+							<div class='panel-block panel-block-borderless columns is-mobile'>
+								<p>Student Performance Scale (Color of Dots)</p>
+							</div>
+							<div class='panel-block panel-block-borderless columns is-mobile is-centered'>
+								<div class='column is-7'>
+									<div class='columns is-mobile is-centered' 
+									style='width:100%; 
+									height:5em; 
+									background-image: linear-gradient(to right, red, yellow, green); 
+									border-color: black; 
+									border-radius: 1em;
+									border-style: solid;
+									border-width: 0.25em;
+									margin: 1em;'>
+										<div class='column is-half is-centered fancy-plot-text' id='groupsPlotScaleMin_professor_dash' style='font-size:2em; text-align:left;'>0%</div>
+										<div class='column is-half is-centered fancy-plot-text' id='groupsPlotScaleMax_professor_dash' style='font-size:2em; text-align:right;'>100%</div>		
+									</div>
 								</div>
 							</div>
-							<div class='has-text-right has-tooltip-top has-tooltip-arrow' id='groupsPlotLegend_professor_dash' data-tooltip='Click on this caption to hide it.'>
-								<img src="{% static "media/images/groupPlotLegend.png" %}"></img>
+							<div class='panel-block panel-block-borderless columns is-mobile is-centered has-tooltip-top has-tooltip-arrow' data-tooltip='Use an absolute scale, or min. and max. performance estimates (relative scale).'>
+								<div class='column is-half' style='text-align:center;'>
+									<input type="radio" name="studentPerformanceScaleType" value="absolute">
+									<label class='has-text-weight-bold' for="absolute">Absolute</label>
+								</div>
+								<div class='column is-half' style='text-align:center;'>
+									<input type="radio" name="studentPerformanceScaleType" value="relative" checked="checked">
+									<label class='has-text-weight-bold' for="relative">Relative</label>
+								</div>
+							</div>
+							<div class='panel-block panel-block-borderless'>
+								<div id='groupsPlotLegendTrigger_professor_dash'>
+									<div class='button has-tooltip-top has-tooltip-arrow' data-tooltip='Show caption.'>
+										<i class="fa fa-window-maximize" aria-hidden="true"></i>
+									</div>
+								</div>
+								<div class='has-text-right has-tooltip-top has-tooltip-arrow' id='groupsPlotLegend_professor_dash' data-tooltip='Click on this caption to hide it.'>
+									<img src="{% static "media/images/groupPlotLegend.png" %}"></img>
+								</div>
 							</div>
 						</div>
 						<div class='column is-9'>
@@ -468,37 +698,273 @@
 						</div>
 					</div>
 
-					<div class='columns is-mobile is-centered is-mobile'>
-						<img class='column is-2' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
+					<div class='columns is-mobile is-centered'>
+						<img class='column is-2 loading-anim' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>
 				</div>
 
 				<div class='panel-block' style='display: block;'>
 					<p>Overall Preferences Distribution</p>
-					<div class='columns is-mobile is-centered is-mobile'>
-						<div class='column is-4' id='interactionsProfilePlot_professor_dash'></div>
+					<div class='columns is-mobile is-centered'>
+						<div class='column is-7' id='interactionsProfilePlot_professor_dash'></div>
 					</div>
 
-					<div class='columns is-mobile is-centered is-mobile'>
-						<img class='column is-2' id='interactionsProfilePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
+					<div class='columns is-mobile is-centered'>
+						<img class='column is-2 loading-anim' id='interactionsProfilePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>
 				</div>
 
 				<div class='panel-block' style='display: block;'>
 					<p>Average Class Learning State</p>
-					<div class='columns is-mobile is-centered is-mobile'>
+					<div class='columns is-mobile is-centered'>
 						<div class='column is-7' id='learningStatePlot_professor_dash'></div>
 					</div>
 
-					<div class='columns is-mobile is-centered is-mobile'>
-						<img class='column is-2' id='learningStatePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
+					<div class='columns is-mobile is-centered'>
+						<img class='column is-2 loading-anim' id='learningStatePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>
 				</div>
 			</div>
 		</section>
+		
+		
+			
+			
+		
+		<!-- modals -->
+		<div class="modal" id="modalPRS_professor_dash">
+			<div class="modal-background"></div>
+			<div class="modal-content">
+				<div class="is-size-2">Configuration Options: Pure Random Search</div>
+				<div class="column"></div>
+				<div class='form-group'>
+					<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
+					<div class='control'>
+						<input id='numberOfConfigChoicesId_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
+					</div>
+				</div>
+			</div>
+			<button class="modal-close is-large" aria-label="close"></button>
+		</div>
+		
+		
+		<div class="modal" id="modalAnnealedPRS_professor_dash">
+			<div class="modal-background"></div>
+			<div class="modal-content">
+				<div class="is-size-2">Configuration Options: Annealed Pure Random Search</div>
+				<div class="column"></div>
+				
+				<div class='form-group'>
+					<label class='column is-4 control-label' for='textinput'>Num Generated Configurations</label>  
+					<div class='control'>
+						<input id='numberOfConfigChoicesId_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
+					</div>
+
+					<label class='column is-4 control-label' for='textinput'>Temperature Decay</label>  
+					<div class='control'>
+						<input id='temperatureDecay_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.5'>
+					</div>
+				</div>
+				
+			</div>
+			<button class="modal-close is-large" aria-label="close"></button>
+		</div>
+		
+		
+		<div class="modal" id="modalEvolutionary_professor_dash">
+			<div class="modal-background"></div>
+			<div class="modal-content">
+				<div class="is-size-2">Configuration Options: Evolutionary (Genetic) Search</div>
+				<div class="column"></div>
+				
+				<div class='form-group'>
+					<label class='column is-4 control-label' for='textinput'>Initial Population Size</label>  
+					<div class='control'>
+						<input id='initialPopulationSize_professor_dash' class='input' type='number' min='1' max='1000' placeholder='100'>
+					</div>
+					
+					<label class='column is-4 control-label' for='textinput'>Crossover Prob.</label>  
+					<div class='control'>
+						<input id='probOfCross_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.65'>
+					</div>
+					
+					<label class='column is-4 control-label' for='textinput'>Mutation Prob.</label>  
+					<div class='control'>
+						<input id='probOfMutation_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.15'>
+
+						<div class='form-group'>
+							<label class='column is-4 control-label' for='textinput'>Config. Change Mutation Prob.</label>  
+							<div class='control'>
+								<input id='probOfMutationConfig_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.8'>
+							</div>
+							<label class='column is-4 control-label' for='textinput'>Profile Change Mutation Prob.</label>  
+							<div class='control'>
+								<input id='probOfMutationGIPs_professor_dash' class='input' type='number' min='0' max='1' step="0.01" placeholder='0.4'>
+							</div>
+						</div>
+					</div>
+
+					<label class='column is-4 control-label' for='textinput'>Num. Evolutions Per Iteration</label>  
+					<div class='control'>
+						<input id='numberOfEvolutionsPerIteration_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='50'>
+					</div>
+
+					<label class='column is-4 control-label' for='textinput'>Num. Children Per Generation</label>  
+					<div class='control'>
+						<input id='numChildrenPerIteration_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='100'>
+					</div>
+
+					<label class='column is-4 control-label' for='textinput'>Num. Survivors Per Generation</label>  
+					<div class='control'>
+						<input id='numSurvivors_professor_dash' class='input' type='number' min='0' max='100' step="1" placeholder='10'>
+					</div>
+				</div>
+				
+			</div>
+			<button class="modal-close is-large" aria-label="close"></button>
+		</div>
+		
+		
+		<div class='modal' id='modalODPIP_professor_dash'>
+			<div class='modal-background'></div>
+			<div class='modal-content'>
+				<div class='is-size-2'>Edit pairing restrictions</div>
+				<div class='column'></div>
+				
+				<div id='constraintsError_professor_dash' class='section hero is-danger is-centered has-text-centered' style='width:100%'>
+					<label class='label subtitle is-4 is-white'>Constraint Creation Error! Please verify if at least two students are selected.</label>
+				</div>
+				
+				<div class='panel-block dash-cell-box has-tooltip-arrow' data-tooltip="To create a constraint, first select two or more students, and then the type of constraint (if they must be joint or separated). Afterwards, click on the '+' button to add the new constraint.">
+					<div class='column is-two-thirds'>
+						<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Students</div>
+						<div class='table-container'>
+							<div class='table' style='margin:2em;' id='cstUsersODPIPTable_professor_dash'></div>
+						</div>
+					</div>
+				
+					<div class='column'>
+						<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Type</div>
+						<div class='table-container'>
+							<div class='table' style='margin:2em;' id='cstTypeODPIPTable_professor_dash'></div>
+						</div>
+					</div>
+				</div>
+				
+				<div class='panel-block dash-cell-box'>
+					<div class='column'>
+						<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Constraints</div>
+						<div class='table-container'>
+							<div class='table' style='margin:2em;' id='cstODPIPTable_professor_dash'>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<!--<div class='form-group'>
+					<label class='column is-4 control-label' for='textinput'>Joint Player Constraints</label>  
+					<div class='control' data-tooltip='Optional, Format: [id1, id2]; [id3, id4]'>
+						<input id='jointPlayerConstraintsId_professor_dash' class='input' type='text'>
+					</div>
+
+					<label class='column is-4 control-label' for='textinput'>Separated Player Constraints</label>  
+					<div class='control' data-tooltip='Optional, Format: [id1, id2]; [id3, id4]'>
+						<input id='separatedPlayerConstraintsId_professor_dash' class='input' type='text'>
+					</div>
+				</div>-->
+			</div>
+			
+			<button class="modal-close is-large" aria-label="close"></button>
+		</div>
+		
+		
+		<div class="modal" id="modalKNN_professor_dash">
+			<div class="modal-background"></div>
+			
+			<div class="modal-content">
+				<div class="is-size-2">Configuration Options: KNN</div>
+				<div class="column"></div>
+				<div class='form-group'>
+					<label class='column is-4 control-label' for='textinput'>Num NNs</label>  
+					<div class='control'>
+						<input  id='numNNsId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>
+					</div>
+				
+					<label class='column is-4 control-label' for='textinput'>Ability</label>  
+					<div class='control'>
+						<input id='qualityWeightsAbId_professor_dash' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
+					</div>
+				
+					<label class='column is-4 control-label' for='textinput'>Engagement</label>  
+					<div class='control'>
+						<input id='qualityWeightsEngId_professor_dash' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
+					</div>
+				</div>
+			</div>
+			
+			<button class="modal-close is-large" aria-label="close"></button>
+		</div>
+		
+		<div class="modal" id="modalSynergies_professor_dash">
+			<div class="modal-background"></div>
+			<div class="modal-content">
+				<div class="is-size-2">Configuration Options:</div> 
+				<div class="is-size-2">KNN w/ Synergy Between Students</div>
+			
+				<div class='block dash-cell-box has-background-white'>
+					<label class='subtitle columns is-4 control-label' style='color:gray;' for='textinput'>KNN Options (for Preferences Est.)</label>  
+					<div class='columns'>
+						<div class='column is-1'></div>
+						<div class="column">
+							<label class='column is-4 control-label' for='textinput'>Num NNs</label>  
+							<div class='control'>
+								<input  id='synergiesNumNNsId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>
+							</div>
+						
+							<label class='column is-4 control-label' for='textinput'>Ability</label>  
+							<div class='control'>
+								<input id='synergiesQualityWeightsAbId_professor_dash' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
+							</div>
+						
+							<label class='column is-4 control-label' for='textinput'>Engagement</label>  
+							<div class='control'>
+								<input id='synergiesQualityWeightsEngId_professor_dash' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
+							</div>
+						</div>
+						<div class='column is-1'></div>
+					</div>
+				</div>
+				
+				<div class='block dash-cell-box has-background-white'>
+					<label class='subtitle columns is-4 control-label' style='color:gray;' for='textinput'>Synergies Table (for Coalition Eval.)</label>  
+					<div class='columns'>
+						<div class='column is-1'></div>
+						<div class='column form-group has-tooltip has-tooltip-arrow' data-tooltip="This table relates each pair of students' preferences quadrants to a value, which can be modified via a cell click. The higher the value, the better the pair is considered to work together.">
+							<div class='control' style='margin: auto' id="modalSynergiesTable_professor_dash"></div>
+						</div>
+						<div class='column is-1'></div>
+					</div>
+					
+					<div class='columns'>
+						<div class='column is-1'></div>
+						<button class='column button is-fullwidth is-fullheight is-info' id='modalSynergiesTable-save-button_professor_dash'>Save Table</button>
+						<div class='column is-1'></div>
+					</div>
+				</div>
+			</div>
+			
+			<button class="modal-close is-large" aria-label="close"></button>
+			
+		</div>
+		
+		
+		
+		
 		{% csrf_token %}
 
-
+		
+		
+		
 	</div>
 	{% include 'common/footer.html' %}
 </body>
@@ -506,21 +972,42 @@
 src='https://code.jquery.com/jquery-3.2.1.min.js'
 integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='
 crossorigin='anonymous'></script>
-<script src="https://kit.fontawesome.com/cdbfc7205f.js" crossorigin="anonymous"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"
+	integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA=="
+	crossorigin="anonymous"
+	referrerpolicy="no-referrer"
+></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src='https://d3js.org/d3.v5.js' crossorigin='anonymous'></script>
 <script src='https://unpkg.com/d3-force-attract@latest' crossorigin='anonymous'></script>
 <!-- <script src='{% static 'js/color.js' %}' crossorigin='anonymous'></script> -->
+<!-- Common code to both plots used here and interface -->
+<script>
+	var generatePlotErrorMessage = function(message, delay){
+		$('#adaptationErrorText_professor_dash').html(message);
+		$('#adaptationError_professor_dash').show(500);
+		setTimeout(function(){ 
+// 			$('#adaptationErrorText_professor_dash').html(plotErrorsStr);
+			$('#adaptationError_professor_dash').hide(500); 
+		}, delay);
+	}
+	
+	var generatePlotWarningMessage = function(message, delay){
+		$('#adaptationWarningText_professor_dash').html(message);
+		$('#adaptationWarning_professor_dash').show(500);
+		setTimeout(function(){ 
+// 			$('#adaptationWarningText_professor_dash').html(plotWarnStr);
+			$('#adaptationWarning_professor_dash').hide(500); 
+		}, delay);
+	}
+</script>
 <script src='{% static 'js/plots.js' %}'></script>
 
 <script>
 
 	$(document).ready(function(){
 		
-		// CSRF protection setup 
-		// (from: 
-		// https://docs.djangoproject.com/en/dev/ref/csrf/
-		// and https://stackoverflow.com/questions/54835849/django-how-to-send-csrf-token-with-ajax
-		// )
 		csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 		function csrfSafeMethod(method) {
     		// these HTTP methods do not require CSRF protection
@@ -535,20 +1022,26 @@ crossorigin='anonymous'></script>
 		});
 
 
-
-
 		$("#adaptationError_professor_dash").hide();
-		$("#adaptationIssues_professor_dash").hide();
+		$("#adaptationWarning_professor_dash").hide();
 		$("#adaptationInfo_professor_dash").hide();
-		$("#adaptationIssuesText_professor_dash").html('');
+		$("#adaptationWarningText_professor_dash").html('');
 
-		var currServerState = {};
+		$("#constraintsError_professor_dash").hide();
+
+				
+		var currServerState = undefined;
+		var currTimestamp = -1;
 		var currAdaptationConfig = {
 							'selectedGenAlgId': '',
 							'selectedRegAlgId': '',
-
-
+							
 							'numNNs': '',
+
+							'synergiesNumNNs': '',
+							'synergiesQualityWeightsAb': '',
+							'synergiesQualityWeightsEng': '',
+
 							// 'minNumberOfPlayersPerGroup': '',
 							// 'maxNumberOfPlayersPerGroup': '',
 							'preferredNumberOfPlayersPerGroup': '',
@@ -583,21 +1076,580 @@ crossorigin='anonymous'></script>
 		$('#qualityWeightsEng_professor_dash').change(function(){
 			$('#qualityWeightsAb_professor_dash').val(1.0 - $(this).val())
 		});
+		
+		$(function(){
+			$("#groupSizeSlider_professor_dash").slider({
+				range: true,
+				min: 2,
+				max: 10,
+				values: [3, 4],
+				step: 1,
+				slide: function(event, ui){
+					$("#groupSizeText_professor_dash").html("Consider groups sized between " + ui.values[0] + " and " + ui.values[1]+".");
+				}
+			});
+			$("#groupSizeText_professor_dash").html("Consider groups sized between " + $("#groupSizeSlider_professor_dash").slider("values", 0)
+				+ " and " + $("#groupSizeSlider_professor_dash").slider("values", 1) + ".");
+		});
 
 
+		simulationWeekMessages = [`In this tutorial, you will be the professor of a 4 week course. Below, you will find some controls to automate the tutorial. Before the course starts: 
+			<p>  <b>1. Share the platform link</b> with the students, so they can sign up in the platform (simulate this by clicking <b>'Tutorial Controls' > 'Share link'</b>); </p> 
+			<p>  <b>2.</b> Next, <b>register the first task</b> for the course (call it 'week1_00' and make sure it promotes a 'Self-Facilitation' interaction. Also, give the same priority to the task's interaction profile and difficulty when assigning it to a group and, since it is a task for week 1, make it on the easier side); </p>
+			<p>  <b>3.</b> After registering the first task, the other tasks will be automatically registered <b>by clicking 'Tutorial Controls' > 'Simulate task registration'</b>.`,
+		
+		`Perform the following actions: 
+			<p> <b>1. Select all students</b> so that they are considered when forming groups; </p>
+			<p> <b>2. Select the week 1 tasks (check their ids)</b>; </p>
+			<p> <b>3. Compute a group organization</b> and verify the formed groups; </p>
+			<p> <b>4. Manually evaluate</b> Student_E, with <b>ability and engagement equal to 0.3</b> and <b>simulate the evaluation</b> for the rest. You will be able to see now how every student fared in their respective group task. (Normally the students are evaluated automatically by system, but it is also possible to evaluate them manually)`,
+		
+		`Perform the following actions: 
+			<p> <b>1.</b> Student_A will not be available this week, <b>remove the student</b> from the selection; </p>
+			<p> <b>2.</b> Select week 2's tasks, compute a new group organization and simulate students' reaction. </p>`,
+		
+		`Perform the following actions: 
+			<p> <b>1.</b> Student_Y was misevaluated from last week, <b>correct this student's ability value</b>, so it is equal to Student_X; </p>
+			<p> <b>2.</b> Student_X cannot be in the same group as Student_Y. <b>Create the restriction</b> so that Student_X and Student_Y are <b>separated</b>; </p>
+			<p> <b>3.</b> Student_W was very engaged in the group project when working with Student_Z, <b>create the restriction</b> so that Student_W and Student_Z <b>are joined in the same group</b>; </p>
+			<p> <b>4.</b> Register the tasks for week 3, compute a new group organization and simulate reaction.</p>`,
+		
+		`This is a free week, where you can further explore the platform, for example, you can:
+		<p> <b>1.</b> Select week 4's tasks; </p>
+		<p> <b>2.</b> Feel free to change group sizes, change restrictions, change the grouping algorithm, change quality estimation algorithm; </p>
+		<p> <b>3.</b> You can also compute new group organizations and evaluate them as many times as you wish; </p>
+		<p> <b>4.</b> When you are ready, advance to the next week. </p>`,
+		
+		"Congratulations! You have completed the tutorial! You can now choose to reset the simulation and start over, or close this tab."]
 
-		var objChanged = function(obj1, obj2){
-			return !(JSON.stringify(obj1) === JSON.stringify(obj2));
-		};
-		var canComputeAdaptation = function(newServerState){
-			newServerState.studentsStates = currServerState.studentsStates
-			return objChanged(currServerState, newServerState);
+
+		dropdownItemsText = [["<a class=\'dropdown-item\'> Share link between students</a>","<a class=\'dropdown-item\'> Simulate task registration </a>"], ["<a class=\'dropdown-item\'> Simulate evaluation of students </a>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> No actions available </div>"]];
+		dropdownItemsUrls = [['/shareLinkSim/', '/taskRegistrationSim/'], ['/evaluateSim/'], ['/simulateReaction/'],['/simulateReaction/'],['/simulateReaction/'],['/simulateReaction/']]
+		var changeSimulationWeek = function(newServerState)
+		{
+// 			if(currServerState.simWeek == newServerState.simWeek)
+// 				return;
+
+			week = newServerState.simWeek
+			
+			$('#simulationState_professor_dash').empty();
+			buildPieChart('simulationState_professor_dash', 6, week, changeSimulationDisplay);
+			
+			$('#simulationAction_professor_dash').empty();
+			$('#simulationAction_professor_dash').append(changeSimulationControls(newServerState));
+			
+			return changeSimulationDisplay(week, week, newServerState);
+		}
+
+		var changeSimulationDisplay = function(currWeek, selectedWeek, newServerState = undefined)
+		{
+			
+			if(selectedWeek < currWeek){
+				$('#simulationControls_professor_dash').hide();
+			}else{
+				$('#simulationControls_professor_dash').show();
+			}
+			
+		
+			leftXPosition = -document.getElementById("storylineLog_professor_dash").parentElement.clientWidth * 0.58
+			positionArray = [[0,-70],[0,0],[0,70],[leftXPosition,70],[leftXPosition,0],[leftXPosition,-150]]
+
+			
+			
+			
+			var weekText = "<p>Week " + selectedWeek + "</p>";
+			if (selectedWeek == 0) {
+				weekText = "Course Preparation";
+			}
+			else if (selectedWeek == 5){
+				weekText = "Tutorial Finished!";
+			}
+		
+			$("#simulationWeek_professor_dash").empty();
+			$("#simulationWeek_professor_dash").append(weekText);
+			
+			
+			if(newServerState!=undefined){
+				
+				if(newServerState.studentToEvaluate.length > 0)
+					simulationWeekMessages[1] = simulationWeekMessages[1].replace("Student_E", "<b>" + newServerState.studentToEvaluate + "</b>");
+				
+				if(newServerState.unavailableStudent.length > 0)
+					simulationWeekMessages[2] = simulationWeekMessages[2].replace("Student_A", "<b>" + newServerState.unavailableStudent + "</b>");
+				
+				if(newServerState.studentX.length > 0)
+					simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_X", "<b>" + newServerState.studentX + "</b>");
+				if(newServerState.studentY.length > 0)
+					simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_Y", "<b>" + newServerState.studentY + "</b>");
+				if(newServerState.studentW.length > 0)
+					simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_W", "<b>" + newServerState.studentW + "</b>");
+				if(newServerState.studentZ.length > 0)
+					simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_Z", "<b>" + newServerState.studentZ + "</b>");
+			}
+		
+			
+
+			var simulationLog = $("<div class=\'list\'><div class=\'list-item\'>" + simulationWeekMessages[selectedWeek] + "</div></div>");
+			$('#simulationLog_professor_dash').empty();
+			$('#simulationLog_professor_dash').append(simulationLog);
+
+			$("#storylineLog_professor_dash").css({'transform': 'translate(' + positionArray[selectedWeek][0] + 'px,' + positionArray[selectedWeek][1] + 'px)'}).animate(500)
+
+			return simulationLog
+			
 		}
 
 
+		var changeSimulationControls = function(newServerState)
+		{
+			week = newServerState.simWeek
 
-		var generateDashTableFromArray = function(canAdd, idArray, nameArray, tagClass, moveButtonIconClass, moveElementUrl, moveElementArg, addElementURL, addElementArg, deleteElementUrl, deleteElementArg, editElementUrl, editElementArg){
-		    var table = $('<div>');
+			var simulationDropdown = $("<div class=\'dropdown-menu\' style=\"height:6em; width:15em;  display:block\"> </div>");
+			var simulationDropdownContent = $("<div class=\'dropdown-content\'> </div>");
+			
+			$("#advanceSimulationButton_professor_dash").attr('disabled', true);
+			$("#closeSimulationButton_professor_dash").hide();
+			if (week == 0) {
+				$("#simulationActionDropdown_professor_dash").parent().parent().show();
+				$("#advanceSimulationButton_professor_dash").show();
+
+
+				if (!newServerState.linkShared)
+					var dropdownItem  = $("<div class=\'dropdown-item button\'> Share link </div>")
+				else
+					var dropdownItem  = $("<div class=\'dropdown-item button\' disabled> Share link </div>")
+
+	
+				simulationDropdownContent.append(dropdownItem);
+				if (!newServerState.linkShared)
+					dropdownItem.click(function(){
+						$.ajax(
+						{
+							type: 'POST',
+							url: '/shareLinkSim/',
+							data: {"numUsersToGenerate": 12, "minDelay": 0.2, "maxDelay": 0.5}
+						}
+						);
+					});
+				
+				if (newServerState.isTaskCreated){
+					$("#advanceSimulationButton_professor_dash").attr('disabled', false);
+					dropdownItem = $("<div class=\'dropdown-item button\'> Simulate task registration </div>");
+				}else
+					dropdownItem = $("<div class=\'dropdown-item button\' disabled> Simulate task registration </div>");
+
+				simulationDropdownContent.append(dropdownItem);
+				if (newServerState.isTaskCreated)
+					dropdownItem.click(function(){
+						$.ajax(
+						{
+							type: 'POST',
+							url: '/taskRegistrationSim/',
+							data: {"minDelay": 0.2, "maxDelay": 0.5}
+						}
+						);
+					});
+
+			}
+
+			else if (week == 1){
+				if (!newServerState.simWeekOneUsersEvaluated)
+					var dropdownItem = $("<div class=\'button dropdown-item\'> Simulate evaluation of students </div>");
+				else{
+					$("#advanceSimulationButton_professor_dash").attr('disabled', false);
+					var dropdownItem = $("<div class=\'button dropdown-item\' disabled> Simulate evaluation of students </div>");
+				}
+				
+				simulationDropdownContent.append(dropdownItem);
+				if (!newServerState.simWeekOneUsersEvaluated)
+					dropdownItem.click(function(){
+						$.ajax(
+						{
+							type: 'POST',
+							url: '/evaluateSim/'
+						}
+						);
+					});
+			}
+
+			else if (week == 5) {
+				$("#simulationActionDropdown_professor_dash").parent().parent().hide();
+				$("#advanceSimulationButton_professor_dash").hide();
+				$("#closeSimulationButton_professor_dash").show();
+			}
+
+			else if (week > 1 && week < 5){
+				if(week==4)
+					$("#advanceSimulationButton_professor_dash").attr('disabled', false);
+
+				if (!newServerState.simSimulateReaction || week == 4)
+					var dropdownItem = $("<div class=\'dropdown-item button\'> Simulate evaluation of all students </div>");
+				else{
+					$("#advanceSimulationButton_professor_dash").attr('disabled', false);
+					var dropdownItem = $("<div class=\'dropdown-item button\' disabled> Simulate evaluation of all students </div>");
+				}
+				simulationDropdownContent.append(dropdownItem);
+				if (!newServerState.simSimulateReaction || week == 4)
+					dropdownItem.click(function(){
+						$.ajax(
+							{
+								type: 'POST',
+								url: '/simulateReaction/'
+							}
+						)
+					})
+			}
+			
+			simulationDropdown.append(simulationDropdownContent);
+			return simulationDropdown;
+		}
+	
+	
+		var canComputeAdaptation = function(newServerState){
+			var newTimestamp = newServerState['timestamp'];
+			delete newServerState.timestamp;
+			
+			var res = (currServerState == undefined || 
+			(!(JSON.stringify(currServerState) === JSON.stringify(newServerState)) && 
+			   newTimestamp > currTimestamp));
+			   
+			currTimestamp = res? newTimestamp: currTimestamp;
+			return res;
+		}
+		
+		
+		
+		//synergy tables stuff
+		var addSynergyTableLine = function(line, domTable, colElems, isRemovable){
+			var rowContent = $('<div class=\'row columns is-variable\'></div>');
+			if(isRemovable){
+				var removeButton = $(`
+				<div class=\'column is-1 button is-danger\'>
+					<i class="fa fa-trash" aria-hidden="true"></i>
+				</div>
+				`);
+				rowContent.append(removeButton);
+				removeButton.click(function(){
+					($(this)).parent().hide(500, function(){ ($(this)).remove(); });
+				});
+			}
+			else{
+// 				rowContent.append($("<div class=\'column is-1 \'></div>"));
+				rowContent.append($("<div></div>"));
+			}
+			for(var col=0; col<colElems.length; col++){
+				id = "table_"+col+"_"+line;
+				
+				var textInputBox = $("<input class=\'column button is-white\'/>").attr({
+					type: "text", id: id, name: id
+				});
+				
+				
+				lineElem = colElems[col];
+					
+				if(line == 0 || col < 2){
+					textInputBox.addClass("is-light")
+					textInputBox.attr("readonly", "readonly");
+					textInputBox.attr("background-color", "gray");
+				}
+				
+				textInputBox.val(lineElem);
+				rowContent.append(textInputBox);
+			}
+			rowContent.hide();
+			domTable.append(rowContent);
+			rowContent.show(500);
+		}
+		
+		var sngTableStrToDom = function(sngTbl, domTable){
+			
+			sngTbl = sngTbl.replaceAll('\t','');
+			sngTbl = sngTbl.split("\n");
+			var structuredSngTbl = [];
+			for(var i=0; i<sngTbl.length; i++){
+				var item = sngTbl[i];
+				structuredSngTbl.push(item.split(','));
+			}
+			
+			var table = $('<div class=\'column\'></div>');
+			for(var line=0; line<structuredSngTbl.length; line++){
+				var colElems = undefined;
+				colElems = structuredSngTbl[line];	
+// 				addSynergyTableLine(line, table, colElems, line > 0);
+				addSynergyTableLine(line, table, colElems, false);
+			}
+			domTable.append(table);
+			
+			
+// 			var addLineButtonRow = $('<div class=\'column columns is-variable\'></div>');
+// 			domTable.append(addLineButtonRow);
+// 			colElems = new Array(structuredSngTbl[0].length).fill("<NA>");
+// 			var addLineButton = $(`<button class=\'column is-1 button is-info\'>
+// 				<i class="fas fa-plus-circle" aria-hidden="true"></i>
+// 			</button>`).attr({
+// 				type: "text", id: id, name: id
+// 			});
+// 			addLineButton.click(function(){
+// 				var lineDoms = $(domTable.children()[0]).children();
+// 				addSynergyTableLine(lineDoms.length, table, colElems, true);
+// 			});
+// 			addLineButtonRow.append(addLineButton);
+		}
+		
+		var sngTableDomToStr = function(domTable){
+			var lineDoms = $(domTable.children()[0]).children();
+			var retStr = "";
+			for(var line=0; line<lineDoms.length; line++){
+				var colDoms = $(lineDoms[line]).children();
+				for(var col=1;col<colDoms.length; col++){
+					colStr = $(colDoms[col]).val();
+					retStr +=  (col < (colDoms.length) - 1)? colStr+",": 
+						(line < (lineDoms.length) - 1)? colStr+"\n": colStr; 
+				}
+			}
+			return retStr;
+			
+		}
+		
+		
+		var generateSynergiesTableFromFile = function(){
+			$.ajax(
+				{
+					type: 'POST',
+					url: '/fetchSynergiesTable/',
+					dataType: 'json',
+					success: 
+						function(response) {
+							var textualTbl = response['textualTbl'];
+							$('#modalSynergiesTable_professor_dash').empty();
+							sngTableStrToDom(textualTbl, $('#modalSynergiesTable_professor_dash'));
+						}
+				}
+			);
+		};
+
+		$('#modalSynergiesTable-save-button_professor_dash').click(function(){
+			$.ajax(
+				{
+					type: 'POST',
+					url: '/saveSynergiesTable/',
+					dataType: 'json',
+					data: {'textualTbl': sngTableDomToStr($('#modalSynergiesTable_professor_dash'))}
+				}
+			);
+		});
+		
+		$('#modalSynergiesConfigButton_professor_dash').click(function(){
+			generateSynergiesTableFromFile();
+		});
+
+
+		
+		
+		var usersSelectedDOMElems = [];
+		var currCstTypeDOMElem = undefined;
+		var currCsts = { 'joint': [], 'separated': [] };
+		
+		var processCstArray = function(cst){
+			return JSON.stringify(cst)
+				.replace('[[','[')
+				.replace(']]',']')
+				.replaceAll('],[','];[');
+		};
+		
+		var processedCsts = function(currCstr){
+			return { 'joint': processCstArray(currCstr['joint']), 'separated': processCstArray(currCstr['separated']) };
+		};
+		
+		
+		var generateODPIPUsrTableFromArray = function(idArray, tagClass, highlightedTagClass){
+		    var table = $('<div></div>');
+		    for(var i=0; i < idArray.length; i++){
+		        
+		        var tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>").text(idArray[i]);
+		        tag.click(function(){
+					if($(this).hasClass(tagClass)){
+						$(this).removeClass(tagClass);
+						$(this).addClass(highlightedTagClass);
+						usersSelectedDOMElems.push($(this))
+					}else{
+						$(this).addClass(tagClass);
+						$(this).removeClass(highlightedTagClass);
+						usersSelectedDOMElems.splice(
+							usersSelectedDOMElems.indexOf($(this))
+						, 1);
+					}
+		        })
+		        
+				tag.addClass('button')
+		        tag.attr('tagClass',tagClass);
+		        tag.attr('highlightedTagClass',highlightedTagClass);
+				tag.attr('elemID', idArray[i]);
+				tag.addClass(tagClass);
+				tag.addClass('is-normal');
+				tag.addClass('is-rounded');
+				table.append(tag);
+				tag.show(135);
+		    }
+		    return table;
+		};
+		var generateODPIPTypeTableFromArray = function(tagClass, highlightedTagClass, otherTagClass){
+		    var table = $('<div></div>');
+		    var elemArray = [
+				`<i class="fa-solid fa-user-group" data-tooltip="Students must be joint."></i>`,
+				`<i class="fa-solid fa-ban" data-tooltip="Students must be separated."></i>`
+		    ];
+		    for(var i=0; i < elemArray.length; i++){
+		        var tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>")
+		        tag.append(elemArray[i]);
+		        
+		        tag.attr('cstType', (i==0)? 'joint': 'separated');
+		        tag.attr('tagClass',tagClass);
+		        tag.attr('highlightedTagClass',(i==0)? highlightedTagClass: otherTagClass);
+		        tag.click(function(){
+					var buttons = $($(this).parent()).children();
+					for(var j=0; j< buttons.length; j++){
+						var currElem = buttons[j];
+						$(currElem).removeClass((j==0)? highlightedTagClass: otherTagClass);
+					}
+					$(this).addClass((this==buttons[0])? highlightedTagClass: otherTagClass);
+					currCstTypeDOMElem = $(this);
+		        })
+		        
+				tag.addClass('tag');
+				tag.addClass(tagClass);
+				tag.addClass((i==0)? highlightedTagClass: '');
+				tag.addClass('is-large');
+				tag.addClass('is-rounded');
+				table.append(tag);
+				tag.show(135);
+				
+				if(i==0){
+					currCstTypeDOMElem = tag;
+				}
+		    }
+		    return table;
+		};
+		
+		var appendCstTag = function(tagClass, usersSelectedForConstraint, currConstraintType, jointTable, sepTable){
+			
+			var backgroundColor = ["#23d160", "#ff3860"];
+			var csTag = $("<span class='context-menu' style='margin:0.1em; z-index:1000; background-color: " + backgroundColor[(currConstraintType == 'joint')? 0: 1] + "'></span>");
+			csTag.attr('cstType', currConstraintType);
+			
+			var tagArray = [
+				`<i class="fa-solid fa-user-group"></i>`,
+				`<i class="fa-solid fa-ban"></i>`
+			];
+			
+			csTag.append(tagArray[(currConstraintType == 'joint')? 0: 1]);
+			csTag.append("<p>&nbsp;&nbsp;"+usersSelectedForConstraint+"</p>");
+			csTag.attr('elemID', usersSelectedForConstraint);
+			csTag.addClass('tag');
+			csTag.addClass(tagClass);
+			csTag.addClass('is-medium');
+			csTag.addClass('is-rounded');
+			
+			if(currConstraintType == 'joint'){
+				$('#jointCstODPIPTable_professor_dash').append(csTag);
+			}else if(currConstraintType == 'separated'){
+				$('#separatedCstODPIPTable_professor_dash').append(csTag);
+			}
+			
+			csTag.show(135);
+			
+			var deleteButton = $('<button style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash\'></i></button>');
+			deleteButton.click(function(){
+				var cstDOMElem = $(this).parent();
+				var cstArray = currCsts[$(cstDOMElem).attr('cstType')];
+				
+				var index = $(cstDOMElem).index();
+				
+				cstArray.splice(index, 1);
+				$(cstDOMElem).remove();
+			});
+			csTag.append(deleteButton);
+			
+			
+			csTag.attr('elemID', i);
+			csTag.addClass('tag');
+			csTag.addClass(tagClass);
+			csTag.addClass('is-medium');
+			csTag.addClass('is-rounded');
+			if(currConstraintType == 'joint'){
+				$(jointTable).append(csTag);
+			}else if(currConstraintType == 'separated'){
+				$(sepTable).append(csTag);
+			}
+			csTag.show(135);
+			return csTag
+		}
+		
+		var generateODPIPCstTableFromArray = function(cstArray, tagClass){
+		    var table = $(`<div></div>`);
+		    
+		    var jointTable = $(`<div class='table' style='margin:2em;' id='jointCstODPIPTable_professor_dash'></div>`);
+		    var sepTable = $(`<div class='table' style='margin:2em;' id='separatedCstODPIPTable_professor_dash'></div>`);
+		    var addButtonTable = $(`<div class='table' style='margin:2em;' id='addCstODPIPTable_professor_dash'></div>`);
+		    
+		    table.append(jointTable);
+		    table.append(sepTable);
+		    table.append(addButtonTable);
+		    
+		    var allCst = cstArray['joint'].concat(cstArray['separated']);
+		    for(var i=0; i < allCst.length+1; i++){
+		        var tag = undefined;
+		        if(i < allCst.length){
+					var currConstraintType = (i < cstArray['joint'].length)? 'joint': 'separated';
+					appendCstTag(tagClass, allCst[i], currConstraintType, jointTable, sepTable);
+		        }else{
+					tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>").text(allCst[i]);
+					var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Create constraint.'></div>");
+					addButton.append('<button style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-plus-circle\'></i></button>');
+					addButton.click(function(){
+						
+						if(usersSelectedDOMElems.length < 2){
+							$('#constraintsError_professor_dash').show(500);
+							setTimeout(function(){ $('#constraintsError_professor_dash').hide(500); }, 5000);
+							
+							return;
+						}
+						
+						var usersSelectedForConstraint = [];
+						for(var u=0; u<usersSelectedDOMElems.length; u++){
+							var currElem = usersSelectedDOMElems[u];
+							usersSelectedForConstraint.push(currElem.text());
+							$(currElem).removeClass(currElem.attr('highlightedTagClass'));
+							$(currElem).addClass(currElem.attr('tagClass'));
+						}
+						
+						var currConstraintType = $(currCstTypeDOMElem).attr('cstType');
+						currCsts[currConstraintType].push(usersSelectedForConstraint);
+
+						appendCstTag(tagClass, usersSelectedForConstraint, currConstraintType, jointTable, sepTable);
+						
+						usersSelectedDOMElems = [];
+						currConstraintType = 'joint';
+					});
+					tag.append(addButton);
+					
+					tag.attr('elemID', i);
+			        tag.addClass('tag');
+			        tag.addClass(tagClass);
+			        tag.addClass('is-medium');
+			        tag.addClass('is-rounded');
+					$(addButtonTable).append(tag);
+			        tag.show(135);
+		        }
+		    }
+		    return table;
+		};
+
+
+		
+		
+		var generateDashTableFromArray = function(canAdd, idArray, nameArray, tagClass, moveButtonIconClass, moveElementUrl, moveElementArg, addElementURL, addElementArg, deleteElementUrl, deleteElementArg, editElementArg, editElementUrlTask, editElementUrlStudent){
+		    var table = $('<div></div>');
 		    for(var i=0; i < idArray.length+1; i++){
 		        
 		        var tag = undefined;
@@ -613,9 +1665,15 @@ crossorigin='anonymous'></script>
 			            tag.append(deleteButton);
 		            }
 
-		        	if(editElementUrl!=""){
+		        	if(editElementUrlTask!=""){
 			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually edit state'></div>");
-			            editButton.append('<form method=\'GET\' action=\''+editElementUrl+'\'><input type=\'hidden\' name=\''+editElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-edit pointer\'></i></button></form>');
+			            editButton.append('<form method=\'GET\' action=\''+editElementUrlTask+'\'><input type=\'hidden\' name=\''+editElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-edit pointer\'></i></button></form>');
+			            tag.append(editButton);
+					}
+
+					else if(editElementUrlStudent!=""){
+			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually evaluate student'></div>");
+			            editButton.append('<form method=\'GET\' action=\''+editElementUrlStudent+'\'><input type=\'hidden\' name=\''+editElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-edit pointer\'></i></button></form>');
 			            tag.append(editButton);
 					}
 
@@ -657,158 +1715,205 @@ crossorigin='anonymous'></script>
 		    return table;
 		};
 
+		var updateGroupsPlotScaleCallback = function(){
+			var scaleType = $('input[name="studentPerformanceScaleType"]:checked').val();
+            updateGroupsPlotNodeColors('groupsPlot_professor_dash', scaleType);
+            
+			if(scaleType=='relative'){
+				$('#groupsPlotScaleMin_professor_dash').hide(500).show(500);
+				setTimeout(function(){$('#groupsPlotScaleMin_professor_dash').html(Math.round(((abMin + engMin)/2).toFixed(2)*100) + '%'); },500)
+				$('#groupsPlotScaleMax_professor_dash').hide(500).show(500);
+				setTimeout(function(){$('#groupsPlotScaleMax_professor_dash').html(Math.round(((abMax + engMax)/2).toFixed(2)*100) + '%'); },500)
+			}else{
+				$('#groupsPlotScaleMin_professor_dash').hide(500).show(500);
+				setTimeout(function(){$('#groupsPlotScaleMin_professor_dash').html('0%'); },500)
+				$('#groupsPlotScaleMax_professor_dash').hide(500).show(500);
+				setTimeout(function(){$('#groupsPlotScaleMax_professor_dash').html('100%'); },500)
+			}
+		};
+		
 
-
+		$('input[name=\'studentPerformanceScaleType\']').change(function(){
+			updateGroupsPlotScaleCallback();
+        });
 
 		var fetchServerData = function(){
 			$.ajax(
 			{
 				url: '/fetchServerState/',
-						dataType: 'json',
-						success: 
-						function (newServerState) {	
-							
-							if(!canComputeAdaptation(newServerState)){
-								return;
-							}
-
-							
-							readyForNewActivity = newServerState.readyForNewActivity;
-							if(readyForNewActivity){
-
-								$('#adaptationInfo_professor_dash').hide(500); 
-
-								$('#forceStartAdaptation_professor_dash').removeClass('is-loading');
-								$('#loadAndStartAdaptation_professor_dash').removeClass('is-loading');
-								$('#rebuildPlot_professor_dash').removeClass('is-loading');
+				dataType: 'json',
+				success: 
+					function (newServerState) {	
+						
+						//this has to be computed before, 
+						//for the case that some student altered their state
+						$.ajax({
+							type: 'POST',
+							url: '/fetchStudentStates/',
+							success: 
+							function(studentsStates)
+							{
+								newServerState.studentsStates = JSON.parse(studentsStates);
 								
-								$('#groupsPlotLegend_professor_dash').show(500);
-								$('#groupsPlot_professor_dash').show(500);
-								$('#interactionsProfilePlot_professor_dash').show(500);
-								$('#learningStatePlot_professor_dash').show(500);
-								
-								$('#groupsPlotLoadingImage_professor_dash').hide(500);
-								$('#interactionsProfilePlotLoadingImage_professor_dash').hide(500);
-								$('#learningStatePlotLoadingImage_professor_dash').hide(500);
-
-							}else{
-								
-								$('#adaptationInfoTitle_professor_dash').html('<br></br>Watch out, it is Big Brain Time!');
-								$('#adaptationInfoText_professor_dash').html('<br></br>Please wait some moments until groups are organized according to the students\' preferences...');
-								$('#adaptationInfo_professor_dash').show(500);
-
-
-								$('#rebuildPlot_professor_dash').addClass('is-loading');
-								$('#forceStartAdaptation_professor_dash').addClass('is-loading');
-								$('#loadAndStartAdaptation_professor_dash').addClass('is-loading');
-
-								$('#groupsPlotLegend_professor_dash').hide(500);
-								$('#groupsPlot_professor_dash').hide(500);
-								$('#interactionsProfilePlot_professor_dash').hide(500);
-								$('#learningStatePlot_professor_dash').hide(500);
-								
-								$('#groupsPlotLoadingImage_professor_dash').show(500);
-								$('#interactionsProfilePlotLoadingImage_professor_dash').show(500);
-								$('#learningStatePlotLoadingImage_professor_dash').show(500);
-
-							}
-
-							$('#groupsPlotLegendTrigger_professor_dash').hide();
-							$('#groupsPlotLegend_professor_dash').click(function(){
-									$('#groupsPlotLegend_professor_dash').hide(500);
-									$('#groupsPlotLegendTrigger_professor_dash').show(500);
-							});
-							$('#groupsPlotLegendTrigger_professor_dash').click(function(){
-									$('#groupsPlotLegend_professor_dash').show(500);
-									$('#groupsPlotLegendTrigger_professor_dash').hide(500);
-							});
-
-
-							var currSelectedUsers = newServerState.currSelectedUsers;
-							var currFreeUsers = newServerState.currFreeUsers;
-							var fuTable = generateDashTableFromArray(
-									true, currFreeUsers, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
-									'{% url 'addSelectedUser' %}', 'username',
-									'', 'username',
-									'','usernameToDelete',
-									'{% url 'manuallyManageStudent' %}','usernameToUpdate'
-								);
-							var suTable = generateDashTableFromArray(
-									false, currSelectedUsers, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
-									'{% url 'removeSelectedUser' %}', 'username',
-									'', 'username',
-									'','usernameToDelete',
-									'{% url 'manuallyManageStudent' %}','usernameToUpdate'
-								);
-							$('#freeUsersTable_professor_dash').empty();
-							$('#freeUsersTable_professor_dash').append(fuTable);
-
-							$('#selectedUsersTable_professor_dash').empty();
-							$('#selectedUsersTable_professor_dash').append(suTable);
-
-							var currFreeTasks = unformattedStringToObj(newServerState.currFreeTasks);
-							var currSelectedTasks = unformattedStringToObj(newServerState.currSelectedTasks);
-
-
-							var currFreeTaskIds = [];
-							var currSelectedTaskIds = [];
-
-							for (i=0; i< currFreeTasks.length; i++){
-								currFreeTaskIds[i] = currFreeTasks[i].taskId;
-							}
-							for (i=0; i< currSelectedTasks.length; i++){
-								currSelectedTaskIds[i] = currSelectedTasks[i].taskId;
-							}
-
-							ftTable = generateDashTableFromArray(
-								true, currFreeTaskIds, currFreeTaskIds, 'is-danger', 'fa-arrow-circle-right', 
-								'{% url 'addSelectedTask' %}', 'taskId',
-								'{% url 'taskRegistration' %}', 'taskId',
-								'{% url 'taskDeletion' %}','taskIdToDelete',
-								'{% url 'taskUpdate' %}','taskIdToUpdate'
-							);
-
-							stTable = generateDashTableFromArray(
-								false, currSelectedTaskIds, currSelectedTaskIds, 'is-danger', 'fa-arrow-circle-left', 
-								'{% url 'removeSelectedTask' %}', 'taskId',
-								'{% url 'taskRegistration' %}', 'taskId',
-								'{% url 'taskDeletion' %}','taskIdToDelete',
-								'{% url 'taskUpdate' %}','taskIdToUpdate'
-							);
-
-							$('#freeTasksTable_professor_dash').empty();
-							$('#freeTasksTable_professor_dash').append(ftTable);
-
-							$('#selectedTasksTable_professor_dash').empty();
-							$('#selectedTasksTable_professor_dash').append(stTable);
-
-
-							currServerState = newServerState;
-
-							// var studentsStates = {}
-							// for(var i=0; i<currSelectedUsers; i++){
-							// 	currUserId = currSelectedUsers[i];
-							// 	studentsStates[currUserId] = fetchUserStateCallBack(currUserId)
-							// }
-							
-
-							$.ajax({
-								type: 'POST',
-								url: '/fetchStudentStates/',
-								success: 
-								function(studentsStates)
-								{
-									$('#groupsPlot_professor_dash').empty();
-									currServerState.studentsStates = JSON.parse(studentsStates);
-									buildPlots(currServerState);
+								if(studentsStates != undefined && 
+									!canComputeAdaptation(newServerState)){
+									return;
 								}
-							});
+								
+								readyForNewActivity = newServerState.readyForNewActivity;
+								if(readyForNewActivity){
+
+									$('#adaptationInfo_professor_dash').hide(500); 
+
+									$('#forceStartAdaptation_professor_dash').removeClass('is-loading');
+									$('#loadAndStartAdaptation_professor_dash').removeClass('is-loading');
+									$('#rebuildPlot_professor_dash').removeClass('is-loading');
+									
+									$('#groupsPlotAuxPanel_professor_dash').show(500);
+									$('#groupsPlot_professor_dash').show();
+									$('#interactionsProfilePlot_professor_dash').show();
+									$('#learningStatePlot_professor_dash').show();
+									
+									$('#groupsPlotLoadingImage_professor_dash').hide(500);
+									$('#interactionsProfilePlotLoadingImage_professor_dash').hide(500);
+									$('#learningStatePlotLoadingImage_professor_dash').hide(500);
+
+								}else{
+									
+									$('#adaptationInfoTitle_professor_dash').html('<br></br>Watch out, it is Big Brain Time!');
+									$('#adaptationInfoText_professor_dash').html('<br></br>Please wait some moments until groups are organized according to the students\' preferences...');
+									$('#adaptationInfo_professor_dash').show(500);
 
 
-						}
+									$('#rebuildPlot_professor_dash').addClass('is-loading');
+									$('#forceStartAdaptation_professor_dash').addClass('is-loading');
+									$('#loadAndStartAdaptation_professor_dash').addClass('is-loading');
 
+									$('#groupsPlotAuxPanel_professor_dash').hide(500);
+									$('#groupsPlot_professor_dash').hide(500);
+									$('#interactionsProfilePlot_professor_dash').hide(500);
+									$('#learningStatePlot_professor_dash').hide(500);
+									
+									$('#groupsPlotLoadingImage_professor_dash').show(500);
+									$('#interactionsProfilePlotLoadingImage_professor_dash').show(500);
+									$('#learningStatePlotLoadingImage_professor_dash').show(500);
+
+								}
+
+								$('#groupsPlotLegendTrigger_professor_dash').hide();
+								$('#groupsPlotLegend_professor_dash').click(function(){
+										$('#groupsPlotLegend_professor_dash').hide(500);
+										$('#groupsPlotLegendTrigger_professor_dash').show(500);
+								});
+								$('#groupsPlotLegendTrigger_professor_dash').click(function(){
+										$('#groupsPlotLegend_professor_dash').show(500);
+										$('#groupsPlotLegendTrigger_professor_dash').hide(500);
+								});
+
+								$('#simulationLog_professor_dash').empty();
+								$('#simulationLog_professor_dash').append(changeSimulationWeek(newServerState));
+
+
+								var currSelectedUsers = newServerState.currSelectedUsers;
+								var currFreeUsers = newServerState.currFreeUsers;
+								var fuTable = generateDashTableFromArray(
+										true, currFreeUsers, currFreeUsers, 'is-info', 'fa-arrow-circle-right', 
+										'{% url 'addSelectedUser' %}', 'username',
+										'', 'username',
+										'','usernameToDelete',
+										'usernameToUpdate', "", '{% url 'manuallyManageStudent' %}'
+									);
+								var suTable = generateDashTableFromArray(
+										false, currSelectedUsers, currSelectedUsers, 'is-info', 'fa-arrow-circle-left', 
+										'{% url 'removeSelectedUser' %}', 'username',
+										'', 'username',
+										'','usernameToDelete',
+										'usernameToUpdate', "", '{% url 'manuallyManageStudent' %}'
+									);
+								$('#freeUsersTable_professor_dash').empty();
+								$('#freeUsersTable_professor_dash').append(fuTable);
+
+								$('#selectedUsersTable_professor_dash').empty();
+								$('#selectedUsersTable_professor_dash').append(suTable);
+
+								
+								
+								
+								var odpipUsrTable = generateODPIPUsrTableFromArray(
+												currSelectedUsers, 'modal-button', 'is-info'
+											);
+								$('#cstUsersODPIPTable_professor_dash').empty();
+								$('#cstUsersODPIPTable_professor_dash').append(odpipUsrTable);
+								
+								var odpipTypeTable = generateODPIPTypeTableFromArray(
+												'is-dark', 'is-success', 'is-danger'
+											);
+								$('#cstTypeODPIPTable_professor_dash').empty();
+								$('#cstTypeODPIPTable_professor_dash').append(odpipTypeTable);
+									
+								
+								$('#cstODPIPTable_professor_dash').empty();
+								usersSelectedDOMElems = [];
+								currConstraintType = 'joint';
+								var odpipCstTable = generateODPIPCstTableFromArray(
+												currCsts, 'is-info'
+											);
+								$('#cstODPIPTable_professor_dash').append(odpipCstTable);
+								
+								
+
+								var currFreeTasks = unformattedStringToObj(newServerState.currFreeTasks);
+								var currSelectedTasks = unformattedStringToObj(newServerState.currSelectedTasks);
+								
+
+								var currFreeTaskIds = [];
+								var currSelectedTaskIds = [];
+
+								for (i=0; i< currFreeTasks.length; i++){
+									currFreeTaskIds[i] = currFreeTasks[i].taskId;
+								}
+								for (i=0; i< currSelectedTasks.length; i++){
+									currSelectedTaskIds[i] = currSelectedTasks[i].taskId;
+								}
+
+								ftTable = generateDashTableFromArray(
+									true, currFreeTaskIds, currFreeTaskIds, 'is-danger', 'fa-arrow-circle-right', 
+									'{% url 'addSelectedTask' %}', 'taskId',
+									'{% url 'taskRegistration' %}', 'taskId',
+									'{% url 'taskDeletion' %}','taskIdToDelete',
+									'taskIdToUpdate', editElementUrlTask='{% url 'taskUpdate' %}', ""
+								);
+
+								stTable = generateDashTableFromArray(
+									false, currSelectedTaskIds, currSelectedTaskIds, 'is-danger', 'fa-arrow-circle-left', 
+									'{% url 'removeSelectedTask' %}', 'taskId',
+									'{% url 'taskRegistration' %}', 'taskId',
+									'{% url 'taskDeletion' %}','taskIdToDelete',
+									'taskIdToUpdate', editElementUrlTask='{% url 'taskUpdate' %}', ""
+								);
+
+								$('#freeTasksTable_professor_dash').empty();
+								$('#freeTasksTable_professor_dash').append(ftTable);
+
+								$('#selectedTasksTable_professor_dash').empty();
+								$('#selectedTasksTable_professor_dash').append(stTable);
+
+								newServerState.studentsStates = JSON.parse(studentsStates);
+								currServerState = newServerState;
+
+								
+								$('#groupsPlot_professor_dash').empty();
+								
+								if (currServerState.currAdaptationState != undefined && currServerState.currAdaptationState != [])
+// 									console.log(currServerState.currAdaptationState)
+									buildPlots(currServerState);
+								
+								
+							}
+						});
 					}
-				);
+			}
+		);
 		};
 
 		fetchServerData();
@@ -816,7 +1921,13 @@ crossorigin='anonymous'></script>
 
 
 		var buildPlots = function(currServerState){
-			buildGroupsPlot(false, 'groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
+			buildGroupsPlot(
+				false, 
+				'groupsPlot_professor_dash', 
+				currServerState.currAdaptationState, 
+				currServerState.studentsStates,
+				$('input[name="studentPerformanceScaleType"]:checked').val()
+			);
 
 			$('#interactionsProfilePlot_professor_dash').empty()
 			$('#learningStatePlot_professor_dash').empty()
@@ -859,6 +1970,7 @@ crossorigin='anonymous'></script>
 					{ "name": "Engagement" , "value": avgChars[1] }
 				]
 			);
+			updateGroupsPlotScaleCallback();
 		}
 
 		var startAdaptation = function(){
@@ -868,13 +1980,12 @@ crossorigin='anonymous'></script>
 					dataType: 'json',
 					complete:
 					function(newServerState){
-						// $('#loadAndStartAdaptation_professor_dash').removeClass("is-loading");
-						// $('#forceStartAdaptation_professor_dash').removeClass("is-loading");
-
 						$('#groupsPlot_professor_dash').empty();
 						if(newServerState.responseText.localeCompare("error")==0){
-							$('#adaptationError_professor_dash').show(500);
-							setTimeout(function(){ $('#adaptationError_professor_dash').hide(500); }, 5000);
+							generatePlotErrorMessage(
+								'Adaptation Error! Please verify if enough students are selected. Maintaining old state...',
+								3000
+							);
 							currServerState = "error";
 							return;
 						}
@@ -888,15 +1999,25 @@ crossorigin='anonymous'></script>
 
 
 		var loadAndStartAdaptation = function(){
+			
+			var processedCtrs = processedCsts(currCsts)
+			
 			newAdaptationConfig = {
 				'selectedGenAlgId': $('#selectedGenAlgId_professor_dash').text(), 
 				'selectedRegAlgId': $('#selectedRegAlgId_professor_dash').text(),
 
 
 				'numNNs': $('#numNNsId_professor_dash').val(),
+				
+				'synergiesNumNNs': $('#synergiesNumNNsId_professor_dash').val(),
+				'synergiesQualityWeightsAb': $('#synergiesQualityWeightsAbId_professor_dash').val(),
+				'synergiesQualityWeightsEng': $('#synergiesQualityWeightsEngId_professor_dash').val(),
+				
 				// 'minNumberOfPlayersPerGroup': $('#minNumberOfPlayersPerGroupId_professor_dash').val(),
 				// 'maxNumberOfPlayersPerGroup': $('#maxNumberOfPlayersPerGroupId_professor_dash').val(),
 				'preferredNumberOfPlayersPerGroup': $('#preferredNumberOfPlayersPerGroupId_professor_dash').val(),
+				'minNumberOfPlayersPerGroup': $('#groupSizeSlider_professor_dash').slider("values", 0),
+				'maxNumberOfPlayersPerGroup': $('#groupSizeSlider_professor_dash').slider("values", 1),
 				'qualityWeightsAb': $('#qualityWeightsAbId_professor_dash').val(),
 				'qualityWeightsEng': $('#qualityWeightsEngId_professor_dash').val(),
 				'playerWindow': $('#playerWindowId_professor_dash').val(),
@@ -913,6 +2034,9 @@ crossorigin='anonymous'></script>
 				'numberOfEvolutionsPerIteration': $('#numberOfEvolutionsPerIteration_professor_dash').val(),
 				'numChildrenPerIteration': $('#numChildrenPerIteration_professor_dash').val(),
 				'numSurvivors': $('#numSurvivors_professor_dash').val(),
+				
+				'jointPlayerConstraints': processedCtrs['joint'],
+				'separatedPlayerConstraints': processedCtrs['separated'],
 
 
 
@@ -992,12 +2116,42 @@ crossorigin='anonymous'></script>
 		$('#rebuildPlot_professor_dash').click(function(){
 			$('#groupsPlot_professor_dash').empty();
 			if(currServerState.currAdaptationState != undefined && currServerState.currAdaptationState.groups != undefined){
-				buildGroupsPlot(false, 'groupsPlot_professor_dash', currServerState.currAdaptationState, currServerState.studentsStates);
+				buildGroupsPlot(
+					false, 
+					'groupsPlot_professor_dash', 
+					currServerState.currAdaptationState, 
+					currServerState.studentsStates,
+					$('input[name="studentPerformanceScaleType"]:checked').val()
+				);
 			}
 		})
+
+		$('#advanceSimulationButton_professor_dash').click(function(){
+			$.ajax(
+			{
+				type: 'POST',
+				url: '/advanceSimWeek/'
+			}
+			);
+		});
+
+		$('#resetSimulationButton_professor_dash').click(function(){
+			$.ajax(
+			{
+				type: 'POST',
+				url: '/resetSimWeek/'
+			}
+			);
+		});
+		
+		$("#closeSimulationButton_professor_dash").parent().parent().parent().parent().parent().parent().find(".panel-block").show();
+    	$("#closeSimulationButton_professor_dash").click(function(){
+        	var content = $(this).parent().parent().parent().parent().parent().parent().find(".panel-block").hide(350);
+		});
 	});
 	
 
 
 </script>
+
 </html>

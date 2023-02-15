@@ -1,3 +1,4 @@
+from email.policy import default
 import os
 import uuid
 from uuid import uuid4
@@ -39,6 +40,14 @@ class ModelAuxMethods():
         return wrapper
 
 
+
+# class Subject(models.Model):
+#     subjectId = models.CharField(max_length=1020,primary_key=True)
+#     description = models.TextField(max_length=1020)
+#     studentIds = models.CharField(max_length=1020)
+
+
+
 class UserProfile(models.Model):
 
     # included from 
@@ -46,22 +55,27 @@ class UserProfile(models.Model):
   
     user = models.OneToOneField(User, 
         on_delete=models.CASCADE,
-        primary_key=True)
+        primary_key=True,
+        db_constraint=False)
 
-    role = MultiSelectField(choices=ROLE, max_choices=1)
+    role = MultiSelectField(choices=ROLE, max_choices=1, max_length=9)
     
-    fullName = models.CharField(max_length=255)
+    fullName = models.CharField(max_length=1020)
     age = models.IntegerField()
-    gender = MultiSelectField(choices=GENDER, max_choices=1)
-    description = models.TextField(max_length=255)
+    gender = MultiSelectField(choices=GENDER, max_choices=1, max_length=6)
+    description = models.TextField(blank=True, max_length=3072)
 
 
-    currState = models.CharField(max_length=255)
-    pastModelIncreasesDataFrame = models.CharField(max_length=255)
-    preferences = models.CharField(max_length=255)
+    currState = models.TextField(max_length=3072)
+    pastModelIncreasesDataFrame = models.TextField(max_length=3072)
+    preferences = models.CharField(max_length=1020)
+
+    
+    # subjectIds = models.CharField(max_length=1020)
+    grade = models.CharField(max_length=1020)
 
 
-    avatar = models.ImageField(upload_to=ModelAuxMethods.pathAndRename('images/userAvatars/'))
+    avatar = models.ImageField(upload_to=ModelAuxMethods.pathAndRename('images/userAvatars/'), default='images/userAvatars/avatarPH.png')
 
 
     def __str__(self):
@@ -71,13 +85,13 @@ class UserProfile(models.Model):
 
 
 class Task(models.Model):
-    taskId = models.CharField(max_length=255,primary_key=True)
+    taskId = models.CharField(max_length=100,primary_key=True)
 
-    creator = models.CharField(max_length=255)
-    creationTime = models.CharField(max_length=255)
-    description = models.TextField(max_length=255)
+    creator = models.CharField(max_length=1020)
+    creationTime = models.CharField(max_length=1020)
+    description = models.TextField(blank=True, max_length=3072)
     minReqAbility = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
-    profile = models.CharField(max_length=255)
+    profile = models.CharField(max_length=1020)
     
     profileWeight = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
     difficultyWeight = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
@@ -87,22 +101,37 @@ class Task(models.Model):
     finalDate = models.DateField()
 
 
-    files = models.FileField(upload_to=ModelAuxMethods.pathAndRename('taskFiles/'))
+    files = models.FileField(upload_to=ModelAuxMethods.pathAndRename('taskFiles/'), default='taskFiles/placeholder')
 
 
     def __str__(self):
         return self.taskId
 
 class ServerState(models.Model):
-    currAdaptationState = models.CharField(max_length=255, default="[]")
+    currAdaptationState = models.TextField(max_length=3072, default="[]")
 
-    currSelectedUsers = models.CharField(max_length=255, default="[]")
-    currFreeUsers = models.CharField(max_length=255, default="[]")
+    currSelectedUsers = models.TextField(max_length=3072, default="[]")
+    currFreeUsers = models.TextField(max_length=3072, default="[]")
 
-    currSelectedTasks = models.CharField(max_length=255, default="[]")
-    currFreeTasks = models.CharField(max_length=255, default="[]")
+    currSelectedTasks = models.TextField(max_length=3072, default="[]")
+    currFreeTasks = models.TextField(max_length=3072, default="[]")
 
-    readyForNewActivity = models.CharField(max_length=255, default="false")
+    readyForNewActivity = models.CharField(max_length=1020, default="false")
 
-    initDate = models.CharField(max_length=255, default="[]")
-    finalDate = models.CharField(max_length=255, default="[]")
+    initDate = models.CharField(max_length=1020, default="[]")
+    finalDate = models.CharField(max_length=1020, default="[]")
+    
+    
+    simIsLinkShared = models.BooleanField(default=False)
+    simIsTaskCreated = models.BooleanField(default=False)
+    simWeekOneUsersEvaluated = models.BooleanField(default=False)
+    simSimulateReaction = models.BooleanField(default=False)
+    simWeekFourDoneOnce = models.BooleanField(default=False)
+
+    simulationWeek = models.IntegerField(default=0)
+    simStudentToEvaluate = models.CharField(max_length=1020)
+    simUnavailableStudent = models.CharField(max_length=1020)
+    simStudentX = models.CharField(max_length=1020)
+    simStudentY = models.CharField(max_length=1020)
+    simStudentW = models.CharField(max_length=1020)
+    simStudentZ = models.CharField(max_length=1020)

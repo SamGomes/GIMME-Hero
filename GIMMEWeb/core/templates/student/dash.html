@@ -10,7 +10,7 @@
 				<div class='has-text-centered; slider-content animated zoomIn'>
 					<div>
 						<p class='title is-1 main-text'>Welcome to GIMME-Web, {{request.session.userId}}</p>
-						<p class='subtitle is-4 main-text'>A sophisticated Group Interactions Management Tool</p>
+						<p class='subtitle is-4 main-text'>A Sophisticated Group Interactions Management Tool</p>
 					</div>
 				</div>
 			</div>
@@ -18,6 +18,26 @@
 	</div>
 
 	<div id='dashboard'>
+
+		<section class='section'>
+				<div class='panel animated zoomIn'>
+					<div class='panel-heading'>
+						<div class='columns is-mobile is-vcentered'>
+							<div class='column'>
+								<p>Your Learning State</p>
+								<div class='is-pulled-right'>
+									<div class='button minimizerButton'></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class='panel-block' style='display: block;'>
+						<div class='columns is-mobile is-centered is-mobile'>
+							<div class='column is-9' id='student_learningStatePlot'></div>
+						</div>
+					</div>
+				</div>
+			</section>
 
 		<section class='section' id='student_currentClassInfo'>
 			<div class='panel animated zoomIn'>
@@ -97,7 +117,7 @@
 				</div>
 			</section>
 
-			<section class='section'>
+			<!-- <section class='section'>
 				<div class='panel animated zoomIn'>
 					<div class='panel-heading'>
 						<div class='columns is-mobile is-vcentered'>
@@ -113,10 +133,6 @@
 						<div class='columns is-mobile is-centered is-mobile'>
 							<div class='column is-9' id='student_learningStatePlot'></div>
 						</div>
-
-						<!-- <div class='columns is-mobile is-centered is-mobile'>
-							<img class='column is-2' id='student_learningStatePlotLoadingImage' src="{% static "media/images/loading.gif" %}"></img>
-						</div> -->
 					</div>
 				</div>
 			</section>
@@ -137,13 +153,9 @@
 						<div class='columns is-mobile is-centered is-mobile'>
 							<div class='column is-5' id='student_interactionsProfilePlot'></div>
 						</div>
-
-						<!-- <div class='columns is-mobile is-centered is-mobile'>
-							<img class='column is-2' id='student_interactionsProfilePlotLoadingImage' src="{% static "media/images/loading.gif" %}"></img>
-						</div> -->
 					</div>
 				</div>
-			</section>
+			</section> -->
 			{% csrf_token %}
 
 		</div>
@@ -198,7 +210,7 @@
 
 	    	var oldGroup = {};
 	    	var oldTasks = {};
-	    	var oldChars = {};
+	    	var oldGrade = {};
 
 	    	var updateData = function(){
 				
@@ -267,28 +279,30 @@
 						}	
 
 
-						if(objChanged(oldChars, myInfo.characteristics)){
-		    				oldChars = myInfo.characteristics;
+						if(objChanged(oldGrade, myInfo.grade)){
+		    				oldGrade = myInfo.grade;
 
 							$('#student_learningStatePlot').empty();
 							buildStatePlot('student_learningStatePlot', 
 								[
-									{ 'name': 'Ability' , 'value': myInfo.characteristics.ability },
-									{ 'name': 'Engagement' , 'value': myInfo.characteristics.engagement }
-								]
+									{ 'name': 'Grade', 'value': myInfo.grade }
+									// { 'name': 'Ability' , 'value': myInfo.characteristics.ability },
+									// { 'name': 'Engagement' , 'value': myInfo.characteristics.engagement }
+								],
+								0,20
 							);
 
 
-							$('#student_interactionsProfilePlot').empty()
-							buildScatterInteractionPlot('student_interactionsProfilePlot', 
-								[
-									// { 'focus': -3 , 'challenge': -3 , 'timestamp': 2 },
-									// { 'focus': 3, 'challenge': 3 , 'timestamp': 1 },
-									// { 'focus': 3 , 'challenge': -3 , 'timestamp': 4 },
-									// { 'focus': -3, 'challenge': 3 , 'timestamp': 8 }
-									{ 'focus': myInfo.groupProfile['Focus']*6.0 - 3.0 , 'challenge': myInfo.groupProfile['Challenge']*6.0 - 3.0 , 'timestamp': 9 }
-								]
-							);
+							// $('#student_interactionsProfilePlot').empty()
+							// buildScatterInteractionPlot('student_interactionsProfilePlot', 
+							// 	[
+							// 		// { 'focus': -3 , 'challenge': -3 , 'timestamp': 2 },
+							// 		// { 'focus': 3, 'challenge': 3 , 'timestamp': 1 },
+							// 		// { 'focus': 3 , 'challenge': -3 , 'timestamp': 4 },
+							// 		// { 'focus': -3, 'challenge': 3 , 'timestamp': 8 }
+							// 		{ 'focus': myInfo.groupProfile['Focus']*6.0 - 3.0 , 'challenge': myInfo.groupProfile['Challenge']*6.0 - 3.0 , 'timestamp': 9 }
+							// 	]
+							// );
 						}
 
 					}

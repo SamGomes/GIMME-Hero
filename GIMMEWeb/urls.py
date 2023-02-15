@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, re_path
-from django.conf.urls import include, url
+from django.conf.urls import include
 from GIMMEWeb.core.views import Views
 
 from django.conf import settings
@@ -11,6 +11,7 @@ urlpatterns = [
     re_path(r'^home/$', Views.home, name='home'),
 
     re_path(r'^initServer/$', Views.initServer, name='initServer'),
+    re_path(r'^simulateReaction/$', Views.simulateReaction, name='simulateReaction'),
 
     re_path(r'^dash/$', Views.dash, name='dash'),
 
@@ -53,7 +54,21 @@ urlpatterns = [
     re_path(r'^uploadTaskResults/', Views.uploadTaskResults, name='uploadTaskResults'),
     
     re_path(r'^manuallyChangeStudentGroup/', Views.manuallyChangeStudentGroup, name='manuallyChangeStudentGroup'),
-    re_path(r'^manuallyManageStudent/', Views.manuallyManageStudent, name='manuallyManageStudent')
+    re_path(r'^manuallyManageStudent/', Views.manuallyManageStudent, name='manuallyManageStudent'),
+    
+    
+    re_path(r'^fetchSynergiesTable/', Views.fetchSynergiesTable, name='fetchSynergiesTable'),
+    re_path(r'^saveSynergiesTable/', Views.saveSynergiesTable, name='saveSynergiesTable'),
+
+    re_path(r'^resetSimWeek/', Views.resetSimWeek, name='resetSimWeek'),
+    re_path(r'^advanceSimWeek/', Views.advanceSimWeek, name='advanceSimWeek'),
+    re_path(r'^shareLinkSim/', Views.shareLinkSim, name='shareLinkSim'),
+    re_path(r'^taskRegistrationSim/', Views.taskRegistrationSim, name='taskRegistrationSim'),
+    re_path(r'^evaluateSim/', Views.evaluateSim, name='evaluateSim'),
+
+
+
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

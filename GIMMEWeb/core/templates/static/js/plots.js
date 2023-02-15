@@ -31,91 +31,109 @@ var responsivefy = function(svg, targetWidthClamp, leftPaddingRatio) {
     }
 }
 
-var buildStatePlot = function(canvasId, data){
-
-    var canvas = d3.select('#'+canvasId);
-    var canvasContainer = canvas.node().parentNode;
-
-    var width = 900;
-    var height = 150;
-
-    var margin = {
-        top: height * 0.1,
-        right: width * 0.1,
-        bottom: height * 0.1,
-        left: width * 0.3
-    };
-
-    var svg = canvas.append('svg');
-
-    svg.attr('width', width + margin.left + margin.right)
-        .attr('display', 'block')
-        .attr('margin', 'auto')
-        .attr('height', height + margin.top + margin.bottom + 200)
-        .call(responsivefy, 1000, 0.15);
 
 
-    var maxValue = Math.max(data[0].value, data[1].value);
-    var x = d3.scaleLinear()
-        .range([margin.left, width])
-        .domain([0, maxValue + 0.5]);
-
-    var y = d3.scaleBand()
-        .range([margin.bottom, height])
-        .domain(data.map(function(d) {
-            return d.name;
-        }));
-
-    var xAxis = d3.axisBottom(x)
-        .tickSize(maxValue / 5.0);
-
-    var yAxis = d3.axisLeft(y)
-        .tickSize(0);
 
 
-    var bars = svg.selectAll('.bar')
-        .data(data)
-        .enter()
-        .append('g');
 
 
-    bars.append('rect')
-        .attr('class', 'bar')
-        .attr('y', function (d) {
-            return y(d.name) + y.bandwidth()*3/16;
-        })
-        .attr('height', y.bandwidth()*1/2)
-        .attr('x', margin.left)
-        .attr('width', function (d) {
-            return  x(d.value) - margin.left;
-        })
-        .attr('fill', '#50C2E3');
-
-    var gy = svg.append('g')
-        .attr('class', 'y axis label')
-        .call(yAxis) 
-        .attr('transform', 'translate(' + margin.left + ',0)')
-        .style('font-size','30px');
 
 
-    var gx = svg.append('g')
-        .attr('class', 'x axis')
-        .call(xAxis)
-        .attr('transform', 'translate(0,' + height + ')')
-        .style('font-size','30px');
+groupsPlotNodeElements = undefined;
+groupsPlotScaleType = undefined;
+
+// used to correctly generate user colors
+var abMax = 0;
+var engMax = 0; 
+
+var abMin = Infinity;
+var engMin = Infinity; 
+
+var generateGroupColor = function(profile) {
+    var focus = profile.dimensions.Focus;
+    var challenge = profile.dimensions.Challenge;
+
+    if (focus >= 0 && focus < 0.33){
+        if (challenge >= 0 && challenge < 0.33){
+            return '#dd6c02'
+        }
+        else if (challenge >= 0.33 && challenge < 0.66){
+            return '#ddb502'
+        }
+        else if (challenge >= 0.66 && challenge <= 1.0){
+            return '#b5dd02'
+        }
+    }
+    else if (focus >= 0.33 && focus < 0.66){
+        if (challenge >= 0 && challenge < 0.33){
+            return '#dd1402'
+        }
+        else if (challenge >= 0.33 && challenge < 0.66){
+            return '#a3a1a1'
+        }
+        else if (challenge >= 0.66 && challenge <= 1.0){
+            return '#19c151'
+        }
+    }
+    else if (focus >= 0.66 && focus <= 1.0){
+        if (challenge >= 0 && challenge < 0.33){
+            return '#89150b'
+        }
+        else if (challenge >= 0.33 && challenge < 0.66){
+            return '#cd7dce'
+        }
+        else if (challenge >= 0.66 && challenge <= 1.0){
+            return '#7724d6'
+        }
+    }
+    return '#a3a1a1'
 }
 
 
-var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates){
 
-    // used to correctly generate user colors
-    var abMax = 0;
-    var engMax = 0; 
+var generatePlayerColor = function(node){
+    var userChar = node.userState.characteristics;
+    
+    //groupsPlotScaleType == 'absolute'
+    var abRatio = userChar.ability;
+    var engRatio = userChar.engagement;
+    if(groupsPlotScaleType =='relative'){
+        abRatio = abMax > 0.0? ((userChar.ability - abMin) / (abMax - abMin)): 0.0;
+        engRatio = engMax > 0.0? ((userChar.engagement - engMin) / (engMax - engMin)): 0.0;
+    }
 
-    var abMin = Infinity;
-    var engMin = Infinity; 
+    ratio = (abRatio + engRatio) / 2.0;
 
+    return d3.scaleLinear()
+    .domain([0.0, 0.5, 1.0])
+    .range(['#FF0000', '#FFFF00', '#00FF00'])(ratio)
+}
+    
+var updateGroupsPlotNodeColors = function(canvasId, newScaleType){
+    groupsPlotScaleType = newScaleType;
+    
+    var nodes = groupsPlotNodeElements._groups[0];
+    for(var i=0; i<nodes.length; i++){
+        d3.select(nodes[i])
+            .transition()
+            .duration(1000)
+            .attr('fill', function(){
+                    return nodes[i].isForStudent? colors[0]: generatePlayerColor(nodes[i].__data__);
+                });
+    }
+    
+}
+    
 
+var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleType){
+    abMax = 0;
+    engMax = 0; 
+
+    abMin = Infinity;
+    engMin = Infinity; 
+    
+    groupsPlotScaleType = scaleType;
+    
     $('#adaptationIssues_professor_dash').hide();
     $('#adaptationIssuesText_professor_dash').html('');
 
@@ -163,62 +181,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
     }
 
 
-    var generateGroupColor = function(profile) {
-        var focus = profile.dimensions.Focus;
-        var challenge = profile.dimensions.Challenge;
-
-        if (focus >= 0 && focus < 0.33){
-            if (challenge >= 0 && challenge < 0.33){
-                return '#dd6c02'
-            }
-            else if (challenge >= 0.33 && challenge < 0.66){
-                return '#ddb502'
-            }
-            else if (challenge >= 0.66 && challenge <= 1.0){
-                return '#b5dd02'
-            }
-        }
-        else if (focus >= 0.33 && focus < 0.66){
-            if (challenge >= 0 && challenge < 0.33){
-                return '#dd1402'
-            }
-            else if (challenge >= 0.33 && challenge < 0.66){
-                return '#a3a1a1'
-            }
-            else if (challenge >= 0.66 && challenge <= 1.0){
-                return '#19c151'
-            }
-        }
-        else if (focus >= 0.66 && focus <= 1.0){
-            if (challenge >= 0 && challenge < 0.33){
-                return '#89150b'
-            }
-            else if (challenge >= 0.33 && challenge < 0.66){
-                return '#cd7dce'
-            }
-            else if (challenge >= 0.66 && challenge <= 1.0){
-                return '#7724d6'
-            }
-        }
-        return '#a3a1a1'
-    }
     
-
-
-    var generatePlayerColor = function(node){
-
-        var userChar = node.userState.characteristics;
-        abRatio = abMax > 0.0? ((userChar.ability - abMin) / (abMax - abMin)): 0.0;
-        engRatio = engMax > 0.0? ((userChar.engagement - engMin) / (engMax - engMin)): 0.0;
-
-
-        ratio = (abRatio + engRatio) / 2.0;
-
-        return d3.scaleLinear()
-        .domain([0.0, 0.5, 1.0])
-        .range(['#FF0000', '#FFFF00', '#00FF00'])(ratio)
-
-    }
 
 
     // from: https://stackoverflow.com/questions/35969656/how-can-i-generate-the-opposite-color-according-to-current-color
@@ -275,28 +238,23 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
         return (Math.pow(vec1.ability - vec2.ability, 2) + Math.pow(vec1.engagement - vec2.engagement, 2));
     }
 
-    var resizeCanvas = function(canvas, aspect){
-        var targetWidth = canvasContainer.getBoundingClientRect().width;
-        height = canvasContainer.getBoundingClientRect().height;
-        canvas.attr('width', targetWidth);
-        canvas.attr('height', targetWidth/ aspect);
-    }
-
     svg = d3.select('#'+canvasId).append('svg');
 
     var canvas = svg;
     var canvasContainer = canvas.node().parentNode;
-
     width = canvasContainer.getBoundingClientRect().width;
-
+ 
     if(isForStudent){
         aspect = 2.5 / 1.0;
     }else{
         aspect = 2.5/ 1.5;
     }
-
-    resizeCanvas(canvas, aspect);
-
+   
+    height = width/ aspect;
+    
+    canvas.attr('width', width);
+    canvas.attr('height', height);
+    
 
     var userNodes = [];
     var groupIndicatorNodes = [];
@@ -304,7 +262,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
 
     var currPlotIndex = 0;
 
-    svg.call(responsivefy,5000,0);
+    svg.call(responsivefy, 5000, 0);
 
     for (i=0; i<data.groups.length; i++){
         var group = data.groups[i];
@@ -315,7 +273,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
             
             for(var j=0;j<group.length; j++){
                 var userId = group[j];
-                userState = selectedUsersStates[userId];
+                userState = userStates[userId];
                 userNodes.push({'plotIndex': currPlotIndex++, 'userId': userId, 'userState': unformattedStringToObj(userState), 'groupId': i, 'centerOfMass': groupCenterOfMass});
             }
             colors[i] = "#778caa";
@@ -329,7 +287,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
             
             for(var j=0;j<group.length; j++){
                 var userId = group[j];
-                userState = selectedUsersStates[userId];
+                userState = userStates[userId];
                 userNodes.push({'plotIndex': currPlotIndex++, 'userId': userId, 'userState': unformattedStringToObj(userState), 'groupId': i, 'groupCharacteristics': avgCharacteristics, 'centerOfMass': groupCenterOfMass});
             }
             colors[i] = generateGroupColor(profile);
@@ -375,11 +333,15 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
       return num <= min ? min : num >= max ? max : num;
     }
 
+    
+    
+    
     var nodeElements =
         svg.append('g')
             .selectAll('circle')
             .data(userNodes)
-            .enter().append('circle')
+            .enter()
+            .append('circle')
             .attr('r', '1%')
             .each(function(node){
                 //update caps before treating nodes for print
@@ -405,19 +367,24 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
                     return isForStudent? (data.myStudentId == node.userId? "red": colors[0]): colors[node.groupId];
                 })
             .attr('stroke-width', '0.3%');
+         
+    groupsPlotNodeElements = nodeElements;
+            
+    var nodeTextElements = 
+        svg.append('g')
+        .selectAll('text')
+        .data(userNodes)
+        .enter()
+        .append('text')
+        .attr('dy', 7)
+//         .attr('class', 'fancy-plot-text')
+        .attr('font-family', 'Calibri,sans-serif')
+        .attr('text-anchor', 'middle')
+        .style("stroke-width", 0.5)
+        .style("stroke", "black")
+        .style("fill", "white")
+        .text('');
 
-
-    // var textElements =
-    //     svg.append('g')
-    //       .selectAll('text')
-    //       .data(userNodes)
-    //       .enter().append('text')
-    //         .text(function (d) {
-    //             return d.userId.toString();
-    //         })
-    //         .attr('font-size', 10)
-    //         .attr('dx', -5)
-    //         .attr('dy', 5);
 
     var groupInfoTooltips =
         svg.append('g')
@@ -489,7 +456,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
                 .append('rect')
                 .attr('x', x + 140)
                 .attr('y', y - 5)
-                .attr('width', 180)
+                .attr('width', 250)
                 .attr('height', 20)
                 .attr('fill', function(node){ return 'white'; })
                 .attr('stroke', 'black');
@@ -513,6 +480,203 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
     };
 
 
+
+    
+    
+    var mouseX = 0;
+    var mouseY = 0;
+
+    var studentForChange = undefined;
+    var groupForChange = undefined;
+
+    var resetChangeState = function(){
+        nodeElements.attr('r', '1%');
+
+        studentForChange = undefined;
+        groupForChange = undefined;
+
+        d3.select('#'+canvasId).select('line').remove();
+    }
+    
+    
+    var canNodeBeExpanded = function(selection, node){
+        return (node.groupId == selection.groupId || (studentForChange != undefined && node.userId == studentForChange.userId))
+    };
+    
+//     var mouseOverCallbacks = 0;
+   
+    var expandNodeViz = function(d){
+//         if(mouseOverCallbacks == 0){
+//             simulation.alpha(0.1).restart();
+//         }
+//         mouseOverCallbacks++;
+        
+        $(groupIndicators._groups[0])
+            .each(function(i,e){
+                d3.select(e).attr('opacity', node => canNodeBeExpanded(d, node)? '1.0': '0.2');
+            });
+        $(nodeElements._groups[0])
+            .each(function(i,e){
+                d3.select(e).attr('r', node => canNodeBeExpanded(d, node)? '1.5%': '1%');
+                d3.select(e).attr('opacity', node => canNodeBeExpanded(d, node)? '1.0': '0.2');
+            });
+        $(nodeTextElements._groups[0])
+            .each(function(i,e){
+                d3.select(e).text(node => {
+                    if(canNodeBeExpanded(d, node)){
+                        var fullName = node.userState.fullName.split(' ');
+                        var nameInitials = '';
+                        if(fullName.length == 1){
+                            nameInitials = fullName[0][0];
+                        }else{
+                            nameInitials = fullName[0][0] + fullName[fullName.length - 1][0];
+                        }
+                        return nameInitials;
+                    }
+                    else{
+                        return '';
+                    }
+                    
+                });
+            });
+    };
+    
+    var contractNodeViz = function(d){
+        if(studentForChange!=undefined){
+            return;
+        }
+        
+        
+        $(groupIndicators._groups[0])
+            .each(function(i,e){
+                d3.select(e).attr('opacity', '1.0');
+            });
+            
+        $(nodeElements._groups[0])
+            .each(function(i,e){
+                d3.select(e).attr('r', '1%');
+                d3.select(e).attr('opacity', '1.0');
+            });
+            
+        $(nodeTextElements._groups[0])
+            .each(function(i,e){
+                d3.select(e).text('');
+            });
+    };
+
+    
+    
+    
+    
+    
+    if(!isForStudent){
+        groupIndicators.on('mouseover', function(d){
+            d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'visible');
+            expandNodeViz(d);
+            
+            if(studentForChange != undefined){
+
+                thisElem = d3.select(this);
+                
+                groupForChange = d;
+
+                d3.select('#' + canvasId).select('line')
+                    .attr('x2', thisElem.attr('cx'))
+                    .attr('y2', thisElem.attr('cy'));
+                
+               
+            }
+            d3.event.stopPropagation();
+            
+        });
+        groupIndicators.on('mouseout', function(d){
+            d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'hidden');
+            contractNodeViz(d);
+            d3.event.stopPropagation();
+        });
+        
+        d3.select('#'+canvasId).on('click',function(d){
+            resetChangeState();
+            contractNodeViz(d);
+            d3.event.stopPropagation();
+        });
+
+    }
+
+
+    
+
+    // define arrow points paths
+    var defs = svg.append('defs');
+
+    defs.append('marker')
+        .attr('id', 'arrow')
+        .attr('viewBox', '0 -10 20 20')
+        .attr('refX', 10)
+        .attr('refY', 0)
+        .attr('markerWidth', 6)
+        .attr('markerHeight', 6)
+        .attr('orient', 'auto')
+        .attr('stroke', 'black')
+        .attr('fill', 'black')
+
+        .append('path')
+            .attr('d', 'M0,-5 L10,0 L0,5')
+            .attr('class', 'arrowHead');
+
+
+
+
+
+    // only professors can perform changes in groups
+    if(!isForStudent){
+        
+        var nodeClickCallback = function(d, i){
+            resetChangeState();
+            
+            var elem = nodeElements._groups[0][i];
+            
+            var coordinates = d3.mouse(elem);
+            var mouseX = coordinates[0];
+            var mouseY = coordinates[1];
+
+            var thisElem = d3.select(elem);
+            thisElem.attr('r', '2%');
+            studentForChange = d;
+            
+            d3.select(elem.parentNode.parentNode)
+
+                .append('line')
+                .attr('class', 'arrow')
+//                 .attr('marker-start', 'url(#arrowFront)')
+                .attr('marker-end', 'url(#arrow)')
+                .attr('x1', thisElem.attr('cx'))
+                .attr('y1', thisElem.attr('cy'))
+                .attr('x2', mouseX)
+                .attr('y2', mouseY)
+                .attr('stroke-width', '0.5%')
+                .attr('stroke-dasharray', '2%')
+                .attr('stroke', 'black');
+            
+            d3.event.stopPropagation();
+        }
+        
+        nodeTextElements.on('click', function(d, i){
+            nodeClickCallback(d, i);
+        });
+        nodeElements.on('click', function(d){ 
+            nodeClickCallback(d, i);
+        });
+    }
+
+    
+    
+
+    
+    
+    
+    
+    
     // adapted from: https://stackoverflow.com/questions/12115691/svg-d3-js-rounded-corner-on-one-corner-of-a-rectangle
     // Returns path data for a rectangle with rounded right corners.
     // The top-left corner is ⟨x,y⟩.
@@ -533,7 +697,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
     groupInfoTooltips
         .append('path')
         .attr('d', function(d) {
-          return rightRoundedRect(15, 15, 600, 350, 7);
+          return rightRoundedRect(15, 15, 600, 310, 7);
         })
         .attr('fill', function(node){
                                 var baseColor = colors[node.groupId].split('#')[1];
@@ -541,16 +705,18 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
                                 return '#' +  baseColor + transparency.toString(16);
                             })
         .attr('stroke', 'gray')
-        .attr('stroke-width', '0.15%');
+        .attr('stroke-width', '0.15%')
+        .attr('z-index','7000');
     
 
+    var warningMsg = 'Could not compute task for group(s) ';
+    var displayWarn = false;
     groupInfoTooltips.each(function(originalNode){ 
 
         var currTooltip = d3.select(groupInfoTooltips._groups[0][originalNode.groupId]);
         if(originalNode.tasks == -1){
-            $('#adaptationIssuesText_professor_dash').html($('#adaptationIssuesText_professor_dash').html() + ('<br></br>Could not compute task for group '+node.groupId+'... Maybe no tasks are available?'));
-            $('#adaptationIssues_professor_dash').show(500);
-            setTimeout(function(){ $('#adaptationIssues_professor_dash').hide(500); }, 10000);
+            displayWarn = true;
+            warningMsg += originalNode.groupId + ',';
         }
         node = $.extend({}, originalNode); //performs a shallow copy
         node.tasks = originalNode.tasks == -1 ? '<No computed tasks>' : originalNode.tasks;
@@ -580,8 +746,6 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
                 dimensions[key] = Number((currD*6.0 - 3.0).toFixed(2));
             }
 
-
-
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
@@ -591,32 +755,45 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
             delete node.profile;
             delete node.characteristics;
         }
+        node['Task'] = node.tasks;
+        
         delete node.tasks;
         delete node.centerOfMass;
         delete node.groupId;
 
+
         htmlFromJSON(node, currTooltip, 0, 0, 0, 40, 0);
     });
-
-
-    if(!isForStudent){
-        groupIndicators.on('mouseover', function(d){ d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'visible');})
-                .on('mouseout', function(d){ d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'hidden');});        
+    if(displayWarn){
+        generatePlotWarningMessage(
+            warningMsg.slice(0, -2) + ' and ' + warningMsg.slice(-2, -1)  + '... Maybe no tasks are selected?',
+            3000
+        );
     }
-
-
+    
+    
+    
+    
+    
+    
     var userInfoTooltips =
         svg.append('g')
             .selectAll('text')
             .data(userNodes)
             .enter()
             .append('g')
-            .style('visibility','hidden');
+            .style('visibility','hidden')
+            .attr('z-index','7000');
 
     userInfoTooltips
         .append('path')
         .attr('d', function(d) {
-            return rightRoundedRect(5, 5, 600, 250, 7);
+            if(!isForStudent){
+                return rightRoundedRect(5, 5, 600, 280, 7);
+//                 return rightRoundedRect(5, 5, 600, 320, 7);
+            }else{
+                return rightRoundedRect(5, 5, 500, 200, 7);
+            }
         })
         .attr('fill', function(node){
             var baseColor = {}
@@ -654,178 +831,77 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
                 currC = characteristics[key]; 
                 characteristics[key] = Number((currC).toFixed(2));
             }
-            // for (i=0; i<dKeys.length; i++){
-            //     key = dKeys[i];
-            //     currD = dimensions[key]; 
-            //     dimensions[key] = Number((currD).toFixed(2));
-            // }
 
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
-
-            // node['Preferences Est'] = dimensions;
+            //node['(External) Grade'] = originalNode.userState.grade;
         }
 
         htmlFromJSON(node, currTooltip, 0, 0, 0, 50, 0);
     });
 
-
-    // nodeElements.on('click', function(d){ 
-    //     var elem = d3.select(userInfoTooltips._groups[0][d.plotIndex]); 
-    //     d3.select(d).style('stroke-width','3em');
-    //     elem.style('visibility') == 'visible'? elem.style('visibility', 'hidden') : elem.style('visibility', 'visible');});
-
-
-    // define arrow points paths
-    var defs = svg.append('defs');
-
-    defs.append('marker')
-        .attr('id', 'arrow')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 5)
-        .attr('refY', 0)
-        .attr('markerWidth', 4)
-        .attr('markerHeight', 4)
-        .attr('orient', 'auto')
-        .attr('stroke', 'gray')
-        .attr('fill', 'white')
-
-        .append('path')
-            .attr('d', 'M0,-5 L10,0 L0,5')
-            .attr('class', 'arrowHead');
-
-    defs.append('marker')
-        .attr('id', 'arrowFront')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 5)
-        .attr('refY', 0)
-        .attr('markerWidth', 4)
-        .attr('markerHeight', 4)
-        .attr('orient', 'auto')
-        .attr('stroke', 'gray')
-        .attr('fill', 'white')
-
-        .append('path')
-            .attr('d', 'M10,-5 L0,0 L10,5')
-            .attr('class', 'arrowHead');
-
-
-
-    var mouseX = 0;
-    var mouseY = 0;
-
-    var studentForChange1 = undefined;
-    var studentForChange2 = undefined;
-
-    var resetChangeState = function(){
-        nodeElements.attr('r', '1%');
-
-        studentForChange1 = undefined;
-        studentForChange2 = undefined;
-
-        d3.select('#'+canvasId).select('line').remove();
+    
+    var nodeMouseOverCallback = function(i){
+        node = userNodes[i];
+        expandNodeViz(node);
+        d3.select(userInfoTooltips._groups[0][node.plotIndex]).style('visibility', 'visible');
+        d3.event.stopPropagation();
     }
-
-    d3.select('#'+canvasId).on('dbclick',function(d){
-        resetChangeState();
-    });
-
-    // only professors can perform changes in groups
-    if(!isForStudent){
-        nodeElements.on('click', function(d){ 
-
-            if(studentForChange2 == undefined){
-
-                var coordinates = d3.mouse(this);
-                var mouseX = coordinates[0];
-                var mouseY = coordinates[1];
-
-                thisElem = d3.select(this);
-                thisElem.attr('r', '2%');
-                studentForChange1 = d;
-                
-                d3.select(this.parentNode)
-
-                    .append('line')
-                    .attr('class', 'arrow')
-                    .attr('marker-start', 'url(#arrowFront)')
-                    .attr('marker-end', 'url(#arrow)')
-
-                    .attr('x1', thisElem.attr('cx'))
-                    .attr('y1', thisElem.attr('cy'))
-                    .attr('x2', mouseX)
-                    .attr('y2', mouseY)
-                    .attr('stroke-width', '0.5%')
-                    .attr('stroke-dasharray', '2%')
-                    .attr('stroke', 'gray');
-
-            }else{
-                //perform change
-                //deploy confirmation box?
-                $.ajax({
-                    type: 'POST',
-                    url: '/manuallyChangeStudentGroup/',
-                    data: {'student1': studentForChange1, 'student2': studentForChange2},
-                    success: 
-                    function(){}
-                });
-
-                resetChangeState();
-            }
-        });
+    var nodeMouseOutCallback = function(i){
+        node = userNodes[i];
+        contractNodeViz(node);
+        d3.select(userInfoTooltips._groups[0][node.plotIndex]).style('visibility', 'hidden');
+        d3.event.stopPropagation();
     }
-
-    nodeElements.on('mouseover', function(d){
-
-        d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'visible');
-        if(studentForChange1 != undefined){
-
-            thisElem = d3.select(this);
-            thisElem.attr('r', '2%');
-
-            if(d.groupId == studentForChange1.groupId){
-                resetChangeState();
-                return;
-            }
-            studentForChange2 = d;
-
-            d3.select('#'+canvasId).select('line')
-                .attr('x2', thisElem.attr('cx'))
-                .attr('y2', thisElem.attr('cy'));
-        }
+    
+    nodeTextElements.on('mouseover', function(_, i){
+        nodeMouseOverCallback(i);
     });
-    nodeElements.on('mouseout', function(d){
-        d3.select(userInfoTooltips._groups[0][d.plotIndex]).style('visibility', 'hidden');
-        if(studentForChange2!=undefined){
-            thisElem = d3.select(this);
-            thisElem.attr('r', '1%');
-        }  
+    nodeElements.on('mouseover', function(_, i){
+        nodeMouseOverCallback(i);
+    });
+    nodeTextElements.on('mouseout', function(_, i){ 
+        nodeMouseOutCallback(i);
+    });
+    nodeElements.on('mouseout', function(_, i){
+        nodeMouseOutCallback(i);
     });
 
 
-
+    
 
     var simulation = d3.forceSimulation();
     var resetSim = function(){
         simulation.nodes(userNodes)
         .force('collide', d3.forceCollide()
             .radius(width*0.015)
-            .strength(0.1))
+//             .radius((_, i) => {
+//                 return (d3.select(nodeElements._groups[0][i]).attr('r') == '1%')? width*0.015: width*0.03;
+//             })
+            .strength(0.1)
+        )
         .force('attract', d3.forceAttract()
-                    .target((node) => {return [node.centerOfMass.x, node.centerOfMass.y];})
-                    .strength(3)
-                    );
+            .target((node) => {return [node.centerOfMass.x, node.centerOfMass.y];})
+            .strength(5)
+        );
     }
 
 
     resetSim();
     simulation.on('tick', () => {
+            resetSim();
+            
+//             console.log(simulation.alpha());
 
             nodeElements
                 .attr('cx', node => node.x)
                 .attr('cy', node => node.y);
 
+            nodeTextElements
+                .attr('x', node => node.x)
+                .attr('y', node => node.y);
+                
             groupIndicators
                 .attr('cx', node => node.centerOfMass.x)
                 .attr('cy', node => node.centerOfMass.y)
@@ -860,7 +936,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
     const dragDrop = d3.drag()
         .on('start', node => {
             if (!d3.event.active)
-                simulation.alphaTarget(0.3).restart();
+                simulation.alphaTarget(0.1).restart();
 
             node.centerOfMass.x = d3.event.x;
             node.centerOfMass.y = d3.event.y;
@@ -876,10 +952,33 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
                     currNode.fy = currNode.centerOfMass.y;
                 }
             }
+            
+            if(studentForChange != undefined){
+                if(studentForChange.groupId != node.groupId){
+                    //perform change
+                    //deploy confirmation box?
+                    $.ajax({
+                        type: 'POST',
+                        url: '/manuallyChangeStudentGroup/',
+                        data: {'student': studentForChange, 'group': groupForChange},
+                        complete: 
+                        function(response){
+                            if(response.responseText == 'error'){
+                                generatePlotErrorMessage(
+                                    'Adaptation Error! Group size violation. Maintaining old state...',
+                                    3000
+                                );
+                            }
+                        }
+                    });
+                }
+                resetChangeState();
+            }
         })
+        
         .on('drag', node => {
             if (!d3.event.active)
-                simulation.alphaTarget(1.0).restart();
+                simulation.alphaTarget(0.1).restart();
             node.centerOfMass.x = d3.event.x;
             node.centerOfMass.y = d3.event.y;
             node.fx = node.centerOfMass.x;
@@ -896,9 +995,8 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
             }
         })
         .on('end', node => {
-            if (!d3.event.active) {
+            if (!d3.event.active)
                 simulation.alphaTarget(0);
-            }
             node.fx = null;
             node.fy = null;
             for(i=0; i<userNodes.length; i++){
@@ -918,16 +1016,11 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, selectedUsersStates
 }
 
 
-
-var buildScatterInteractionPlot  = function(canvasId, data){
+var buildScatterInteractionPlot  = function(canvasId, data, mouseClickCallback = undefined, width=500, height=500){
     //originally from https://www.d3-graph-gallery.com/graph/scatter_basic.html
 
     var canvas = d3.select('#'+canvasId);
-    var canvasContainer = canvas.node();
-    var width = 200;
-    var height = 200;
-
-
+    
     // append the svg object to the body of the page
     svg = canvas
         .append('svg')
@@ -936,24 +1029,34 @@ var buildScatterInteractionPlot  = function(canvasId, data){
         .style('background', 'url("../media/images/plots/interactionSpaceBckgrd.png") no-repeat')
         .style('background-size', '100%')
         .style('background-position', 'center')
-        .call(responsivefy, 500, 0);
+        .attr('display', 'block')
+        .attr('margin', 'auto')
+        .call(responsivefy, width, 0);
     
+    if (mouseClickCallback != undefined)
+        svg.on("click", function () {
+            let pos = d3.mouse(this);
+            mouseClickCallback(pos[0]/width, pos[1]/height);
+            
+            d3.select(d3.selectAll('circle')._groups[0][0]).attr('cx', pos[0]).attr('cy', pos[1]);
+        });
+        
     svg.append('g')
         .append('text') 
         .attr('class', 'x label')
         .attr('x', width* 0.5)
         .attr('y', height* 0.94)
         .attr('text-anchor', 'middle')
-        .style('font-size', width*0.05+'px')
+        .style('font-size', width*0.05 +'px')
         .text(' Self      ← Focus →     Others');
 
     svg.append('g')
         .append('text') 
         .attr('class', 'y label')
         .attr('text-anchor', 'middle')
-        .attr('x', -width *0.48)
+        .attr('x', -width* 0.48)
         .attr('y', height* 0.04)
-        .style('font-size', height*0.05+'px')
+        .style('font-size', height*0.05 +'px')
         .attr('transform', 'rotate(-90)')
         .text('Complicate ← Challenge → Facilitate ');
 
@@ -961,17 +1064,25 @@ var buildScatterInteractionPlot  = function(canvasId, data){
     // Add X axis
     var x = d3.scaleLinear()
         .domain([-3, 3])
-        .range([14, width-10]);
+        .range([35, width-30]);
 
 
     // Add Y axis
     var y = d3.scaleLinear()
         .domain([-3, 3])
-        .range([height-25, 12]);
+        .range([height-65, 30]);
 
     // Add dots
-    svg.append('g')
-        .selectAll('dot')
+    var g = svg.append('g');
+    if (mouseClickCallback != undefined)
+        svg.on("click", function () {
+            let pos = d3.mouse(this);
+            mouseClickCallback(pos[0]/width, pos[1]/height);
+            
+            d3.select(d3.selectAll('circle')._groups[0][0]).attr('cx', pos[0]).attr('cy', pos[1]);
+        });
+        
+    g.selectAll('dot')
         .data(data)
         .enter()
         .append('circle')
@@ -985,4 +1096,227 @@ var buildScatterInteractionPlot  = function(canvasId, data){
     
 }
 
+
+var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined, step=undefined){
+
+    var canvas = d3.select('#'+canvasId);
+
+    var width = 1000;
+    var height = 150;
+
+    var margin = {
+        top: height * 0.1,
+        right: width * 0.1,
+        bottom: height * 0.1,
+        left: width * 0.3
+    };
+
+    var svg = canvas.append('svg');
+
+    svg.attr('width', width + margin.left + margin.right)
+        .attr('display', 'block')
+        .attr('margin', 'auto')
+        .attr('height', height + margin.top + margin.bottom + 200)
+        .call(responsivefy, 1000, 0.15);
+
+
+    if(maxValue == undefined){
+        for(var i=0; i < data.length; i++){
+            var currValue = parseFloat(data[i].value);
+            if(maxValue == undefined || currValue > maxValue){
+                maxValue = currValue;
+            }
+        }
+        maxValue += 0.1*maxValue;
+    }
+
+    var x = d3.scaleLinear()
+        .range([margin.left, width])
+        .domain([minValue, maxValue]);
+
+    var y = d3.scaleBand()
+        .range([margin.bottom, height])
+        .domain(data.map(function(d) {
+            return d.name;
+        }));
+
+    var xAxis = d3.axisBottom(x);
+        
+    xAxis.tickSize(-width);
+    if(step != undefined){
+        xAxis.ticks(maxValue - minValue / step);
+    }
+
+    var yAxis = d3.axisLeft(y)
+        .tickSize(0);
+
+
+    var bars = svg.selectAll('.bar')
+        .data(data)
+        .enter()
+        .append('g');
+
+
+    bars.append('rect')
+        .attr('class', 'bar')
+        .attr('y', function (d) {
+            return y(d.name) + y.bandwidth()*3/16;
+        })
+        .attr('height', y.bandwidth()*1/2)
+        .attr('x', margin.left)
+        .attr('width', function (d) {
+            return  x(d.value) - margin.left;
+        })
+        .attr('fill', '#50C2E3');
+
+    var gy = svg.append('g')
+                .attr('class', 'y axis label')
+                .call(yAxis) 
+                .attr('transform', 'translate(' + margin.left + ',0)')
+                    .style('font-size','30px');
+
+    gy.selectAll("text")
+        .attr("transform", "translate(-35,0)");
+
+    
+    var gx = svg.append('g')
+                .attr('class', 'x axis')
+                .call(xAxis)
+                .attr('transform', 'translate(0,' + height + ')')
+                .style('font-size','25px');
+    
+    gx.selectAll('.tick line')
+        .attr('opacity', 0.5)
+     
+    gx.selectAll("text")
+        .attr("transform", "rotate(70), translate(35,-15)");
+        
+    
+    svg.append('g')
+        .call(xAxis)
+        .selectAll("text")
+            .attr("visibility","hidden");
+}
+
+
+var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationDisplayCallback){
+
+    
+    // set the dimensions and margins of the graph
+    var width = 300
+    height = 600;
+    
+    var margin = {
+        top: height * 0.1,
+        right: width * 0.1,
+        bottom: height * 0.1,
+        left: width * 0.1
+    };
+    
+    
+    // // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
+    var radius = Math.min(width, height) / 2 
+    
+    var svg = d3.select('#'+canvasId)
+        .append('svg');
+
+    svg.attr('width', width + margin.left + margin.right)
+        .attr('height', height + margin.bottom + margin.top)
+        .attr('display', 'block')
+        .attr('margin', 'auto')
+        .call(responsivefy, 300, 0.7);
+    
+    // Create dummy data
+    var weekValue = 100 / numWeeks;
+    var data = {};
+    for(i=0; i<numWeeks; i++)
+        data[i] = weekValue;
+
+    var leftXPosition = -document.getElementById("storylineLog_professor_dash").parentElement.clientWidth / 1.8;
+    var currSelectedWeek = currWeek;
+
+
+    // Compute the position of each group on the pie:
+    var pie = d3.pie()
+    .value(function(d) {return d.value; })
+    var data_ready = pie(d3.entries(data))
+
+    var arcGenerator = d3.arc()
+    .innerRadius(radius*0.3)
+    .outerRadius(radius);
+
+
+    var g = svg.append('g');    
+    g.style("transform", "translate(" + (width / 2)*1.2 + "px," + height / 2 + "px)");
+    var slices =  g
+    .selectAll('mySlices')
+    .data(data_ready)
+    .enter().append('path');
+    
+    var updatePieColors = function(){
+         slices
+        .attr('fill', 
+        function(d){
+            week = d.data.key;
+            if (week <= currWeek)
+                var color = '#91f4ff';
+                if (week == currWeek) 
+                    color = '#1ce9ff';
+                else if(week == currSelectedWeek)
+                    color = '#64dee0';
+                return color;
+            return '#404040';
+        });
+    };
+    updatePieColors();
+    
+    
+    
+    
+    var line = g.append('path')
+    .attr("stroke", "grey")
+    .style("stroke-width", "4px");
+    
+    var updateLine = function(){
+        var gen = d3.line();
+        var pos = $("#storylineLog_professor_dash").position();
+        var angle = (currSelectedWeek==0)? -data_ready[1].startAngle : data_ready[currSelectedWeek-1].startAngle;
+        var angleArray = [Math.cos(angle), Math.sin(angle)]
+        var pathOfLine = gen([
+                                [angleArray[0]*160,angleArray[1]*160],
+                                [angleArray[0]*200,angleArray[1]*200],
+                                [angleArray[0]*400,angleArray[1]*200]
+                            ]);
+        line.attr('d', pathOfLine)
+        .attr('fill', 'none');
+    }
+    updateLine();
+    
+    // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+    slices.attr('d', arcGenerator)
+    .attr("stroke", "white")
+    .style("stroke-width", "10px")
+    .style("opacity", 0.7)
+    .on("mouseover", function (d) {
+        currSelectedWeek = d.data.key;
+        if(currSelectedWeek > currWeek)
+            return;
+        updatePieColors();
+        changeSimulationDisplayCallback(currWeek, currSelectedWeek);
+        updateLine();
+    })
+    .on("mouseout", function (d) {
+        currSelectedWeek = currWeek;
+        if(currSelectedWeek > currWeek)
+            return;
+        updatePieColors();
+        changeSimulationDisplayCallback(currWeek, currSelectedWeek);
+        updateLine();
+
+    });
+    
+     
+    
+    
+}
 

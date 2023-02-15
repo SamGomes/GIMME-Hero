@@ -6,6 +6,8 @@
 
 **/*.sqlite3
 
+.env
+
 certification/
 
 GIMMEWeb/core/templates/static/media/

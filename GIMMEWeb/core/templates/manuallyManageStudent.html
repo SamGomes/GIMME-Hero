@@ -3,24 +3,36 @@
 
 <!DOCTYPE html>
 <html>
-	<body class="layout-default">
+<body class="layout-default">
 
-		<section class="section columns">
-			<div class='panel-block'  id="manuallyManageStudent_currentActivityInfo">
-				<label class='column is-3'>
-					<p class='has-text-weight-bold'>Correct "{{request.GET.usernameToUpdate}}" State:</p>
-					<input class="control has-icons-left" type="text" id="manuallyManageStudent_results_ability" placeholder="Ability Increase">
-					<input class="control has-icons-left" type="text" id="manuallyManageStudent_results_engagement" placeholder="Engagement Increase">
-					<!-- <input class="control has-icons-left button" type="text" id="student_results_file" name="filename"> -->
-					<button class="button is-info" id="manuallyManageStudent_apply_results">Apply Changes</button>
-				</label>
-			</div>
-		</section>
+	<section class="section columns">
+		<div class="column is-3"></div>
+		<div class='panel panel-block column'  id="manuallyManageStudent_currentActivityInfo" data-tooltip="Ability: accumulated knowledge acquired by the student. Corresponds to the student's grade.&#10;Engagement: metric quantifying time spent engaged in activity, measured with questionnaires.">
+			<label>
+				<p class='has-text-weight-bold'>Evaluate "{{request.GET.usernameToUpdate}}" State:</p>
+				
+				<br>
+				<div class='columns is-mobile is-centered control' style="margin-right: 1.0;">
+					<div class='column is-mobile is-centered is-half' id="currentAbility"></div>
+					<input class='column is-mobile is-centered is-half' type="text" id="manuallyManageStudent_results_ability" placeholder="New Ability">
+				</div>
+
+				<div class='columns is-mobile is-centered control' style="margin-right: 1.0;">
+					<div class='column is-mobile is-centered is-half' id="currentEngagement"></div>
+					<input class="column is-mobile is-centered is-half" type="text" id="manuallyManageStudent_results_engagement" placeholder="New Engagement">
+				</div>
+				<!-- <input class="control has-icons-left button" type="text" id="student_results_file" name="filename"> -->
+				<button class="button is-info" id="manuallyManageStudent_apply_results">Apply Changes</button>
+			</label>
+
+		</div>
+		<div class="column is-3"></div>
+	</section>
 		{% csrf_token %}
 
 
 
-	</body>
+</body>
 	<script
 		src="https://code.jquery.com/jquery-3.2.1.min.js"
 		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
@@ -50,19 +62,52 @@
 			});
 
 
-			$('#manuallyManageStudent_apply_results').click(function() {
-				var characteristicsDelta = '{"abilityInc": '+$('#manuallyManageStudent_results_ability').val() +', "engagementInc": '+$('#manuallyManageStudent_results_engagement').val() +'}';
+			var changePlaceholderAbilityAndEngagement = function(){
 				$.ajax(
-					{
-						url: '/uploadTaskResults/',
-						type: 'POST',
-						data: {'username': '{{request.GET.usernameToUpdate}}', 'characteristicsDelta': characteristicsDelta },
-						success: 
-						function (res) {
-							window.location = '{% url 'dash' %}';
-						}
+	    		{
+	    			url: '/fetchStudentInfo/',
+            		type: 'POST',
+	    			dataType: 'json',
+	    			data: {'username': '{{request.GET.usernameToUpdate}}'},
+	    			complete: 
+	    			function (res) {
+						var studentCharacteristics = unformattedStringToObj(res.responseText)["characteristics"];
+						document.getElementById("currentAbility").innerHTML="Current Ability: <b>" + String(studentCharacteristics["ability"].toFixed(2)) + "</b> -> Change To:";
+						document.getElementById("currentEngagement").innerHTML="Current Engagement: <b>" + String(studentCharacteristics["engagement"].toFixed(2)) + "</b> -> Change To:";
 					}
-				);
+				
+				});
+			}
+
+			changePlaceholderAbilityAndEngagement();
+			
+			$('#manuallyManageStudent_apply_results').click(function() {
+				$.ajax(
+	    		{
+	    			url: '/fetchStudentInfo/',
+            		type: 'POST',
+	    			dataType: 'json',
+	    			data: {'username': '{{request.GET.usernameToUpdate}}'},
+	    			complete: 
+	    			function (res) {
+						var studentCharacteristics = unformattedStringToObj(res.responseText)["characteristics"];
+
+						var characteristicsDelta = '{"abilityInc": '+($('#manuallyManageStudent_results_ability').val() - studentCharacteristics["ability"]) +', "engagementInc": '+ ($('#manuallyManageStudent_results_engagement').val() - studentCharacteristics["engagement"]) +', "gradeInc": 0}';
+						$.ajax(
+							{
+								url: '/uploadTaskResults/',
+								type: 'POST',
+								data: {'username': '{{request.GET.usernameToUpdate}}', 'characteristicsDelta': characteristicsDelta },
+								success: 
+								function (res) {
+									window.location = '{% url 'dash' %}';
+								}
+							}
+						);
+					}
+				
+				});
+				
 			});
 		});
 
