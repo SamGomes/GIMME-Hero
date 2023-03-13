@@ -42,6 +42,7 @@ urlpatterns = [
     re_path(r'^startActivity/', Views.startActivity, name='startActivity'),
     re_path(r'^saveTaskResults/', Views.saveTaskResults, name='saveTaskResults'),
 
+    re_path(r'^questionnaire/', Views.questionnaire, name='questionnaire'),
     
     re_path(r'^fetchServerState/', Views.fetchServerState, name='fetchServerState'),
     re_path(r'^fetchStudentStates/', Views.fetchStudentStates, name='fetchStudentStates'),

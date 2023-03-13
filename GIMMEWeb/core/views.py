@@ -684,6 +684,9 @@ class Views(): #acts as a namespace
 		logout(request)
 		return redirect('/home')
 	
+	def questionnaire(request):
+		return render(request, 'student/questionnaire.html', {})
+	
 	
 	def userRegistration(request):
 		if request.method == 'POST':
