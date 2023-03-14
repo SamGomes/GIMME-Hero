@@ -29,7 +29,7 @@ from django.contrib import messages
 from GIMMEWeb.core.models import UserProfile
 from GIMMEWeb.core.models import Task
 from GIMMEWeb.core.models import ServerState
-from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm
+from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm, LikertForm
 
 from GIMMECore import *
 
@@ -684,9 +684,21 @@ class Views(): #acts as a namespace
 		logout(request)
 		return redirect('/home')
 	
+
 	def questionnaire(request):
-		return render(request, 'student/questionnaire.html', {})
-	
+		if request.method == 'POST':
+			form = LikertForm(request.POST)
+			if form.is_valid():
+				for question_id, response in form.cleaned_data.items():
+					if question_id.startswith('question_'):
+						question_id = question_id[len('question_'):]
+						response = LikertResponse(question_id=question_id, response=response)
+						response.save()
+				return render(request, 'thanks.html')
+		else:
+			form = LikertForm()
+		return render(request, 'student/questionnaire.html', {'form': form})
+
 	
 	def userRegistration(request):
 		if request.method == 'POST':

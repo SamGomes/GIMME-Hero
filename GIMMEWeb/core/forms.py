@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from django import forms
 
-from GIMMEWeb.core.models import UserProfile, Task
+from GIMMEWeb.core.models import UserProfile, Task, LikertQuestion
 
 
 
@@ -39,6 +39,15 @@ class CreateTaskForm(ModelForm):
 		exclude = ['creator', 'creationTime', 'profile', 'initDate', 'finalDate', 'minReqAbility', 'difficultyWeight', 'profileWeight'] 
 
 
+class LikertForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for question in LikertQuestion.objects.all():
+            self.fields[f"question_{question.id}"] = forms.ChoiceField(
+                choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')],
+                widget=forms.RadioSelect,
+                label=question.question_text,
+            )
 
 
 class UpdateUserForm(UserChangeForm):

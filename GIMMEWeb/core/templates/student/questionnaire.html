@@ -1,4 +1,28 @@
-<!DOCTYPE html>
-<html>
-    <p>Questionnaire</p>
-</html>
+
+  <h1>Student Questionnaire</h1>
+  <form method="post">
+    <label for="question_1">Please rate how strongly you agree or disagree with the following statement:</label>
+        <p>I feel comfortable communicating my thoughts and ideas to others.</p>
+            <fieldset id="question_1">
+                <legend>Choose one:</legend>
+                <label for="response_1"><input type="radio" id="response_1" name="question_1" value="1">Strongly Disagree</label>
+                <label for="response_2"><input type="radio" id="response_2" name="question_1" value="2">Disagree</label>
+                <label for="response_3"><input type="radio" id="response_3" name="question_1" value="3">Neither Agree nor Disagree</label>
+                <label for="response_4"><input type="radio" id="response_4" name="question_1" value="4">Agree</label>
+                <label for="response_5"><input type="radio" id="response_5" name="question_1" value="5">Strongly Agree</label>
+            </fieldset>
+    {% csrf_token %}
+    {% for field in form %}
+        <p>{{ field.label_tag }}</p>
+        <fieldset id="{{ field.name }}">
+        <legend>Choose one:</legend>
+        {% for choice in field.field.choices %}
+            <label for="{{ field.id_for_label }}_{{ forloop.counter }}">
+            <input type="{{ field.field.widget.input_type }}" id="{{ field.id_for_label }}_{{ forloop.counter }}" name="{{ field.html_name }}" value="{{ choice.0 }}">
+            {{ choice.1 }}
+            </label>
+        {% endfor %}
+        </fieldset>
+    {% endfor %}
+    <button type="submit">Submit</button>
+  </form>

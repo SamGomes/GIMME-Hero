@@ -47,6 +47,13 @@ class ModelAuxMethods():
 #     studentIds = models.CharField(max_length=1020)
 
 
+class LikertQuestion(models.Model):
+    question_text = models.CharField(max_length=200)
+
+class LikertResponse(models.Model):
+    question = models.ForeignKey(LikertQuestion, on_delete=models.CASCADE)
+    response = models.IntegerField()
+    
 
 class UserProfile(models.Model):
 
