@@ -30,7 +30,7 @@ from django.forms import formset_factory
 
 from GIMMEWeb.core.models import UserProfile
 from GIMMEWeb.core.models import Task
-from GIMMEWeb.core.models import Questionnaire, LikertQuestion, LikertResponse
+from GIMMEWeb.core.models import Questionnaire, LikertQuestion, LikertResponse, Submission
 from GIMMEWeb.core.models import ServerState
 from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm, LikertResponseForm, LikertForm
 
@@ -689,17 +689,19 @@ class Views(): #acts as a namespace
 
 	
 	def questionnaire(request):
-		questionnaire_id = "Questionnaire 1"
+		questionnaire_id = "Epic Questionnaire"
 		questionnaire = Questionnaire.objects.get(title=questionnaire_id)
 
 		if request.method == 'POST':
 			form = LikertForm(request.POST)
 			if form.is_valid():
+				submission = Submission.objects.create(questionnaire=questionnaire, student=request.user)
 				for question_id, response in form.cleaned_data.items():
 					if question_id.startswith('question_'):
 						question_id = question_id[len('question_'):]
-						response = LikertResponse(question_id=question_id, response=response)
+						response = LikertResponse(question_id=question_id, submission=submission, response=response)
 						response.save()
+
 				return render(request, 'student/thanks.html')
 		else:
 			form = LikertForm()
@@ -847,12 +849,17 @@ class Views(): #acts as a namespace
 			'designer': 'designer/dash.html'
 		}
 
-		# check if user has already submitted questionnaire
-		questionnaires_available = not Questionnaire.objects.filter(student=request.user).exists()
+		# check for active questionnaires
+		active_questionnaires = Questionnaire.objects.filter(is_active=True)
+		available_questionnaires = []
+
+		for questionnaire in active_questionnaires:
+			if not Submission.objects.filter(questionnaire=questionnaire, student=request.user).exists():
+				available_questionnaires += Submission.objects.filter(questionnaire=questionnaire)
 
 
 		context = {} 
-		context["questionnaires_available"] = questionnaires_available
+		context["available_questionnaires"] = available_questionnaires
 
 		return render(request, dashSwitch.get(str(request.user.userprofile.role)), context)
 

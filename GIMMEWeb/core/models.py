@@ -50,7 +50,6 @@ class ModelAuxMethods():
 class Questionnaire(models.Model):
     title = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
-    student = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
 
 
@@ -59,8 +58,15 @@ class LikertQuestion(models.Model):
     text = models.TextField()
 
 
+class Submission(models.Model):
+    questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(default=timezone.now)
+
+
 class LikertResponse(models.Model):
     question = models.ForeignKey(LikertQuestion, on_delete=models.CASCADE)
+    submission = models.ForeignKey(Submission, on_delete=models.CASCADE)
     response = models.PositiveIntegerField(choices=((1, 'Strongly Disagree'), (2, 'Disagree'), (3, 'Neutral'), (4, 'Agree'), (5, 'Strongly Agree')))
 
 
