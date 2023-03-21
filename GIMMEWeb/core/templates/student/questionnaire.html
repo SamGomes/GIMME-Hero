@@ -1,7 +1,7 @@
 
-  <h1>Student Questionnaire</h1>
+  <h1>{{questionnaire.title}}</h1>
   <form method="post">
-    <label for="question_1">Please rate how strongly you agree or disagree with the following statement:</label>
+    <!-- <label for="question_1">Please rate how strongly you agree or disagree with the following statement:</label>
         <p>I feel comfortable communicating my thoughts and ideas to others.</p>
             <fieldset id="question_1">
                 <legend>Choose one:</legend>
@@ -10,7 +10,7 @@
                 <label for="response_3"><input type="radio" id="response_3" name="question_1" value="3">Neither Agree nor Disagree</label>
                 <label for="response_4"><input type="radio" id="response_4" name="question_1" value="4">Agree</label>
                 <label for="response_5"><input type="radio" id="response_5" name="question_1" value="5">Strongly Agree</label>
-            </fieldset>
+            </fieldset> -->
     {% csrf_token %}
     {% for field in form %}
         <p>{{ field.label_tag }}</p>
@@ -23,6 +23,6 @@
             </label>
         {% endfor %}
         </fieldset>
-    {% endfor %}
+    {% endfor %} 
     <button type="submit">Submit</button>
   </form>

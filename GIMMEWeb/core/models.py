@@ -6,6 +6,7 @@ from uuid import uuid4
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from django.utils import timezone
 
 from multiselectfield import MultiSelectField
 
@@ -40,20 +41,29 @@ class ModelAuxMethods():
         return wrapper
 
 
-
 # class Subject(models.Model):
 #     subjectId = models.CharField(max_length=1020,primary_key=True)
 #     description = models.TextField(max_length=1020)
 #     studentIds = models.CharField(max_length=1020)
 
 
+class Questionnaire(models.Model):
+    title = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(default=timezone.now)
+
+
 class LikertQuestion(models.Model):
-    question_text = models.CharField(max_length=200)
+    questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)
+    text = models.TextField()
+
 
 class LikertResponse(models.Model):
     question = models.ForeignKey(LikertQuestion, on_delete=models.CASCADE)
-    response = models.IntegerField()
-    
+    response = models.PositiveIntegerField(choices=((1, 'Strongly Disagree'), (2, 'Disagree'), (3, 'Neutral'), (4, 'Agree'), (5, 'Strongly Agree')))
+
+
 
 class UserProfile(models.Model):
 

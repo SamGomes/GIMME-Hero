@@ -34,11 +34,14 @@
 
 				<div class='panel-block' id='student_currentQuestionnaires' style='display: block;'>
 					<label class='column is-8'>
-						<p class='has-text-weight-bold'>No questionnaires available.</p>
-							<a href="/questionnaire">
-								<button class='button is-info' style='margin: 1em;' id='student_start_questionnaire'>Questionnaire</button>
-							</a>
-
+						{% block content %}
+							{% if questionnaires_available %}
+								<a href="{% url 'questionnaire' %}" class="btn btn-primary">Take Questionnaire</a>
+							{% else %}
+								<p>No new questionnaires available</p>
+								<a href="{% url 'questionnaire' %}" class="btn btn-primary">Take Questionnaire</a>
+							{% endif %}
+						{% endblock %}
 					</label>
 				</div>
 			</div>

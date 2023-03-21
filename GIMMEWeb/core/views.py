@@ -26,10 +26,13 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login, logout
 from django.contrib import messages
 
+from django.forms import formset_factory
+
 from GIMMEWeb.core.models import UserProfile
 from GIMMEWeb.core.models import Task
+from GIMMEWeb.core.models import Questionnaire, LikertQuestion, LikertResponse
 from GIMMEWeb.core.models import ServerState
-from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm, LikertForm
+from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm, LikertResponseForm, LikertForm
 
 from GIMMECore import *
 
@@ -683,9 +686,12 @@ class Views(): #acts as a namespace
 	def logoutCheck(request):
 		logout(request)
 		return redirect('/home')
-	
 
+	
 	def questionnaire(request):
+		questionnaire_id = "Questionnaire 1"
+		questionnaire = Questionnaire.objects.get(title=questionnaire_id)
+
 		if request.method == 'POST':
 			form = LikertForm(request.POST)
 			if form.is_valid():
@@ -694,12 +700,16 @@ class Views(): #acts as a namespace
 						question_id = question_id[len('question_'):]
 						response = LikertResponse(question_id=question_id, response=response)
 						response.save()
-				return render(request, 'thanks.html')
+				return render(request, 'student/thanks.html')
 		else:
 			form = LikertForm()
-		return render(request, 'student/questionnaire.html', {'form': form})
 
-	
+		context = { 'questionnaire': questionnaire,
+					'form' : form }
+		
+		return render(request, 'student/questionnaire.html', context)
+
+
 	def userRegistration(request):
 		if request.method == 'POST':
 			form = CreateUserForm(request.POST)
@@ -836,7 +846,15 @@ class Views(): #acts as a namespace
 			'professor': 'professor/dash.html',
 			'designer': 'designer/dash.html'
 		}
-		return render(request, dashSwitch.get(str(request.user.userprofile.role)))
+
+		# check if user has already submitted questionnaire
+		questionnaires_available = not Questionnaire.objects.filter(student=request.user).exists()
+
+
+		context = {} 
+		context["questionnaires_available"] = questionnaires_available
+
+		return render(request, dashSwitch.get(str(request.user.userprofile.role)), context)
 
 	
 	def getRandomString(length):

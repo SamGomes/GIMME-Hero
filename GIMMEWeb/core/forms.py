@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from django import forms
 
-from GIMMEWeb.core.models import UserProfile, Task, LikertQuestion
+from GIMMEWeb.core.models import UserProfile, Task, LikertQuestion, Questionnaire, LikertResponse
 
 
 
@@ -40,14 +40,28 @@ class CreateTaskForm(ModelForm):
 
 
 class LikertForm(forms.Form):
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		for question in LikertQuestion.objects.all():
+			self.fields[f"question_{question.id}"] = forms.ChoiceField(
+				choices=[(1, '1 (Strongly Disagree)'), (2, '2 (Disagree)'), (3, '3 (Neutral)'), (4, '4 (Agree)'), (5, '5 (Strongly Agree)')],
+				widget=forms.RadioSelect,
+				label=question.text,
+			)
+
+
+class LikertResponseForm(forms.Form):
+    class Meta:
+        model = LikertResponse
+        fields = ['response']
+        widgets = {
+            'response': forms.RadioSelect(choices=((1, 'Strongly Disagree'), (2, 'Disagree'), (3, 'Neutral'), (4, 'Agree'), (5, 'Strongly Agree')))
+        }
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for question in LikertQuestion.objects.all():
-            self.fields[f"question_{question.id}"] = forms.ChoiceField(
-                choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')],
-                widget=forms.RadioSelect,
-                label=question.question_text,
-            )
+        # question_text = kwargs.pop('question.text')
+        # self.fields['response'].label = question_text
 
 
 class UpdateUserForm(UserChangeForm):

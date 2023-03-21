@@ -16,3 +16,5 @@ admin.site.register(UserProfile,GeneralAdmin)
 admin.site.register(Task,GeneralAdmin)
 
 admin.site.register(LikertQuestion)
+admin.site.register(Questionnaire)
+

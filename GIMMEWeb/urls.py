@@ -43,6 +43,7 @@ urlpatterns = [
     re_path(r'^saveTaskResults/', Views.saveTaskResults, name='saveTaskResults'),
 
     re_path(r'^questionnaire/', Views.questionnaire, name='questionnaire'),
+    #re_path('questionnaire/<int:questionnaire_id>/$', Views.questionnaire, name='questionnaire'),
     
     re_path(r'^fetchServerState/', Views.fetchServerState, name='fetchServerState'),
     re_path(r'^fetchStudentStates/', Views.fetchStudentStates, name='fetchStudentStates'),
@@ -67,6 +68,8 @@ urlpatterns = [
     re_path(r'^taskRegistrationSim/', Views.taskRegistrationSim, name='taskRegistrationSim'),
     re_path(r'^evaluateSim/', Views.evaluateSim, name='evaluateSim'),
 
+
+    path('admin/', admin.site.urls)
 
 
 

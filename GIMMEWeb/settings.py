@@ -15,7 +15,7 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG')
-ALLOWED_HOSTS=["localhost","146.193.224.171","gimme-web.duckdns.org","gimme-web-secure.duckdns.org"]
+ALLOWED_HOSTS=["localhost","146.193.224.171","gimme-web.duckdns.org","gimme-web-secure.duckdns.org", "127.0.0.1"]
 
 INTERNAL_IPS = (
     '127.0.0.1',
@@ -66,6 +66,7 @@ TEMPLATES = [
     },
 ]
 WSGI_APPLICATION = 'GIMMEWeb.wsgi.application'
+
 
 # Database
 DATABASES = {
