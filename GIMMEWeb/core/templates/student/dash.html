@@ -35,11 +35,10 @@
 				<div class='panel-block' id='student_currentQuestionnaires' style='display: block;'>
 					<label class='column is-8'>
 						{% block content %}
-							{% if available_questionnaires %}
+							{% if available_questionnaires|length > 0 %}
 								<a href="{% url 'questionnaire' %}" class="btn btn-primary">Take Questionnaire</a>
 							{% else %}
 								<p>No new questionnaires available</p>
-								<a href="{% url 'questionnaire' %}" class="btn btn-primary">Take Questionnaire</a>
 							{% endif %}
 						{% endblock %}
 					</label>
