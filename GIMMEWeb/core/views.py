@@ -332,7 +332,10 @@ class CustomTaskModelBridge(TaskModelBridge):
 	def getTaskProfileWeight(self, taskId):
 		task = Task.objects.get(taskId = taskId)
 		return float(task.profileWeight)
-
+	
+	def getTaskDiversityWeight(self, taskId):
+		task = Task.objects.get(taskId = taskId)
+		return float(task.diversity)
 
 	def getTaskInitDate(self, taskId):
 		task = Task.objects.get(taskId = taskId)
@@ -399,6 +402,9 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		profile = json.loads(playerInfo.currState)['profile']
 		profile = InteractionsProfile(dimensions= profile['dimensions'])
 		return profile
+	
+	def getPlayerPersonality(self,  username):
+		return User.objects.get(username=username).personality
 
 	def getPlayerCurrGroup(self,  username):
 		playerInfo = User.objects.get(username=username).userprofile
@@ -1066,9 +1072,18 @@ class Views(): #acts as a namespace
 				)
 			)
 
-
 		selectedGenAlg = {}
 		def selectedGenAlgSwitcherRandom(request):
+			return RandomConfigsGen(
+				playerModelBridge = playerBridge, 
+				interactionsProfileTemplate = intProfTemplate.generateCopy(),
+				minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
+				maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
+				# preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
+				jointPlayerConstraints = newConfigParams['jointPlayerConstraints'],
+				separatedPlayerConstraints = newConfigParams['separatedPlayerConstraints'])
+		
+		def selectedGenAlgSwitcherDiversity(request):
 			return RandomConfigsGen(
 				playerModelBridge = playerBridge, 
 				interactionsProfileTemplate = intProfTemplate.generateCopy(),
@@ -1184,6 +1199,8 @@ class Views(): #acts as a namespace
 				taskModelBridge = taskBridge
 			) 
 
+
+
 		# switch config. gen. algs
 		selectedGenAlgId = newConfigParams['selectedGenAlgId']
 		selectedGenAlg = defaultConfigsAlg
@@ -1236,6 +1253,8 @@ class Views(): #acts as a namespace
 					task.difficultyWeight = str(1.0 - float(requestInfo['taskSelectWeigths']))
 					
 					task.minReqAbility = requestInfo['difficulty']
+
+					task.diversity = requestInfo['diversity']
 					
 					task.save()
 

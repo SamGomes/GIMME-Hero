@@ -92,6 +92,7 @@ class UserProfile(models.Model):
     currState = models.TextField(max_length=3072)
     pastModelIncreasesDataFrame = models.TextField(max_length=3072)
     preferences = models.CharField(max_length=1020)
+    personality = models.CharField(max_length=10)
 
     
     # subjectIds = models.CharField(max_length=1020)
@@ -119,6 +120,7 @@ class Task(models.Model):
     profileWeight = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
     difficultyWeight = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
 
+    diversity = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
 
     initDate = models.DateField()
     finalDate = models.DateField()
