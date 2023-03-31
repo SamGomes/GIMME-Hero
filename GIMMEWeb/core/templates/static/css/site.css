@@ -21,7 +21,6 @@ html {
 }
 
 body {
-
   /* Margin bottom by footer height */
   background-position: absolute;
   background-image: url("../media/images/background.png");
@@ -94,8 +93,8 @@ body {
 }
 .subtitle{
   font-size: 200%;
-  color: #131444;
-  font-weight: bold;
+  color: #373f51;
+  font-weight: 600;
 }
 
 
@@ -134,8 +133,8 @@ body {
   border-color: rgba(10,10,10,0.86); 
 }
 .modal-content{
-  color: black;
-  background-color: rgba(255,255,255,.86);
+  color: #373f61;
+  background-color: rgb(236, 247, 255);
   border-color: rgba(10,10,10,1.0); 
   border-radius: 0.2em; 
   width: 50%;
