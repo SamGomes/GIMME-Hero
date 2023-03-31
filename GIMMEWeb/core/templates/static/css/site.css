@@ -100,12 +100,10 @@ body {
 
 
 .dash-cell-box{
+  margin: 1em 0;
   padding:2em; 
   overflow: auto;
-  border-color:gray; 
-  border-style:solid; 
-  border-radius: 1em; 
-  border-width: 0.1em;
+  border-radius: 0.2em; 
   object-fit: fill;
 }
 
@@ -139,13 +137,15 @@ body {
   color: black;
   background-color: rgba(255,255,255,.86);
   border-color: rgba(10,10,10,1.0); 
-  border-radius: 3em; 
+  border-radius: 0.2em; 
   width: 50%;
   height: 70%;
   padding: 2em;
   margin: auto;
 }
-
+.slidecontainer {
+  width: 100%;
+}
 
 .alias {cursor: alias;}
 .all-scroll {cursor: all-scroll;}

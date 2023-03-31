@@ -555,6 +555,31 @@
 												<button class='button modal-button is-small is-rounded' id='modalSynergiesConfigButton_professor_dash' data-target='modalSynergies_professor_dash'>Configure...</button>
 											</div>
 										</a>
+										<a class='dropdown-item is-active'>
+											KNN w/ Personality Diversity
+											<div class='column'></div>
+											
+											<div class='form-group columns' style='opacity: 0.8; font-weight:bold;'>
+												<div class='column is-1'>
+												</div>
+												<div class='column'>
+													<div>Comp. Efficiency (Scalability)</div>
+												</div>
+												<div class='column'>
+													<div>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-solid fa-star'></i>
+														<i class='fa-regular fa-star'></i>
+													</div>
+												</div>
+											</div>
+											
+											<div class='form-group'>
+												<button class='button modal-button is-small is-rounded' data-target='modalDiversity_professor_dash'>Configure...</button>
+											</div>
+										</a>
 									</div>
 								</div>
 							</div>
@@ -882,7 +907,7 @@
 			<div class="modal-background"></div>
 			
 			<div class="modal-content">
-				<div class="is-size-2">Configuration Options: KNN</div>
+				<div class="is-size-3">Configuration Options: KNN</div>
 				<div class="column"></div>
 				<div class='form-group'>
 					<label class='column is-4 control-label' for='textinput'>Num NNs</label>  
@@ -908,8 +933,8 @@
 		<div class="modal" id="modalSynergies_professor_dash">
 			<div class="modal-background"></div>
 			<div class="modal-content">
-				<div class="is-size-2">Configuration Options:</div> 
-				<div class="is-size-2">KNN w/ Synergy Between Students</div>
+				<div class="is-size-3">Configuration Options:</div> 
+				<div class="is-size-3">KNN w/ Synergy Between Students</div>
 			
 				<div class='block dash-cell-box has-background-white'>
 					<label class='subtitle columns is-4 control-label' style='color:gray;' for='textinput'>KNN Options (for Preferences Est.)</label>  
@@ -957,6 +982,40 @@
 			
 		</div>
 		
+		<div class="modal" id="modalDiversity_professor_dash">
+			<div class="modal-background"></div>
+			
+			<div class="modal-content">
+				<p class="is-size-3" >Configuration Options: KNN w/ Personality Diversity</p>
+
+				<div class="column"></div>
+				<div class='form-group'>
+					<label class='column is-4 control-label' for='textinput'>Num NNs</label>  
+					<div class='control'>
+						<input  id='numNNsId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>
+					</div>
+				
+					<label class='column is-4 control-label' for='textinput'>Ability</label>  
+					<div class='control'>
+						<input id='qualityWeightsAbId_professor_dash' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
+					</div>
+				
+					<label class='column is-4 control-label' for='textinput'>Engagement</label>  
+					<div class='control'>
+						<input id='qualityWeightsEngId_professor_dash' class='input' type='number' step='0.01' min='0' max='1' placeholder='0.50'>
+					</div>
+
+					<label class='column is-4 control-label has-tooltip-arrow' data-tooltip='Aligned teams are more cohesive and perform better at linear tasks. Diverse teams show more innovation and perfrom better at creative tasks.'>Teams Diversity</label>
+					<div class='slidecontainer'>
+						<div class="sliderValue">
+							<span>1</span>
+						Aligned&ensp;<input name='diversity' class='slider' type='range' value='0.5' min='0.0' max='1.0' step='0.1'>&ensp;Diverse
+					</div>
+				</div>
+			</div>
+			
+			<button class="modal-close is-large" aria-label="close"></button>
+		</div>
 		
 		
 		
