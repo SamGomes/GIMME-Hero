@@ -49,18 +49,24 @@ body {
 }
 .section{
   border-radius: 20px;
-  border-fill: #131444;
+  border-color: #def0ff;
 }
+
+.panel-heading:first-child {
+  border-top: 1px solid #def0ff;
+  }
 
 .panel-heading {
   border-radius: 25px 25px 0px 0px;
-  border-fill: transparent;
+  background-color:rgb(236, 247, 255);
+  border-color: #def0ff;
 }
 
 .panel-block {
   background-color: white;
   /*border-radius: 0px 0px 25px 25px;*/
-  border-fill: transparent;
+  border-color: #def0ff;
+  border-top: #def0ff;
 }
 
 .button{
