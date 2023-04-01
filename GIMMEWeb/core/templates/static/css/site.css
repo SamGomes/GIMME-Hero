@@ -46,6 +46,7 @@ body {
   background-attachment: fixed; 
   border-radius: 25px;
   margin: 40px;
+  background-color: #def0ff;
 }
 .section{
   border-radius: 20px;
@@ -57,20 +58,25 @@ body {
   }
 
 .panel-heading {
-  border-radius: 25px 25px 0px 0px;
+  font-weight: 450; 
+  color: #373f61;
+  border-radius: 15px 15px 0px 0px;
   background-color:rgb(236, 247, 255);
   border-color: #def0ff;
 }
 
 .panel-block {
   background-color: white;
-  /*border-radius: 0px 0px 25px 25px;*/
   border-color: #def0ff;
   border-top: #def0ff;
 }
 
 .button{
   border-radius: 50px;
+  border-color: #0086fd;
+  color: #373f51;
+  background-color: #f9fcff;
+  font-weight: 500;
 }
 
 .navbar-dropdown {
