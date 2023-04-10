@@ -1010,8 +1010,17 @@
 					<label class='column is-4 control-label has-tooltip-arrow' data-tooltip='Aligned teams are more cohesive and perform better at linear tasks. Diverse teams show more innovation and perfrom better at creative tasks.'>Teams Diversity</label>
 					<div class='slidecontainer'>
 						<div class="sliderValue">
-							<span>1</span>
-						Aligned&ensp;<input name='diversity' class='slider' type='range' value='0.5' min='0.0' max='1.0' step='0.1'>&ensp;Diverse
+							<span id="sliderValueText">0.5</span>
+						</div>
+						<div class="slider">
+							<div class="value left">Aligned</div>
+							<!-- Aligned&ensp; -->
+							<input name='diversity' type='range' value='0.5' min='0.0' max='1.0' step='0.1' onchange="updateSliderValueText(this.value);">
+							<!-- &ensp;Diverse -->
+							<div class="value right">Diverse</div>
+						</div>
+
+			
 					</div>
 				</div>
 			</div>
@@ -1029,6 +1038,11 @@
 	</div>
 	{% include 'common/footer.html' %}
 </body>
+<script>
+function updateSliderValueText(val) {
+          document.getElementById('sliderValueText').textContent=val; 
+        }
+</script>
 <script
 src='https://code.jquery.com/jquery-3.2.1.min.js'
 integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='

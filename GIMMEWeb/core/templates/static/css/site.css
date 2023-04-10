@@ -59,7 +59,7 @@ body {
 
 .panel-heading {
   font-weight: 450; 
-  color: #373f61;
+  color: #373f51;
   border-radius: 15px 15px 0px 0px;
   background-color:rgb(236, 247, 255);
   border-color: #def0ff;
@@ -130,9 +130,7 @@ body {
   height: 1.75rem;
   overflow: hidden;
   border-radius: 50%;
-
 }
-
 
 .loading-anim{
   max-width: 96px;
@@ -154,8 +152,53 @@ body {
   padding: 2em;
   margin: auto;
 }
-.slidecontainer {
+
+.slidecontainer{
+  background:#fff;
+  border-radius: 0.2em;
+  padding: 10px 25px 20px 25px;
+  display:grid;
+  text-align:center;
+  place-items:center;
+}
+.slidecontainer .sliderValue{
+  position:relative;
+  text-align: center;
+  width:100%;
+}
+.slidecontainer .slider{
+  position:relative;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 70%;
+  font-weight: 500;
+}
+.slidecontainer .slider input{
+  -webkit-appearance: none;
+  height:8px;
+  background: #def0ff;
+  border-radius: 2px;
+  border-color: #373f51;
+  border: solid;
+  border-color: #bbcdf3;
+  border-width: 1px;
   width: 100%;
+}
+.slidecontainer .slider input::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  height: 20px;
+  width: 12px;
+  background: #373f51;
+  border-radius: 20%;
+  cursor: pointer;
+}
+.slidecontainer .slider .value.left{
+  padding: 0px 10px;
+}
+.slidecontainer .slider .value.right{
+  padding: 0px 10px;
 }
 
 .alias {cursor: alias;}
