@@ -34,6 +34,9 @@
 
 				<div class='panel-block' id='student_currentQuestionnaires' style='display: block;'>
 					<label class='column is-8'>
+						<div class='button' id='randomPersonalityButton'>Get Personality Type</div>
+						<p id='personalityDisplay'></p>
+
 						{% block content %}
 							{% if available_questionnaires|length > 0 %}
 								<a href="{% url 'questionnaire' %}" class="btn btn-primary">Take Questionnaire</a>
@@ -197,6 +200,37 @@
 	<script src='https://d3js.org/d3.v5.js'></script>
 	<script src='{% static 'js/plots.js' %}'></script>
 	<script src='https://unpkg.com/d3-force-attract@latest' crossorigin='anonymous'></script>
+
+	<script>
+	const randomPersonalityButton = document.querySelector('#randomPersonalityButton');
+
+	randomPersonalityButton.addEventListener('click', function() {
+		const mbtiTypes = [
+		'ISTJ',
+		'ISFJ',
+		'INFJ',
+		'INTJ',
+		'ISTP',
+		'ISFP',
+		'INFP',
+		'INTP',
+		'ESTP',
+		'ESFP',
+		'ENFP',
+		'ENTP',
+		'ESTJ',
+		'ESFJ',
+		'ENFJ',
+		'ENTJ'
+		];
+
+		const randomIndex = Math.floor(Math.random() * mbtiTypes.length);
+		const randomType = mbtiTypes[randomIndex];
+
+		document.querySelector('#personalityDisplay').textContent = randomType;
+	});
+	</script>
+
 	<script>
 	$(document).ready(
 		function(){

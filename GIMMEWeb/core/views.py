@@ -403,8 +403,18 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		profile = InteractionsProfile(dimensions= profile['dimensions'])
 		return profile
 	
-	def getPlayerPersonality(self,  username):
-		return User.objects.get(username=username).personality
+	def getPlayerPersonality(self,  username) -> PlayerPersonality :
+		personalityModel = User.objects.get(username=username).personalityModel  # string
+		personalityType = User.objects.get(username=username).personality  # string
+
+		if personalityModel == 'MBTI':
+			if len(personalityType) != 4:
+				return None  # exception if the personality type is not 4 characters long
+
+			return PersonalityMBTI(personalityType[0], personalityType[1], personalityType[2], personalityType[3])
+
+		return None
+
 
 	def getPlayerCurrGroup(self,  username):
 		playerInfo = User.objects.get(username=username).userprofile
@@ -610,6 +620,7 @@ class Views(): #acts as a namespace
 			playerBridge.resetPlayerCurrState(player)
 			playerBridge.resetPlayerPastModelIncreases(player)
 
+		print("Finished")
 		return HttpResponse('ok')
 
 	def calcReaction(playerBridge, state, playerId):
@@ -693,7 +704,7 @@ class Views(): #acts as a namespace
 		logout(request)
 		return redirect('/home')
 
-	
+
 	def questionnaire(request):
 		questionnaire_id = "Epic Questionnaire"
 		questionnaire = Questionnaire.objects.get(title=questionnaire_id)
@@ -737,6 +748,7 @@ class Views(): #acts as a namespace
 					), 
 				default=lambda o: o.__dict__, sort_keys=True)
 				profile.preferences = json.dumps(intProfTemplate.generateCopy().reset(), default=lambda o: o.__dict__, sort_keys=True)
+				profile.personality = json.dumps(PersonalityMBTI()) 
 
 				profile.save() 
 
@@ -1055,6 +1067,11 @@ class Views(): #acts as a namespace
 				playerModelBridge = playerBridge,
 				taskModelBridge = taskBridge
 			)
+		def selectedRegAlgSwitcherDiversity(request):
+			return DiversityValueAlg( 
+				playerBridge
+			)
+
 
 		selectedRegAlgId = newConfigParams['selectedRegAlgId']
 		# selectedRegAlg = None
@@ -1071,19 +1088,20 @@ class Views(): #acts as a namespace
 					engagement = float(newConfigParams['synergiesQualityWeightsEng'])
 				)
 			)
+		elif (selectedRegAlg == 'KNN w/ Personality Diversity'):
+			selectedRegAlg = selectedRegAlgSwitcherDiversity(request)
+			persEstRegAlg = KNNRegression( 
+				playerBridge, 
+				int(newConfigParams['synergiesNumNNs']),
+				qualityWeights = PlayerCharacteristics(
+					ability = float(newConfigParams['synergiesQualityWeightsAb']), 
+					engagement = float(newConfigParams['synergiesQualityWeightsEng'])
+				)
+			)
+
 
 		selectedGenAlg = {}
 		def selectedGenAlgSwitcherRandom(request):
-			return RandomConfigsGen(
-				playerModelBridge = playerBridge, 
-				interactionsProfileTemplate = intProfTemplate.generateCopy(),
-				minNumberOfPlayersPerGroup = int(newConfigParams['minNumberOfPlayersPerGroup']), 
-				maxNumberOfPlayersPerGroup = int(newConfigParams['maxNumberOfPlayersPerGroup']), 
-				# preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
-				jointPlayerConstraints = newConfigParams['jointPlayerConstraints'],
-				separatedPlayerConstraints = newConfigParams['separatedPlayerConstraints'])
-		
-		def selectedGenAlgSwitcherDiversity(request):
 			return RandomConfigsGen(
 				playerModelBridge = playerBridge, 
 				interactionsProfileTemplate = intProfTemplate.generateCopy(),
