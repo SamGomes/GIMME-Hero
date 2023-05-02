@@ -43,6 +43,7 @@ urlpatterns = [
     re_path(r'^saveTaskResults/', Views.saveTaskResults, name='saveTaskResults'),
 
     re_path(r'^questionnaire/', Views.questionnaire, name='questionnaire'),
+    re_path(r'^addPersonality/', Views.addPersonality, name='addPersonality'),
     #re_path('questionnaire/<int:questionnaire_id>/$', Views.questionnaire, name='questionnaire'),
     
     re_path(r'^fetchServerState/', Views.fetchServerState, name='fetchServerState'),

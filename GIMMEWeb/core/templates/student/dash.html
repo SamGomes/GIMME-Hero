@@ -34,6 +34,7 @@
 
 				<div class='panel-block' id='student_currentQuestionnaires' style='display: block;'>
 					<label class='column is-8'>
+						
 						<div class='button' id='randomPersonalityButton'>Get Personality Type</div>
 						<p id='personalityDisplay'></p>
 
@@ -228,7 +229,16 @@
 		const randomType = mbtiTypes[randomIndex];
 
 		document.querySelector('#personalityDisplay').textContent = randomType;
-	});
+
+		$.ajax(
+					{
+						url: '/addPersonality/',
+						type: 'POST',
+						data: {'personalityType': randomType, 'personalityModel': 'MBTI'},
+						dataType: 'json'
+					}
+				);
+	});	
 	</script>
 
 	<script>

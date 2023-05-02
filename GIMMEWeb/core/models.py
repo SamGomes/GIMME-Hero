@@ -92,8 +92,7 @@ class UserProfile(models.Model):
     currState = models.TextField(max_length=3072)
     pastModelIncreasesDataFrame = models.TextField(max_length=3072)
     preferences = models.CharField(max_length=1020)
-    personality = models.CharField(max_length=10)
-    personalityModel = models.CharField(max_length=32)
+    personality = models.CharField(max_length=1020)
 
     
     # subjectIds = models.CharField(max_length=1020)

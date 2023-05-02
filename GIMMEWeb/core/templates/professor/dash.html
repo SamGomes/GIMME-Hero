@@ -1015,7 +1015,7 @@
 						<div class="slider">
 							<div class="value left">Aligned</div>
 							<!-- Aligned&ensp; -->
-							<input name='diversity' type='range' value='0.5' min='0.0' max='1.0' step='0.1' oninput="updateSliderValueText(this.value);">
+							<input name='diversity' id='diversityWeight_professor_dash' type='range' value='0.5' min='0.0' max='1.0' step='0.1' oninput="updateSliderValueText(this.value);">
 							<!-- &ensp;Diverse -->
 							<div class="value right">Diverse</div>
 						</div>
@@ -2089,6 +2089,8 @@ crossorigin='anonymous'></script>
 				'synergiesNumNNs': $('#synergiesNumNNsId_professor_dash').val(),
 				'synergiesQualityWeightsAb': $('#synergiesQualityWeightsAbId_professor_dash').val(),
 				'synergiesQualityWeightsEng': $('#synergiesQualityWeightsEngId_professor_dash').val(),
+
+				'diversityWeight' : $('#diversityWeight_professor_dash').val(),
 				
 				// 'minNumberOfPlayersPerGroup': $('#minNumberOfPlayersPerGroupId_professor_dash').val(),
 				// 'maxNumberOfPlayersPerGroup': $('#maxNumberOfPlayersPerGroupId_professor_dash').val(),

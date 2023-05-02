@@ -77,6 +77,11 @@ class UpdateUserProfileForm(ModelForm):
 		fields = ['fullName', 'age', 'gender', 'description', 'avatar']
 
 
+class UpdateUserPersonalityForm(ModelForm):
+	class Meta:
+		model = UserProfile
+		fields = ['personality']
+
 
 class UpdateTaskForm(ModelForm):
 	initDate = forms.DateField(widget=DateInput)
