@@ -3,6 +3,9 @@ import os
 import uuid
 from uuid import uuid4
 
+from enum import Enum
+from enumfields import  EnumField
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -23,6 +26,12 @@ ROLE = (('designer', 'designer'),
 GENDER = (('Male', 'Male'),
         ('Female', 'Female'),
         ('Other', 'Other'))
+
+
+class QuestionnaireType(Enum):
+    MBTI = 'MBTI'
+
+QUESTIONNAIRE_TYPES = ((QuestionnaireType.MBTI, 'MBTI'))
 
 
 class ModelAuxMethods():
@@ -51,23 +60,23 @@ class Questionnaire(models.Model):
     title = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
-
-
-class LikertQuestion(models.Model):
-    questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)
-    text = models.TextField()
-
+    type = EnumField(QuestionnaireType)
 
 class Submission(models.Model):
     questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)
     student = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
 
+class LikertQuestion(models.Model):
+    text = models.TextField()
+
+class LikertQuestionnaire(Questionnaire):
+    questions = models.ManyToManyField(LikertQuestion, related_name='questionnaires')
 
 class LikertResponse(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(LikertQuestion, on_delete=models.CASCADE)
-    submission = models.ForeignKey(Submission, on_delete=models.CASCADE)
-    response = models.PositiveIntegerField(choices=((1, 'Strongly Disagree'), (2, 'Disagree'), (3, 'Neutral'), (4, 'Agree'), (5, 'Strongly Agree')))
+    value = models.PositiveIntegerField(choices=((1, 'Strongly Disagree'), (2, 'Disagree'), (3, 'Neutral'), (4, 'Agree'), (5, 'Strongly Agree')))
 
 
 

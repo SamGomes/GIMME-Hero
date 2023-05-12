@@ -30,7 +30,7 @@ from django.forms import formset_factory
 
 from GIMMEWeb.core.models import UserProfile
 from GIMMEWeb.core.models import Task
-from GIMMEWeb.core.models import Questionnaire,LikertResponse, Submission
+from GIMMEWeb.core.models import Questionnaire, LikertResponse, Submission, QuestionnaireType
 from GIMMEWeb.core.models import ServerState
 from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm, UpdateUserPersonalityForm, LikertForm
 
@@ -606,6 +606,16 @@ taskSelectWeigths = '0.5'
 profileDim0 = ['0', '1', '1', '0', '0', '1', '1', '0', '0', '1', '1', '0', '0', '1', '1', '0', '0', '1', '1']
 profileDim1 = ['1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1']
 
+
+#region Questionnaire Auxiliary Functions
+def is_questionnaire_completed(questionnaire, user):
+	return Submission.objects.filter(questionnaire=questionnaire, student=user).exists()
+
+def calculate_personality_MBTI(data):
+	return 2
+#endregion
+
+
 class Views(): #acts as a namespace
 
 	def initServer(request):
@@ -721,28 +731,66 @@ class Views(): #acts as a namespace
 		return redirect('/home')
 
 
-	def questionnaire(request):
-		questionnaire_id = "Epic Questionnaire"
-		questionnaire = Questionnaire.objects.get(title=questionnaire_id)
+
+	#region Questionnaire View Functions
+	def questionnaire_MBTI(request, questionnaire_title):
+		questionnaire = Questionnaire.objects.get(title=questionnaire_title)
+		user = request.user
+
+		# # Check if the user has already submitted their answers for this questionnaire
+		# if LikertResponse.objects.filter(user=user, question__in=questionnaire.questions.all()).exists():
+		# 	# Questionnaire completed
+		# 	return
 
 		if request.method == 'POST':
 			form = LikertForm(request.POST)
 			if form.is_valid():
 				submission = Submission.objects.create(questionnaire=questionnaire, student=request.user)
-				for question_id, response in form.cleaned_data.items():
-					if question_id.startswith('question_'):
-						question_id = question_id[len('question_'):]
-						response = LikertResponse(question_id=question_id, submission=submission, response=response)
-						response.save()
+				submission.save()
+				# Save the student's answers
+				for question, value in form.cleaned_data.items():
+					if question.startswith('question_'):
+						question_id = int(question[9:])
+						answer = LikertResponse(student=user, question_id=question_id, value=value)
+						answer.save()
 
+				# Calculate the result based on the user's answers
+				result = calculate_personality_MBTI(form.cleaned_data)
 				return render(request, 'student/thanks.html')
 		else:
 			form = LikertForm()
 
-		context = { 'questionnaire': questionnaire,
-					'form' : form }
+		return render(request, 'student/questionnaire.html', {'form': form, 'questionnaire': questionnaire})
+
+
+	def questionnaire(request, questionnaire_title):
+		# switch(questionnaire.type)
+		#	case QuestionnaireType.MBTI:
+		#		questionnaire_MBTI(request)
+		questionnaire = Questionnaire.objects.get(title=questionnaire_title)
+		questionnaire_type = questionnaire.type
+
+		if questionnaire_type == QuestionnaireType.MBTI:
+			return Views.questionnaire_MBTI(request, questionnaire_title)
+
+		# if request.method == 'POST':
+		# 	form = LikertForm(request.POST)
+		# 	if form.is_valid():
+		# 		submission = Submission.objects.create(questionnaire=questionnaire, student=request.user)
+		# 		for question_id, response in form.cleaned_data.items():
+		# 			if question_id.startswith('question_'):
+		# 				question_id = question_id[len('question_'):]
+		# 				#response = LikertResponse(question_id=question_id, submission=submission, response=response)
+		# 				#response.save()
+
+		# 		return render(request, 'student/thanks.html')
+		# else:
+		# 	form = LikertForm()
+
+		# context = { 'questionnaire': questionnaire,
+		# 			'form' : form }
 		
-		return render(request, 'student/questionnaire.html', context)
+		# return render(request, 'student/questionnaire.html', context)
 
 
 	def addPersonality(request):
@@ -765,6 +813,7 @@ class Views(): #acts as a namespace
 			personalityForm.save()
 		
 		return HttpResponse('ok')
+	#endregion
 		
 
 	def userRegistration(request):
@@ -920,8 +969,8 @@ class Views(): #acts as a namespace
 		available_questionnaires = []
 
 		for questionnaire in active_questionnaires:
-			if not Submission.objects.filter(questionnaire=questionnaire, student=request.user).exists():
-				available_questionnaires += Submission.objects.filter(questionnaire=questionnaire)
+			if not is_questionnaire_completed(questionnaire, request.user):
+				available_questionnaires.append(questionnaire)
 
 
 		context = {} 
@@ -938,8 +987,6 @@ class Views(): #acts as a namespace
 		return result_str
 	
 		
-
-
 	
 	def addAllUsersSelected(request): #reads (player) from args
 		if request.method == 'POST':

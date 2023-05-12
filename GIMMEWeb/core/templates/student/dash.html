@@ -40,7 +40,11 @@
 
 						{% block content %}
 							{% if available_questionnaires|length > 0 %}
-								<a href="{% url 'questionnaire' %}" class="btn btn-primary">Take Questionnaire</a>
+								{% for questionnaire in available_questionnaires %}
+									<form action="{% url 'questionnaire' questionnaire.title %}" method="get">
+										<button type="submit">{{ questionnaire_title }}</button>
+									</form>
+								{% endfor %}
 							{% else %}
 								<p>No new questionnaires available</p>
 							{% endif %}

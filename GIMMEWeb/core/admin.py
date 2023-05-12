@@ -17,4 +17,5 @@ admin.site.register(Task,GeneralAdmin)
 
 admin.site.register(LikertQuestion)
 admin.site.register(Questionnaire)
+admin.site.register(LikertQuestionnaire)
 
