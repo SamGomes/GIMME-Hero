@@ -2025,6 +2025,8 @@ crossorigin='anonymous'></script>
 
 				avgChars[0] += currState.ability/ profiles.length;
 				avgChars[1] += currState.engagement/ profiles.length;
+
+				console.log(currState.group_diversity);
 			}
 
 
@@ -2047,6 +2049,8 @@ crossorigin='anonymous'></script>
 					{ "name": "Engagement" , "value": avgChars[1] }
 				]
 			);
+
+			//buildDiversityAveragePlot();
 			updateGroupsPlotScaleCallback();
 		}
 
