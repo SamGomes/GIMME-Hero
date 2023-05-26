@@ -282,6 +282,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             delete avgCharacteristics.profile;
             var profile = data.profiles[i];
             var tasks = data.tasks[i];
+            
 
             groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics, 'profile': profile, 'tasks': tasks, 'centerOfMass': groupCenterOfMass});
             
@@ -749,6 +750,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
+            node['Characteristics']['Diversity'] = characteristics.group_diversity;
             node['Profile'] = dimensions;
 
             //delete undisplayed attributes
@@ -835,6 +837,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
+            node['Characteristics']['Personality'] = characteristics.group_diversity;  //TODO display personality
             //node['(External) Grade'] = originalNode.userState.grade;
         }
 

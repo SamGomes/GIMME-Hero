@@ -1998,6 +1998,7 @@ crossorigin='anonymous'></script>
 
 
 		var buildPlots = function(currServerState){
+			console.log(currServerState.studentsStates)
 			buildGroupsPlot(
 				false, 
 				'groupsPlot_professor_dash', 
@@ -2025,8 +2026,6 @@ crossorigin='anonymous'></script>
 
 				avgChars[0] += currState.ability/ profiles.length;
 				avgChars[1] += currState.engagement/ profiles.length;
-
-				console.log(currState.group_diversity);
 			}
 
 
