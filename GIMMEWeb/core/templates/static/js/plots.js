@@ -837,7 +837,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
-            node['Characteristics']['Personality'] = characteristics.group_diversity;  //TODO display personality
+            node['Characteristics']['Personality'] = originalNode.userState.personality;  //TODO display personality
             //node['(External) Grade'] = originalNode.userState.grade;
         }
 

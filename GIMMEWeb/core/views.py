@@ -407,7 +407,6 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		profile = User.objects.get(username=username).userprofile
 		personality = json.loads(profile.personality)
 		
-		# breakpoint()
 		# TODO add personality model verification
 		# if personalityModel == 'MBTI':
 		# 	if len(personalityType) != 4:
@@ -522,6 +521,11 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		newState = self.getPlayerCurrState(username)
 		newState.characteristics = characteristics
 		playerInfo.currState = json.dumps(newState, default=lambda o: o.__dict__)
+		playerInfo.save()
+
+	def setPlayerPersonality(self, username, personality):
+		playerInfo = User.objects.get(username=username).userprofile
+		playerInfo.personality = json.dumps(personality, default=lambda o: o.__dict__)
 		playerInfo.save()
 
 	def setPlayerGrade(self, username, grade):
@@ -850,7 +854,7 @@ class Views(): #acts as a namespace
 				profile.save() 
 
 				if 'student' in profile.role:
-					currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
+					currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
 					currFreeUsers.append(user.username)
 					serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
 					playerBridge.setPlayerGrade(user.username, 0)
@@ -1517,6 +1521,7 @@ class Views(): #acts as a namespace
 			userInfo['tasks'] = playerBridge.getPlayerCurrTasks(username)
 			userInfo['statesDataFrame'] = playerBridge.getPlayerStatesDataFrame(username)
 			userInfo['grade'] = playerBridge.getPlayerGrade(username)
+			userInfo['personality'] = playerBridge.getPlayerPersonality(username).getPersonalityString()
 
 			userInfo = json.dumps(userInfo, default=lambda o: o.__dict__, sort_keys=True)
 			return HttpResponse(userInfo)
