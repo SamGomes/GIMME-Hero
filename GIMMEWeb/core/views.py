@@ -35,6 +35,7 @@ from GIMMEWeb.core.models import ServerState
 from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm, UpdateUserPersonalityForm, LikertForm
 
 from GIMMECore import *
+from GIMMEWeb.core import OEJTS_questionnaire
 
 
 
@@ -614,9 +615,6 @@ profileDim1 = ['1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', 
 #region Questionnaire Auxiliary Functions
 def is_questionnaire_completed(questionnaire, user):
 	return Submission.objects.filter(questionnaire=questionnaire, student=user).exists()
-
-def calculate_personality_MBTI(data):
-	return 2
 #endregion
 
 
@@ -759,7 +757,7 @@ class Views(): #acts as a namespace
 						answer.save()
 
 				# Calculate the result based on the user's answers
-				result = calculate_personality_MBTI(form.cleaned_data)
+				result = OEJTS_questionnaire.calculate_personality_MBTI(form.cleaned_data)
 				return render(request, 'student/thanks.html')
 		else:
 			form = LikertForm()

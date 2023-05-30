@@ -1830,6 +1830,7 @@ crossorigin='anonymous'></script>
 							success: 
 							function(studentsStates)
 							{
+								console.log(studentsStates)
 								newServerState.studentsStates = JSON.parse(studentsStates);
 								
 								if(studentsStates != undefined && 

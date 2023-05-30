@@ -58,6 +58,7 @@ class ModelAuxMethods():
 
 class Questionnaire(models.Model):
     title = models.CharField(max_length=255)
+    description = models.TextField(max_length=3072)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
     type = EnumField(QuestionnaireType)

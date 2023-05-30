@@ -44,7 +44,7 @@ class LikertForm(forms.Form):
 		super().__init__(*args, **kwargs)
 		for question in LikertQuestion.objects.all():
 			self.fields[f"question_{question.id}"] = forms.ChoiceField(
-				choices=[(1, '1 (Strongly Disagree)'), (2, '2 (Disagree)'), (3, '3 (Neutral)'), (4, '4 (Agree)'), (5, '5 (Strongly Agree)')],
+				choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')],
 				widget=forms.RadioSelect,
 				label=question.text,
 			)
