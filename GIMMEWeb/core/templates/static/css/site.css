@@ -71,6 +71,14 @@ body {
   border-top: #def0ff;
 }
 
+.panel-footer {
+  font-weight: 450; 
+  color: #373f51;
+  border-radius: 0px 0px 15px 15px ;
+  background-color:rgb(236, 247, 255);
+  border-color: #def0ff;
+}
+
 .button{
   border-radius: 50px;
   border-color: #0086fd;
@@ -107,6 +115,27 @@ body {
   font-size: 200%;
   color: #373f51;
   font-weight: 600;
+}
+
+.question-text{
+  font-size: 105%;
+  color: #373f51;
+  font-weight: 500;
+}
+
+.question-block{
+  background-color: white;
+  border-color: #def0ff;
+  border-style: solid;
+}
+
+.likert-options{
+  font-size: 105%;
+  color: #373f51;
+}
+
+.likert-element{
+  padding: 0.4em;
 }
 
 
