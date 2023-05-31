@@ -39,7 +39,7 @@
 							{% if available_questionnaires|length > 0 %}
 								{% for questionnaire in available_questionnaires %}
 									<form action="{% url 'questionnaire' questionnaire.title %}" method="get">
-										<button type="submit">{{ questionnaire_title }}</button>
+										<button class="button" type="submit">{{ questionnaire.title }}</button>
 									</form>
 								{% endfor %}
 							{% else %}
