@@ -5,7 +5,8 @@
 
         <div class="section" style="text-align: center;">
             <div class="panel-heading" >
-                <h1 class="title" style="font-size: 250%;">{{questionnaire.title}}</h1>
+                {% load replace_underscores %}
+                <h1 class="title" style="font-size: 250%;">{{questionnaire.title | replace_underscores}}</h1>
                 <p class="subtitle" style="font-size: 110%;">{{questionnaire.description}}</p>
             </div>
             <form method="post">

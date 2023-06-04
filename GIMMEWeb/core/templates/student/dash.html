@@ -35,7 +35,11 @@
 				<div class='panel-block' id='student_tutorial' style='display: block;'>
 					<h1 class="title" style="font-size: 250%; text-align: center; margin-top: 0.5em;">Welcome!</h1>
 					<div class="description">
-						<p>In order to complete your profile, please answer the <b class="contrast-color">First Questionnaire</b> in your <i>Questionnaires to Answer</i> section</p>
+						<!-- <p>In order to complete your profile, please answer the <b class="contrast-color">First Questionnaire</b> in your <i>Questionnaires to Answer</i> section</p> -->
+						{% csrf_token %}
+						{% for questionnaire in available_questionnaires %}
+							<p>{{ questionnaire.dashboard_message |safe}}</p>
+						{% endfor %}
 						<p>The First Questionnaire serves to assess your profile. The results will be shared with you after completing the study.</p>
 					</div>
 				</div>
@@ -61,9 +65,11 @@
 						{% block content %}
 							{% if available_questionnaires|length > 0 %}
 								{% for questionnaire in available_questionnaires %}
+								{% load replace_underscores %}
 									<form action="{% url 'questionnaire' questionnaire.title %}" method="get">
-										<button class="button" type="submit">{{ questionnaire.title }}</button>
+										<button class="button" type="submit">{{ questionnaire.title | replace_underscores }}</button>
 									</form>
+
 								{% endfor %}
 							{% else %}
 								<p>No new questionnaires available</p>

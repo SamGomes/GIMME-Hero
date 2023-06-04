@@ -744,6 +744,9 @@ class Views(): #acts as a namespace
 		# 	# Questionnaire completed
 		# 	return
 
+		if is_questionnaire_completed(questionnaire, user):
+			return render(request, 'student/thanks.html')
+
 		if request.method == 'POST':
 			form = LikertForm(request.POST)
 			if form.is_valid():
@@ -762,6 +765,7 @@ class Views(): #acts as a namespace
 		else:
 			form = LikertForm()
 
+		print(form)
 		return render(request, 'student/questionnaire.html', {'form': form, 'questionnaire': questionnaire})
 
 

@@ -62,6 +62,7 @@ class Questionnaire(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now)
     type = EnumField(QuestionnaireType)
+    dashboard_message = models.TextField(max_length=3072) 
 
 class Submission(models.Model):
     questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)
