@@ -1,5 +1,3 @@
-
-
 {% include 'common/header.html' %}
 <div class="section columns" style="display: flex;">
     <div class="column"></div>
@@ -15,16 +13,16 @@
                 {% for field in form %}
                     <div class="question-block">
                         <div class="column">
-                            <p class="question-text">{{ field.label_tag }}</p>
-
                             <fieldset class="likert-options" id="{{ field.name }}">
-                            <!-- <legend>Choose one:</legend> -->
+
+                            <label class="question-text">{{ field.field.left_extremity }}</label>
                             {% for choice in field.field.choices %}
                                 <label class="likert-element" for="{{ field.id_for_label }}_{{ forloop.counter }}">
                                 <input type="{{ field.field.widget.input_type }}" id="{{ field.id_for_label }}_{{ forloop.counter }}" name="{{ field.html_name }}" value="{{ choice.0 }}">
                                 {{ choice.1 }}
                                 </label>
                             {% endfor %}
+                            <label class="question-text">{{ field.field.right_extremity }}</label>
                             </fieldset>
                         </div>
                     </div>

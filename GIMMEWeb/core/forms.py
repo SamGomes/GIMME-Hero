@@ -9,6 +9,13 @@ from GIMMEWeb.core.models import UserProfile, Task, LikertQuestion, Questionnair
 
 
 
+class LikertChoiceField(forms.ChoiceField):
+	def __init__(self, choices, widget, label, left_extremity, right_extremity):
+		super().__init__(choices=choices, widget=widget, label=label)
+		self.left_extremity = left_extremity
+		self.right_extremity = right_extremity
+	
+
 class DateInput(forms.DateInput):
 	input_type = 'date'
 
@@ -43,26 +50,14 @@ class LikertForm(forms.Form):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		for question in LikertQuestion.objects.all():
-			self.fields[f"question_{question.id}"] = forms.ChoiceField(
-				choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')],
-				widget=forms.RadioSelect,
-				label=question.text,
+			self.fields[f"question_{question.id}"] = LikertChoiceField(
+				[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')],
+				forms.RadioSelect,
+				question.text,
+				question.left_extremity,
+				question.right_extremity
 			)
-
-
-class LikertResponseForm(forms.Form):
-    class Meta:
-        model = LikertResponse
-        fields = ['response']
-        widgets = {
-            'response': forms.RadioSelect(choices=((1, 'Strongly Disagree'), (2, 'Disagree'), (3, 'Neutral'), (4, 'Agree'), (5, 'Strongly Agree')))
-        }
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # question_text = kwargs.pop('question.text')
-        # self.fields['response'].label = question_text
-
+			
 
 class UpdateUserForm(UserChangeForm):
 	# email = models.EmailField(required = True)

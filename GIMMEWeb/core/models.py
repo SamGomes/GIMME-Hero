@@ -69,7 +69,8 @@ class Submission(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
 
 class LikertQuestion(models.Model):
-    text = models.TextField()
+    left_extremity = models.TextField(max_length=127)
+    right_extremity = models.TextField(max_length=127)
 
 class LikertQuestionnaire(Questionnaire):
     questions = models.ManyToManyField(LikertQuestion, related_name='questionnaires')
