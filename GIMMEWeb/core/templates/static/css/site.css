@@ -91,6 +91,10 @@ body {
   min-width: 50%;
 }
 
+.contrast-color{
+  color: #ee4266;
+}
+
 .main-title{
   font-size: 400%;
   text-shadow: -4px 0 #131444, 0 4px #131444, 4px 0 #131444, 0 -4px #131444;
@@ -115,6 +119,12 @@ body {
   font-size: 200%;
   color: #373f51;
   font-weight: 600;
+}
+.description{
+  font-size: 110%; text-align: center;
+  color: #373f51;
+  font-weight: 600;
+  margin: 0.5em;
 }
 
 .question-text{
