@@ -131,6 +131,7 @@ body {
   font-size: 105%;
   color: #373f51;
   font-weight: 500;
+  margin: 0.5em;
 }
 
 .question-block{
@@ -139,13 +140,23 @@ body {
   border-style: solid;
 }
 
+.likert-row {
+  display: flex;
+  align-items: center;
+}
+
 .likert-options{
   font-size: 105%;
   color: #373f51;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .likert-element{
-  padding: 0.4em;
+  margin: 1em;
+  flex: 1;
+  text-align: center;
 }
 
 
