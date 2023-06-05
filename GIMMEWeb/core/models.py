@@ -132,8 +132,6 @@ class Task(models.Model):
     profileWeight = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
     difficultyWeight = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
 
-    diversity = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
-
     initDate = models.DateField()
     finalDate = models.DateField()
 

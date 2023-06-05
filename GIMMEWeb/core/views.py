@@ -1372,8 +1372,6 @@ class Views(): #acts as a namespace
 					task.difficultyWeight = str(1.0 - float(requestInfo['taskSelectWeigths']))
 					
 					task.minReqAbility = requestInfo['difficulty']
-
-					task.diversity = requestInfo['diversity']
 					
 					task.save()
 

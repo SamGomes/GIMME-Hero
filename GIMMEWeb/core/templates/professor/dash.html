@@ -730,6 +730,17 @@
 				</div>
 
 				<div class='panel-block' style='display: block;'>
+					<p>Personality Diversity Distribution</p>
+					<div class='columns is-mobile is-centered'>
+						<div class='column is-7' id='personalityDiversityPlot_professor_dash'></div>
+					</div>
+
+					<div class='columns is-mobile is-centered'>
+						<img class='column is-2 loading-anim' id='learningStatePlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
+					</div>
+				</div>
+
+				<div class='panel-block' style='display: block;'>
 					<p>Overall Preferences Distribution</p>
 					<div class='columns is-mobile is-centered'>
 						<div class='column is-7' id='interactionsProfilePlot_professor_dash'></div>
@@ -1013,11 +1024,11 @@
 							<span id="sliderValueText">0.5</span>
 						</div>
 						<div class="slider">
-							<div class="value left">Aligned</div>
+							<div class="value left" data-tooltip='Aligned teams are more cohesive and perform better at linear tasks.'>Aligned</div>
 							<!-- Aligned&ensp; -->
 							<input name='diversity' id='diversityWeight_professor_dash' type='range' value='0.5' min='0.0' max='1.0' step='0.1' oninput="updateSliderValueText(this.value);">
 							<!-- &ensp;Diverse -->
-							<div class="value right">Diverse</div>
+							<div class="value right" data-tooltip='Diverse teams show more innovation and perfrom better at creative tasks.'>Diverse</div>
 						</div>
 
 			
@@ -1849,6 +1860,7 @@ crossorigin='anonymous'></script>
 									
 									$('#groupsPlotAuxPanel_professor_dash').show(500);
 									$('#groupsPlot_professor_dash').show();
+									$('#personalityDiversityPlot_professor_dash').show();
 									$('#interactionsProfilePlot_professor_dash').show();
 									$('#learningStatePlot_professor_dash').show();
 									
@@ -1869,6 +1881,7 @@ crossorigin='anonymous'></script>
 
 									$('#groupsPlotAuxPanel_professor_dash').hide(500);
 									$('#groupsPlot_professor_dash').hide(500);
+									$('#personalityDiversityPlot_professor_dash').hide(500);
 									$('#interactionsProfilePlot_professor_dash').hide(500);
 									$('#learningStatePlot_professor_dash').hide(500);
 									
@@ -2007,7 +2020,8 @@ crossorigin='anonymous'></script>
 				currServerState.studentsStates,
 				$('input[name="studentPerformanceScaleType"]:checked').val()
 			);
-
+			
+			$('#personalityDiversityPlot_professor_dash').empty()
 			$('#interactionsProfilePlot_professor_dash').empty()
 			$('#learningStatePlot_professor_dash').empty()
 			var interactionDatapoints = [];
@@ -2042,6 +2056,7 @@ crossorigin='anonymous'></script>
 			// 	{ 'focus': -3, 'challenge': -1, 'timestamp': 8 }
 			// ]
 
+			buildDiversityDistributionPlot('personalityDiversityPlot_professor_dash', currServerState.currAdaptationState);
 			buildScatterInteractionPlot('interactionsProfilePlot_professor_dash', interactionDatapoints);
 			buildStatePlot('learningStatePlot_professor_dash', 
 				[
@@ -2050,7 +2065,6 @@ crossorigin='anonymous'></script>
 				]
 			);
 
-			//buildDiversityAveragePlot();
 			updateGroupsPlotScaleCallback();
 		}
 

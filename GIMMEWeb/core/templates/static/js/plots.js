@@ -747,10 +747,23 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
                 dimensions[key] = Number((currD*6.0 - 3.0).toFixed(2));
             }
 
+
+            var diversity_text = String(characteristics.group_diversity);
+
+            if (characteristics.group_diversity < 0.33){
+                diversity_text += " (Aligned)";
+            }
+            else if (characteristics.group_diversity > 0.66){
+                diversity_text += " (Diverse)";
+            }
+            else{
+                diversity_text += " (Balanced)";
+            }
+
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
-            node['Characteristics']['Diversity'] = characteristics.group_diversity;
+            node['Characteristics']['Diversity'] = diversity_text;
             node['Profile'] = dimensions;
 
             //delete undisplayed attributes
@@ -1323,3 +1336,7 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationD
     
 }
 
+
+var buildDiversityDistributionPlot = function(canvasId, data){
+
+}
