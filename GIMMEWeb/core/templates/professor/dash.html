@@ -1841,7 +1841,6 @@ crossorigin='anonymous'></script>
 							success: 
 							function(studentsStates)
 							{
-								console.log(studentsStates)
 								newServerState.studentsStates = JSON.parse(studentsStates);
 								
 								if(studentsStates != undefined && 
@@ -1996,7 +1995,6 @@ crossorigin='anonymous'></script>
 								$('#groupsPlot_professor_dash').empty();
 								
 								if (currServerState.currAdaptationState != undefined && currServerState.currAdaptationState != [])
-// 									console.log(currServerState.currAdaptationState)
 									buildPlots(currServerState);
 								
 								
@@ -2012,7 +2010,6 @@ crossorigin='anonymous'></script>
 
 
 		var buildPlots = function(currServerState){
-			console.log(currServerState.studentsStates)
 			buildGroupsPlot(
 				false, 
 				'groupsPlot_professor_dash', 

@@ -761,11 +761,11 @@ class Views(): #acts as a namespace
 
 				# Calculate the result based on the user's answers
 				result = OEJTS_questionnaire.calculate_personality_MBTI(form.cleaned_data)
+				# TODO save result in database
 				return render(request, 'student/thanks.html')
 		else:
 			form = LikertForm()
 
-		print(form)
 		return render(request, 'student/questionnaire.html', {'form': form, 'questionnaire': questionnaire})
 
 
