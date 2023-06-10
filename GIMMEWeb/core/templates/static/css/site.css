@@ -87,6 +87,14 @@ body {
   font-weight: 500;
 }
 
+.plot-label{
+  font-weight: 500;
+  color: #131444;
+  font-size: 130%;
+
+}
+
+
 .navbar-dropdown {
   min-width: 50%;
 }
