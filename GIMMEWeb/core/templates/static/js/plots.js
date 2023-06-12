@@ -49,6 +49,10 @@ var engMax = 0;
 var abMin = Infinity;
 var engMin = Infinity; 
 
+const GIMME_BLUE = '#0086fd';
+const TEXT_BLUE = '#131444';
+
+
 var generateGroupColor = function(profile) {
     var focus = profile.dimensions.Focus;
     var challenge = profile.dimensions.Challenge;
@@ -282,6 +286,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             delete avgCharacteristics.profile;
             var profile = data.profiles[i];
             var tasks = data.tasks[i];
+            
 
             groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics, 'profile': profile, 'tasks': tasks, 'centerOfMass': groupCenterOfMass});
             
@@ -697,7 +702,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
     groupInfoTooltips
         .append('path')
         .attr('d', function(d) {
-          return rightRoundedRect(15, 15, 600, 310, 7);
+          return rightRoundedRect(15, 15, 600, 340, 7);
         })
         .attr('fill', function(node){
                                 var baseColor = colors[node.groupId].split('#')[1];
@@ -746,9 +751,23 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
                 dimensions[key] = Number((currD*6.0 - 3.0).toFixed(2));
             }
 
+
+            var diversity_text = String(characteristics.group_diversity);
+
+            if (characteristics.group_diversity < 0.33){
+                diversity_text += " (Aligned)";
+            }
+            else if (characteristics.group_diversity > 0.66){
+                diversity_text += " (Diverse)";
+            }
+            else{
+                diversity_text += " (Balanced)";
+            }
+
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
+            node['Characteristics']['Diversity'] = diversity_text;
             node['Profile'] = dimensions;
 
             //delete undisplayed attributes
@@ -835,6 +854,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
+            node['Characteristics']['Personality'] = originalNode.userState.personality;  //TODO display personality
             //node['(External) Grade'] = originalNode.userState.grade;
         }
 
@@ -1043,16 +1063,16 @@ var buildScatterInteractionPlot  = function(canvasId, data, mouseClickCallback =
         
     svg.append('g')
         .append('text') 
-        .attr('class', 'x label')
+        .attr('class', 'plot-label')
         .attr('x', width* 0.5)
         .attr('y', height* 0.94)
         .attr('text-anchor', 'middle')
         .style('font-size', width*0.05 +'px')
-        .text(' Self      ← Focus →     Others');
+        .text('  Self      ← Focus →    Others');
 
     svg.append('g')
         .append('text') 
-        .attr('class', 'y label')
+        .attr('class', 'plot-label')
         .attr('text-anchor', 'middle')
         .attr('x', -width* 0.48)
         .attr('y', height* 0.04)
@@ -1117,7 +1137,7 @@ var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined, st
         .attr('display', 'block')
         .attr('margin', 'auto')
         .attr('height', height + margin.top + margin.bottom + 200)
-        .call(responsivefy, 1000, 0.15);
+        .call(responsivefy, width, 0);
 
 
     if(maxValue == undefined){
@@ -1167,10 +1187,10 @@ var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined, st
         .attr('width', function (d) {
             return  x(d.value) - margin.left;
         })
-        .attr('fill', '#50C2E3');
+        .attr('fill', GIMME_BLUE);
 
     var gy = svg.append('g')
-                .attr('class', 'y axis label')
+                .attr('class', 'plot-label')
                 .call(yAxis) 
                 .attr('transform', 'translate(' + margin.left + ',0)')
                     .style('font-size','30px');
@@ -1180,7 +1200,7 @@ var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined, st
 
     
     var gx = svg.append('g')
-                .attr('class', 'x axis')
+                .attr('class', 'plot-label')
                 .call(xAxis)
                 .attr('transform', 'translate(0,' + height + ')')
                 .style('font-size','25px');
@@ -1320,3 +1340,82 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationD
     
 }
 
+
+var buildDiversityDistributionPlot = function(canvasId, data){
+    // set the dimensions and margins of the graph
+    var margin = {top: 30, right: 30, bottom: 60, left: 60},
+        width = 590 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    // append the svg object to the body of the page
+    var svg = d3.select('#'+canvasId)
+    .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .call(responsivefy, width, 0)
+    .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+    
+    var x = d3.scaleLinear()
+        .domain([0, 1]) 
+        .range([0, width]);
+
+
+    svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
+        .style('font-size','15px');
+    
+    var histogram = d3.histogram()
+        .value(function(d) { return d.group_diversity; }) 
+        .domain(x.domain()) 
+        .thresholds(x.ticks(20)); 
+    
+    var bins = histogram(data.avgCharacteristics);
+
+
+    var y = d3.scaleLinear()
+        .range([height, 0]);
+        y.domain([0, d3.max(bins, function(d) { return d.length; })]);  
+
+
+    svg.append("g")
+        .call(d3.axisLeft(y)
+        .ticks(y.domain()[1])
+        .tickFormat(d3.format('d')))
+        .style('font-size','15px');
+
+
+    // X axis label:
+    svg.append("text")
+        .attr("text-anchor", "middle")
+        .attr('class', 'plot-label')
+        .attr("x", width / 2)
+        .attr("y", height + margin.top + 20)
+        .text("Group Personality Diversity");
+
+
+    // Y axis label:
+    svg.append("text")
+        .attr("text-anchor", "middle")
+        .attr('class', 'plot-label')
+        .attr("transform", "rotate(-90)")
+        .attr("y", - margin.left + 20)
+        .attr("x", - height / 2)
+        .text("Number Of Groups");
+
+
+    // append the bar rectangles to the svg element
+    svg.selectAll("rect")
+        .data(bins)
+        .enter()
+        .append("rect")
+            .attr("x", 1)
+            .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
+            .attr("width", function(d) { return x(d.x1) - x(d.x0) -1 ; })
+            .attr("height", function(d) { return height - y(d.length); })
+            .style("fill", GIMME_BLUE)
+      
+}

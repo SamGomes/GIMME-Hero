@@ -14,3 +14,8 @@ class GeneralAdmin(admin.ModelAdmin):
 # admin.site.register(User,GeneralAdmin)
 admin.site.register(UserProfile,GeneralAdmin)
 admin.site.register(Task,GeneralAdmin)
+
+admin.site.register(LikertQuestion)
+admin.site.register(Questionnaire)
+admin.site.register(LikertQuestionnaire)
+

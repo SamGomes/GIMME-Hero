@@ -3,9 +3,13 @@ import os
 import uuid
 from uuid import uuid4
 
+from enum import Enum
+from enumfields import  EnumField
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from django.utils import timezone
 
 from multiselectfield import MultiSelectField
 
@@ -24,6 +28,12 @@ GENDER = (('Male', 'Male'),
         ('Other', 'Other'))
 
 
+class QuestionnaireType(Enum):
+    MBTI = 'MBTI'
+
+QUESTIONNAIRE_TYPES = ((QuestionnaireType.MBTI, 'MBTI'))
+
+
 class ModelAuxMethods():
 
     def pathAndRename(path):
@@ -40,11 +50,36 @@ class ModelAuxMethods():
         return wrapper
 
 
-
 # class Subject(models.Model):
 #     subjectId = models.CharField(max_length=1020,primary_key=True)
 #     description = models.TextField(max_length=1020)
 #     studentIds = models.CharField(max_length=1020)
+
+
+class Questionnaire(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField(max_length=3072)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    type = EnumField(QuestionnaireType)
+    dashboard_message = models.TextField(max_length=3072) 
+
+class Submission(models.Model):
+    questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(default=timezone.now)
+
+class LikertQuestion(models.Model):
+    left_extremity = models.TextField(max_length=127)
+    right_extremity = models.TextField(max_length=127)
+
+class LikertQuestionnaire(Questionnaire):
+    questions = models.ManyToManyField(LikertQuestion, related_name='questionnaires')
+
+class LikertResponse(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    question = models.ForeignKey(LikertQuestion, on_delete=models.CASCADE)
+    value = models.PositiveIntegerField(choices=((1, 'Strongly Disagree'), (2, 'Disagree'), (3, 'Neutral'), (4, 'Agree'), (5, 'Strongly Agree')))
 
 
 
@@ -69,6 +104,7 @@ class UserProfile(models.Model):
     currState = models.TextField(max_length=3072)
     pastModelIncreasesDataFrame = models.TextField(max_length=3072)
     preferences = models.CharField(max_length=1020)
+    personality = models.CharField(max_length=1020)
 
     
     # subjectIds = models.CharField(max_length=1020)
@@ -95,7 +131,6 @@ class Task(models.Model):
     
     profileWeight = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
     difficultyWeight = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
-
 
     initDate = models.DateField()
     finalDate = models.DateField()

@@ -20,11 +20,72 @@
 	<div id='dashboard'>
 
 		<section class='section'>
+			<div class='panel animated zoomIn'>
+				<div class='panel-heading'>
+					<div class='columns is-mobile is-vcentered'>
+						<div class='column'>
+							Tutorial
+							<div class='is-pulled-right'>
+								<div class='button minimizerButton'></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class='panel-block' id='student_tutorial' style='display: block;'>
+					<h1 class="title" style="font-size: 250%; text-align: center; margin-top: 0.5em;">Welcome!</h1>
+					<div class="description">
+						<!-- <p>In order to complete your profile, please answer the <b class="contrast-color">First Questionnaire</b> in your <i>Questionnaires to Answer</i> section</p> -->
+						{% csrf_token %}
+						{% for questionnaire in available_questionnaires %}
+							<p>{{ questionnaire.dashboard_message |safe}}</p>
+						{% endfor %}
+						<p>The First Questionnaire serves to assess your profile. The results will be shared with you after completing the study.</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class='section'>
+			<div class='panel animated zoomIn'>
+				<div class='panel-heading'>
+					<div class='columns is-mobile is-vcentered'>
+						<div class='column'>
+							Questionnaires to Answer
+							<div class='is-pulled-right'>
+								<div class='button minimizerButton'></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class='panel-block' id='student_currentQuestionnaires' style='display: block;'>
+					<label class='column is-8'>
+						
+						{% block content %}
+							{% if available_questionnaires|length > 0 %}
+								{% for questionnaire in available_questionnaires %}
+								{% load replace_underscores %}
+									<form action="{% url 'questionnaire' questionnaire.title %}" method="get">
+										<button class="button" type="submit">{{ questionnaire.title | replace_underscores }}</button>
+									</form>
+
+								{% endfor %}
+							{% else %}
+								<p>No new questionnaires available</p>
+							{% endif %}
+						{% endblock %}
+					</label>
+				</div>
+			</div>
+		</section>
+
+		<section class='section'>
 				<div class='panel animated zoomIn'>
 					<div class='panel-heading'>
 						<div class='columns is-mobile is-vcentered'>
 							<div class='column'>
-								<p>Your Learning State</p>
+								Your Learning State
 								<div class='is-pulled-right'>
 									<div class='button minimizerButton'></div>
 								</div>
@@ -44,7 +105,7 @@
 				<div class='panel-heading'>
 					<div class='columns is-mobile is-vcentered'>
 						<div class='column'>
-							<p>Your Group</p>
+							Your Group
 							<div class='is-pulled-right'>
 								<div class='button minimizerButton'></div>
 							</div>
@@ -80,7 +141,7 @@
 					<div class='panel-heading'>
 						<div class='columns is-mobile is-vcentered'>
 							<div class='column'>
-								<p>Current Activity</p>
+								Current Activity
 								<div class='is-pulled-right'>
 									<div class='button minimizerButton'></div>
 								</div>
@@ -170,6 +231,7 @@
 	<script src='https://d3js.org/d3.v5.js'></script>
 	<script src='{% static 'js/plots.js' %}'></script>
 	<script src='https://unpkg.com/d3-force-attract@latest' crossorigin='anonymous'></script>
+
 	<script>
 	$(document).ready(
 		function(){
