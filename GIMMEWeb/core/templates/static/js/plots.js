@@ -53,6 +53,7 @@ const GIMME_BLUE = '#0086fd';
 const TEXT_BLUE = '#131444';
 
 
+
 var generateGroupColor = function(profile) {
     var focus = profile.dimensions.Focus;
     var challenge = profile.dimensions.Challenge;
@@ -854,7 +855,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
-            node['Characteristics']['Personality'] = originalNode.userState.personality;  //TODO display personality
+            node['Characteristics']['Personality'] = originalNode.userState.personality; 
             //node['(External) Grade'] = originalNode.userState.grade;
         }
 
@@ -1414,8 +1415,113 @@ var buildDiversityDistributionPlot = function(canvasId, data){
         .append("rect")
             .attr("x", 1)
             .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
-            .attr("width", function(d) { return x(d.x1) - x(d.x0) -1 ; })
+            .attr("width", function(d) { return x(d.x1) - x(d.x0) ; })
             .attr("height", function(d) { return height - y(d.length); })
             .style("fill", GIMME_BLUE)
       
+}
+
+var calculateMBTILettersFrequencies = function(data) {
+    var frequencies = [];
+
+    for (let key in data) {
+
+
+        userState = unformattedStringToObj(data[key])
+        var personality = userState.personality;
+
+        for (var i = 0; i < personality.length; i++) {
+
+            letter = personality[i];
+
+            var foundLetter = frequencies.find(obj => obj.letter === letter);
+    
+            if (foundLetter) {
+              foundLetter.value++;
+            } else {
+              frequencies.push({ letter: letter, value: 1 });
+            }
+        }
+    }
+
+    frequencies.sort((a, b) => b.value - a.value);
+
+    return frequencies;
+}
+
+var buildMBTIFrequenciesPlot = function(canvasId, data) {
+    // set the dimensions and margins of the graph
+    var margin = {top: 30, right: 30, bottom: 60, left: 60},
+        width = 650 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
+
+    frequencies = calculateMBTILettersFrequencies(data);
+
+    // append the svg object to the body of the page
+    var svg = d3.select('#'+canvasId)
+    .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .call(responsivefy, width, 0)
+    .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+
+    x = d3.scaleBand()
+    .domain(frequencies.map(d => d.letter))
+    .range([margin.left, width - margin.right])
+    .padding(0.1);
+    
+    y = d3.scaleLinear()
+    .domain([0, d3.max(frequencies, d => d.value)])
+    .range([height - margin.bottom, margin.top]);
+
+
+    xAxis = g => g
+    .attr("transform", `translate(0,${height - margin.bottom})`)
+    .call(d3.axisBottom(x)
+        .tickSizeOuter(0))
+        .style('font-size','20px')
+        .style('font-weight', '700');
+
+    yAxis = g => g
+    .attr("transform", `translate(${margin.left},0)`)
+    .call(d3.axisLeft(y))
+        .style('font-size','15px');
+
+
+    // X axis label:
+    svg.append("text")
+        .attr("text-anchor", "middle")
+        .attr('class', 'plot-label')
+        .attr("x", width / 2 + 20)
+        .attr("y", height)
+        .text("MBTI Letter");
+
+    // Y axis label:
+    svg.append("text")
+        .attr("text-anchor", "middle")
+        .attr('class', 'plot-label')
+        .attr("transform", "rotate(-90)")
+        .attr("y", 20)
+        .attr("x", - height / 2 + 20)
+        .text("Number Of Occurences");
+
+
+    svg.append("g")
+        .call(xAxis);
+
+    svg.append("g")
+        .call(yAxis);
+
+    svg.append("g")
+        .attr("fill", GIMME_BLUE)
+    .selectAll("rect").data(frequencies).enter().append("rect")
+        .attr("x", d => x(d.letter))
+        .attr("y", d => y(d.value))
+        .attr("height", d => y(0) - y(d.value))
+        .attr("width", x.bandwidth());
+    // append the bar rectangles to the svg element
+
 }

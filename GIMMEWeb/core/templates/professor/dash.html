@@ -121,6 +121,12 @@
 						<div class='button' type='submit' id='clearAllUsers_professor_dash'>Deselect all</div>
 					</div>
 				</div>
+				<div class='panel-block' style='display: block;'>
+					<p>MBTI Letters Frequency</p>
+					<div class='columns is-mobile is-centered'>
+						<div class='column is-7' id='mbtiFrequencyPlot_professor_dash'></div>
+					</div>
+				</div>
 
 			
 			</div>
@@ -2019,6 +2025,8 @@ crossorigin='anonymous'></script>
 				currServerState.studentsStates,
 				$('input[name="studentPerformanceScaleType"]:checked').val()
 			);
+
+			
 			
 			$('#personalityDiversityPlot_professor_dash').empty()
 			$('#interactionsProfilePlot_professor_dash').empty()
@@ -2042,7 +2050,7 @@ crossorigin='anonymous'></script>
 				avgChars[1] += currState.engagement/ profiles.length;
 			}
 
-
+	
 			// interactionDatapoints = [
 			// 	{ 'focus': -3 , 'challenge': -3, 'timestamp': 2 },
 			// 	{ 'focus': 3, 'challenge': 3, 'timestamp': 1 },
@@ -2055,6 +2063,7 @@ crossorigin='anonymous'></script>
 			// 	{ 'focus': -3, 'challenge': -1, 'timestamp': 8 }
 			// ]
 
+			buildMBTIFrequenciesPlot("mbtiFrequencyPlot_professor_dash", currServerState.studentsStates);
 			buildDiversityDistributionPlot('personalityDiversityPlot_professor_dash', currServerState.currAdaptationState);
 			buildScatterInteractionPlot('interactionsProfilePlot_professor_dash', interactionDatapoints);
 			buildStatePlot('learningStatePlot_professor_dash', 
