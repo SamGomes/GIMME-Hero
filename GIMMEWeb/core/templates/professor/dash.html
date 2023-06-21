@@ -1999,7 +1999,9 @@ crossorigin='anonymous'></script>
 								newServerState.studentsStates = JSON.parse(studentsStates);
 								currServerState = newServerState;
 
-								
+								$('#mbtiFrequencyPlot_professor_dash').empty();
+								buildMBTIFrequenciesPlot("mbtiFrequencyPlot_professor_dash", currServerState.studentsStates);
+
 								$('#groupsPlot_professor_dash').empty();
 								
 								if (currServerState.currAdaptationState != undefined && currServerState.currAdaptationState != [])
@@ -2063,7 +2065,7 @@ crossorigin='anonymous'></script>
 			// 	{ 'focus': -3, 'challenge': -1, 'timestamp': 8 }
 			// ]
 
-			buildMBTIFrequenciesPlot("mbtiFrequencyPlot_professor_dash", currServerState.studentsStates);
+			
 			buildDiversityDistributionPlot('personalityDiversityPlot_professor_dash', currServerState.currAdaptationState);
 			buildScatterInteractionPlot('interactionsProfilePlot_professor_dash', interactionDatapoints);
 			buildStatePlot('learningStatePlot_professor_dash', 
