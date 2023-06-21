@@ -1449,6 +1449,23 @@ var calculateMBTILettersFrequencies = function(data) {
     return frequencies;
 }
 
+
+var letterColor = function(letter){
+    if (letter == "I" || letter == "E")
+        return GIMME_BLUE
+
+    if (letter == "S" || letter == "N")
+        return "#29339B"
+        //return "#592E83"
+    
+    if (letter == "T" || letter == "F")
+        return "#EE4266"
+
+    if (letter == "J" || letter == "P")
+        return "#84E6F8"
+        //return "#7AE7C7"
+}
+
 var buildMBTIFrequenciesPlot = function(canvasId, data) {
     // set the dimensions and margins of the graph
     var margin = {top: 30, right: 30, bottom: 60, left: 60},
@@ -1487,7 +1504,9 @@ var buildMBTIFrequenciesPlot = function(canvasId, data) {
 
     yAxis = g => g
     .attr("transform", `translate(${margin.left},0)`)
-    .call(d3.axisLeft(y))
+    .call(d3.axisLeft(y)
+            .ticks(y.domain()[1])
+            .tickFormat(d3.format('d')))      
         .style('font-size','15px');
 
 
@@ -1516,8 +1535,8 @@ var buildMBTIFrequenciesPlot = function(canvasId, data) {
         .call(yAxis);
 
     svg.append("g")
-        .attr("fill", GIMME_BLUE)
     .selectAll("rect").data(frequencies).enter().append("rect")
+        .attr("fill", d => letterColor(d.letter))
         .attr("x", d => x(d.letter))
         .attr("y", d => y(d.value))
         .attr("height", d => y(0) - y(d.value))
