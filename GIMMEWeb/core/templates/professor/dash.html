@@ -2000,7 +2000,10 @@ crossorigin='anonymous'></script>
 								currServerState = newServerState;
 
 								$('#mbtiFrequencyPlot_professor_dash').empty();
-								buildMBTIFrequenciesPlot("mbtiFrequencyPlot_professor_dash", currServerState.studentsStates);
+								//buildMBTIFrequenciesPlot("mbtiFrequencyPlot_professor_dash", currServerState.studentsStates);
+
+
+								buildMBTIFrequenciesStackedBarPlot("mbtiFrequencyPlot_professor_dash", currServerState.studentsStates);
 
 								$('#groupsPlot_professor_dash').empty();
 								

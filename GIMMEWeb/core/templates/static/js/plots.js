@@ -1444,8 +1444,6 @@ var calculateMBTILettersFrequencies = function(data) {
         }
     }
 
-    frequencies.sort((a, b) => b.value - a.value);
-
     return frequencies;
 }
 
@@ -1473,6 +1471,7 @@ var buildMBTIFrequenciesPlot = function(canvasId, data) {
         height = 500 - margin.top - margin.bottom;
 
     frequencies = calculateMBTILettersFrequencies(data);
+    frequencies.sort((a, b) => b.value - a.value);
 
     // append the svg object to the body of the page
     var svg = d3.select('#'+canvasId)
@@ -1543,4 +1542,134 @@ var buildMBTIFrequenciesPlot = function(canvasId, data) {
         .attr("width", x.bandwidth());
     // append the bar rectangles to the svg element
 
+}
+
+const leftSideMBTILetters = ['J', 'T', 'S', 'E'];
+const rightSideMBTILetter = ['P', 'F', 'N', 'I'];
+
+const letterToPosition = { 'E' : 4, 'I' : 4,
+                           'S' : 3, 'N' : 3,
+                           'T' : 2, 'F' : 2,
+                           'J' : 1, 'P' : 1  }
+
+const letterPair = { 'E' : 'I',
+                     'I' : 'E',
+                     'S' : 'N',
+                     'N' : 'S',
+                     'T' : 'F',
+                     'F' : 'T',
+                     'J' : 'P',
+                     'P' : 'J' 
+                    }
+
+var formatFrequenciesStackedBarPlot = function(data, numberStudents){
+    frequencies = [];
+
+    data.forEach(element => {
+        color = GIMME_BLUE;
+        pair = data.find(entry => entry.letter == letterPair[element.letter]);
+
+        if (element.value > pair.value)
+            color = '#EE4266';
+        else if (element.value == pair.value && rightSideMBTILetter.includes(element.letter))
+            color = '#63BBFF';
+
+        if (leftSideMBTILetters.includes(element.letter))
+            frequencies.push({ letter: element.letter, value: element.value, x0: 0, x1: element.value, color: color });
+        else
+            frequencies.push({ letter: element.letter, value: element.value, x0: numberStudents - element.value, x1: numberStudents, color: color });
+    });
+
+    return frequencies
+}
+
+var buildMBTIFrequenciesStackedBarPlot  = function(canvasId, data) {
+    // set the dimensions and margins of the graph
+    var margin = {top: 30, right: 30, bottom: 30, left: 30},
+        width = 650 - margin.left - margin.right,
+        height = 350 - margin.top - margin.bottom;
+
+    numberStudents = Object.keys(data).length;
+    frequencies = formatFrequenciesStackedBarPlot(calculateMBTILettersFrequencies(data), numberStudents);
+    console.log(frequencies);
+
+    // append the svg object to the body of the page
+    var svg = d3.select('#' + canvasId)
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .call(responsivefy, width, 0)
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+
+    x = d3.scaleLinear()
+        .domain([0, numberStudents])
+        .range([margin.left, width - margin.left]);
+
+    yLeft = d3.scaleBand()
+        .domain(leftSideMBTILetters)
+        .range([height - margin.bottom, margin.top])
+        .padding(0.1);
+
+    yRight = d3.scaleBand()
+        .domain(rightSideMBTILetter)
+        .range([height - margin.bottom, margin.top])
+        .padding(0.1);
+
+
+    y = d3.scaleBand()
+    .domain([1, 2, 3, 4])
+    .range([height - margin.bottom, margin.top])
+    .padding(0.1);
+
+    
+    
+    leftAxis = g => g
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(d3.axisLeft(yLeft)
+                .tickSizeOuter(0))
+            .style('font-size','25px')
+            .style('font-weight', '700');
+    
+
+    rightAxis = g => g
+        .attr("transform", `translate(${width - margin.left},0)`)
+        .call(d3.axisRight(yRight)
+                .tickSizeOuter(0))
+            .style('font-size','23px')
+            .style('font-weight', '700');
+
+
+    // xAxis = g => g
+    //     .attr("transform", `translate(0,${height - margin.bottom})`)
+    //     .call(d3.axisBottom(x));
+
+    // svg.append("g")
+    //     .call(xAxis);
+
+    svg.append("g")
+        .call(leftAxis);
+    
+    svg.append("g")
+        .call(rightAxis);
+
+
+    svg.append("g")
+        .selectAll("rect").data(frequencies).enter().append("rect")
+            .attr("fill", d => d.color)
+            .attr("x", d => x(d.x0))
+            .attr("y", d => y(letterToPosition[d.letter]))
+            .attr("height", yLeft.bandwidth())
+            .attr("width", d => x(d.x1) - x(d.x0));
+
+
+    svg.append("g").selectAll("text").data(frequencies).enter().append("text")
+         .attr("x", d => d.x0 == 0 ? x(d.x1) - 25: x(d.x0) + 10 )
+         .attr("y", d => y(letterToPosition[d.letter]) +  yLeft.bandwidth() / 2 + 8)
+         .text( d => String(d.value))
+         .style("fill", "#FFFFFF")
+         .style('font-size','23px')
+         .style('font-weight', '500');
 }
