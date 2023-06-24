@@ -96,6 +96,22 @@
 				<div class='panel-block'>
 					<div class='column is-half is-offset1 is-mobile'>
 						<div class='dash-cell-box'>
+							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Tags</div>
+							<div class='table-container'>						
+								<div class='table' style='margin:2em;' id='studentTagTable_professor_dash'>
+									{% for tag in available_tags %}
+										<button class="tagButton" data-tag="{{ tag }}">{{ tag }}</button>
+								 	{% endfor %}
+							   						
+									<button  class ="button" id="addTagButton">Add Tag</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class='panel-block'>
+					<div class='column is-half is-offset1 is-mobile'>
+						<div class='dash-cell-box'>
 							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Registered Students</div>
 							<div class='table-container'>
 								<div class='table' style='margin:2em;' id='freeUsersTable_professor_dash'></div>
@@ -1928,12 +1944,18 @@ crossorigin='anonymous'></script>
 										'','usernameToDelete',
 										'usernameToUpdate', "", '{% url 'manuallyManageStudent' %}'
 									);
+									
 								$('#freeUsersTable_professor_dash').empty();
 								$('#freeUsersTable_professor_dash').append(fuTable);
 
 								$('#selectedUsersTable_professor_dash').empty();
 								$('#selectedUsersTable_professor_dash').append(suTable);
 
+
+								var tagsTable = generateTagsTable();
+
+								$('#studentTagTable_professor_dash').empty();
+								$('#studentTagTable_professor_dash').append(tagsTable);
 								
 								
 								

@@ -82,6 +82,10 @@ class LikertResponse(models.Model):
     value = models.PositiveIntegerField(choices=((1, 'Strongly Disagree'), (2, 'Disagree'), (3, 'Neutral'), (4, 'Agree'), (5, 'Strongly Agree')))
 
 
+class StudentTag(models.Model):
+    tag = models.CharField(max_length=32)
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+
 
 class UserProfile(models.Model):
 

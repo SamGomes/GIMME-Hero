@@ -30,6 +30,7 @@ from django.forms import formset_factory
 
 from GIMMEWeb.core.models import UserProfile
 from GIMMEWeb.core.models import Task
+from GIMMEWeb.core.models import StudentTag
 from GIMMEWeb.core.models import Questionnaire, LikertResponse, Submission, QuestionnaireType
 from GIMMEWeb.core.models import ServerState
 from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm, UpdateUserPersonalityForm, LikertForm
@@ -555,6 +556,16 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		newState.tasks = tasks
 		playerInfo.currState = json.dumps(newState, default=lambda o: o.__dict__)
 		playerInfo.save()
+
+	def addPlayerTag(self, username, tag):
+		user = User.objects.get(username=username)
+		new_tag = StudentTag.objects.create(tag=tag, student=user)
+		new_tag.save()
+
+	def removePlayerTag(self, username, tag):
+		user = User.objects.get(username=username)
+		StudentTag.objects.filter(tag=tag, student=user).delete()
+
 
 
 playerBridge = CustomPlayerModelBridge()
