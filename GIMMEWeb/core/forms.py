@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from django import forms
 
-from GIMMEWeb.core.models import UserProfile, Task, LikertQuestion, Questionnaire, LikertResponse
+from GIMMEWeb.core.models import UserProfile, Task, LikertQuestion, Questionnaire, LikertResponse, Tag
 
 
 
@@ -56,6 +56,12 @@ class LikertForm(forms.Form):
 				question.left_extremity,
 				question.right_extremity
 			)
+
+
+class CreateTagForm(ModelForm):
+	class Meta:
+		model = Tag
+		fields = ['name']
 			
 
 class UpdateUserForm(UserChangeForm):

@@ -34,25 +34,26 @@ addTagButton.addEventListener('click', () => {
     saveTagButton.addEventListener('click', () => {
         const tagName = tagInput.value.trim();
         if (tagName !== '') {
-            const url = '/addStudentTag/';
-            const data = { tag: tagName};
+            const url = '/createNewTag/';
+            const data = { name: tagName };
 
+            
             $.ajax({
                 url: url,
                 type: 'POST',
                 headers: {
-                  'X-CSRFToken': getCookie('csrftoken') // Use the getCookie function to retrieve CSRF token
+                    'X-CSRFToken': getCookie('csrftoken')
                 },
-                data: JSON.stringify(data),
-                contentType: 'application/json',
+                data: data,
                 success: function(result) {
-                  // Handle the response from the server
-                  // Refresh the tag list after saving the tag
+                    // Handle the response from the server
+                    // Refresh the tag list after saving the tag
                 },
                 error: function(error) {
-                  // Handle any errors
+                    // Handle any errors
                 }
-              });
+            });
+            console.log(JSON.stringify(data))
             // Reset the input field and hide the add tag container
 
             // Send an AJAX request to your Django view to save the tag

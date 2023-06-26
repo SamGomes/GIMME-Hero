@@ -1780,27 +1780,27 @@ crossorigin='anonymous'></script>
 		        }
 		        if(i<idArray.length){
 		        	tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>").text(nameArray[i]);
-		        	tag.append("<br></br>")
+
 		        	if(deleteElementUrl!=""){
-			            var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this task'></div>");
+			            var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this task'></div>");
 			            deleteButton.append('<form method=\'GET\' action=\''+deleteElementUrl+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+deleteElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash pointer\'></i></button></form>');
 			            tag.append(deleteButton);
 		            }
 
 		        	if(editElementUrlTask!=""){
-			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually edit state'></div>");
+			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually edit state'></div>");
 			            editButton.append('<form method=\'GET\' action=\''+editElementUrlTask+'\'><input type=\'hidden\' name=\''+editElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-edit pointer\'></i></button></form>');
 			            tag.append(editButton);
 					}
 
 					else if(editElementUrlStudent!=""){
-			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually evaluate student'></div>");
+			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually evaluate student'></div>");
 			            editButton.append('<form method=\'GET\' action=\''+editElementUrlStudent+'\'><input type=\'hidden\' name=\''+editElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-edit pointer\'></i></button></form>');
 			            tag.append(editButton);
 					}
 
 		        	if(moveElementUrl!=""){
-			            var moveButton = $("<div class='button is-rounded is-small pointer' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Select/Deselect this student/task for the next iteration'></div>");
+			            var moveButton = $("<div class='button is-rounded is-small pointer' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Select/Deselect this student/task for the next iteration'></div>");
 			            moveButton.append("<i class='fas "+moveButtonIconClass+" pointer'></i>");
 			            moveButton.click(function() {
 			                var data = {};
@@ -1816,7 +1816,7 @@ crossorigin='anonymous'></script>
 
 		        }else{
 		        	if(addElementURL!=""){
-		        		var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Add new task'></div>");
+		        		var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Add new task'></div>");
 			            addButton.append('<form method="POST" action=\''+addElementURL+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+addElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-plus-circle\'></i></button></form>');
 		        	
 		        		tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'>").text(nameArray[i]);

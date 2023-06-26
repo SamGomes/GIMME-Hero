@@ -47,7 +47,7 @@ urlpatterns = [
     re_path(r'^questionnaire/(?P<questionnaire_title>[\w-]+)/$', Views.questionnaire, name='questionnaire'),
     #re_path('questionnaire/<int:questionnaire_id>/$', Views.questionnaire, name='questionnaire'),
     
-    re_path(r'^addStudentTag/', Views.addStudentTag, name='addStudentTag'),
+    re_path(r'^createNewTag/', Views.createNewTag, name='createNewTag'),
 
     re_path(r'^fetchServerState/', Views.fetchServerState, name='fetchServerState'),
     re_path(r'^fetchStudentStates/', Views.fetchStudentStates, name='fetchStudentStates'),

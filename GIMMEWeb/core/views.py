@@ -32,10 +32,10 @@ from django.http import JsonResponse
 
 from GIMMEWeb.core.models import UserProfile
 from GIMMEWeb.core.models import Task
-from GIMMEWeb.core.models import StudentTag
+from GIMMEWeb.core.models import Tag
 from GIMMEWeb.core.models import Questionnaire, LikertResponse, Submission, QuestionnaireType
 from GIMMEWeb.core.models import ServerState
-from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm, UpdateUserPersonalityForm, LikertForm
+from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm, UpdateUserPersonalityForm, LikertForm, CreateTagForm
 
 from GIMMECore import *
 from GIMMEWeb.core import OEJTS_questionnaire
@@ -559,14 +559,17 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		playerInfo.currState = json.dumps(newState, default=lambda o: o.__dict__)
 		playerInfo.save()
 
-	def addPlayerTag(self, username, tag):
-		user = User.objects.get(username=username)
-		new_tag = StudentTag.objects.create(tag=tag, student=user)
-		new_tag.save()
+	def addPlayerTag(self, username, tagname):
+		userprofile = User.objects.get(username=username).userprofile
+		tag = Tag.objects.get(name=tagname)
+		userprofile.tags.add(tag)
+		userprofile.save()
 
-	def removePlayerTag(self, username, tag):
-		user = User.objects.get(username=username)
-		StudentTag.objects.filter(tag=tag, student=user).delete()
+	def removePlayerTag(self, username, tagname):
+		userprofile = User.objects.get(username=username).userprofile
+		tag = Tag.objects.get(name=tagname)
+		userprofile.tags.remove(tag)
+		userprofile.save()
 
 
 
@@ -836,19 +839,44 @@ class Views(): #acts as a namespace
 
 	#region Student Tag
 
-	def addStudentTag(request):
+	def createNewTag(request):
+		if request.method == 'POST':
+			print(request)
+			form = CreateTagForm(request.POST)
+
+			response_data = {
+					'status': 'error',
+					'message': 'Create tag form invalid'
+			}
+			
+			if form.is_valid():
+				form.save()		
+
+				response_data = {
+					'status': 'success',
+					'message': 'Tag saved successfully'
+				}
+				
+			print(response_data)
+			return JsonResponse(response_data)
+		
+
+	def deleteTag(request):
 		if request.method == 'POST':
 			tag_name = request.POST.get('tag')
         
-			# TODO Save the tag in your database or perform any other necessary actions
-		
+			# TODO Delete the tag from database or perform any other necessary actions
+
+
+
 			
 			response_data = {
 				'status': 'success',
-				'message': 'Tag saved successfully'
+				'message': 'Tag deleted successfully'
 			}
 			
-			return JsonResponse(response_data)
+		return JsonResponse(response_data)
+		
 	
 
 	#endregion
