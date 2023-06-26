@@ -28,6 +28,8 @@ from django.contrib import messages
 
 from django.forms import formset_factory
 
+from django.http import JsonResponse
+
 from GIMMEWeb.core.models import UserProfile
 from GIMMEWeb.core.models import Task
 from GIMMEWeb.core.models import StudentTag
@@ -744,7 +746,6 @@ class Views(): #acts as a namespace
 		return redirect('/home')
 
 
-
 	#region Questionnaire View Functions
 	def questionnaire_MBTI(request, questionnaire_title):
 		questionnaire = Questionnaire.objects.get(title=questionnaire_title)
@@ -833,6 +834,25 @@ class Views(): #acts as a namespace
 	#endregion
 		
 
+	#region Student Tag
+
+	def addStudentTag(request):
+		if request.method == 'POST':
+			tag_name = request.POST.get('tag')
+        
+			# TODO Save the tag in your database or perform any other necessary actions
+		
+			
+			response_data = {
+				'status': 'success',
+				'message': 'Tag saved successfully'
+			}
+			
+			return JsonResponse(response_data)
+	
+
+	#endregion
+	
 	def userRegistration(request):
 		if request.method == 'POST':
 			form = CreateUserForm(request.POST)

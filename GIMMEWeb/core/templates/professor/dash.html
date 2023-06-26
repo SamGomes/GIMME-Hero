@@ -104,6 +104,15 @@
 								 	{% endfor %}
 							   						
 									<button  class ="button" id="addTagButton">Add Tag</button>
+
+
+									<div id="addTagContainer" style="display: none;">
+										<input type="text" id="tagInput" placeholder="Enter tag name">
+										<button id="saveTagButton">Save</button>
+										<button id="cancelTagButton">Cancel</button>
+									</div>
+
+									
 								</div>
 							</div>
 						</div>
@@ -1071,6 +1080,9 @@
 	</div>
 	{% include 'common/footer.html' %}
 </body>
+
+<script src="{% static 'js/tagFunctionality.js' %}"></script>
+
 <script>
 function updateSliderValueText(val) {
           document.getElementById('sliderValueText').textContent=val; 
@@ -1951,11 +1963,11 @@ crossorigin='anonymous'></script>
 								$('#selectedUsersTable_professor_dash').empty();
 								$('#selectedUsersTable_professor_dash').append(suTable);
 
+								// TODO
+								//var tagsTable = generateTagsTable();
 
-								var tagsTable = generateTagsTable();
-
-								$('#studentTagTable_professor_dash').empty();
-								$('#studentTagTable_professor_dash').append(tagsTable);
+								//$('#studentTagTable_professor_dash').empty();
+								//$('#studentTagTable_professor_dash').append(tagsTable);
 								
 								
 								
