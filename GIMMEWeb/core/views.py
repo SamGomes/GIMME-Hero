@@ -857,6 +857,15 @@ class Views(): #acts as a namespace
 
 	def createNewTag(request):
 		if request.method == 'POST':
+			if Tag.objects.filter(name=request.POST.get('name')).exists():
+				response_data = {
+				'status': 'error',
+				'message': 'Tag already exists'
+				}
+				
+				return JsonResponse(response_data)
+		
+
 			form = CreateTagForm(request.POST)
 
 			response_data = {

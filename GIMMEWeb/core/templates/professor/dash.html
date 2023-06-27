@@ -109,7 +109,7 @@
 
 
 							<div class='table-container'>						
-								<div class='table' style='margin:2em;' id='tagTable_professor_dash'>
+								<div class='table' style='margin:2em 2em 0em 2em;' id='tagTable_professor_dash'>
 									{% for tag in available_tags %}
 										<button class="tagButton" data-tag="{{ tag }}">{{ tag }}</button>
 								 	{% endfor %}
@@ -1778,8 +1778,12 @@ crossorigin='anonymous'></script>
 				tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;  background-color: #FFBC42; color: white'></span>").text(element.name);
 				
 
-				var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this tag'></div>");
-				deleteButton.append('<button type="button" class="button pointer delete-tag-button" data-tag-id="{{ element.name }}" style=\'border: none; background-color:transparent; color:white\'><i class="fas fa-trash pointer"></i></button>');
+				const deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this tag'></div>");
+  
+  				const deleteTagButton = $("<button type='button' class='button pointer delete-tag-button' style='border: none; background-color:transparent; color:white'><i class='fas fa-trash pointer'></i></button>");
+  				deleteTagButton.attr('data-tag-id', element.name);
+  				deleteButton.append(deleteTagButton);
+
 				tag.append(deleteButton);
 
 
@@ -1806,8 +1810,8 @@ crossorigin='anonymous'></script>
 
 		        	if(deleteElementUrl!=""){
 			            var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this task'></div>");
-			            deleteButton.append('<form method=\'GET\' action=\''+deleteElementUrl+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+deleteElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash pointer\'></i></button></form>');
-			            tag.append(deleteButton);
+			            deleteButton.append('<form method=\'GET\' action=\''+deeteElementUrl+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+deleteElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash pointer\'></i></button></form>');
+			            tag.append(deleteButton);l
 		            }
 
 		        	if(editElementUrlTask!=""){
@@ -1986,11 +1990,8 @@ crossorigin='anonymous'></script>
 								$('#selectedUsersTable_professor_dash').empty();
 								$('#selectedUsersTable_professor_dash').append(suTable);
 
-								// TODO
-								
-								var tagsTable = generateTagsTable(newServerState.tags);
 
-								console.log(newServerState.tags)
+								var tagsTable = generateTagsTable(newServerState.tags);
 
 								$('#tagTable_professor_dash').empty();
 								$('#tagTable_professor_dash').append(tagsTable);

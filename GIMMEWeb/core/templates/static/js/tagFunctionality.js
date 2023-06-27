@@ -7,8 +7,7 @@ const tagInput = document.getElementById('tagInput');
 $(document).on('click', '.delete-tag-button', function() {
     const tagId = $(this).data('tag-id');
     const url = '/deleteTag/';
-
-    console.log($(this).attr('data-tag-id'))
+    
 
     $.ajax({
       url: url,
