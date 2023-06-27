@@ -3,6 +3,29 @@ const addTagContainer = document.getElementById('addTagContainer');
 const tagInput = document.getElementById('tagInput');
 
 
+// Add event listener for delete tag button
+$(document).on('click', '.delete-tag-button', function() {
+    const tagId = $(this).data('tag-id');
+    const url = '/deleteTag/';
+
+    console.log($(this).attr('data-tag-id'))
+
+    $.ajax({
+      url: url,
+      type: 'POST',
+      headers: {
+        'X-CSRFToken': getCookie('csrftoken') // Use the getCookie function to retrieve CSRF token
+      },
+      data: { name: tagId },
+      success: function(result) {
+        // Handle the response from the server
+        // Refresh the tag list or perform any other necessary updates
+      },
+      error: function(error) {
+        // Handle any errors
+      }
+    });
+  });
 
 
 
@@ -54,11 +77,6 @@ addTagButton.addEventListener('click', () => {
                 }
             });
             console.log(JSON.stringify(data))
-            // Reset the input field and hide the add tag container
-
-            // Send an AJAX request to your Django view to save the tag
-            // You can use the tagName value to store the new tag
-            // Refresh the tag list after saving the tag
 
             // Reset the input field and hide the add tag container
             ShowAddTagButton();
@@ -81,7 +99,6 @@ function ShowAddTagButton(){
 
 function getCookie(c_name)
 {
-    console.log(document.cookie.length)
     if (document.cookie.length > 0)
     {
         c_start = document.cookie.indexOf(c_name + "=");

@@ -288,6 +288,11 @@ class ServerStateModelBridge():
 		else:
 			serverState.simStudentW = simStudentW
 		serverState.save()
+
+
+	def getTags(self):
+		tags = list(Tag.objects.all())
+		return tags
 		
 
 serverStateModelBridge = ServerStateModelBridge()
@@ -353,6 +358,8 @@ class CustomTaskModelBridge(TaskModelBridge):
 	def getTaskFilePaths(self, taskId):
 		task = Task.objects.get(taskId = taskId)
 		return task.filePaths
+	
+
 
 taskBridge = CustomTaskModelBridge()
 
@@ -570,6 +577,15 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		tag = Tag.objects.get(name=tagname)
 		userprofile.tags.remove(tag)
 		userprofile.save()
+
+	def getPlayerTags(self, username):
+		userprofile = User.objects.get(username=username).userprofile
+		tags = list(userprofile.tags.all())
+		#if len(tags) == 0:
+		#	return ''
+		
+		return tags
+
 
 
 
@@ -841,7 +857,6 @@ class Views(): #acts as a namespace
 
 	def createNewTag(request):
 		if request.method == 'POST':
-			print(request)
 			form = CreateTagForm(request.POST)
 
 			response_data = {
@@ -857,17 +872,16 @@ class Views(): #acts as a namespace
 					'message': 'Tag saved successfully'
 				}
 				
-			print(response_data)
 			return JsonResponse(response_data)
 		
 
 	def deleteTag(request):
 		if request.method == 'POST':
-			tag_name = request.POST.get('tag')
-        
-			# TODO Delete the tag from database or perform any other necessary actions
+			tag_name = request.POST.get('name')
 
 
+			print(request.POST)
+			Tag.objects.filter(name=tag_name).delete()
 
 			
 			response_data = {
@@ -875,7 +889,7 @@ class Views(): #acts as a namespace
 				'message': 'Tag deleted successfully'
 			}
 			
-		return JsonResponse(response_data)
+			return JsonResponse(response_data)
 		
 	
 
@@ -1581,8 +1595,10 @@ class Views(): #acts as a namespace
 			userInfo['statesDataFrame'] = playerBridge.getPlayerStatesDataFrame(username)
 			userInfo['grade'] = playerBridge.getPlayerGrade(username)
 			userInfo['personality'] = playerBridge.getPlayerPersonality(username).getPersonalityString()
+			userInfo['tags'] = playerBridge.getPlayerTags(username)
 
 			userInfo = json.dumps(userInfo, default=lambda o: o.__dict__, sort_keys=True)
+
 			return HttpResponse(userInfo)
 		return HttpResponse('error')
 	
@@ -1612,6 +1628,8 @@ class Views(): #acts as a namespace
 
 			newSessionState['currSelectedUsers'] = serverStateModelBridge.getCurrSelectedUsers()
 			newSessionState['currFreeUsers'] = serverStateModelBridge.getCurrFreeUsers()
+
+			newSessionState['tags'] = serverStateModelBridge.getTags()
 
 			currSelectedTasks = []
 			currFreeTasks = []

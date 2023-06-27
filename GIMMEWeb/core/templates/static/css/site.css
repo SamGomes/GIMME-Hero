@@ -94,6 +94,10 @@ body {
 
 }
 
+.student-tag{
+  background-color: #f9fcff
+}
+
 
 .navbar-dropdown {
   min-width: 50%;
@@ -169,10 +173,12 @@ body {
 
 
 .dash-cell-box{
-  margin: 1em 0;
-  padding:2em; 
+  padding: 2em;
   overflow: auto;
-  border-radius: 0.2em; 
+  border-color: #373f51;
+  border-style: solid;
+  border-radius: 1em;
+  border-width: 0.1em;
   object-fit: fill;
 }
 

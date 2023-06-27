@@ -94,23 +94,26 @@
 					</div>
 				</div>
 				<div class='panel-block'>
-					<div class='column is-half is-offset1 is-mobile'>
-						<div class='dash-cell-box'>
+					<div class='column is-mobile'>
+						<div class='dash-cell-box'  style='border-style:none;'>
 							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Tags</div>
+
+							<button  class ="button" id="addTagButton">Add Tag</button>
+
+
+							<div id="addTagContainer" style="display: none;">
+								<input type="text" id="tagInput" placeholder="Enter tag name">
+								<button id="saveTagButton">Save</button>
+								<button id="cancelTagButton">Cancel</button>
+							</div>
+
+
 							<div class='table-container'>						
-								<div class='table' style='margin:2em;' id='studentTagTable_professor_dash'>
+								<div class='table' style='margin:2em;' id='tagTable_professor_dash'>
 									{% for tag in available_tags %}
 										<button class="tagButton" data-tag="{{ tag }}">{{ tag }}</button>
 								 	{% endfor %}
 							   						
-									<button  class ="button" id="addTagButton">Add Tag</button>
-
-
-									<div id="addTagContainer" style="display: none;">
-										<input type="text" id="tagInput" placeholder="Enter tag name">
-										<button id="saveTagButton">Save</button>
-										<button id="cancelTagButton">Cancel</button>
-									</div>
 
 									
 								</div>
@@ -1768,7 +1771,27 @@ crossorigin='anonymous'></script>
 		};
 
 
+		var generateTagsTable = function(tagNamesArray){
+			var table = $('<div></div>');
+
+			tagNamesArray.forEach(element => {
+				tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;  background-color: #FFBC42; color: white'></span>").text(element.name);
+				
+
+				var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this tag'></div>");
+				deleteButton.append('<button type="button" class="button pointer delete-tag-button" data-tag-id="{{ element.name }}" style=\'border: none; background-color:transparent; color:white\'><i class="fas fa-trash pointer"></i></button>');
+				tag.append(deleteButton);
+
+
+				tag.addClass('tag');
+				tag.addClass('is-medium');
+				tag.addClass('is-rounded');
+				table.append(tag);
 		
+			});
+
+			return table
+		}
 		
 		var generateDashTableFromArray = function(canAdd, idArray, nameArray, tagClass, moveButtonIconClass, moveElementUrl, moveElementArg, addElementURL, addElementArg, deleteElementUrl, deleteElementArg, editElementArg, editElementUrlTask, editElementUrlStudent){
 		    var table = $('<div></div>');
@@ -1964,10 +1987,13 @@ crossorigin='anonymous'></script>
 								$('#selectedUsersTable_professor_dash').append(suTable);
 
 								// TODO
-								//var tagsTable = generateTagsTable();
+								
+								var tagsTable = generateTagsTable(newServerState.tags);
 
-								//$('#studentTagTable_professor_dash').empty();
-								//$('#studentTagTable_professor_dash').append(tagsTable);
+								console.log(newServerState.tags)
+
+								$('#tagTable_professor_dash').empty();
+								$('#tagTable_professor_dash').append(tagsTable);
 								
 								
 								

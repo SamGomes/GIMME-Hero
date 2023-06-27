@@ -1591,7 +1591,6 @@ var buildMBTIFrequenciesStackedBarPlot  = function(canvasId, data) {
 
     numberStudents = Object.keys(data).length;
     frequencies = formatFrequenciesStackedBarPlot(calculateMBTILettersFrequencies(data), numberStudents);
-    console.log(frequencies);
 
     // append the svg object to the body of the page
     var svg = d3.select('#' + canvasId)
