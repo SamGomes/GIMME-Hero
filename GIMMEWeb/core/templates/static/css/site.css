@@ -181,6 +181,16 @@ body {
   border-width: 0.1em;
   object-fit: fill;
 }
+.student-info-box{
+  padding: 1em;
+  overflow: auto;
+  border-color: #373f51;
+  background-color: #def0ff;
+  border-style: solid;
+  border-radius: 1em;
+  border-width: 0.1em;
+  object-fit: fill;
+}
 
 .panel-block-borderless{ 
   border-style:none; 
