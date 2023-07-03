@@ -128,10 +128,13 @@
 
 							<div class='student-info-box'>
 								<div id="student-info-placeholder" style=" color: #737d99;">Click on student to view details</div>
-								<div class="columns  is-mobile" id="student-info-view">
-									<div class='column'>a</div>
-									<div class='column'>b</div>
-									<div class='column'>c</div>
+
+								<div id="student-info-preview"  style="display: none;">
+									<div class="columns  is-mobile" >
+										<div class='column'>a</div>
+										<div class='column'>b</div>
+										<div class='column'>c</div>
+									</div>
 								</div>
 							</div>
 
@@ -1095,6 +1098,7 @@
 </body>
 
 <script src="{% static 'js/tagFunctionality.js' %}"></script>
+<script src="{% static 'js/studentInfoPreview.js' %}"></script>
 
 <script>
 function updateSliderValueText(val) {
@@ -1816,12 +1820,14 @@ crossorigin='anonymous'></script>
 		            return table;
 		        }
 		        if(i<idArray.length){
-		        	tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>").text(nameArray[i]);
+		        	tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>")
+						.text(nameArray[i])
+						.attr('onclick', "previewStudentInfo('" + nameArray[i] + "')");
 
 		        	if(deleteElementUrl!=""){
 			            var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this task'></div>");
-			            deleteButton.append('<form method=\'GET\' action=\''+deeteElementUrl+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+deleteElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash pointer\'></i></button></form>');
-			            tag.append(deleteButton);l
+			            deleteButton.append('<form method=\'GET\' action=\''+deleteElementUrl+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+deleteElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash pointer\'></i></button></form>');
+			            tag.append(deleteButton);
 		            }
 
 		        	if(editElementUrlTask!=""){
@@ -1871,6 +1877,8 @@ crossorigin='anonymous'></script>
 			        tag.show(135);
 			    }
 		    }
+
+
 		    return table;
 		};
 
