@@ -130,14 +130,16 @@
 								<div id="student-info-placeholder" style=" color: #737d99;">Click on student to view details</div>
 
 								<div id="student-info-preview"  style="display: none;">
-									<div class='student-info-name'>Student Name</div>
+									<div class="columns is-mobile student-info-header" style="margin-bottom: 0;">
+										<div class='student-info-header-element' style='flex-grow: 1' id='student-info-name'>Student Name</div>
+										<div class='student-info-header-element' style='flex-grow: 4' id='student-info-email'>email</div>
+									</div>
 
-									<div class="columns  is-mobile" >
-										<div class='column student-info-column-title'>Personality
+									<div class='columns is-mobile'>
+										<div class='column student-info-column-title' style='flex-grow: 1;'>Personality
 											<p class='student-info-column-content' id='student-info-personality'></p>
 										</div>
-										<div class='column student-info-column-title'>E-mail</div>
-										<div class='column student-info-column-title'>Tags</div>
+										<div class='column student-info-column-title' style='flex-grow: 2;'>Tags</div>
 									</div>
 								</div>
 							</div>
