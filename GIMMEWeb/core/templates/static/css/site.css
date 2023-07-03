@@ -181,6 +181,7 @@ body {
   border-width: 0.1em;
   object-fit: fill;
 }
+
 .student-info-box{
   padding: 1em;
   overflow: auto;
@@ -191,6 +192,21 @@ body {
   border-width: 0.1em;
   object-fit: fill;
 }
+
+.student-info-name{
+  font-weight: 480;  
+}
+
+.student-info-column-title{
+  font-weight: 700;  
+  font-size: 90%;
+}
+
+.student-info-column-content{
+  font-weight: 500;  
+  font-size: 105%;
+}
+
 
 .panel-block-borderless{ 
   border-style:none; 

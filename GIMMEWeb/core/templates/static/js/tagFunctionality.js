@@ -18,7 +18,6 @@ $(document).on('click', '.delete-tag-button', function() {
       data: { name: tagId },
       success: function(result) {
         // Handle the response from the server
-        // Refresh the tag list or perform any other necessary updates
       },
       error: function(error) {
         // Handle any errors
@@ -75,7 +74,6 @@ addTagButton.addEventListener('click', () => {
                     // Handle any errors
                 }
             });
-            console.log(JSON.stringify(data))
 
             // Reset the input field and hide the add tag container
             ShowAddTagButton();
