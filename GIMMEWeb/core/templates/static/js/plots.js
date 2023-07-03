@@ -1658,12 +1658,13 @@ var buildMBTIFrequenciesStackedBarPlot  = function(canvasId, data) {
     svg.append("g")
         .selectAll("rect").data(frequencies).enter().append("rect")
             .attr("fill", d => d.color)
+            .attr("stroke", "white")
             .attr("x", d => x(d.x0))
             .attr("y", d => y(letterToPosition[d.letter]))
             .attr("height", yLeft.bandwidth())
             .attr("width", d => x(d.x1) - x(d.x0));
 
-
+            
     svg.append("g").selectAll("text").data(frequencies).enter().append("text")
          .attr("x", d => d.x0 == 0 ? x(d.x1) - 25: x(d.x0) + 10 )
          .attr("y", d => y(letterToPosition[d.letter]) +  yLeft.bandwidth() / 2 + 8)

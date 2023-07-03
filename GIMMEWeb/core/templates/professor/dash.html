@@ -1819,13 +1819,11 @@ crossorigin='anonymous'></script>
 		
 		var generateDashTableFromArray = function(canAdd, idArray, nameArray, tagClass, moveButtonIconClass, moveElementUrl, moveElementArg, addElementURL, addElementArg, deleteElementUrl, deleteElementArg, editElementArg, editElementUrlTask, editElementUrlStudent){
 		    var table = $('<div></div>');
-		    for(var i=0; i < idArray.length+1; i++){
+		    for(var i=-1; i < idArray.length; i++){
 		        
 		        var tag = undefined;
-		        if(!canAdd && i == idArray.length){
-		            return table;
-		        }
-		        if(i<idArray.length){
+
+		        if(i >= 0){
 		        	tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>")
 						.text(nameArray[i])
 						.attr('onclick', "previewStudentInfo('" + nameArray[i] + "')");
@@ -1864,7 +1862,7 @@ crossorigin='anonymous'></script>
 					}
 
 		        }else{
-		        	if(addElementURL!=""){
+		        	if(addElementURL!="" && canAdd){
 		        		var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Add new task'></div>");
 			            addButton.append('<form method="POST" action=\''+addElementURL+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+addElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-plus-circle\'></i></button></form>');
 		        	
