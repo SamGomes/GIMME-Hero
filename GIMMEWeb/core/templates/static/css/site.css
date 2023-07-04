@@ -126,6 +126,10 @@ body {
   color: #131444;
 }
 
+.assigned-tag-remove-button:hover{
+  color:#ee4266;
+}
+
 .navbar-dropdown {
   min-width: 50%;
 }

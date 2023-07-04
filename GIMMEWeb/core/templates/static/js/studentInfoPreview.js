@@ -72,7 +72,7 @@ function listAvailableTags(){
         if (studentTags.some(obj => obj.id === tag.id && obj.name === tag.name))
             return;
         
-        element = $("<span class='assignable-tag pointer'></span>").text(tag.name);
+        const element = $("<span class='assignable-tag pointer'></span>").text(tag.name);
 
         element.on('click', function(){
             const data = {tag: tag.name, student: currentStudent};
@@ -109,6 +109,14 @@ function showAssignedTags(){
 
     studentTags.forEach(tag => {
         element = $("<span class='assigned-tag'></span>").text(tag.name);
+
+        const removeButton = $("<div class='fas fa-trash pointer assigned-tag-remove-button' style='padding-left: 0.5em;'></div>");
+        
+
+        element.append(removeButton);
+
+
+
 
         assignedTagsTable.append(element);
     })

@@ -136,8 +136,10 @@
 											<p class='student-info-column-content' id='student-info-personality'></p>
 										</div>
 										<div class='column student-info-column-title' style='flex-grow: 3;'>Tags
-											<div id="student-info-assigned-tags-table" style="display: flex;"></div>
-											<div style="display: flex;">
+
+											<div id="student-info-assigned-tags-table" style="display: flex; flex-wrap: wrap;"></div>
+
+											<div style="display: flex; flex-wrap: wrap;">
 												<button class="is-rounded is-small has-tooltip-arrow pointer assign-tag" id="assignTagToStudentButton" style="border-radius: 50px; border-style: solid; background-color:transparent; margin:0.2em" data-tooltip='Assign tag' onclick="toggleAvailableTags()">
 													<div class="fas fa-plus-circle"></div>
 												</button>
