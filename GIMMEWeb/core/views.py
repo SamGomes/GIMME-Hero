@@ -580,10 +580,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 	def getPlayerTags(self, username):
 		userprofile = User.objects.get(username=username).userprofile
-		tags = list(userprofile.tags.all())
-		#if len(tags) == 0:
-		#	return ''
-		
+		tags = list(userprofile.tags.all())		
 		return tags
 
 
@@ -888,8 +885,6 @@ class Views(): #acts as a namespace
 		if request.method == 'POST':
 			tag_name = request.POST.get('name')
 
-
-			print(request.POST)
 			Tag.objects.filter(name=tag_name).delete()
 
 			
@@ -899,9 +894,36 @@ class Views(): #acts as a namespace
 			}
 			
 			return JsonResponse(response_data)
-		
-	
 
+		
+	def assignTag(request):
+		if request.method == 'POST':
+			tag_name = request.POST.get('tag')
+			student_name = request.POST.get('student')
+
+			response_data = {}
+
+			userprofile = User.objects.get(username=student_name).userprofile
+			tag = Tag.objects.get(name=tag_name)
+
+
+			if tag in userprofile.tags.all():
+				response_data = {
+					'status': 'error',
+					'message': 'Tag already assigned'
+				}
+
+			else:
+				userprofile.tags.add(tag)
+				userprofile.save()
+
+				response_data = {
+					'status': 'success',
+					'message': 'Tag assigned successfully'
+				}
+
+			return JsonResponse(response_data)
+		
 	#endregion
 	
 	def userRegistration(request):

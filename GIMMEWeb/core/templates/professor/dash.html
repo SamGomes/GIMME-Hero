@@ -110,17 +110,13 @@
 
 							<div class='table-container'>						
 								<div class='table' style='margin:2em 2em 0em 2em;' id='tagTable_professor_dash'>
-									{% for tag in available_tags %}
-										<button class="tagButton" data-tag="{{ tag }}">{{ tag }}</button>
-								 	{% endfor %}
-							   						
-
-									
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+
+
 				<div class='panel-block'>
 					<div class='column is-half is-offset1 is-mobile'>
 						<div class='dash-cell-box'>
@@ -140,10 +136,14 @@
 											<p class='student-info-column-content' id='student-info-personality'></p>
 										</div>
 										<div class='column student-info-column-title' style='flex-grow: 3;'>Tags
-											<div id="student-info-tags-table">
-												<button class="is-rounded is-small has-tooltip-arrow pointer "  id="assignTagToStudentButton" style="border-radius: 50px; background-color:transparent; margin:0.2em" data-tooltip='Assign tag'>
+											<div style="display: flex;">
+												<button class="is-rounded is-small has-tooltip-arrow pointer assign-tag" id="assignTagToStudentButton" style="border-radius: 50px; background-color:transparent; margin:0.2em" data-tooltip='Assign tag' onclick="toggleAvailableTags()">
 													<div class="fas fa-plus-circle"></div>
 												</button>
+
+												<div id="student-info-available-tags-table" style="display: none;"></div>
+												<div id="student-info-assigned-tags-table"></div>
+
 											</div>
 										</div>
 									</div>
@@ -1109,9 +1109,6 @@
 	{% include 'common/footer.html' %}
 </body>
 
-<script src="{% static 'js/tagFunctionality.js' %}"></script>
-<script src="{% static 'js/studentInfoPreview.js' %}"></script>
-
 <script>
 function updateSliderValueText(val) {
           document.getElementById('sliderValueText').textContent=val; 
@@ -1830,7 +1827,7 @@ crossorigin='anonymous'></script>
 		        var tag = undefined;
 
 		        if(i >= 0){
-		        	tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>")
+		        	tag = $("<span class='context-menu pointer' style='margin:0.1em; z-index:1000;'></span>")
 						.text(nameArray[i])
 						.attr('onclick', "previewStudentInfo('" + nameArray[i] + "')");
 
@@ -2352,5 +2349,7 @@ crossorigin='anonymous'></script>
 
 
 </script>
+<script src="{% static 'js/tagFunctionality.js' %}"></script>
+<script src="{% static 'js/studentInfoPreview.js' %}"></script>
 
 </html>

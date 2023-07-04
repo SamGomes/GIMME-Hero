@@ -5,16 +5,24 @@ const placeholderElement = document.getElementById('student-info-placeholder');
 const studentName = document.getElementById('student-info-name');
 const studentEmail = document.getElementById('student-info-email');
 const personalityColumn = document.getElementById('student-info-personality');
-const tagsTable = document.getElementById('student-info-tags-table');
+
+const availableTagsTable = $('#student-info-available-tags-table');
+const assignedTagsTable = $('#student-info-assigned-tags-table');
+
 
 
 let serverState = undefined;
+let currentStudent = undefined;
+
+let listAvailableTagsVisible = false;
 
 
 
 function previewStudentInfo(studentId){
     if (serverState == undefined)
         return;
+
+    currentStudent = studentId;
 
     studentInfo = JSON.parse(serverState.studentsStates[studentId]);
 
@@ -26,10 +34,74 @@ function previewStudentInfo(studentId){
     personalityColumn.textContent = studentInfo.personality;
 
 
-
+    hideAvailableTags();
     hideStudentInfoPlaceholder();
 }
 
+
+function toggleAvailableTags(){
+    if (!listAvailableTagsVisible)
+        listAvailableTags();
+    else
+        hideAvailableTags();
+}
+
+
+function updateAvailableTags(){
+    if (listAvailableTagsVisible)
+        listAvailableTags();
+}
+
+
+function listAvailableTags(){
+    if (serverState == undefined || currentStudent == undefined)
+        return;
+
+    listAvailableTagsVisible = true;
+
+    availableTagsTable.empty();
+    availableTagsTable.css('display', 'block');
+    
+    studentInfo = JSON.parse(serverState.studentsStates[currentStudent]);
+    
+    studentTags = studentInfo.tags;
+    serverTags = serverState.tags;
+
+
+    serverState.tags.forEach(tag => {
+        if (studentTags.some(obj => obj.id === tag.id && obj.name === tag.name))
+            return;
+        
+        element = $("<span class='assignable-tag pointer'></span>").text(tag.name);
+
+        element.on('click', function(){
+            const data = {tag: tag.name, student: currentStudent};
+
+            $.ajax({
+                url: '/assignTag/',
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                data: data,
+                success: function(result) {},
+                error: function(error) {}
+            });
+
+            updateAvailableTags();
+        });
+
+        availableTagsTable.append(element);
+        
+    });
+
+}
+
+
+function hideAvailableTags(){
+    availableTagsTable.css('display', 'none');
+    listAvailableTagsVisible = false;
+}
 
 
 function hideStudentInfoPlaceholder(){
@@ -46,6 +118,7 @@ function showStudentInfoPlaceholder(){
 
 function updateStudentInfoPreview(newServerState){
     serverState = newServerState;
+    updateAvailableTags();
 }
 
 

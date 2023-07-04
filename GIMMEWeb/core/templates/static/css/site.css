@@ -93,11 +93,26 @@ body {
   font-size: 130%;
 
 }
-
-.student-tag{
-  background-color: #f9fcff
+.assign-tag:hover{
+  color: #FFBC42;
+  border-color: #FFBC42;
+  border-style: solid;
 }
 
+.assignable-tag{
+  margin:0.1em; 
+  z-index:1000;  
+  background-color: #FFBC42;
+  color: white;
+  border-radius: 290486px;
+  display: inline-flex;
+  padding: 0.1em 0.75em 0.1em 0.75em;
+  font-weight: 450;
+
+}
+.assignable-tag:hover{
+  background-color: #df9308;
+}
 
 .navbar-dropdown {
   min-width: 50%;
