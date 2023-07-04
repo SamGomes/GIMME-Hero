@@ -114,6 +114,18 @@ body {
   background-color: #df9308;
 }
 
+.assigned-tag{
+  margin: 0.1em; 
+  background-color: transparent;
+  border-color: #131444;
+  border-style: solid;
+  border-width: 0.1em;
+  border-radius: 290486px;
+  padding: 0.1em 0.75em 0.1em 0.75em;
+  font-weight: 500;
+  color: #131444;
+}
+
 .navbar-dropdown {
   min-width: 50%;
 }

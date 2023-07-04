@@ -33,7 +33,7 @@ function previewStudentInfo(studentId){
 
     personalityColumn.textContent = studentInfo.personality;
 
-
+    showAssignedTags();
     hideAvailableTags();
     hideStudentInfoPlaceholder();
 }
@@ -98,6 +98,24 @@ function listAvailableTags(){
 }
 
 
+function showAssignedTags(){
+    if (serverState == undefined || currentStudent == undefined)
+        return;
+
+    assignedTagsTable.empty();
+
+    studentInfo = JSON.parse(serverState.studentsStates[currentStudent]);
+    studentTags = studentInfo.tags;
+
+    studentTags.forEach(tag => {
+        element = $("<span class='assigned-tag'></span>").text(tag.name);
+
+        assignedTagsTable.append(element);
+    })
+
+}
+
+
 function hideAvailableTags(){
     availableTagsTable.css('display', 'none');
     listAvailableTagsVisible = false;
@@ -119,6 +137,7 @@ function showStudentInfoPlaceholder(){
 function updateStudentInfoPreview(newServerState){
     serverState = newServerState;
     updateAvailableTags();
+    showAssignedTags();
 }
 
 
