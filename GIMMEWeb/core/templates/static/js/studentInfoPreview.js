@@ -73,8 +73,9 @@ function listAvailableTags(){
     studentTags = studentInfo.tags;
     serverTags = serverState.tags;
 
+    serverTags.sort(compareTagNames);
 
-    serverState.tags.forEach(tag => {
+    serverTags.forEach(tag => {
         if (studentTags.some(obj => obj.id === tag.id && obj.name === tag.name))
             return;
         
@@ -112,6 +113,8 @@ function showAssignedTags(){
 
     studentInfo = JSON.parse(serverState.studentsStates[currentStudent]);
     studentTags = studentInfo.tags;
+
+    studentTags.sort(compareTagNames);
 
     studentTags.forEach(tag => {
         const element = $("<span class='assigned-tag'></span>").text(tag.name);
@@ -174,3 +177,12 @@ function updateStudentInfoPreview(newServerState){
 }
 
 
+function compareTagNames( a, b ) {
+    if ( a.name < b.name ){
+      return -1;
+    }
+    if ( a.name > b.name ){
+      return 1;
+    }
+    return 0;
+  }

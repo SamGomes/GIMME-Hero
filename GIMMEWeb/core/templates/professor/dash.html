@@ -1799,6 +1799,8 @@ crossorigin='anonymous'></script>
 		var generateTagsTable = function(tagNamesArray){
 			var table = $('<div></div>');
 
+			tagNamesArray.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+
 			tagNamesArray.forEach(element => {
 				tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;  background-color: #FFBC42; color: white'></span>").text(element.name);
 				
