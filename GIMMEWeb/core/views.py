@@ -924,6 +924,28 @@ class Views(): #acts as a namespace
 
 			return JsonResponse(response_data)
 		
+
+	def removeAssignedTag(request):
+		if request.method == 'POST':
+			tag_name = request.POST.get('tag')
+			student_name = request.POST.get('student')
+
+
+			userprofile = User.objects.get(username=student_name).userprofile
+			tag = Tag.objects.get(name=tag_name)
+
+
+			userprofile.tags.remove(tag)
+			userprofile.save()
+
+			response_data = {
+					'status': 'success',
+					'message': 'Tag assigned successfully'
+				}
+
+			return JsonResponse(response_data)
+
+		
 	#endregion
 	
 	def userRegistration(request):

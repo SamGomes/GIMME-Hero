@@ -50,6 +50,7 @@ urlpatterns = [
     re_path(r'^createNewTag/', Views.createNewTag, name='createNewTag'),
     re_path(r'^deleteTag/', Views.deleteTag, name='deleteTag'),
     re_path(r'^assignTag/', Views.assignTag, name='assignTag'),
+    re_path(r'^removeAssignedTag/', Views.removeAssignedTag, name='removeAssignedTag'),
 
     re_path(r'^fetchServerState/', Views.fetchServerState, name='fetchServerState'),
     re_path(r'^fetchStudentStates/', Views.fetchStudentStates, name='fetchStudentStates'),

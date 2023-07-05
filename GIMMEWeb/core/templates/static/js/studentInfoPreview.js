@@ -50,6 +50,8 @@ function toggleAvailableTags(){
 function updateAvailableTags(){
     if (listAvailableTagsVisible)
         listAvailableTags();
+
+    showAssignedTags();
 }
 
 
@@ -108,18 +110,37 @@ function showAssignedTags(){
     studentTags = studentInfo.tags;
 
     studentTags.forEach(tag => {
-        element = $("<span class='assigned-tag'></span>").text(tag.name);
+        const element = $("<span class='assigned-tag'></span>").text(tag.name);
 
-        const removeButton = $("<div class='fas fa-trash pointer assigned-tag-remove-button' style='padding-left: 0.5em;'></div>");
+        const removeDiv = $("<div class='has-tooltip-arrow  assigned-tag-remove-button' style='font-size: .75rem; color: #131444; height: fit-content; padding: 0.2em; margin: 0.2em;' data-tooltip='Remove tag'></div>");
+        const removeButton = $("<div class='fa fa-remove pointer' style='padding-left: 0.5em;'></div>");
+
+        removeDiv.append(removeButton);
+
         
-
-        element.append(removeButton);
-
-
-
+        removeDiv.on('click', function(){
+            const data = {tag: tag.name, student: currentStudent};
+            console.log(data);
+            
+            $.ajax({
+                url: '/removeAssignedTag/',
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                data: data,
+                success: function(result) {},
+                error: function(error) {}
+            });
+            
+            updateAvailableTags();
+        });
+        
+        
+        element.append(removeDiv);
 
         assignedTagsTable.append(element);
-    })
+    });
 
 }
 
