@@ -9,6 +9,8 @@ const personalityColumn = document.getElementById('student-info-personality');
 const availableTagsTable = $('#student-info-available-tags-table');
 const assignedTagsTable = $('#student-info-assigned-tags-table');
 
+const assignTagButton = $('#assign-tag-to-student-button');
+
 
 
 let serverState = undefined;
@@ -32,6 +34,7 @@ function previewStudentInfo(studentId){
     studentEmail.textContent = studentInfo.email;
 
     personalityColumn.textContent = studentInfo.personality;
+
 
     showAssignedTags();
     hideAvailableTags();
@@ -60,6 +63,7 @@ function listAvailableTags(){
         return;
 
     listAvailableTagsVisible = true;
+    assignTagButton.toggleClass('active', true);
 
     availableTagsTable.empty();
     availableTagsTable.css('display', 'block');
@@ -120,7 +124,6 @@ function showAssignedTags(){
         
         removeDiv.on('click', function(){
             const data = {tag: tag.name, student: currentStudent};
-            console.log(data);
             
             $.ajax({
                 url: '/removeAssignedTag/',
@@ -148,6 +151,7 @@ function showAssignedTags(){
 function hideAvailableTags(){
     availableTagsTable.css('display', 'none');
     listAvailableTagsVisible = false;
+    assignTagButton.toggleClass('active', false);
 }
 
 

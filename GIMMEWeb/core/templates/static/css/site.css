@@ -96,7 +96,6 @@ body {
 .assign-tag:hover{
   color: #FFBC42;
   border-color: #FFBC42;
-  border-style: solid;
 }
 
 .assignable-tag{
@@ -110,9 +109,18 @@ body {
   font-weight: 450;
 
 }
+
+.active{
+  border-color: #FFBC42;
+  color: #FFBC42;
+
+}
+
+
 .assignable-tag:hover{
   background-color: #df9308;
 }
+
 
 .assigned-tag{
   margin: 0.1em; 
