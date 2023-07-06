@@ -93,7 +93,7 @@
 						</div>
 					</div>
 				</div>
-				<div class='panel-block'>
+				<!-- <div class='panel-block'>
 					<div class='column is-mobile'>
 						<div class='dash-cell-box'  style='border-style:none;'>
 							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Tags</div>
@@ -114,13 +114,12 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				</div> -->
 
 
 				<div class='panel-block'>
 					<div class='column is-half is-offset1 is-mobile'>
 						<div class='dash-cell-box'>
-							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Registered Students</div>
 
 							<div class='student-info-box'>
 								<div id="student-info-placeholder" style=" color: #737d99;">Click on student to view details</div>
@@ -152,14 +151,41 @@
 								</div>
 							</div>
 
+							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray; margin-bottom: 0; margin-top: 1.5rem;'>Registered Students</div>
+
 							<div class='table-container'>
 								<div class='table' style='margin:2em;' id='freeUsersTable_professor_dash'></div>
 							</div>
 						</div>
 					</div>
 					<div class='column is-half is-offset1 is-mobile'>
+						<div class='dash-cell-box' style="margin-bottom: 1.7rem;">
+							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip=''>Tags</div>
+
+							<div class='columns is-mobile' style="display: flex; flex-wrap: wrap; padding: 0.75rem;">
+
+								<button  class ="is-rounded is-small pointer" id="addTagButton" style="border-radius: 50px; border-style: solid; background-color:transparent; margin:0.2em">
+									<div class="fas fa-plus-circle"></div>
+								</button>
+
+								<div id="addTagContainer" style="display: none;">
+									<input type="text" id="tagInput" placeholder="Enter tag name" maxlength="16">
+									<button id="saveTagButton">Save</button>
+									<button id="cancelTagButton">Cancel</button>
+								</div>
+			
+								<div id='tagTable_professor_dash'></div>
+								
+							</div>
+
+						</div>
+
 						<div class='dash-cell-box'>
+
+
+
 							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the students, selected from all available students, to be considered for the next group management iteration.'>Selected Students</div>
+
 							<div class='table-container'>
 								<div class='table' style='margin:2em;' id='selectedUsersTable_professor_dash'></div>
 							</div>
@@ -1802,21 +1828,18 @@ crossorigin='anonymous'></script>
 			tagNamesArray.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
 
 			tagNamesArray.forEach(element => {
-				tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;  background-color: #FFBC42; color: white'></span>").text(element.name);
+				tag = $("<span class='assignable-tag pointer'></span>").text(element.name);
 				
 
-				const deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this tag'></div>");
+				const deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='height: fit-content; font-size: .75rem; border-color: #ffffff; color:white; background-color:transparent; padding: 0.2em; margin:0.2em;' data-tooltip='Delete this tag'></div>");
   
-  				const deleteTagButton = $("<button type='button' class='button pointer delete-tag-button' style='border: none; background-color:transparent; color:white'><i class='fas fa-trash pointer'></i></button>");
+  				const deleteTagButton = $("<div class='fas fa-trash pointer'></div>");
+
   				deleteTagButton.attr('data-tag-id', element.name);
   				deleteButton.append(deleteTagButton);
 
 				tag.append(deleteButton);
 
-
-				tag.addClass('tag');
-				tag.addClass('is-medium');
-				tag.addClass('is-rounded');
 				table.append(tag);
 		
 			});
