@@ -114,7 +114,7 @@ function showAssignedTags(){
     studentInfo = JSON.parse(serverState.studentsStates[currentStudent]);
     studentTags = studentInfo.tags;
 
-    studentTags.sort(compareTagNames);
+    //studentTags.sort(compareTagNames);
 
     studentTags.forEach(tag => {
         const element = $("<span class='assigned-tag'></span>").text(tag.name);

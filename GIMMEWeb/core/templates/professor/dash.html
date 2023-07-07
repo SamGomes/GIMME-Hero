@@ -1825,7 +1825,7 @@ crossorigin='anonymous'></script>
 		var generateTagsTable = function(tagNamesArray){
 			var table = $('<div></div>');
 
-			tagNamesArray.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+			//tagNamesArray.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
 
 			tagNamesArray.forEach(element => {
 				tag = $("<span class='assignable-tag pointer'></span>").text(element.name);
