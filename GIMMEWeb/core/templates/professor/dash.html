@@ -121,7 +121,7 @@
 					<div class='column is-half is-offset1 is-mobile'>
 						<div class='dash-cell-box'>
 							
-							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray; margin-bottom: 0; margin-top: 1.5rem;'>Registered Students</div>
+							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray; margin-bottom: 0; margin-bottom: 1.5rem;'>Registered Students</div>
 
 
 							<div class='student-info-box'>
@@ -166,17 +166,18 @@
 
 							<div class='columns is-mobile' style="display: flex; flex-wrap: wrap; padding: 0.75rem;">
 
-								<button  class ="is-rounded is-small pointer" id="addTagButton" style="border-radius: 50px; border-style: solid; background-color:transparent; margin:0.2em">
+								<button  class ="button" id="addTagButton">Add Tag</button>
+								<!-- <button  class ="is-rounded is-small pointer" id="addTagButton" style="border-radius: 50px; border-style: solid; background-color:transparent; margin:0.2em">
 									<div class="fas fa-plus-circle"></div>
-								</button>
+								</button> -->
 
 								<div id="addTagContainer" style="display: none;">
-									<input type="text" id="tagInput" placeholder="Enter tag name" maxlength="16">
-									<button id="saveTagButton">Save</button>
-									<button id="cancelTagButton">Cancel</button>
+									<input class ="button" type="text" id="tagInput" placeholder="Enter tag name" maxlength="16">
+									<button class ="button" id="saveTagButton">Save</button>
+									<button class ="button" id="cancelTagButton">Cancel</button>
 								</div>
 			
-								<div id='tagTable_professor_dash'></div>
+								<div id='tagTable_professor_dash' style="margin: 0.75rem;"></div>
 								
 							</div>
 
