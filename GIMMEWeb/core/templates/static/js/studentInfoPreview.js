@@ -15,6 +15,7 @@ const assignTagButton = $('#assign-tag-to-student-button');
 
 let serverState = undefined;
 let currentStudent = undefined;
+let studentInfo = undefined;
 
 let listAvailableTagsVisible = false;
 
@@ -25,9 +26,8 @@ function previewStudentInfo(studentId){
         return;
 
     currentStudent = studentId;
-
+    
     studentInfo = JSON.parse(serverState.studentsStates[studentId]);
-
 
     studentName.textContent = studentInfo.fullName;
 
@@ -68,12 +68,12 @@ function listAvailableTags(){
     availableTagsTable.empty();
     availableTagsTable.css('display', 'block');
     
-    studentInfo = JSON.parse(serverState.studentsStates[currentStudent]);
     
     studentTags = studentInfo.tags;
     serverTags = serverState.tags;
 
-    serverTags.sort(compareTagNames);
+    //serverTags.sort(compareTagNames);
+    var tags = $('<div></div>');
 
     serverTags.forEach(tag => {
         if (studentTags.some(obj => obj.id === tag.id && obj.name === tag.name))
@@ -98,9 +98,11 @@ function listAvailableTags(){
             updateAvailableTags();
         });
 
-        availableTagsTable.append(element);
-        
+        tags.append(element);
     });
+    
+    availableTagsTable.append(tags);
+
 
 }
 
@@ -111,10 +113,11 @@ function showAssignedTags(){
 
     assignedTagsTable.empty();
 
-    studentInfo = JSON.parse(serverState.studentsStates[currentStudent]);
     studentTags = studentInfo.tags;
 
     //studentTags.sort(compareTagNames);
+
+    var tags = $("<div style='display: flex; flex-wrap: wrap; margin-top: 0.3em;'></div>");
 
     studentTags.forEach(tag => {
         const element = $("<span class='assigned-tag'></span>").text(tag.name);
@@ -144,10 +147,10 @@ function showAssignedTags(){
         
         
         element.append(removeDiv);
-
-        assignedTagsTable.append(element);
+        tags.append(element);
     });
-
+    
+    assignedTagsTable.append(tags);
 }
 
 
@@ -172,6 +175,10 @@ function showStudentInfoPlaceholder(){
 
 function updateStudentInfoPreview(newServerState){
     serverState = newServerState;
+
+    if (currentStudent)
+        studentInfo = JSON.parse(serverState.studentsStates[currentStudent]);
+
     updateAvailableTags();
     showAssignedTags();
 }
