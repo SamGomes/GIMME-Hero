@@ -164,18 +164,19 @@
 						<div class='dash-cell-box' style="margin-bottom: 1.7rem;">
 							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip=''>Tags</div>
 
+							<button  class ="button" id="addTagButton">Add Tag</button>
+							<!-- <button  class ="is-rounded is-small pointer" id="addTagButton" style="border-radius: 50px; border-style: solid; background-color:transparent; margin:0.2em">
+								<div class="fas fa-plus-circle"></div>
+							</button> -->
+
+							<div id="addTagContainer" style="display: none;">
+								<input class ="button" type="text" id="tagInput" placeholder="Enter tag name" maxlength="16">
+								<button class ="button" id="saveTagButton">Save</button>
+								<button class ="button" id="cancelTagButton">Cancel</button>
+							</div>
+
 							<div class='columns is-mobile' style="display: flex; flex-wrap: wrap; padding: 0.75rem;">
 
-								<button  class ="button" id="addTagButton">Add Tag</button>
-								<!-- <button  class ="is-rounded is-small pointer" id="addTagButton" style="border-radius: 50px; border-style: solid; background-color:transparent; margin:0.2em">
-									<div class="fas fa-plus-circle"></div>
-								</button> -->
-
-								<div id="addTagContainer" style="display: none;">
-									<input class ="button" type="text" id="tagInput" placeholder="Enter tag name" maxlength="16">
-									<button class ="button" id="saveTagButton">Save</button>
-									<button class ="button" id="cancelTagButton">Cancel</button>
-								</div>
 			
 								<div id='tagTable_professor_dash' style="margin: 0.75rem;"></div>
 								
@@ -1825,21 +1826,81 @@ crossorigin='anonymous'></script>
 		};
 
 
-		var generateTagsTable = function(tagNamesArray){
+		var generateTagsTable = function(tagsArray){
 			var table = $('<div></div>');
 
 			//tagNamesArray.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
 
-			tagNamesArray.forEach(element => {
-				tag = $("<span class='assignable-tag pointer'></span>").text(element.name);
-				
+			tagsArray.forEach(element => {
+				tag = $("<span class='assignable-tag pointer has-tooltip-arrow' data-tooltip='Select tag' style='border: none; height: 2em; align-items: center;'></span>").text(element.name);
 
-				const deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='height: fit-content; border-color: #ffffff; color:white; background-color:transparent; padding: 0.2em; margin:0.2em;' data-tooltip='Delete this tag'></div>");
+				tag.click(function() {
+					const clickedTag = $(this);
+					const tagId = element.name;
+					const url = '/selectTag/';
+					
+					$.ajax({
+					url: url,
+					type: 'POST',
+					headers: {
+						'X-CSRFToken': getCookie('csrftoken') // Use the getCookie function to retrieve CSRF token
+					},
+					data: { name: tagId },
+					success: function(result) {
+						// if (result.is_selected){
+						// 	// show clicked css
+						// 	clickedTag.css({backgroundColor: '#0086fd',});
+						// }
+						// else {
+						// 	// show normal css
+						// 	clickedTag.css({backgroundColor: '#FFBC42',});
+						// }
+					},
+					error: function(error) {}
+					});
+
+				});
+
+
+				const deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow pointer delete-tag-button' style='height: fit-content; border-color: #ffffff; color:white; background-color:#FFBC42; padding: 0.4em 0.7em 0.4em 0.7em; margin: 0.1em 0 0.1em 0.5em;' data-tooltip='Delete this tag'></div>");
   
-  				const deleteTagButton = $("<div class='fas fa-trash pointer  delete-tag-button'></div>");
+  				const deleteTagButton = $("<div class='fas fa-trash' style='height: 0.9rem;'></div>");
 
-  				deleteTagButton.attr('data-tag-id', element.name);
   				deleteButton.append(deleteTagButton);
+			
+				deleteButton.hover(function() {
+					// CSS styles for hover effect
+					$(this).css({
+						backgroundColor: 'white',
+						color: '#FFBC42',
+					});
+				}, function() {
+					// CSS styles to revert back when not hovering
+					$(this).css({
+						backgroundColor: '#FFBC42',
+						color: 'white',
+					});
+				});
+
+				deleteButton.click(function() {
+					const tagId = element.name;
+					const url = '/deleteTag/';
+					
+					$.ajax({
+					url: url,
+					type: 'POST',
+					headers: {
+						'X-CSRFToken': getCookie('csrftoken') // Use the getCookie function to retrieve CSRF token
+					},
+					data: { name: tagId },
+					success: function(result) {
+						// Handle the response from the server
+					},
+					error: function(error) {
+						// Handle any errors
+					}
+					});
+				});
 
 				tag.append(deleteButton);
 

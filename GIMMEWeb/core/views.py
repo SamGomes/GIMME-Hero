@@ -289,7 +289,6 @@ class ServerStateModelBridge():
 			serverState.simStudentW = simStudentW
 		serverState.save()
 
-
 	def getTags(self):
 		tags = list(Tag.objects.all())
 		return tags
@@ -895,6 +894,105 @@ class Views(): #acts as a namespace
 			
 			return JsonResponse(response_data)
 
+
+	def selectTag(request):
+		if request.method == 'POST':
+			tag_name = request.POST.get('name')
+
+			try:
+				tag = Tag.objects.get(name=tag_name)
+				tag_status = tag.is_selected
+				tag.is_selected = not tag_status
+				tag.save()
+				
+			except Tag.DoesNotExist:
+				response_data = {
+					'status': 'error',
+					'message': 'Tag does not exist'
+				}				
+				return JsonResponse(response_data)
+
+
+			currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
+			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers()
+
+			print(currFreeUsers)
+
+			
+			
+			
+			if (not tag_status):
+				print("select")
+				# Select students
+				studentsToSelect = []
+
+				for student in currFreeUsers:
+					if student in currSelectedUsers:
+						continue
+					print(student)
+					studentTags = User.objects.get(username=student).userprofile.tags.all()
+
+					for studentTag in studentTags:
+						if studentTag.name == tag_name:								
+							studentsToSelect.append(student)
+							break
+
+
+				for student in studentsToSelect:
+					currSelectedUsers.append(student)
+					currFreeUsers.remove(student)
+
+				response_data = {
+					'status': 'success',
+					'message': 'Tag selected successfully',
+					'is_selected' : True
+				}	
+			else:
+				print("deselect")
+				# Deselect students
+				studentsToDeselect = []
+
+				for student in currSelectedUsers:
+					print(student)
+					if student in currFreeUsers:
+						continue
+					print(student)
+
+					studentTags = User.objects.get(username=student).userprofile.tags.all()
+					
+					deselect = True
+
+					for studentTag in studentTags:
+						if studentTag.is_selected:	
+							deselect = False
+							break
+												
+					if deselect:
+						studentsToDeselect.append(student)
+
+
+				for student in studentsToDeselect:
+					currFreeUsers.append(student)
+					currSelectedUsers.remove(student)
+					
+
+				response_data = {
+					'status': 'success',
+					'message': 'Tag deselected successfully',
+					'is_selected' : False
+				}
+
+
+			serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
+			serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
+
+			print("CURR selected:")
+			print(currSelectedUsers)
+
+			
+			return JsonResponse(response_data)
+
+
 		
 	def assignTag(request):
 		if request.method == 'POST':
@@ -1136,11 +1234,14 @@ class Views(): #acts as a namespace
 	def addSelectedUser(request): #reads (player) from args
 		if request.method == 'POST':
 			usernameToAdd = request.POST.get('username')
-			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
-			currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
+
+			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers()
+			currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
+
 			if not usernameToAdd in currSelectedUsers:
 				currSelectedUsers.append(usernameToAdd)
 				currFreeUsers.remove(usernameToAdd)
+
 			serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
 			serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
 			return HttpResponse('ok')
@@ -1149,8 +1250,8 @@ class Views(): #acts as a namespace
 	def removeSelectedUser(request): #reads (player) from args
 		if request.method == 'POST':
 			usernameToRemove = request.POST.get('username')
-			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
-			currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
+			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers()
+			currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
 			if usernameToRemove in currSelectedUsers:
 				currSelectedUsers.remove(usernameToRemove)
 				currFreeUsers.append(usernameToRemove)

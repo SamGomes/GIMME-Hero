@@ -3,29 +3,6 @@ const addTagContainer = document.getElementById('addTagContainer');
 const tagInput = document.getElementById('tagInput');
 
 
-// Add event listener for delete tag button
-$(document).on('click', '.delete-tag-button', function() {
-    const tagId = $(this).data('tag-id');
-    const url = '/deleteTag/';
-    
-
-    $.ajax({
-      url: url,
-      type: 'POST',
-      headers: {
-        'X-CSRFToken': getCookie('csrftoken') // Use the getCookie function to retrieve CSRF token
-      },
-      data: { name: tagId },
-      success: function(result) {
-        // Handle the response from the server
-      },
-      error: function(error) {
-        // Handle any errors
-      }
-    });
-  });
-
-
 
 // Add event listener for selecting tags
 const tagButtons = document.querySelectorAll('.tagButton');

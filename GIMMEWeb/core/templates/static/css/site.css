@@ -110,6 +110,11 @@ body {
 
 }
 
+.delete-tag-button:hover{
+  color:#df9308;
+  background-color: white;
+}
+
 .active{
   border-color: #FFBC42;
   color: #FFBC42;
