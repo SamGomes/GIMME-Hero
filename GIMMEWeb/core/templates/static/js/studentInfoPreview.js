@@ -177,7 +177,15 @@ function updateStudentInfoPreview(newServerState){
     serverState = newServerState;
 
     if (currentStudent)
-        studentInfo = JSON.parse(serverState.studentsStates[currentStudent]);
+    {
+        if (!serverState.studentsStates[currentStudent]){
+            showStudentInfoPlaceholder();
+            return;
+        }
+        else {
+            studentInfo = JSON.parse(serverState.studentsStates[currentStudent]);
+        }
+    }
 
     updateAvailableTags();
     showAssignedTags();

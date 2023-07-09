@@ -1569,7 +1569,8 @@ var formatFrequenciesStackedBarPlot = function(data, numberStudents){
         color = GIMME_BLUE;
         pair = data.find(entry => entry.letter == letterPair[element.letter]);
 
-        if (element.value < pair.value)
+
+        if (pair && element.value < pair.value)
             color = '#63BBFF';
         //else if (element.value == pair.value && rightSideMBTILetter.includes(element.letter))
         //    color = '#63BBFF';
