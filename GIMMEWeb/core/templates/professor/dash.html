@@ -1832,7 +1832,9 @@ crossorigin='anonymous'></script>
 			//tagNamesArray.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
 
 			tagsArray.forEach(element => {
-				tag = $("<span class='assignable-tag pointer has-tooltip-arrow' data-tooltip='Select tag' style='border: none; height: 2em; align-items: center;'></span>").text(element.name);
+				tag = $("<span class='selectable-tag pointer has-tooltip-arrow' data-tooltip='Select/Deselect tag' style='border: none; height: 2em; align-items: center;'></span>").text(element.name);
+				
+				tag.toggleClass("selected", element.is_selected);
 
 				tag.click(function() {
 					const clickedTag = $(this);
@@ -1847,14 +1849,14 @@ crossorigin='anonymous'></script>
 					},
 					data: { name: tagId },
 					success: function(result) {
-						// if (result.is_selected){
-						// 	// show clicked css
-						// 	clickedTag.css({backgroundColor: '#0086fd',});
-						// }
-						// else {
-						// 	// show normal css
-						// 	clickedTag.css({backgroundColor: '#FFBC42',});
-						// }
+						if (result.is_selected){
+							// show clicked css
+							//clickedTag.toggleClass("selected", true);
+						}
+						else {
+							// show normal css
+							//clickedTag.toggleClass("selected", false);
+						}
 					},
 					error: function(error) {}
 					});
@@ -1862,7 +1864,7 @@ crossorigin='anonymous'></script>
 				});
 
 
-				const deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow pointer delete-tag-button' style='height: fit-content; border-color: #ffffff; color:white; background-color:#FFBC42; padding: 0.4em 0.7em 0.4em 0.7em; margin: 0.1em 0 0.1em 0.5em;' data-tooltip='Delete this tag'></div>");
+				const deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow pointer delete-tag-button' data-tooltip='Delete this tag'></div>");
   
   				const deleteTagButton = $("<div class='fas fa-trash' style='height: 0.9rem;'></div>");
 

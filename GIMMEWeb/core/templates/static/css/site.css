@@ -110,11 +110,6 @@ body {
 
 }
 
-.delete-tag-button:hover{
-  color:#df9308;
-  background-color: white;
-}
-
 .active{
   border-color: #FFBC42;
   color: #FFBC42;
@@ -124,6 +119,54 @@ body {
 
 .assignable-tag:hover{
   background-color: #df9308;
+}
+
+.selectable-tag {
+  /* CSS styles for the button */
+  margin:0.1em; 
+  z-index:1000;  
+  background-color: #FFBC42;
+  color: white;
+  border-radius: 290486px;
+  display: inline-flex;
+  padding: 0.1em 0.75em 0.1em 0.75em;
+  font-weight: 450;
+}
+
+.selectable-tag:hover{
+  background-color: #df9308;
+}
+
+.selectable-tag.selected {
+  background-color: #0086fd;
+}
+
+.selectable-tag.selected:hover {
+  background-color: #0061b6;
+}
+
+.selectable-tag .delete-tag-button {
+
+  height: fit-content; 
+  border-color: #ffffff; 
+  color:white; 
+  background-color:#FFBC42; 
+  padding: 0.4em 0.7em 0.4em 0.7em; 
+  margin: 0.1em 0 0.1em 0.5em;
+}
+
+.selectable-tag .delete-tag-button:hover{
+  color:#df9308;
+  background-color: white;
+}
+
+.selectable-tag.selected .delete-tag-button {
+
+  background-color:#0086fd; 
+}
+.selectable-tag.selected .delete-tag-button:hover {
+  color:#0061b6; 
+  background-color: white;
 }
 
 
