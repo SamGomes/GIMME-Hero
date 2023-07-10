@@ -1598,7 +1598,7 @@ var buildMBTIFrequenciesStackedBarPlot  = function(canvasId, data) {
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-        .call(responsivefy, width, 0.1)
+        .call(responsivefy, width, 0)
         .append("g")
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
