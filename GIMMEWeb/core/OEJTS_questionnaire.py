@@ -1,3 +1,8 @@
+from django.utils import timezone
+from GIMMEWeb.core.models import Questionnaire, Submission, LikertQuestion, LikertQuestionnaire, QuestionnaireType
+
+
+
 # The Open Extended Jungian Type Scales was developed to be an open source alternative to the Myers-Briggs Type Indicator. 
 # http://openpsychometrics.org/tests/OJTS/development/
 
@@ -63,3 +68,30 @@ def calculate_personality_MBTI(data):
         return calculate_IE(data) + calculate_SN(data) + calculate_FT(data) + calculate_JP(data)
     except:
         print("ERROR: Incorrect amount of questions in OEJTS questionnaire (missing questions)")
+
+
+
+def create_MBTI_questionnaire():
+    # Create a LikertQuestionnaire instance
+    questionnaire = LikertQuestionnaire.objects.create(
+        title='First_Questionnaire',
+        description='Your Questionnaire Description',
+        is_active=True,
+        created_at=timezone.now(),
+        type=QuestionnaireType.MBTI,
+        dashboard_message='Your Dashboard Message'
+    )
+
+    # Create LikertQuestion instances
+    question_1 = LikertQuestion.objects.create(
+        left_extremity='Strongly Disagree',
+        right_extremity='Strongly Agree'
+    )
+    question_2 = LikertQuestion.objects.create(
+        left_extremity='Not at all',
+        right_extremity='Very much'
+    )
+
+    # Add the LikertQuestion instances to the LikertQuestionnaire
+    questionnaire.questions.add(question_1, question_2)
+
