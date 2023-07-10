@@ -209,7 +209,8 @@
 				<div class='panel-block' style='display: block;'>
 					<p>MBTI Letters Frequency</p>
 					<div class='columns is-mobile is-centered'>
-						<div class='column is-7' id='mbtiFrequencyPlot_professor_dash'></div>
+						<div class='column' id='mbtiFrequencyPlot_professor_dash'></div>
+						<div class='column' id='mbtiSelectedFrequencyPlot_professor_dash'></div>
 					</div>
 				</div>
 
@@ -2177,8 +2178,20 @@ crossorigin='anonymous'></script>
 								currServerState = newServerState;
 
 								$('#mbtiFrequencyPlot_professor_dash').empty();
-								//buildMBTIFrequenciesPlot("mbtiFrequencyPlot_professor_dash", currServerState.studentsStates);
-								buildMBTIFrequenciesStackedBarPlot("mbtiFrequencyPlot_professor_dash", currServerState.studentsStates);
+								$('#mbtiSelectedFrequencyPlot_professor_dash').empty();
+
+
+								allStudentStates = currServerState.studentsStates;
+								selectedUsers = currServerState.currSelectedUsers;
+								selectedUsersStates = {}
+
+								selectedUsers.forEach(studentName => {
+									selectedUsersStates[studentName] = allStudentStates[studentName];
+								});
+								
+
+								buildMBTIFrequenciesStackedBarPlot("mbtiFrequencyPlot_professor_dash", allStudentStates);
+								buildMBTIFrequenciesStackedBarPlot("mbtiSelectedFrequencyPlot_professor_dash", selectedUsersStates);
 
 								$('#groupsPlot_professor_dash').empty();
 

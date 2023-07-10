@@ -1587,7 +1587,7 @@ var formatFrequenciesStackedBarPlot = function(data, numberStudents){
 var buildMBTIFrequenciesStackedBarPlot  = function(canvasId, data) {
     // set the dimensions and margins of the graph
     var margin = {top: 30, right: 30, bottom: 30, left: 30},
-        width = 650 - margin.left - margin.right,
+        width = 550 - margin.left - margin.right,
         height = 350 - margin.top - margin.bottom;
 
     numberStudents = Object.keys(data).length;
@@ -1598,7 +1598,7 @@ var buildMBTIFrequenciesStackedBarPlot  = function(canvasId, data) {
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-        .call(responsivefy, width, 0)
+        .call(responsivefy, width, 0.1)
         .append("g")
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
