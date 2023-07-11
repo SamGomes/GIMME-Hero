@@ -676,6 +676,9 @@ class Views(): #acts as a namespace
 			playerBridge.resetPlayerCurrState(player)
 			playerBridge.resetPlayerPastModelIncreases(player)
 
+		if not Questionnaire.objects.filter(title="First_Questionnaire").exists():
+			OEJTS_questionnaire.create_MBTI_questionnaire()
+
 		print("Finished")
 		return HttpResponse('ok')
 
@@ -767,10 +770,6 @@ class Views(): #acts as a namespace
 		user = request.user
 
 		# # Check if the user has already submitted their answers for this questionnaire
-		# if LikertResponse.objects.filter(user=user, question__in=questionnaire.questions.all()).exists():
-		# 	# Questionnaire completed
-		# 	return
-
 		if is_questionnaire_completed(questionnaire, user):
 			return render(request, 'student/thanks.html')
 
@@ -788,7 +787,9 @@ class Views(): #acts as a namespace
 
 				# Calculate the result based on the user's answers
 				result = OEJTS_questionnaire.calculate_personality_MBTI(form.cleaned_data)
-				# TODO save result in database
+				
+				playerBridge.setPlayerPersonality(user, result)
+	
 				return render(request, 'student/thanks.html')
 		else:
 			form = LikertForm()
