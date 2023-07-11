@@ -421,8 +421,8 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		# if personalityModel == 'MBTI':
 		# 	if len(personalityType) != 4:
 		# 		return None  # exception if the personality type is not 4 characters long
-
-		return PersonalityMBTI(personality['letter1'], personality['letter2'], personality['letter3'], personality['letter4'])
+		if personality:
+			return PersonalityMBTI(personality['letter1'], personality['letter2'], personality['letter3'], personality['letter4'])
 
 
 	def getPlayerCurrGroup(self, username):
@@ -535,7 +535,12 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 	def setPlayerPersonality(self, username, personality):
 		playerInfo = User.objects.get(username=username).userprofile
-		playerInfo.personality = json.dumps(personality, default=lambda o: o.__dict__)
+		personalityDict = { "letter1" : personality[0],
+							"letter2" : personality[1],
+							"letter3" : personality[2],
+							"letter4" : personality[3], }
+
+		playerInfo.personality = json.dumps(personalityDict, default=lambda o: o.__dict__)
 		playerInfo.save()
 
 	def setPlayerGrade(self, username, grade):
