@@ -421,7 +421,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		# if personalityModel == 'MBTI':
 		# 	if len(personalityType) != 4:
 		# 		return None  # exception if the personality type is not 4 characters long
-		if personality:
+		if personality and type(personality) is dict:
 			return PersonalityMBTI(personality['letter1'], personality['letter2'], personality['letter3'], personality['letter4'])
 
 
@@ -1754,8 +1754,15 @@ class Views(): #acts as a namespace
 			userInfo['tasks'] = playerBridge.getPlayerCurrTasks(username)
 			userInfo['statesDataFrame'] = playerBridge.getPlayerStatesDataFrame(username)
 			userInfo['grade'] = playerBridge.getPlayerGrade(username)
-			userInfo['personality'] = playerBridge.getPlayerPersonality(username).getPersonalityString()
 			userInfo['tags'] = playerBridge.getPlayerTags(username)
+
+			personality = playerBridge.getPlayerPersonality(username)
+
+			if personality: 
+				userInfo['personality'] = personality.getPersonalityString()
+			else:
+				userInfo['personality'] = ''
+
 
 			userInfo = json.dumps(userInfo, default=lambda o: o.__dict__, sort_keys=True)
 

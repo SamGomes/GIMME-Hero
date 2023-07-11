@@ -1426,9 +1426,11 @@ var calculateMBTILettersFrequencies = function(data) {
 
     for (let key in data) {
 
-
         userState = unformattedStringToObj(data[key])
         var personality = userState.personality;
+
+        if (personality == "")
+            continue;
 
         for (var i = 0; i < personality.length; i++) {
 
@@ -1545,7 +1547,7 @@ var buildMBTIFrequenciesPlot = function(canvasId, data) {
 }
 
 const leftSideMBTILetters = ['J', 'T', 'S', 'E'];
-const rightSideMBTILetter = ['P', 'F', 'N', 'I'];
+const rightSideMBTILetters = ['P', 'F', 'N', 'I'];
 
 const letterToPosition = { 'E' : 4, 'I' : 4,
                            'S' : 3, 'N' : 3,
@@ -1584,14 +1586,37 @@ var formatFrequenciesStackedBarPlot = function(data, numberStudents){
     return frequencies
 }
 
+
+function calculateNumStudents(frequencies_temp)
+{
+    pair = frequencies_temp.find(entry => entry.letter == letterPair[frequencies_temp[0].letter]);
+    numberStudents = 1;
+
+    if (pair)
+        numberStudents = frequencies_temp[0].value + pair.value;
+    else if (frequencies_temp[0].value > 1)
+        numberStudents = frequencies_temp[0].value;
+
+    return numberStudents;
+}
+
+
 var buildMBTIFrequenciesStackedBarPlot  = function(canvasId, data, title) {
     // set the dimensions and margins of the graph
     var margin = {top: 30, right: 30, bottom: 30, left: 30},
         width = 550 - margin.left - margin.right,
         height = 350 - margin.top - margin.bottom;
 
-    numberStudents = Object.keys(data).length;
-    frequencies = formatFrequenciesStackedBarPlot(calculateMBTILettersFrequencies(data), numberStudents);
+
+    frequencies_temp = calculateMBTILettersFrequencies(data);
+
+
+    if (frequencies_temp.length == 0)
+        return;
+
+    numberStudents = calculateNumStudents(frequencies_temp);
+
+    frequencies = formatFrequenciesStackedBarPlot(frequencies_temp, numberStudents);
 
     // append the svg object to the body of the page
     var svg = d3.select('#' + canvasId)
@@ -1614,7 +1639,7 @@ var buildMBTIFrequenciesStackedBarPlot  = function(canvasId, data, title) {
         .padding(0.1);
 
     yRight = d3.scaleBand()
-        .domain(rightSideMBTILetter)
+        .domain(rightSideMBTILetters)
         .range([height - margin.bottom, margin.top])
         .padding(0.1);
 
