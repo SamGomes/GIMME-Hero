@@ -164,6 +164,7 @@
 						<div class='dash-cell-box' style="margin-bottom: 1.7rem;">
 							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip=''>Tags</div>
 
+							<button  class ="button" id="randomizeGroupsButton">Randomize Groups</button>
 							<button  class ="button" id="addTagButton">Add Tag</button>
 							<!-- <button  class ="is-rounded is-small pointer" id="addTagButton" style="border-radius: 50px; border-style: solid; background-color:transparent; margin:0.2em">
 								<div class="fas fa-plus-circle"></div>
@@ -177,16 +178,12 @@
 
 							<div class='columns is-mobile' style="display: flex; flex-wrap: wrap; padding: 0.75rem;">
 
-			
 								<div id='tagTable_professor_dash' style="margin: 0.75rem;"></div>
 								
 							</div>
-
 						</div>
 
 						<div class='dash-cell-box'>
-
-
 
 							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the students, selected from all available students, to be considered for the next group management iteration.'>Selected Students</div>
 
@@ -1826,93 +1823,6 @@ crossorigin='anonymous'></script>
 		    return table;
 		};
 
-
-		var generateTagsTable = function(tagsArray){
-			var table = $('<div></div>');
-
-			//tagNamesArray.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
-
-			tagsArray.forEach(element => {
-				tag = $("<span class='selectable-tag pointer has-tooltip-arrow' data-tooltip='Select/Deselect tag' style='border: none; height: 2em; align-items: center;'></span>").text(element.name);
-				
-				tag.toggleClass("selected", element.is_selected);
-
-				tag.click(function() {
-					const clickedTag = $(this);
-					const tagId = element.name;
-					const url = '/selectTag/';
-					
-					$.ajax({
-					url: url,
-					type: 'POST',
-					headers: {
-						'X-CSRFToken': getCookie('csrftoken') // Use the getCookie function to retrieve CSRF token
-					},
-					data: { name: tagId },
-					success: function(result) {
-						if (result.is_selected){
-							// show clicked css
-							//clickedTag.toggleClass("selected", true);
-						}
-						else {
-							// show normal css
-							//clickedTag.toggleClass("selected", false);
-						}
-					},
-					error: function(error) {}
-					});
-
-				});
-
-
-				const deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow pointer delete-tag-button' data-tooltip='Delete this tag'></div>");
-  
-  				const deleteTagButton = $("<div class='fas fa-trash' style='height: 0.9rem;'></div>");
-
-  				deleteButton.append(deleteTagButton);
-			
-				deleteButton.hover(function() {
-					// CSS styles for hover effect
-					$(this).css({
-						backgroundColor: 'white',
-						color: '#FFBC42',
-					});
-				}, function() {
-					// CSS styles to revert back when not hovering
-					$(this).css({
-						backgroundColor: '#FFBC42',
-						color: 'white',
-					});
-				});
-
-				deleteButton.click(function() {
-					const tagId = element.name;
-					const url = '/deleteTag/';
-					
-					$.ajax({
-					url: url,
-					type: 'POST',
-					headers: {
-						'X-CSRFToken': getCookie('csrftoken') // Use the getCookie function to retrieve CSRF token
-					},
-					data: { name: tagId },
-					success: function(result) {
-						// Handle the response from the server
-					},
-					error: function(error) {
-						// Handle any errors
-					}
-					});
-				});
-
-				tag.append(deleteButton);
-
-				table.append(tag);
-		
-			});
-
-			return table
-		}
 		
 		var generateDashTableFromArray = function(canAdd, idArray, nameArray, tagClass, moveButtonIconClass, moveElementUrl, moveElementArg, addElementURL, addElementArg, deleteElementUrl, deleteElementArg, editElementArg, editElementUrlTask, editElementUrlStudent){
 		    var table = $('<div></div>');

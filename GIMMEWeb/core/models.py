@@ -85,6 +85,7 @@ class LikertResponse(models.Model):
 class Tag(models.Model):
     name = models.CharField(max_length=32)
     is_selected = models.BooleanField(default=False)
+    is_removable = models.BooleanField(default=True)
 
 
 class UserProfile(models.Model):

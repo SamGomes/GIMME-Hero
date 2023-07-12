@@ -52,6 +52,7 @@ urlpatterns = [
     re_path(r'^assignTag/', Views.assignTag, name='assignTag'),
     re_path(r'^selectTag/', Views.selectTag, name='selectTag'),
     re_path(r'^removeAssignedTag/', Views.removeAssignedTag, name='removeAssignedTag'),
+    re_path(r'^randomizeGroupTags/', Views.randomizeGroupTags, name='randomizeGroupTags'),
 
     re_path(r'^fetchServerState/', Views.fetchServerState, name='fetchServerState'),
     re_path(r'^fetchStudentStates/', Views.fetchStudentStates, name='fetchStudentStates'),

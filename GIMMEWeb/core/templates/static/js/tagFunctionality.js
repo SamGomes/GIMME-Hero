@@ -1,17 +1,30 @@
 const addTagButton = document.getElementById('addTagButton');
 const addTagContainer = document.getElementById('addTagContainer');
 const tagInput = document.getElementById('tagInput');
+const randomizeButton = doocument.getElementById('randomizeGroupsButton');
+
+// // Add event listener for selecting tags
+// const tagButtons = document.querySelectorAll('.tagButton');
+// 	tagButtons.forEach(button => {
+// 		button.addEventListener('click', () => {
+// 			button.classList.toggle('selected');
+// 		});
+// 	});
 
 
-
-// Add event listener for selecting tags
-const tagButtons = document.querySelectorAll('.tagButton');
-	tagButtons.forEach(button => {
-		button.addEventListener('click', () => {
-			button.classList.toggle('selected');
-		});
-	});
-
+// randomizeButton.addEventListener('click', () => {
+//     const url = '/randomizeGroupTags/';
+//     console.log("randomize");
+//     $.ajax({
+//         url: url,
+//         type: 'POST',
+//         headers: {
+//             'X-CSRFToken': getCookie('csrftoken')
+//         },
+//         success: function(result) {},
+//         error: function(error) {}
+//     });
+// });
 
 // Add event listener for adding a tag
 addTagButton.addEventListener('click', () => {
@@ -86,3 +99,75 @@ function getCookie(c_name)
     }
     return "";
  }
+
+
+ function generateTagsTable(tagsArray){
+    var table = $('<div></div>');
+
+    tagsArray.forEach(element => {
+        tag = $("<span class='selectable-tag pointer has-tooltip-arrow' data-tooltip='Select/Deselect tag' style='border: none; height: 2em; align-items: center;'></span>").text(element.name);
+        
+        tag.toggleClass("selected", element.is_selected);
+
+        tag.click(function() {
+            const clickedTag = $(this);
+            const tagId = element.name;
+            const url = '/selectTag/';
+            
+            $.ajax({
+            url: url,
+            type: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken') // Use the getCookie function to retrieve CSRF token
+            },
+            data: { name: tagId },
+            success: function(result) {},
+            error: function(error) {}
+            });
+
+        });
+
+        if(element.is_removable) {
+            const deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow pointer delete-tag-button' data-tooltip='Delete this tag'></div>");
+            const deleteTagButton = $("<div class='fas fa-trash' style='height: 0.9rem;'></div>");
+
+            deleteButton.append(deleteTagButton);
+        
+            deleteButton.hover(function() {
+                // CSS styles for hover effect
+                $(this).css({
+                    backgroundColor: 'white',
+                    color: '#FFBC42',
+                });
+            }, function() {
+                // CSS styles to revert back when not hovering
+                $(this).css({
+                    backgroundColor: '#FFBC42',
+                    color: 'white',
+                });
+            });
+
+            deleteButton.click(function() {
+                const tagId = element.name;
+                const url = '/deleteTag/';
+                
+                $.ajax({
+                url: url,
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken') // Use the getCookie function to retrieve CSRF token
+                },
+                data: { name: tagId },
+                success: function(result) {},
+                error: function(error) {}
+                });
+            });
+
+            tag.append(deleteButton);
+        }
+
+        table.append(tag);
+    });
+
+    return table
+}

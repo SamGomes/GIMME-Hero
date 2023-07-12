@@ -684,6 +684,12 @@ class Views(): #acts as a namespace
 		if not Questionnaire.objects.filter(title="First_Questionnaire").exists():
 			OEJTS_questionnaire.create_MBTI_questionnaire()
 
+		if not Tag.objects.filter(name="Group A").exists():
+			Tag.objects.create(name="Group A", is_removable = False)
+
+		if not Tag.objects.filter(name="Group B").exists():
+			Tag.objects.create(name="Group B", is_removable = False)
+
 		print("Finished")
 		return HttpResponse('ok')
 
@@ -1049,7 +1055,37 @@ class Views(): #acts as a namespace
 
 			return JsonResponse(response_data)
 
-		
+
+	def	randomizeGroupTags(request):
+		if request.method == 'POST':
+			users = User.objects.all()
+
+			half_length = len(users) / 2
+			count = 0
+
+			group1_tag = Tag.objects.get(name="Group A")
+			group2_tag = Tag.objects.get(name="Group B")
+
+			random.shuffle(users)
+
+			for user in users:
+				if count < half_length:
+					user.userprofile.tags.remove(group2_tag)
+					user.userprofile.tags.add(group1_tag)
+				else:
+					user.userprofile.tags.remove(group1_tag)
+					user.userprofile.tags.add(group2_tag)
+
+				user.userprofile.save()
+				count += 1
+
+			response_data = {
+					'status': 'success',
+					'message': 'Groups randomized successfully'
+				}
+
+			return JsonResponse(response_data)
+
 	#endregion
 	
 	def userRegistration(request):
