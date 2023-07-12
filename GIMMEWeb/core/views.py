@@ -1066,14 +1066,16 @@ class Views(): #acts as a namespace
 			group1_tag = Tag.objects.get(name="Group A")
 			group2_tag = Tag.objects.get(name="Group B")
 
-			random.shuffle(users)
+			users = users.order_by('?')
+
 
 			for user in users:
-				if count < half_length:
-					user.userprofile.tags.remove(group2_tag)
+				user.userprofile.tags.remove(group1_tag)
+				user.userprofile.tags.remove(group2_tag)
+				
+				if count < half_length:		
 					user.userprofile.tags.add(group1_tag)
 				else:
-					user.userprofile.tags.remove(group1_tag)
 					user.userprofile.tags.add(group2_tag)
 
 				user.userprofile.save()

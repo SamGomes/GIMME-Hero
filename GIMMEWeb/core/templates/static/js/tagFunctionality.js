@@ -1,7 +1,7 @@
 const addTagButton = document.getElementById('addTagButton');
 const addTagContainer = document.getElementById('addTagContainer');
 const tagInput = document.getElementById('tagInput');
-const randomizeButton = doocument.getElementById('randomizeGroupsButton');
+const randomizeButton = document.getElementById('randomizeGroupsButton');
 
 // // Add event listener for selecting tags
 // const tagButtons = document.querySelectorAll('.tagButton');
@@ -12,19 +12,19 @@ const randomizeButton = doocument.getElementById('randomizeGroupsButton');
 // 	});
 
 
-// randomizeButton.addEventListener('click', () => {
-//     const url = '/randomizeGroupTags/';
-//     console.log("randomize");
-//     $.ajax({
-//         url: url,
-//         type: 'POST',
-//         headers: {
-//             'X-CSRFToken': getCookie('csrftoken')
-//         },
-//         success: function(result) {},
-//         error: function(error) {}
-//     });
-// });
+randomizeButton.addEventListener('click', () => {
+    const url = '/randomizeGroupTags/';
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        success: function(result) {},
+        error: function(error) {}
+    });
+});
 
 // Add event listener for adding a tag
 addTagButton.addEventListener('click', () => {
