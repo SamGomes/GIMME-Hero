@@ -684,6 +684,9 @@ class Views(): #acts as a namespace
 		if not Questionnaire.objects.filter(title="First_Questionnaire").exists():
 			OEJTS_questionnaire.create_MBTI_questionnaire()
 
+		# if not Tag.objects.filter(name="Everyone").exists():
+		# 	Tag.objects.create(name="Everyone", is_removable = False)
+
 		if not Tag.objects.filter(name="Group A").exists():
 			Tag.objects.create(name="Group A", is_removable = False)
 
@@ -927,21 +930,14 @@ class Views(): #acts as a namespace
 
 			currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
 			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers()
-
-			print(currFreeUsers)
-
-			
-			
-			
+	
 			if (not tag_status):
-				print("select")
 				# Select students
 				studentsToSelect = []
 
 				for student in currFreeUsers:
 					if student in currSelectedUsers:
 						continue
-					print(student)
 					studentTags = User.objects.get(username=student).userprofile.tags.all()
 
 					for studentTag in studentTags:
@@ -960,15 +956,13 @@ class Views(): #acts as a namespace
 					'is_selected' : True
 				}	
 			else:
-				print("deselect")
 				# Deselect students
 				studentsToDeselect = []
 
 				for student in currSelectedUsers:
-					print(student)
+
 					if student in currFreeUsers:
 						continue
-					print(student)
 
 					studentTags = User.objects.get(username=student).userprofile.tags.all()
 					
@@ -997,10 +991,6 @@ class Views(): #acts as a namespace
 
 			serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
 			serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
-
-			print("CURR selected:")
-			print(currSelectedUsers)
-
 			
 			return JsonResponse(response_data)
 

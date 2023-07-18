@@ -6,8 +6,8 @@
         <div class="section" style="text-align: center;">
             <div class="panel-heading" >
                 {% load replace_underscores %}
-                <h1 class="title" style="font-size: 250%;">{{questionnaire.title | replace_underscores}}</h1>
-                <p class="subtitle" style="font-size: 110%;">{{questionnaire.description}}</p>
+                <h1 class="title" style="font-size: 250%; margin: 0.5em">{{questionnaire.title | replace_underscores}}</h1>
+                <p class="subtitle" style="font-size: 90%; margin: 0.5em">{{questionnaire.description}}</p>
             </div>
             <form method="post">
                 {% csrf_token %}
@@ -16,14 +16,16 @@
                         <div class="column">
                             <fieldset class="likert-options" id="{{ field.name }}">
                                 <div class="likert-row">
-                                    <p class="question-text">{{ field.field.left_extremity }}</p>
+                                    <p class="question-text" style="width: 25rem; flex: 2; text-align: right;">{{ field.field.left_extremity }}</p>
+                                    <div style="display: inline-flex; flex: 1; ">
                                     {% for choice in field.field.choices %}
                                         <label class="likert-element" for="{{ field.id_for_label }}_{{ forloop.counter }}">
                                             <input type="{{ field.field.widget.input_type }}" id="{{ field.id_for_label }}_{{ forloop.counter }}" name="{{ field.html_name }}" value="{{ choice.0 }}">
                                             <span style="display: block;">{{ choice.1 }}</span>
                                         </label>
                                     {% endfor %}
-                                    <p class="question-text">{{ field.field.right_extremity }}</p>
+                                    </div>
+                                    <p class="question-text" style="width: 25rem; flex: 2; text-align: left;">{{ field.field.right_extremity }}</p>
                                 </div>
                             </fieldset>
                         </div>

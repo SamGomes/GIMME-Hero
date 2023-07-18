@@ -3,6 +3,7 @@ const addTagContainer = document.getElementById('addTagContainer');
 const tagInput = document.getElementById('tagInput');
 const randomizeButton = document.getElementById('randomizeGroupsButton');
 
+let isEveryoneSelected = false;
 // // Add event listener for selecting tags
 // const tagButtons = document.querySelectorAll('.tagButton');
 // 	tagButtons.forEach(button => {
@@ -101,8 +102,39 @@ function getCookie(c_name)
  }
 
 
- function generateTagsTable(tagsArray){
+ function toggleEveryoneTag(clickedTag) {
+    isEveryoneSelected = !isEveryoneSelected;
+    clickedTag.toggleClass("selected", isEveryoneSelected);
+                
+    if (isEveryoneSelected)
+        var url = '/addAllUsersSelected/';
+    else
+        var url = '/removeAllUsersSelected/';
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken') // Use the getCookie function to retrieve CSRF token
+        },
+        success: function(result) {},
+        error: function(error) {}
+    });
+}
+
+
+function generateTagsTable(tagsArray) {
     var table = $('<div></div>');
+
+    everyone = $("<span class='selectable-tag pointer has-tooltip-arrow' data-tooltip='Select/Deselect tag' style='border: none; height: 2em; align-items: center;'></span>").text("Everyone");
+    everyone.toggleClass("selected", isEveryoneSelected);
+    everyone.click(function() {
+        const clickedTag = $(this);
+        toggleEveryoneTag(clickedTag);
+    });
+
+    table.append(everyone)
+
 
     tagsArray.forEach(element => {
         tag = $("<span class='selectable-tag pointer has-tooltip-arrow' data-tooltip='Select/Deselect tag' style='border: none; height: 2em; align-items: center;'></span>").text(element.name);
