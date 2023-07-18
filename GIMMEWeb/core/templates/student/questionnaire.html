@@ -20,7 +20,7 @@
                                     <div style="display: inline-flex; flex: 1; ">
                                     {% for choice in field.field.choices %}
                                         <label class="likert-element" for="{{ field.id_for_label }}_{{ forloop.counter }}">
-                                            <input type="{{ field.field.widget.input_type }}" id="{{ field.id_for_label }}_{{ forloop.counter }}" name="{{ field.html_name }}" value="{{ choice.0 }}">
+                                            <input type="{{ field.field.widget.input_type }}" id="{{ field.id_for_label }}_{{ forloop.counter }}" name="{{ field.html_name }}" value="{{ choice.0 }}" style="transform: scale(1.5); margin-bottom: 0.5em;">
                                             <span style="display: block;">{{ choice.1 }}</span>
                                         </label>
                                     {% endfor %}
