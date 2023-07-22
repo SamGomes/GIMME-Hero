@@ -414,15 +414,25 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		return profile
 	
 	def getPlayerPersonality(self, username) -> PlayerPersonality:
-		profile = User.objects.get(username=username).userprofile
-		personality = json.loads(profile.personality)
-		
-		# TODO add personality model verification
-		# if personalityModel == 'MBTI':
-		# 	if len(personalityType) != 4:
-		# 		return None  # exception if the personality type is not 4 characters long
-		if personality and type(personality) is dict:
-			return PersonalityMBTI(personality['letter1'], personality['letter2'], personality['letter3'], personality['letter4'])
+		try:
+			profile = User.objects.get(username=username).userprofile
+			personality = json.loads(profile.personality)
+			
+			# TODO add personality model verification
+			# if personalityModel == 'MBTI':
+			# 	if len(personalityType) != 4:
+			# 		return None  # exception if the personality type is not 4 characters long
+			if personality and type(personality) is dict:
+				return PersonalityMBTI(personality['letter1'], personality['letter2'], personality['letter3'], personality['letter4'])
+			
+		except UserProfile.DoesNotExist:
+			# Handle the case when the UserProfile doesn't exist or "personality" is missing
+			# For example, you can set a default value for the personality or perform any other actions.
+			personality = {}
+		except json.JSONDecodeError:
+			# Handle the case when the JSON decoding fails (invalid JSON format)
+			# For example, you can set personality to None or perform any other actions.
+			personality = None
 
 
 	def getPlayerCurrGroup(self, username):
@@ -541,7 +551,13 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 							"letter4" : personality[3], }
 
 		playerInfo.personality = json.dumps(personalityDict, default=lambda o: o.__dict__)
+
+		playerInfo.tags.add(Tag.objects.get(name=personality[0]))
+		playerInfo.tags.add(Tag.objects.get(name=personality[1]))
+		playerInfo.tags.add(Tag.objects.get(name=personality[2]))
+		playerInfo.tags.add(Tag.objects.get(name=personality[3]))
 		playerInfo.save()
+		
 
 	def setPlayerGrade(self, username, grade):
 		playerInfo = User.objects.get(username=username).userprofile
@@ -684,15 +700,36 @@ class Views(): #acts as a namespace
 		if not Questionnaire.objects.filter(title="First_Questionnaire").exists():
 			OEJTS_questionnaire.create_MBTI_questionnaire()
 
-		# if not Tag.objects.filter(name="Everyone").exists():
-		# 	Tag.objects.create(name="Everyone", is_removable = False)
-
 		if not Tag.objects.filter(name="Group A").exists():
 			Tag.objects.create(name="Group A", is_removable = False)
 
 		if not Tag.objects.filter(name="Group B").exists():
 			Tag.objects.create(name="Group B", is_removable = False)
 
+		if not Tag.objects.filter(name="E").exists():
+			Tag.objects.create(name="E", is_removable = False)
+
+		if not Tag.objects.filter(name="I").exists():
+			Tag.objects.create(name="I", is_removable = False)
+
+		if not Tag.objects.filter(name="S").exists():
+			Tag.objects.create(name="S", is_removable = False)
+
+		if not Tag.objects.filter(name="N").exists():
+			Tag.objects.create(name="N", is_removable = False)
+
+		if not Tag.objects.filter(name="T").exists():
+			Tag.objects.create(name="T", is_removable = False)
+
+		if not Tag.objects.filter(name="F").exists():
+			Tag.objects.create(name="F", is_removable = False)
+
+		if not Tag.objects.filter(name="J").exists():
+			Tag.objects.create(name="J", is_removable = False)
+
+		if not Tag.objects.filter(name="P").exists():
+			Tag.objects.create(name="P", is_removable = False)
+			
 		print("Finished")
 		return HttpResponse('ok')
 
@@ -1048,27 +1085,29 @@ class Views(): #acts as a namespace
 
 	def	randomizeGroupTags(request):
 		if request.method == 'POST':
-			users = User.objects.all()
+			student_profiles = UserProfile.objects.filter(role__contains="student")
+			# students = [profile.user for profile in student_profiles]
 
-			half_length = len(users) / 2
+			half_length = len(student_profiles) / 2
 			count = 0
+			print(student_profiles)
 
 			group1_tag = Tag.objects.get(name="Group A")
 			group2_tag = Tag.objects.get(name="Group B")
 
-			users = users.order_by('?')
+			student_profiles = student_profiles.order_by('?')
 
+			for student in student_profiles:
 
-			for user in users:
-				user.userprofile.tags.remove(group1_tag)
-				user.userprofile.tags.remove(group2_tag)
+				student.tags.remove(group1_tag)
+				student.tags.remove(group2_tag)
 				
 				if count < half_length:		
-					user.userprofile.tags.add(group1_tag)
+					student.tags.add(group1_tag)
 				else:
-					user.userprofile.tags.add(group2_tag)
+					student.tags.add(group2_tag)
 
-				user.userprofile.save()
+				student.save()
 				count += 1
 
 			response_data = {
@@ -1090,16 +1129,6 @@ class Views(): #acts as a namespace
 				
 				profile = profileForm.save(commit = False)
 				profile.user = user
-
-
-				# Add random personality -------------------
-				# TODO delete later
-				random_index = random.randint(0, len(personalities)-1)
-				personalityType = personalities[random_index]
-				personality = PersonalityMBTI(personalityType[0], personalityType[1], personalityType[2], personalityType[3])
-				# ------------------------------------------
-
-
 				profile.currState = json.dumps(PlayerState(profile=intProfTemplate.generateCopy()), default=lambda o: o.__dict__)
 				profile.pastModelIncreasesDataFrame = json.dumps(
 					PlayerStatesDataFrame(
@@ -1108,10 +1137,17 @@ class Views(): #acts as a namespace
 					), 
 				default=lambda o: o.__dict__, sort_keys=True)
 				profile.preferences = json.dumps(intProfTemplate.generateCopy().reset(), default=lambda o: o.__dict__, sort_keys=True)
-				profile.personality = json.dumps(personality, default=lambda o: o.__dict__, sort_keys=True)
-
+				# profile.personality = json.dumps(personality, default=lambda o: o.__dict__, sort_keys=True)
 
 				profile.save() 
+
+				# # Add random personality -------------------
+				random_index = random.randint(0, len(personalities)-1)
+				personalityType = personalities[random_index]
+				personality = PersonalityMBTI(personalityType[0], personalityType[1], personalityType[2], personalityType[3])
+				# ------------------------------------------
+				print(user)
+				playerBridge.setPlayerPersonality(user.username, personalityType)
 
 				if 'student' in profile.role:
 					currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
