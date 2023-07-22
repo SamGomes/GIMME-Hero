@@ -1137,7 +1137,7 @@ var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined, st
     svg.attr('width', width + margin.left + margin.right)
         .attr('display', 'block')
         .attr('margin', 'auto')
-        .attr('height', height + margin.top + margin.bottom + 200)
+        .attr('height', height + margin.top + margin.bottom + 30)
         .call(responsivefy, width, 0);
 
 
