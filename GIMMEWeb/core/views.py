@@ -552,10 +552,13 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 		playerInfo.personality = json.dumps(personalityDict, default=lambda o: o.__dict__)
 
-		playerInfo.tags.add(Tag.objects.get(name=personality[0]))
-		playerInfo.tags.add(Tag.objects.get(name=personality[1]))
-		playerInfo.tags.add(Tag.objects.get(name=personality[2]))
-		playerInfo.tags.add(Tag.objects.get(name=personality[3]))
+		try:		
+			playerInfo.tags.add(Tag.objects.get(name=personality[0]))
+			playerInfo.tags.add(Tag.objects.get(name=personality[1]))
+			playerInfo.tags.add(Tag.objects.get(name=personality[2]))
+			playerInfo.tags.add(Tag.objects.get(name=personality[3]))
+		except Tag.DoesNotExist:
+			print("Couldn't add default personality tags")
 		playerInfo.save()
 		
 
@@ -707,28 +710,28 @@ class Views(): #acts as a namespace
 			Tag.objects.create(name="Group B", is_removable = False)
 
 		if not Tag.objects.filter(name="E").exists():
-			Tag.objects.create(name="E", is_removable = False)
+			Tag.objects.create(name="E", is_removable = False, is_assignable = False)
 
 		if not Tag.objects.filter(name="I").exists():
-			Tag.objects.create(name="I", is_removable = False)
+			Tag.objects.create(name="I", is_removable = False, is_assignable = False)
 
 		if not Tag.objects.filter(name="S").exists():
-			Tag.objects.create(name="S", is_removable = False)
+			Tag.objects.create(name="S", is_removable = False, is_assignable = False)
 
 		if not Tag.objects.filter(name="N").exists():
-			Tag.objects.create(name="N", is_removable = False)
+			Tag.objects.create(name="N", is_removable = False, is_assignable = False)
 
 		if not Tag.objects.filter(name="T").exists():
-			Tag.objects.create(name="T", is_removable = False)
+			Tag.objects.create(name="T", is_removable = False, is_assignable = False)
 
 		if not Tag.objects.filter(name="F").exists():
-			Tag.objects.create(name="F", is_removable = False)
+			Tag.objects.create(name="F", is_removable = False, is_assignable = False)
 
 		if not Tag.objects.filter(name="J").exists():
-			Tag.objects.create(name="J", is_removable = False)
+			Tag.objects.create(name="J", is_removable = False, is_assignable = False)
 
 		if not Tag.objects.filter(name="P").exists():
-			Tag.objects.create(name="P", is_removable = False)
+			Tag.objects.create(name="P", is_removable = False, is_assignable = False)
 			
 		print("Finished")
 		return HttpResponse('ok')

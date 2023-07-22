@@ -76,7 +76,7 @@ function listAvailableTags(){
     var tags = $('<div></div>');
 
     serverTags.forEach(tag => {
-        if (studentTags.some(obj => obj.id === tag.id && obj.name === tag.name))
+        if (studentTags.some(obj => obj.id === tag.id && obj.name === tag.name) || !tag.is_assignable)
             return;
         
         const element = $("<span class='assignable-tag pointer'></span>").text(tag.name);
@@ -122,31 +122,31 @@ function showAssignedTags(){
     studentTags.forEach(tag => {
         const element = $("<span class='assigned-tag'></span>").text(tag.name);
 
-        const removeDiv = $("<div class='has-tooltip-arrow  assigned-tag-remove-button' style='font-size: .75rem; color: #131444; height: fit-content; padding: 0.2em; margin: 0.2em;' data-tooltip='Remove tag'></div>");
-        const removeButton = $("<div class='fa fa-remove pointer' style='padding-left: 0.5em;'></div>");
+        if (tag.is_assignable) {
+            const removeDiv = $("<div class='has-tooltip-arrow  assigned-tag-remove-button' style='font-size: .75rem; color: #131444; height: fit-content; padding: 0.2em; margin: 0.2em;' data-tooltip='Remove tag'></div>");
+            const removeButton = $("<div class='fa fa-remove pointer' style='padding-left: 0.5em;'></div>");
 
-        removeDiv.append(removeButton);
-
-        
-        removeDiv.on('click', function(){
-            const data = {tag: tag.name, student: currentStudent};
-            
-            $.ajax({
-                url: '/removeAssignedTag/',
-                type: 'POST',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                data: data,
-                success: function(result) {},
-                error: function(error) {}
+            removeDiv.append(removeButton);       
+            removeDiv.on('click', function(){
+                const data = {tag: tag.name, student: currentStudent};
+                
+                $.ajax({
+                    url: '/removeAssignedTag/',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    data: data,
+                    success: function(result) {},
+                    error: function(error) {}
+                });
+                
+                updateAvailableTags();
             });
-            
-            updateAvailableTags();
-        });
-        
-        
-        element.append(removeDiv);
+              
+            element.append(removeDiv);
+        }
+
         tags.append(element);
     });
     
