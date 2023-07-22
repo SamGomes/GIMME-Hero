@@ -1298,6 +1298,12 @@ class Views(): #acts as a namespace
 		if request.method == 'POST':
 			serverStateModelBridge.setCurrFreeUsers(serverStateModelBridge.getCurrSelectedUsers() + serverStateModelBridge.getCurrFreeUsers())
 			serverStateModelBridge.setCurrSelectedUsers([])
+
+			tags = Tag.objects.all()
+			for tag in tags:
+				tag.is_selected = False
+				tag.save()
+
 			return HttpResponse('ok')
 
 	
