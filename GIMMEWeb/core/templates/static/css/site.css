@@ -58,11 +58,13 @@ body {
   }
 
 .panel-heading {
-  font-weight: 450; 
+  font-weight: 500; 
   color: #373f51;
   border-radius: 15px 15px 0px 0px;
   background-color:rgb(236, 247, 255);
   border-color: #def0ff;
+  padding-left: 1.5rem;
+  padding-top: 1rem;
 }
 
 .panel-block {

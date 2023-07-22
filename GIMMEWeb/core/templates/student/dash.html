@@ -51,7 +51,7 @@
 				<div class='panel-heading'>
 					<div class='columns is-mobile is-vcentered'>
 						<div class='column'>
-							Questionnaires to Answer
+							Tasks To Do
 							<div class='is-pulled-right'>
 								<div class='button minimizerButton'></div>
 							</div>
@@ -79,24 +79,6 @@
 				</div>
 			</div>
 		</section>
-
-		<section class='section'>
-				<div class='panel animated zoomIn'>
-					<div class='panel-heading'>
-						<div class='columns is-mobile is-vcentered'>
-							<div class='column'>
-								Your Learning State
-								<div class='is-pulled-right'>
-									<div class='button minimizerButton'></div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class='panel-block' style='display: block;'>
-						<div id='student_learningStatePlot' style="display: flex; justify-content: center; align-items: center; padding: 2rem;"></div>
-					</div>
-				</div>
-			</section>
 
 		<section class='section' id='student_currentClassInfo'>
 			<div class='panel animated zoomIn'>
@@ -131,50 +113,67 @@
 						<img class='column is-2' id='groupsPlotLoadingImage_professor_dash' src="{% static "media/images/loading.gif" %}"></img>
 					</div>
 				</div>
-
-			</section>
-
-			<section class='section'>
+		</section>
+		
+		<section class='section'>
 				<div class='panel animated zoomIn'>
 					<div class='panel-heading'>
 						<div class='columns is-mobile is-vcentered'>
 							<div class='column'>
-								Current Activity
+								Your Learning State
 								<div class='is-pulled-right'>
 									<div class='button minimizerButton'></div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class='panel-block'  id='student_currentActivityInfo' style='display: block;'>
-						<div class='columns is-mobile is-centered'>
-							<div class='column is-4'>
-								<p class='has-text-weight-bold'>Task Title:</p> 
-								<p id='student_currentActivityInfo_taskTitle'></p>
-							</div>
+					<div class='panel-block' style='display: block;'>
+						<div id='student_learningStatePlot' style="display: flex; justify-content: center; align-items: center; padding: 2rem;"></div>
+					</div>
+				</div>
+		</section>
 
-							<div class='column is-4'>
-								<p class='has-text-weight-bold'>Task Description:</p> 
-								<p id='student_currentActivityInfo_taskDesc'></p>
-							</div>
-
-							<div class='column is-4'>
-								<p class='has-text-weight-bold'>Task Files:</p> 
-								<a id='student_currentActivityInfo_taskFiles' download></a>
+		<section class='section'>
+			<div class='panel animated zoomIn'>
+				<div class='panel-heading'>
+					<div class='columns is-mobile is-vcentered'>
+						<div class='column'>
+							Current Activity
+							<div class='is-pulled-right'>
+								<div class='button minimizerButton'></div>
 							</div>
 						</div>
 					</div>
+				</div>
+				<div class='panel-block'  id='student_currentActivityInfo' style='display: block;'>
+					<div class='columns is-mobile is-centered'>
+						<div class='column is-4'>
+							<p class='has-text-weight-bold'>Task Title:</p> 
+							<p id='student_currentActivityInfo_taskTitle'></p>
+						</div>
 
-					<div class='panel-block' id='student_currentActivityInfo' style='display: block;'>
-						<label class='column is-8'>
-							<p class='has-text-weight-bold'>Submit your Task Results:</p>
-							<br/>
-							<input class='control has-icons-left button' style='margin: 1em;' type='file' id='student_results_file' name='filename'>
-							<button class='button is-info' style='margin: 1em;' id='student_apply_results'>Apply Changes</button>
-						</label>
+						<div class='column is-4'>
+							<p class='has-text-weight-bold'>Task Description:</p> 
+							<p id='student_currentActivityInfo_taskDesc'></p>
+						</div>
+
+						<div class='column is-4'>
+							<p class='has-text-weight-bold'>Task Files:</p> 
+							<a id='student_currentActivityInfo_taskFiles' download></a>
+						</div>
 					</div>
 				</div>
-			</section>
+
+				<div class='panel-block' id='student_currentActivityInfo' style='display: block;'>
+					<label class='column is-8'>
+						<p class='has-text-weight-bold'>Submit your Task Results:</p>
+						<br/>
+						<input class='control has-icons-left button' style='margin: 1em;' type='file' id='student_results_file' name='filename'>
+						<button class='button is-info' style='margin: 1em;' id='student_apply_results'>Apply Changes</button>
+					</label>
+				</div>
+			</div>
+		</section>
 
 			<!-- <section class='section'>
 				<div class='panel animated zoomIn'>
