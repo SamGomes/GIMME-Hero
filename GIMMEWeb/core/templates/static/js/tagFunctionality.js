@@ -165,20 +165,6 @@ function generateTagsTable(tagsArray) {
 
             deleteButton.append(deleteTagButton);
         
-            deleteButton.hover(function() {
-                // CSS styles for hover effect
-                $(this).css({
-                    backgroundColor: 'white',
-                    color: '#FFBC42',
-                });
-            }, function() {
-                // CSS styles to revert back when not hovering
-                $(this).css({
-                    backgroundColor: '#FFBC42',
-                    color: 'white',
-                });
-            });
-
             deleteButton.click(function() {
                 const tagId = element.name;
                 const url = '/deleteTag/';
