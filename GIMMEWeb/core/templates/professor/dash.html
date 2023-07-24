@@ -162,11 +162,13 @@
 					</div>
 					<div class='column is-half is-offset1 is-mobile'>
 						<div class='dash-cell-box' style="margin-bottom: 1.7rem;">
-							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip=''>Tags</div>
-
+							<div style="display: flex;">
+								<div class='subtitle is-5 has-tooltip-right' style='color:gray; flex: 1' data-tooltip="Tags help quickly select and deselect groups of students. There is a set of pre-defined tags. &#13;&#10;You can also create your own tags and assign them to chosen students.">Tags</div>
+								<div style="flex:12"></div>
+							</div>
 							<div style="display: inline-flex; gap: 0.2em;">
-								<button  class ="button" id="randomizeGroupsButton">Randomize Groups</button>
-								<button  class ="button" id="addTagButton">Add Tag</button>
+								<button  class ="button  has-tooltip-right" id="randomizeGroupsButton" data-tooltip="Automatically split all students into two random groups, Group A and Group B.">Randomize Groups A/B</button>
+								<button  class ="button has-tooltip-right" id="addTagButton" data-tooltip="Create your own custom tag that you can assign to individual students.">Create Tag</button>
 								<!-- <button  class ="is-rounded is-small pointer" id="addTagButton" style="border-radius: 50px; border-style: solid; background-color:transparent; margin:0.2em">
 									<div class="fas fa-plus-circle"></div>
 								</button> -->
