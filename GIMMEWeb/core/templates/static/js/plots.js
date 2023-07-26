@@ -755,13 +755,16 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
 
             var diversity_text = String(characteristics.group_diversity);
 
-            if (characteristics.group_diversity < 0.33){
+            if(characteristics.group_diversity < 0) {
+                diversity_text = "N/A";
+            }
+            else if (characteristics.group_diversity < 0.33) {
                 diversity_text += " (Aligned)";
             }
-            else if (characteristics.group_diversity > 0.66){
+            else if (characteristics.group_diversity > 0.66) {
                 diversity_text += " (Diverse)";
             }
-            else{
+            else {
                 diversity_text += " (Balanced)";
             }
 
@@ -855,7 +858,12 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
-            node['Characteristics']['Personality'] = originalNode.userState.personality; 
+
+            personality = originalNode.userState.personality;
+            if (personality)
+                node['Characteristics']['Personality'] = originalNode.userState.personality; 
+            else
+                node['Characteristics']['Personality'] = "N/A"; 
             //node['(External) Grade'] = originalNode.userState.grade;
         }
 
@@ -1358,11 +1366,9 @@ var buildDiversityDistributionPlot = function(canvasId, data){
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
-    
     var x = d3.scaleLinear()
         .domain([0, 1]) 
         .range([0, width]);
-
 
     svg.append("g")
         .attr("transform", "translate(0," + height + ")")
@@ -1376,18 +1382,15 @@ var buildDiversityDistributionPlot = function(canvasId, data){
     
     var bins = histogram(data.avgCharacteristics);
 
-
     var y = d3.scaleLinear()
         .range([height, 0]);
         y.domain([0, d3.max(bins, function(d) { return d.length; })]);  
-
 
     svg.append("g")
         .call(d3.axisLeft(y)
         .ticks(y.domain()[1])
         .tickFormat(d3.format('d')))
         .style('font-size','15px');
-
 
     // X axis label:
     svg.append("text")
@@ -1396,7 +1399,6 @@ var buildDiversityDistributionPlot = function(canvasId, data){
         .attr("x", width / 2)
         .attr("y", height + margin.top + 20)
         .text("Group Personality Diversity");
-
 
     // Y axis label:
     svg.append("text")
@@ -1407,7 +1409,8 @@ var buildDiversityDistributionPlot = function(canvasId, data){
         .attr("x", - height / 2)
         .text("Number Of Groups");
 
-
+        
+    console.log(bins)
     // append the bar rectangles to the svg element
     svg.selectAll("rect")
         .data(bins)
@@ -1416,9 +1419,13 @@ var buildDiversityDistributionPlot = function(canvasId, data){
             .attr("x", 1)
             .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
             .attr("width", function(d) { return x(d.x1) - x(d.x0) ; })
-            .attr("height", function(d) { return height - y(d.length); })
+            .attr("height", function(d) { 
+                if (d.length)
+                    return height - y(d.length); 
+                else
+                    return 0; 
+            })
             .style("fill", GIMME_BLUE)
-      
 }
 
 var calculateMBTILettersFrequencies = function(data) {
@@ -1607,9 +1614,7 @@ var buildMBTIFrequenciesStackedBarPlot  = function(canvasId, data, title) {
         width = 550 - margin.left - margin.right,
         height = 350 - margin.top - margin.bottom;
 
-
     frequencies_temp = calculateMBTILettersFrequencies(data);
-
 
     if (frequencies_temp.length == 0)
         return;
@@ -1628,7 +1633,6 @@ var buildMBTIFrequenciesStackedBarPlot  = function(canvasId, data, title) {
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
-
     x = d3.scaleLinear()
         .domain([0, numberStudents])
         .range([margin.left, width - margin.left]);
@@ -1643,13 +1647,10 @@ var buildMBTIFrequenciesStackedBarPlot  = function(canvasId, data, title) {
         .range([height - margin.bottom, margin.top])
         .padding(0.1);
 
-
     y = d3.scaleBand()
     .domain([1, 2, 3, 4])
     .range([height - margin.bottom, margin.top])
     .padding(0.1);
-
-    
     
     leftAxis = g => g
         .attr("transform", `translate(${margin.left},0)`)
@@ -1658,14 +1659,12 @@ var buildMBTIFrequenciesStackedBarPlot  = function(canvasId, data, title) {
             .style('font-size','25px')
             .style('font-weight', '700');
     
-
     rightAxis = g => g
         .attr("transform", `translate(${width - margin.left},0)`)
         .call(d3.axisRight(yRight)
                 .tickSizeOuter(0))
             .style('font-size','23px')
             .style('font-weight', '700');
-
 
     // xAxis = g => g
     //     .attr("transform", `translate(0,${height - margin.bottom})`)
@@ -1680,7 +1679,6 @@ var buildMBTIFrequenciesStackedBarPlot  = function(canvasId, data, title) {
     svg.append("g")
         .call(rightAxis);
 
-
     svg.append("g")
         .selectAll("rect").data(frequencies).enter().append("rect")
             .attr("fill", d => d.color)
@@ -1689,8 +1687,7 @@ var buildMBTIFrequenciesStackedBarPlot  = function(canvasId, data, title) {
             .attr("y", d => y(letterToPosition[d.letter]))
             .attr("height", yLeft.bandwidth())
             .attr("width", d => x(d.x1) - x(d.x0));
-
-            
+       
     svg.append("g").selectAll("text").data(frequencies).enter().append("text")
          .attr("x", d => d.x0 == 0 ? x(d.x1) - 25: x(d.x0) + 10 )
          .attr("y", d => y(letterToPosition[d.letter]) +  yLeft.bandwidth() / 2 + 8)
@@ -1698,8 +1695,6 @@ var buildMBTIFrequenciesStackedBarPlot  = function(canvasId, data, title) {
          .style("fill", "#FFFFFF")
          .style('font-size','23px')
          .style('font-weight', '500');
-
-
 
     svg.append("text")
          .attr("x", (width / 2))             

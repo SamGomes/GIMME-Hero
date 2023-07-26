@@ -427,13 +427,12 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 			
 		except UserProfile.DoesNotExist:
 			# Handle the case when the UserProfile doesn't exist or "personality" is missing
-			# For example, you can set a default value for the personality or perform any other actions.
 			personality = {}
 		except json.JSONDecodeError:
 			# Handle the case when the JSON decoding fails (invalid JSON format)
-			# For example, you can set personality to None or perform any other actions.
 			personality = None
-
+		
+		return None
 
 	def getPlayerCurrGroup(self, username):
 		playerInfo = User.objects.get(username=username).userprofile
@@ -1149,7 +1148,6 @@ class Views(): #acts as a namespace
 				personalityType = personalities[random_index]
 				personality = PersonalityMBTI(personalityType[0], personalityType[1], personalityType[2], personalityType[3])
 				# ------------------------------------------
-				print(user)
 				playerBridge.setPlayerPersonality(user.username, personalityType)
 
 				if 'student' in profile.role:

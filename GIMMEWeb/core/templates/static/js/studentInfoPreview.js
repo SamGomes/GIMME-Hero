@@ -33,8 +33,11 @@ function previewStudentInfo(studentId){
 
     studentEmail.textContent = studentInfo.email;
 
-    personalityColumn.textContent = studentInfo.personality;
-
+    personality = studentInfo.personality;
+    if (personality)
+        personalityColumn.textContent = personality;
+    else
+    personalityColumn.textContent = "N/A";
 
     showAssignedTags();
     hideAvailableTags();
