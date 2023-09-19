@@ -5,9 +5,16 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from django import forms
 
-from GIMMEWeb.core.models import UserProfile, Task
+from GIMMEWeb.core.models import UserProfile, Task, LikertQuestion, Questionnaire, LikertResponse, Tag
 
 
+
+class LikertChoiceField(forms.ChoiceField):
+	def __init__(self, choices, widget, left_extremity, right_extremity):
+		super().__init__(choices=choices, widget=widget, label="")
+		self.left_extremity = left_extremity
+		self.right_extremity = right_extremity
+	
 
 class DateInput(forms.DateInput):
 	input_type = 'date'
@@ -39,7 +46,23 @@ class CreateTaskForm(ModelForm):
 		exclude = ['creator', 'creationTime', 'profile', 'initDate', 'finalDate', 'minReqAbility', 'difficultyWeight', 'profileWeight'] 
 
 
+class LikertForm(forms.Form):
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		for question in LikertQuestion.objects.all():
+			self.fields[f"question_{question.id}"] = LikertChoiceField(
+				[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')],
+				forms.RadioSelect,
+				question.left_extremity,
+				question.right_extremity
+			)
 
+
+class CreateTagForm(ModelForm):
+	class Meta:
+		model = Tag
+		fields = ['name']
+			
 
 class UpdateUserForm(UserChangeForm):
 	# email = models.EmailField(required = True)
@@ -53,6 +76,11 @@ class UpdateUserProfileForm(ModelForm):
 		model = UserProfile
 		fields = ['fullName', 'age', 'gender', 'description', 'avatar']
 
+
+class UpdateUserPersonalityForm(ModelForm):
+	class Meta:
+		model = UserProfile
+		fields = ['personality']
 
 
 class UpdateTaskForm(ModelForm):

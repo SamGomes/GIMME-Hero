@@ -49,6 +49,11 @@ var engMax = 0;
 var abMin = Infinity;
 var engMin = Infinity; 
 
+const GIMME_BLUE = '#0086fd';
+const TEXT_BLUE = '#131444';
+
+
+
 var generateGroupColor = function(profile) {
     var focus = profile.dimensions.Focus;
     var challenge = profile.dimensions.Challenge;
@@ -282,6 +287,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             delete avgCharacteristics.profile;
             var profile = data.profiles[i];
             var tasks = data.tasks[i];
+            
 
             groupIndicatorNodes.push({'groupId': i, 'characteristics': avgCharacteristics, 'profile': profile, 'tasks': tasks, 'centerOfMass': groupCenterOfMass});
             
@@ -697,7 +703,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
     groupInfoTooltips
         .append('path')
         .attr('d', function(d) {
-          return rightRoundedRect(15, 15, 600, 310, 7);
+          return rightRoundedRect(15, 15, 600, 340, 7);
         })
         .attr('fill', function(node){
                                 var baseColor = colors[node.groupId].split('#')[1];
@@ -746,9 +752,26 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
                 dimensions[key] = Number((currD*6.0 - 3.0).toFixed(2));
             }
 
+
+            var diversity_text = String(characteristics.group_diversity);
+
+            if(characteristics.group_diversity < 0) {
+                diversity_text = "N/A";
+            }
+            else if (characteristics.group_diversity < 0.33) {
+                diversity_text += " (Aligned)";
+            }
+            else if (characteristics.group_diversity > 0.66) {
+                diversity_text += " (Diverse)";
+            }
+            else {
+                diversity_text += " (Balanced)";
+            }
+
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
+            node['Characteristics']['Diversity'] = diversity_text;
             node['Profile'] = dimensions;
 
             //delete undisplayed attributes
@@ -835,6 +858,12 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
+
+            personality = originalNode.userState.personality;
+            if (personality)
+                node['Characteristics']['Personality'] = originalNode.userState.personality; 
+            else
+                node['Characteristics']['Personality'] = "N/A"; 
             //node['(External) Grade'] = originalNode.userState.grade;
         }
 
@@ -1043,16 +1072,16 @@ var buildScatterInteractionPlot  = function(canvasId, data, mouseClickCallback =
         
     svg.append('g')
         .append('text') 
-        .attr('class', 'x label')
+        .attr('class', 'plot-label')
         .attr('x', width* 0.5)
         .attr('y', height* 0.94)
         .attr('text-anchor', 'middle')
         .style('font-size', width*0.05 +'px')
-        .text(' Self      ← Focus →     Others');
+        .text('  Self      ← Focus →    Others');
 
     svg.append('g')
         .append('text') 
-        .attr('class', 'y label')
+        .attr('class', 'plot-label')
         .attr('text-anchor', 'middle')
         .attr('x', -width* 0.48)
         .attr('y', height* 0.04)
@@ -1116,8 +1145,8 @@ var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined, st
     svg.attr('width', width + margin.left + margin.right)
         .attr('display', 'block')
         .attr('margin', 'auto')
-        .attr('height', height + margin.top + margin.bottom + 200)
-        .call(responsivefy, 1000, 0.15);
+        .attr('height', height + margin.top + margin.bottom + 30)
+        .call(responsivefy, width, 0);
 
 
     if(maxValue == undefined){
@@ -1167,10 +1196,10 @@ var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined, st
         .attr('width', function (d) {
             return  x(d.value) - margin.left;
         })
-        .attr('fill', '#50C2E3');
+        .attr('fill', GIMME_BLUE);
 
     var gy = svg.append('g')
-                .attr('class', 'y axis label')
+                .attr('class', 'plot-label')
                 .call(yAxis) 
                 .attr('transform', 'translate(' + margin.left + ',0)')
                     .style('font-size','30px');
@@ -1180,7 +1209,7 @@ var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined, st
 
     
     var gx = svg.append('g')
-                .attr('class', 'x axis')
+                .attr('class', 'plot-label')
                 .call(xAxis)
                 .attr('transform', 'translate(0,' + height + ')')
                 .style('font-size','25px');
@@ -1320,3 +1349,358 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationD
     
 }
 
+
+var buildDiversityDistributionPlot = function(canvasId, data){
+    // set the dimensions and margins of the graph
+    var margin = {top: 30, right: 30, bottom: 60, left: 60},
+        width = 590 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    // append the svg object to the body of the page
+    var svg = d3.select('#'+canvasId)
+    .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .call(responsivefy, width, 0)
+    .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+    var x = d3.scaleLinear()
+        .domain([0, 1]) 
+        .range([0, width]);
+
+    svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
+        .style('font-size','15px');
+    
+    var histogram = d3.histogram()
+        .value(function(d) { return d.group_diversity; }) 
+        .domain(x.domain()) 
+        .thresholds(x.ticks(20)); 
+    
+    var bins = histogram(data.avgCharacteristics);
+
+    var y = d3.scaleLinear()
+        .range([height, 0]);
+        y.domain([0, d3.max(bins, function(d) { return d.length; })]);  
+
+    svg.append("g")
+        .call(d3.axisLeft(y)
+        .ticks(y.domain()[1])
+        .tickFormat(d3.format('d')))
+        .style('font-size','15px');
+
+    // X axis label:
+    svg.append("text")
+        .attr("text-anchor", "middle")
+        .attr('class', 'plot-label')
+        .attr("x", width / 2)
+        .attr("y", height + margin.top + 20)
+        .text("Group Personality Diversity");
+
+    // Y axis label:
+    svg.append("text")
+        .attr("text-anchor", "middle")
+        .attr('class', 'plot-label')
+        .attr("transform", "rotate(-90)")
+        .attr("y", - margin.left + 20)
+        .attr("x", - height / 2)
+        .text("Number Of Groups");
+
+        
+    console.log(bins)
+    // append the bar rectangles to the svg element
+    svg.selectAll("rect")
+        .data(bins)
+        .enter()
+        .append("rect")
+            .attr("x", 1)
+            .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
+            .attr("width", function(d) { return x(d.x1) - x(d.x0) ; })
+            .attr("height", function(d) { 
+                if (d.length)
+                    return height - y(d.length); 
+                else
+                    return 0; 
+            })
+            .style("fill", GIMME_BLUE)
+}
+
+var calculateMBTILettersFrequencies = function(data) {
+    var frequencies = [];
+
+    for (let key in data) {
+
+        userState = unformattedStringToObj(data[key])
+        var personality = userState.personality;
+
+        if (personality == "")
+            continue;
+
+        for (var i = 0; i < personality.length; i++) {
+
+            letter = personality[i];
+
+            var foundLetter = frequencies.find(obj => obj.letter === letter);
+    
+            if (foundLetter) {
+              foundLetter.value++;
+            } else {
+              frequencies.push({ letter: letter, value: 1 });
+            }
+        }
+    }
+
+    return frequencies;
+}
+
+
+var letterColor = function(letter){
+    if (letter == "I" || letter == "E")
+        return GIMME_BLUE
+
+    if (letter == "S" || letter == "N")
+        return "#29339B"
+        //return "#592E83"
+    
+    if (letter == "T" || letter == "F")
+        return "#EE4266"
+
+    if (letter == "J" || letter == "P")
+        return "#84E6F8"
+        //return "#7AE7C7"
+}
+
+var buildMBTIFrequenciesPlot = function(canvasId, data) {
+    // set the dimensions and margins of the graph
+    var margin = {top: 30, right: 30, bottom: 60, left: 60},
+        width = 650 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
+
+    frequencies = calculateMBTILettersFrequencies(data);
+    frequencies.sort((a, b) => b.value - a.value);
+
+    // append the svg object to the body of the page
+    var svg = d3.select('#'+canvasId)
+    .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .call(responsivefy, width, 0)
+    .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+
+    x = d3.scaleBand()
+    .domain(frequencies.map(d => d.letter))
+    .range([margin.left, width - margin.right])
+    .padding(0.1);
+    
+    y = d3.scaleLinear()
+    .domain([0, d3.max(frequencies, d => d.value)])
+    .range([height - margin.bottom, margin.top]);
+
+
+    xAxis = g => g
+    .attr("transform", `translate(0,${height - margin.bottom})`)
+    .call(d3.axisBottom(x)
+        .tickSizeOuter(0))
+        .style('font-size','20px')
+        .style('font-weight', '700');
+
+    yAxis = g => g
+    .attr("transform", `translate(${margin.left},0)`)
+    .call(d3.axisLeft(y)
+            .ticks(y.domain()[1])
+            .tickFormat(d3.format('d')))      
+        .style('font-size','15px');
+
+
+    // X axis label:
+    svg.append("text")
+        .attr("text-anchor", "middle")
+        .attr('class', 'plot-label')
+        .attr("x", width / 2 + 20)
+        .attr("y", height)
+        .text("MBTI Letter");
+
+    // Y axis label:
+    svg.append("text")
+        .attr("text-anchor", "middle")
+        .attr('class', 'plot-label')
+        .attr("transform", "rotate(-90)")
+        .attr("y", 20)
+        .attr("x", - height / 2 + 20)
+        .text("Number Of Occurences");
+
+
+    svg.append("g")
+        .call(xAxis);
+
+    svg.append("g")
+        .call(yAxis);
+
+    svg.append("g")
+    .selectAll("rect").data(frequencies).enter().append("rect")
+        .attr("fill", d => letterColor(d.letter))
+        .attr("x", d => x(d.letter))
+        .attr("y", d => y(d.value))
+        .attr("height", d => y(0) - y(d.value))
+        .attr("width", x.bandwidth());
+    // append the bar rectangles to the svg element
+
+}
+
+const leftSideMBTILetters = ['J', 'T', 'S', 'E'];
+const rightSideMBTILetters = ['P', 'F', 'N', 'I'];
+
+const letterToPosition = { 'E' : 4, 'I' : 4,
+                           'S' : 3, 'N' : 3,
+                           'T' : 2, 'F' : 2,
+                           'J' : 1, 'P' : 1  }
+
+const letterPair = { 'E' : 'I',
+                     'I' : 'E',
+                     'S' : 'N',
+                     'N' : 'S',
+                     'T' : 'F',
+                     'F' : 'T',
+                     'J' : 'P',
+                     'P' : 'J' 
+                    }
+
+var formatFrequenciesStackedBarPlot = function(data, numberStudents){
+    frequencies = [];
+
+    data.forEach(element => {
+        color = GIMME_BLUE;
+        pair = data.find(entry => entry.letter == letterPair[element.letter]);
+
+
+        if (pair && element.value < pair.value)
+            color = '#63BBFF';
+        //else if (element.value == pair.value && rightSideMBTILetter.includes(element.letter))
+        //    color = '#63BBFF';
+
+        if (leftSideMBTILetters.includes(element.letter))
+            frequencies.push({ letter: element.letter, value: element.value, x0: 0, x1: element.value, color: color });
+        else
+            frequencies.push({ letter: element.letter, value: element.value, x0: numberStudents - element.value, x1: numberStudents, color: color });
+    });
+
+    return frequencies
+}
+
+
+function calculateNumStudents(frequencies_temp)
+{
+    pair = frequencies_temp.find(entry => entry.letter == letterPair[frequencies_temp[0].letter]);
+    numberStudents = 1;
+
+    if (pair)
+        numberStudents = frequencies_temp[0].value + pair.value;
+    else if (frequencies_temp[0].value > 1)
+        numberStudents = frequencies_temp[0].value;
+
+    return numberStudents;
+}
+
+
+var buildMBTIFrequenciesStackedBarPlot  = function(canvasId, data, title) {
+    // set the dimensions and margins of the graph
+    var margin = {top: 30, right: 30, bottom: 30, left: 30},
+        width = 550 - margin.left - margin.right,
+        height = 350 - margin.top - margin.bottom;
+
+    frequencies_temp = calculateMBTILettersFrequencies(data);
+
+    if (frequencies_temp.length == 0)
+        return;
+
+    numberStudents = calculateNumStudents(frequencies_temp);
+
+    frequencies = formatFrequenciesStackedBarPlot(frequencies_temp, numberStudents);
+
+    // append the svg object to the body of the page
+    var svg = d3.select('#' + canvasId)
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .call(responsivefy, width, 0)
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+    x = d3.scaleLinear()
+        .domain([0, numberStudents])
+        .range([margin.left, width - margin.left]);
+
+    yLeft = d3.scaleBand()
+        .domain(leftSideMBTILetters)
+        .range([height - margin.bottom, margin.top])
+        .padding(0.1);
+
+    yRight = d3.scaleBand()
+        .domain(rightSideMBTILetters)
+        .range([height - margin.bottom, margin.top])
+        .padding(0.1);
+
+    y = d3.scaleBand()
+    .domain([1, 2, 3, 4])
+    .range([height - margin.bottom, margin.top])
+    .padding(0.1);
+    
+    leftAxis = g => g
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(d3.axisLeft(yLeft)
+                .tickSizeOuter(0))
+            .style('font-size','25px')
+            .style('font-weight', '700');
+    
+    rightAxis = g => g
+        .attr("transform", `translate(${width - margin.left},0)`)
+        .call(d3.axisRight(yRight)
+                .tickSizeOuter(0))
+            .style('font-size','23px')
+            .style('font-weight', '700');
+
+    // xAxis = g => g
+    //     .attr("transform", `translate(0,${height - margin.bottom})`)
+    //     .call(d3.axisBottom(x));
+
+    // svg.append("g")
+    //     .call(xAxis);
+
+    svg.append("g")
+        .call(leftAxis);
+    
+    svg.append("g")
+        .call(rightAxis);
+
+    svg.append("g")
+        .selectAll("rect").data(frequencies).enter().append("rect")
+            .attr("fill", d => d.color)
+            .attr("stroke", "white")
+            .attr("x", d => x(d.x0))
+            .attr("y", d => y(letterToPosition[d.letter]))
+            .attr("height", yLeft.bandwidth())
+            .attr("width", d => x(d.x1) - x(d.x0));
+       
+    svg.append("g").selectAll("text").data(frequencies).enter().append("text")
+         .attr("x", d => d.x0 == 0 ? x(d.x1) - 25: x(d.x0) + 10 )
+         .attr("y", d => y(letterToPosition[d.letter]) +  yLeft.bandwidth() / 2 + 8)
+         .text( d => String(d.value))
+         .style("fill", "#FFFFFF")
+         .style('font-size','23px')
+         .style('font-weight', '500');
+
+    svg.append("text")
+         .attr("x", (width / 2))             
+         .attr("y", 0 + (margin.top / 2))
+         .attr("text-anchor", "middle")  
+         .style('font-size','23px')
+         .style('font-weight', '500')
+         .text(title);
+}

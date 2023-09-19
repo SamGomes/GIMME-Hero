@@ -1,4 +1,4 @@
-﻿
+
 #fullscreen {
         height: 100vh;
         width: 100vw;
@@ -21,7 +21,6 @@ html {
 }
 
 body {
-
   /* Margin bottom by footer height */
   background-position: absolute;
   background-image: url("../media/images/background.png");
@@ -47,29 +46,156 @@ body {
   background-attachment: fixed; 
   border-radius: 25px;
   margin: 40px;
+  background-color: #def0ff;
 }
 .section{
   border-radius: 20px;
-  border-fill: #131444;
+  border-color: #def0ff;
 }
 
+.panel-heading:first-child {
+  border-top: 1px solid #def0ff;
+  }
+
 .panel-heading {
-  border-radius: 25px 25px 0px 0px;
-  border-fill: transparent;
+  font-weight: 500; 
+  color: #373f51;
+  border-radius: 15px 15px 0px 0px;
+  background-color:rgb(236, 247, 255);
+  border-color: #def0ff;
+  padding-left: 1.5rem;
+  padding-top: 1rem;
 }
 
 .panel-block {
   background-color: white;
-  /*border-radius: 0px 0px 25px 25px;*/
-  border-fill: transparent;
+  border-color: #def0ff;
+  border-top: #def0ff;
+}
+
+.panel-footer {
+  font-weight: 450; 
+  color: #373f51;
+  border-radius: 0px 0px 15px 15px ;
+  background-color:rgb(236, 247, 255);
+  border-color: #def0ff;
 }
 
 .button{
   border-radius: 50px;
+  border-color: #0086fd;
+  color: #373f51;
+  background-color: #f9fcff;
+  font-weight: 500;
+}
+
+.plot-label{
+  font-weight: 500;
+  color: #131444;
+  font-size: 130%;
+
+}
+.assign-tag:hover{
+  color: #FFBC42;
+  border-color: #FFBC42;
+}
+
+.assignable-tag{
+  margin:0.1em; 
+  z-index:1000;  
+  background-color: #FFBC42;
+  color: white;
+  border-radius: 290486px;
+  display: inline-flex;
+  padding: 0.1em 0.75em 0.1em 0.75em;
+  font-weight: 450;
+
+}
+
+.active{
+  border-color: #FFBC42;
+  color: #FFBC42;
+
+}
+
+
+.assignable-tag:hover{
+  background-color: #df9308;
+}
+
+.selectable-tag {
+  /* CSS styles for the button */
+  margin:0.1em; 
+  z-index:1000;  
+  background-color: #FFBC42;
+  color: white;
+  border-radius: 290486px;
+  display: inline-flex;
+  padding: 0.1em 0.75em 0.1em 0.75em;
+  font-weight: 450;
+}
+
+.selectable-tag:hover{
+  background-color: #df9308;
+}
+
+.selectable-tag.selected {
+  background-color: #0086fd;
+}
+
+.selectable-tag.selected:hover {
+  background-color: #0061b6;
+}
+
+.selectable-tag .delete-tag-button {
+
+  height: fit-content; 
+  border-color: #ffffff; 
+  color:white; 
+  background-color:#FFBC42; 
+  padding: 0.4em 0.7em 0.4em 0.7em; 
+  margin: 0.1em 0 0.1em 0.5em;
+}
+
+.selectable-tag .delete-tag-button:hover{
+  color:#df9308;
+  background-color: white;
+}
+
+.selectable-tag.selected .delete-tag-button {
+
+  background-color:#0086fd; 
+}
+.selectable-tag.selected .delete-tag-button:hover {
+  color:#0061b6; 
+  background-color: white;
+}
+
+
+.assigned-tag{
+  margin: 0.1em; 
+  background-color: transparent;
+  border-color: #131444;
+  border-style: solid;
+  border-width: 0.1em;
+  border-radius: 290486px;
+  padding: 0 0.75em 0 0.75em;
+  font-weight: 500;
+  color: #131444;
+  align-items: center;
+  display: flex;
+}
+
+.assigned-tag-remove-button:hover{
+  color: #ee4266;
 }
 
 .navbar-dropdown {
   min-width: 50%;
+}
+
+.contrast-color{
+  color: #ee4266;
 }
 
 .main-title{
@@ -83,7 +209,6 @@ body {
   font-size: 200%;
   text-shadow: -4px 0 #131444, 0 4px #131444, 4px 0 #131444, 0 -4px #131444;
   color: white;
-
   font-weight: bold;
 }
 
@@ -94,20 +219,89 @@ body {
 }
 .subtitle{
   font-size: 200%;
-  color: #131444;
-  font-weight: bold;
+  color: #373f51;
+  font-weight: 600;
+}
+.description{
+  font-size: 105%; text-align: center;
+  color: #373f51;
+  font-weight: 600;
+  margin: 0.5em;
+}
+
+.question-text{
+  font-size: 105%;
+  color: #373f51;
+  font-weight: 500;
+  margin: 0.5em;
+}
+
+.question-block{
+  background-color: white;
+  border-color: #def0ff;
+  border-style: solid;
+}
+
+.likert-row {
+  display: flex;
+  align-items: center;
+}
+
+.likert-options{
+  font-size: 105%;
+  color: #373f51;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.likert-element{
+  margin: 1em;
+  flex: 1;
+  text-align: center;
 }
 
 
 .dash-cell-box{
-  padding:2em; 
+  padding: 2em;
   overflow: auto;
-  border-color:gray; 
-  border-style:solid; 
-  border-radius: 1em; 
+  border-color: #373f51;
+  border-style: solid;
+  border-radius: 1em;
   border-width: 0.1em;
   object-fit: fill;
 }
+
+.student-info-box{
+  padding: 1em;
+  overflow: auto;
+  border-color: #373f51;
+  background-color: #def0ff;
+  border-style: solid;
+  border-radius: 1em;
+  border-width: 0.1em;
+  object-fit: fill;
+}
+
+.student-info-header{
+  font-weight: 480;  
+}
+
+.student-info-header-element{
+  padding: 0.4em 0.75em 0.4em 0.75em;
+  font-size: 102%;
+}
+
+.student-info-column-title{
+  font-weight: 700;  
+  font-size: 90%;
+}
+
+.student-info-column-content{
+  font-weight: 450;  
+  font-size: 110%;
+}
+
 
 .panel-block-borderless{ 
   border-style:none; 
@@ -121,9 +315,7 @@ body {
   height: 1.75rem;
   overflow: hidden;
   border-radius: 50%;
-
 }
-
 
 .loading-anim{
   max-width: 96px;
@@ -136,16 +328,63 @@ body {
   border-color: rgba(10,10,10,0.86); 
 }
 .modal-content{
-  color: black;
-  background-color: rgba(255,255,255,.86);
+  color: #373f61;
+  background-color: rgb(236, 247, 255);
   border-color: rgba(10,10,10,1.0); 
-  border-radius: 3em; 
+  border-radius: 0.2em; 
   width: 50%;
   height: 70%;
   padding: 2em;
   margin: auto;
 }
 
+.slidecontainer{
+  background:#fff;
+  border-radius: 0.2em;
+  padding: 10px 25px 20px 25px;
+  display:grid;
+  text-align:center;
+  place-items:center;
+}
+.slidecontainer .sliderValue{
+  position:relative;
+  text-align: center;
+  width:100%;
+}
+.slidecontainer .slider{
+  position:relative;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 70%;
+  font-weight: 500;
+}
+.slidecontainer .slider input{
+  -webkit-appearance: none;
+  height:8px;
+  background: #def0ff;
+  border-radius: 2px;
+  border-color: #373f51;
+  border: solid;
+  border-color: #bbcdf3;
+  border-width: 1px;
+  width: 100%;
+}
+.slidecontainer .slider input::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  height: 20px;
+  width: 12px;
+  background: #373f51;
+  border-radius: 20%;
+  cursor: pointer;
+}
+.slidecontainer .slider .value.left{
+  padding: 0px 10px;
+}
+.slidecontainer .slider .value.right{
+  padding: 0px 10px;
+}
 
 .alias {cursor: alias;}
 .all-scroll {cursor: all-scroll;}
