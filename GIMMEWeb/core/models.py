@@ -82,6 +82,12 @@ class LikertResponse(models.Model):
     value = models.PositiveIntegerField(choices=((1, 'Strongly Disagree'), (2, 'Disagree'), (3, 'Neutral'), (4, 'Agree'), (5, 'Strongly Agree')))
 
 
+class Tag(models.Model):
+    name = models.CharField(max_length=32)
+    is_selected = models.BooleanField(default=False)
+    is_removable = models.BooleanField(default=True)
+    is_assignable = models.BooleanField(default=True)
+
 
 class UserProfile(models.Model):
 
@@ -105,6 +111,9 @@ class UserProfile(models.Model):
     pastModelIncreasesDataFrame = models.TextField(max_length=3072)
     preferences = models.CharField(max_length=1020)
     personality = models.CharField(max_length=1020)
+
+
+    tags = models.ManyToManyField(Tag)
 
     
     # subjectIds = models.CharField(max_length=1020)

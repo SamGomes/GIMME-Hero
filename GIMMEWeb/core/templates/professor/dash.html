@@ -93,32 +93,116 @@
 						</div>
 					</div>
 				</div>
+				<!-- <div class='panel-block'>
+					<div class='column is-mobile'>
+						<div class='dash-cell-box'  style='border-style:none;'>
+							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Tags</div>
+
+							<button  class ="button" id="addTagButton">Add Tag</button>
+
+
+							<div id="addTagContainer" style="display: none;">
+								<input type="text" id="tagInput" placeholder="Enter tag name" maxlength="16">
+								<button id="saveTagButton">Save</button>
+								<button id="cancelTagButton">Cancel</button>
+							</div>
+
+
+							<div class='table-container'>						
+								<div class='table' style='margin:2em 2em 0em 2em;' id='tagTable_professor_dash'>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div> -->
+
+
 				<div class='panel-block'>
 					<div class='column is-half is-offset1 is-mobile'>
 						<div class='dash-cell-box'>
-							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Registered Students</div>
+							
+							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray; margin-bottom: 0; margin-bottom: 1.5rem;'>Registered Students</div>
+
+
+							<div class='student-info-box'>
+								<div id="student-info-placeholder" style=" color: #737d99;">Click on student to view details</div>
+
+								<div id="student-info-preview"  style="display: none;">
+									<div class="columns is-mobile student-info-header" style="margin-bottom: 0;">
+										<div class='student-info-header-element' style='flex-grow: 1' id='student-info-name'>Student Name</div>
+										<div class='student-info-header-element' style='flex-grow: 4' id='student-info-email'>email</div>
+									</div>
+
+									<div class='columns is-mobile'>
+										<div class='column student-info-column-title' style='flex-grow: 1;'>Personality
+											<p class='student-info-column-content' id='student-info-personality'></p>
+										</div>
+										<div class='column student-info-column-title' style='flex-grow: 3;'>Tags
+
+											<div id="student-info-assigned-tags-table"></div>
+
+											<div style="display: flex; flex-wrap: wrap;">
+												<button class="is-rounded is-small has-tooltip-arrow pointer assign-tag" id="assign-tag-to-student-button" style="border-radius: 50px; border-style: solid; background-color:transparent; margin:0.2em" data-tooltip='Assign tag' onclick="toggleAvailableTags()">
+													<div class="fas fa-plus-circle"></div>
+												</button>
+
+												<div id="student-info-available-tags-table" style="display: none;"></div>
+
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+
 							<div class='table-container'>
 								<div class='table' style='margin:2em;' id='freeUsersTable_professor_dash'></div>
 							</div>
 						</div>
 					</div>
 					<div class='column is-half is-offset1 is-mobile'>
+						<div class='dash-cell-box' style="margin-bottom: 1.7rem;">
+							<div style="display: flex;">
+								<div class='subtitle is-5 has-tooltip-right' style='color:gray; flex: 1' data-tooltip="Tags help quickly select and deselect groups of students. There is a set of pre-defined tags. &#13;&#10;You can also create your own tags and assign them to chosen students.">Tags</div>
+								<div style="flex:12"></div>
+							</div>
+							<div style="display: inline-flex; gap: 0.2em;">
+								<button  class ="button  has-tooltip-right" id="randomizeGroupsButton" data-tooltip="Automatically split all students into two random groups, Group A and Group B.">Randomize Groups</button>
+								<button  class ="button has-tooltip-right" id="addTagButton" data-tooltip="Create your own custom tag that you can assign to individual students.">Create Tag</button>
+								<!-- <button  class ="is-rounded is-small pointer" id="addTagButton" style="border-radius: 50px; border-style: solid; background-color:transparent; margin:0.2em">
+									<div class="fas fa-plus-circle"></div>
+								</button> -->
+
+								<div id="addTagContainer" style="display: none;">
+									<input class ="button" type="text" id="tagInput" placeholder="Enter tag name" maxlength="16">
+									<button class ="button" id="saveTagButton">Create</button>
+									<button class ="button" id="cancelTagButton">Cancel</button>
+								</div>
+
+							</div>
+
+							<div class='columns is-mobile' style="display: flex; flex-wrap: wrap; padding: 0.75rem;">
+
+								<div id='tagTable_professor_dash' style="margin: 0.75rem;"></div>
+								
+							</div>
+						</div>
+
 						<div class='dash-cell-box'>
+
 							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the students, selected from all available students, to be considered for the next group management iteration.'>Selected Students</div>
+
 							<div class='table-container'>
 								<div class='table' style='margin:2em;' id='selectedUsersTable_professor_dash'></div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class='panel-block'>
-					<div class="column is-offset-5">
-					</div>
-					<div class='column is-offset-1'>
-						<div class='button' type='submit' id='addAllUsers_professor_dash'>Select all</div>
-					</div>
-					<div class='column is-offset-1'>
-						<div class='button' type='submit' id='clearAllUsers_professor_dash'>Deselect all</div>
+				<div class='panel-block' style='display: block;'>
+					<p>MBTI Letters Frequency</p>
+					<div class='columns is-mobile is-centered' style="flex-wrap: wrap;">
+						<div class='column' id='mbtiFrequencyPlot_professor_dash' style="flex: 1; display: flex; justify-content: center; align-items: center;"></div>
+						<div class='column' id='mbtiSelectedFrequencyPlot_professor_dash' style="flex: 1; display: flex; justify-content: center; align-items: center;"></div>
 					</div>
 				</div>
 
@@ -629,18 +713,14 @@
 				<div class='panel-heading'>
 					<div class='columns is-mobile is-vcentered'>
 						<div class='column'>
-							Current Adaptation State
+							Current Student Groups State
 							<div class='is-pulled-right'>
 								<div class='button minimizerButton'></div>
 							</div>
 						</div>
 					</div>
 				</div>
-				
-				
-				
-				
-				
+					
 				<div class='panel-block panel-block-borderless'>
 					<div class='columns is-mobile is-fullwidth'>
 						<div class='column is-full'>
@@ -653,7 +733,7 @@
 					<!-- is-fullwidth only occupies a portion of the panel block -->
 					<div style="width:100%" class='columns is-mobile has-text-centered'>
 						<div class='column is-6 is-offset-1 has-tooltip-top  has-tooltip-arrow' data-tooltip='Loads the parameterization above iff the configuration changed, and computes a new adaptation state.'>
-							<button class='button is-fullwidth is-fullheight is-info' id='loadAndStartAdaptation_professor_dash'>Check Setup and Compute Group Organization</button>
+							<button class='button is-fullwidth is-fullheight is-info' id='loadAndStartAdaptation_professor_dash'>Generate Student Groups</button>
 						</div>
 						<div class='column is-3 is-offset-1'>
 							<button class='button is-fullwidth is-fullheight' id='rebuildPlot_professor_dash'>Rebuild Plot</button>
@@ -1049,6 +1129,7 @@
 	</div>
 	{% include 'common/footer.html' %}
 </body>
+
 <script>
 function updateSliderValueText(val) {
           document.getElementById('sliderValueText').textContent=val; 
@@ -1733,40 +1814,40 @@ crossorigin='anonymous'></script>
 		    return table;
 		};
 
-
-		
 		
 		var generateDashTableFromArray = function(canAdd, idArray, nameArray, tagClass, moveButtonIconClass, moveElementUrl, moveElementArg, addElementURL, addElementArg, deleteElementUrl, deleteElementArg, editElementArg, editElementUrlTask, editElementUrlStudent){
 		    var table = $('<div></div>');
-		    for(var i=0; i < idArray.length+1; i++){
+			var addButtonDiv = $('<div></div>');
+
+		    for(var i=-1; i < idArray.length; i++){
 		        
 		        var tag = undefined;
-		        if(!canAdd && i == idArray.length){
-		            return table;
-		        }
-		        if(i<idArray.length){
-		        	tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>").text(nameArray[i]);
-		        	tag.append("<br></br>")
+
+		        if(i >= 0){
+		        	tag = $("<span class='context-menu pointer' style='margin:0.1em; z-index:1000;'></span>")
+						.text(nameArray[i])
+						.attr('onclick', "previewStudentInfo('" + nameArray[i] + "')");
+
 		        	if(deleteElementUrl!=""){
-			            var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this task'></div>");
+			            var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this task'></div>");
 			            deleteButton.append('<form method=\'GET\' action=\''+deleteElementUrl+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+deleteElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash pointer\'></i></button></form>');
 			            tag.append(deleteButton);
 		            }
 
 		        	if(editElementUrlTask!=""){
-			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually edit state'></div>");
+			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually edit state'></div>");
 			            editButton.append('<form method=\'GET\' action=\''+editElementUrlTask+'\'><input type=\'hidden\' name=\''+editElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-edit pointer\'></i></button></form>');
 			            tag.append(editButton);
 					}
 
 					else if(editElementUrlStudent!=""){
-			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually evaluate student'></div>");
+			            var editButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Manually evaluate student'></div>");
 			            editButton.append('<form method=\'GET\' action=\''+editElementUrlStudent+'\'><input type=\'hidden\' name=\''+editElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-edit pointer\'></i></button></form>');
 			            tag.append(editButton);
 					}
 
 		        	if(moveElementUrl!=""){
-			            var moveButton = $("<div class='button is-rounded is-small pointer' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Select/Deselect this student/task for the next iteration'></div>");
+			            var moveButton = $("<div class='button is-rounded is-small pointer' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Select/Deselect this student/task for the next iteration'></div>");
 			            moveButton.append("<i class='fas "+moveButtonIconClass+" pointer'></i>");
 			            moveButton.click(function() {
 			                var data = {};
@@ -1780,26 +1861,37 @@ crossorigin='anonymous'></script>
 			            tag.append(moveButton);
 					}
 
-		        }else{
-		        	if(addElementURL!=""){
-		        		var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Add new task'></div>");
+					if(tag != undefined) {
+						tag.attr('elemID', idArray[i]);
+						tag.addClass('tag');
+						tag.addClass(tagClass);
+						tag.addClass('is-medium');
+						tag.addClass('is-rounded');
+						table.append(tag);
+						tag.show(135);
+					}
+
+		        }else {
+		        	if(addElementURL!="" && canAdd){
+		        		var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Add new task'></div>");
 			            addButton.append('<form method="POST" action=\''+addElementURL+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+addElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-plus-circle\'></i></button></form>');
 		        	
 		        		tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'>").text(nameArray[i]);
 			            tag.append(addButton);
+						tag.attr('elemID', idArray[i]);
+						tag.addClass('tag');
+						tag.addClass(tagClass);
+						tag.addClass('is-medium');
+						tag.addClass('is-rounded');
+						addButtonDiv.append(tag)
+						table.append(addButtonDiv)
 		        	}
 		        }
 
-		        if(tag != undefined){
-			        tag.attr('elemID', idArray[i]);
-			        tag.addClass('tag');
-			        tag.addClass(tagClass);
-			        tag.addClass('is-medium');
-			        tag.addClass('is-rounded');
-			        table.append(tag);
-			        tag.show(135);
-			    }
+
 		    }
+
+
 		    return table;
 		};
 
@@ -1922,12 +2014,18 @@ crossorigin='anonymous'></script>
 										'','usernameToDelete',
 										'usernameToUpdate', "", '{% url 'manuallyManageStudent' %}'
 									);
+									
 								$('#freeUsersTable_professor_dash').empty();
 								$('#freeUsersTable_professor_dash').append(fuTable);
 
 								$('#selectedUsersTable_professor_dash').empty();
 								$('#selectedUsersTable_professor_dash').append(suTable);
 
+
+								var tagsTable = generateTagsTable(newServerState.tags);
+
+								$('#tagTable_professor_dash').empty();
+								$('#tagTable_professor_dash').append(tagsTable);
 								
 								
 								
@@ -1993,8 +2091,25 @@ crossorigin='anonymous'></script>
 								newServerState.studentsStates = JSON.parse(studentsStates);
 								currServerState = newServerState;
 
+								$('#mbtiFrequencyPlot_professor_dash').empty();
+								$('#mbtiSelectedFrequencyPlot_professor_dash').empty();
+
+
+								allStudentStates = currServerState.studentsStates;
+								selectedUsers = currServerState.currSelectedUsers;
+								selectedUsersStates = {}
+
+								selectedUsers.forEach(studentName => {
+									selectedUsersStates[studentName] = allStudentStates[studentName];
+								});
 								
+
+								buildMBTIFrequenciesStackedBarPlot("mbtiFrequencyPlot_professor_dash", allStudentStates, "All Students");
+								buildMBTIFrequenciesStackedBarPlot("mbtiSelectedFrequencyPlot_professor_dash", selectedUsersStates, "Selected Students");
+
 								$('#groupsPlot_professor_dash').empty();
+
+								updateStudentInfoPreview(currServerState);
 								
 								if (currServerState.currAdaptationState != undefined && currServerState.currAdaptationState != [])
 									buildPlots(currServerState);
@@ -2019,6 +2134,8 @@ crossorigin='anonymous'></script>
 				currServerState.studentsStates,
 				$('input[name="studentPerformanceScaleType"]:checked').val()
 			);
+
+			
 			
 			$('#personalityDiversityPlot_professor_dash').empty()
 			$('#interactionsProfilePlot_professor_dash').empty()
@@ -2042,7 +2159,7 @@ crossorigin='anonymous'></script>
 				avgChars[1] += currState.engagement/ profiles.length;
 			}
 
-
+	
 			// interactionDatapoints = [
 			// 	{ 'focus': -3 , 'challenge': -3, 'timestamp': 2 },
 			// 	{ 'focus': 3, 'challenge': 3, 'timestamp': 1 },
@@ -2055,6 +2172,7 @@ crossorigin='anonymous'></script>
 			// 	{ 'focus': -3, 'challenge': -1, 'timestamp': 8 }
 			// ]
 
+			
 			buildDiversityDistributionPlot('personalityDiversityPlot_professor_dash', currServerState.currAdaptationState);
 			buildScatterInteractionPlot('interactionsProfilePlot_professor_dash', interactionDatapoints);
 			buildStatePlot('learningStatePlot_professor_dash', 
@@ -2249,5 +2367,7 @@ crossorigin='anonymous'></script>
 
 
 </script>
+<script src="{% static 'js/tagFunctionality.js' %}"></script>
+<script src="{% static 'js/studentInfoPreview.js' %}"></script>
 
 </html>

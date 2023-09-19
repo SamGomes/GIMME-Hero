@@ -28,11 +28,14 @@ from django.contrib import messages
 
 from django.forms import formset_factory
 
+from django.http import JsonResponse
+
 from GIMMEWeb.core.models import UserProfile
 from GIMMEWeb.core.models import Task
+from GIMMEWeb.core.models import Tag
 from GIMMEWeb.core.models import Questionnaire, LikertResponse, Submission, QuestionnaireType
 from GIMMEWeb.core.models import ServerState
-from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm, UpdateUserPersonalityForm, LikertForm
+from GIMMEWeb.core.forms import CreateUserForm, CreateUserProfileForm, CreateTaskForm, UpdateUserForm, UpdateUserProfileForm, UpdateTaskForm, UpdateUserPersonalityForm, LikertForm, CreateTagForm
 
 from GIMMECore import *
 from GIMMEWeb.core import OEJTS_questionnaire
@@ -285,6 +288,10 @@ class ServerStateModelBridge():
 		else:
 			serverState.simStudentW = simStudentW
 		serverState.save()
+
+	def getTags(self):
+		tags = list(Tag.objects.all())
+		return tags
 		
 
 serverStateModelBridge = ServerStateModelBridge()
@@ -350,6 +357,8 @@ class CustomTaskModelBridge(TaskModelBridge):
 	def getTaskFilePaths(self, taskId):
 		task = Task.objects.get(taskId = taskId)
 		return task.filePaths
+	
+
 
 taskBridge = CustomTaskModelBridge()
 
@@ -405,16 +414,25 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		return profile
 	
 	def getPlayerPersonality(self, username) -> PlayerPersonality:
-		profile = User.objects.get(username=username).userprofile
-		personality = json.loads(profile.personality)
+		try:
+			profile = User.objects.get(username=username).userprofile
+			personality = json.loads(profile.personality)
+			
+			# TODO add personality model verification
+			# if personalityModel == 'MBTI':
+			# 	if len(personalityType) != 4:
+			# 		return None  # exception if the personality type is not 4 characters long
+			if personality and type(personality) is dict:
+				return PersonalityMBTI(personality['letter1'], personality['letter2'], personality['letter3'], personality['letter4'])
+			
+		except UserProfile.DoesNotExist:
+			# Handle the case when the UserProfile doesn't exist or "personality" is missing
+			personality = {}
+		except json.JSONDecodeError:
+			# Handle the case when the JSON decoding fails (invalid JSON format)
+			personality = None
 		
-		# TODO add personality model verification
-		# if personalityModel == 'MBTI':
-		# 	if len(personalityType) != 4:
-		# 		return None  # exception if the personality type is not 4 characters long
-
-		return PersonalityMBTI(personality['letter1'], personality['letter2'], personality['letter3'], personality['letter4'])
-
+		return None
 
 	def getPlayerCurrGroup(self, username):
 		playerInfo = User.objects.get(username=username).userprofile
@@ -526,8 +544,22 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 	def setPlayerPersonality(self, username, personality):
 		playerInfo = User.objects.get(username=username).userprofile
-		playerInfo.personality = json.dumps(personality, default=lambda o: o.__dict__)
+		personalityDict = { "letter1" : personality[0],
+							"letter2" : personality[1],
+							"letter3" : personality[2],
+							"letter4" : personality[3], }
+
+		playerInfo.personality = json.dumps(personalityDict, default=lambda o: o.__dict__)
+
+		try:		
+			playerInfo.tags.add(Tag.objects.get(name=personality[0]))
+			playerInfo.tags.add(Tag.objects.get(name=personality[1]))
+			playerInfo.tags.add(Tag.objects.get(name=personality[2]))
+			playerInfo.tags.add(Tag.objects.get(name=personality[3]))
+		except Tag.DoesNotExist:
+			print("Couldn't add default personality tags")
 		playerInfo.save()
+		
 
 	def setPlayerGrade(self, username, grade):
 		playerInfo = User.objects.get(username=username).userprofile
@@ -555,6 +587,25 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		newState.tasks = tasks
 		playerInfo.currState = json.dumps(newState, default=lambda o: o.__dict__)
 		playerInfo.save()
+
+	def addPlayerTag(self, username, tagname):
+		userprofile = User.objects.get(username=username).userprofile
+		tag = Tag.objects.get(name=tagname)
+		userprofile.tags.add(tag)
+		userprofile.save()
+
+	def removePlayerTag(self, username, tagname):
+		userprofile = User.objects.get(username=username).userprofile
+		tag = Tag.objects.get(name=tagname)
+		userprofile.tags.remove(tag)
+		userprofile.save()
+
+	def getPlayerTags(self, username):
+		userprofile = User.objects.get(username=username).userprofile
+		tags = list(userprofile.tags.all())		
+		return tags
+
+
 
 
 playerBridge = CustomPlayerModelBridge()
@@ -648,6 +699,39 @@ class Views(): #acts as a namespace
 			playerBridge.resetPlayerCurrState(player)
 			playerBridge.resetPlayerPastModelIncreases(player)
 
+		if not Questionnaire.objects.filter(title="First_Questionnaire").exists():
+			OEJTS_questionnaire.create_MBTI_questionnaire()
+
+		if not Tag.objects.filter(name="Group A").exists():
+			Tag.objects.create(name="Group A", is_removable = False)
+
+		if not Tag.objects.filter(name="Group B").exists():
+			Tag.objects.create(name="Group B", is_removable = False)
+
+		if not Tag.objects.filter(name="E").exists():
+			Tag.objects.create(name="E", is_removable = False, is_assignable = False)
+
+		if not Tag.objects.filter(name="I").exists():
+			Tag.objects.create(name="I", is_removable = False, is_assignable = False)
+
+		if not Tag.objects.filter(name="S").exists():
+			Tag.objects.create(name="S", is_removable = False, is_assignable = False)
+
+		if not Tag.objects.filter(name="N").exists():
+			Tag.objects.create(name="N", is_removable = False, is_assignable = False)
+
+		if not Tag.objects.filter(name="T").exists():
+			Tag.objects.create(name="T", is_removable = False, is_assignable = False)
+
+		if not Tag.objects.filter(name="F").exists():
+			Tag.objects.create(name="F", is_removable = False, is_assignable = False)
+
+		if not Tag.objects.filter(name="J").exists():
+			Tag.objects.create(name="J", is_removable = False, is_assignable = False)
+
+		if not Tag.objects.filter(name="P").exists():
+			Tag.objects.create(name="P", is_removable = False, is_assignable = False)
+			
 		print("Finished")
 		return HttpResponse('ok')
 
@@ -733,17 +817,12 @@ class Views(): #acts as a namespace
 		return redirect('/home')
 
 
-
 	#region Questionnaire View Functions
 	def questionnaire_MBTI(request, questionnaire_title):
 		questionnaire = Questionnaire.objects.get(title=questionnaire_title)
 		user = request.user
 
 		# # Check if the user has already submitted their answers for this questionnaire
-		# if LikertResponse.objects.filter(user=user, question__in=questionnaire.questions.all()).exists():
-		# 	# Questionnaire completed
-		# 	return
-
 		if is_questionnaire_completed(questionnaire, user):
 			return render(request, 'student/thanks.html')
 
@@ -761,7 +840,9 @@ class Views(): #acts as a namespace
 
 				# Calculate the result based on the user's answers
 				result = OEJTS_questionnaire.calculate_personality_MBTI(form.cleaned_data)
-				# TODO save result in database
+				
+				playerBridge.setPlayerPersonality(user, result)
+	
 				return render(request, 'student/thanks.html')
 		else:
 			form = LikertForm()
@@ -822,6 +903,224 @@ class Views(): #acts as a namespace
 	#endregion
 		
 
+	#region Student Tag
+
+	def createNewTag(request):
+		if request.method == 'POST':
+			if Tag.objects.filter(name=request.POST.get('name')).exists():
+				response_data = {
+				'status': 'error',
+				'message': 'Tag already exists'
+				}
+				
+				return JsonResponse(response_data)
+		
+
+			form = CreateTagForm(request.POST)
+
+			response_data = {
+					'status': 'error',
+					'message': 'Create tag form invalid'
+			}
+			
+			if form.is_valid():
+				form.save()		
+
+				response_data = {
+					'status': 'success',
+					'message': 'Tag saved successfully'
+				}
+				
+			return JsonResponse(response_data)
+		
+
+	def deleteTag(request):
+		if request.method == 'POST':
+			tag_name = request.POST.get('name')
+
+			Tag.objects.filter(name=tag_name).delete()
+
+			
+			response_data = {
+				'status': 'success',
+				'message': 'Tag deleted successfully'
+			}
+			
+			return JsonResponse(response_data)
+
+
+	def selectTag(request):
+		if request.method == 'POST':
+			tag_name = request.POST.get('name')
+
+			try:
+				tag = Tag.objects.get(name=tag_name)
+				tag_status = tag.is_selected
+				tag.is_selected = not tag_status
+				tag.save()
+				
+			except Tag.DoesNotExist:
+				response_data = {
+					'status': 'error',
+					'message': 'Tag does not exist'
+				}				
+				return JsonResponse(response_data)
+
+
+			currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
+			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers()
+	
+			if (not tag_status):
+				# Select students
+				studentsToSelect = []
+
+				for student in currFreeUsers:
+					if student in currSelectedUsers:
+						continue
+					studentTags = User.objects.get(username=student).userprofile.tags.all()
+
+					for studentTag in studentTags:
+						if studentTag.name == tag_name:								
+							studentsToSelect.append(student)
+							break
+
+
+				for student in studentsToSelect:
+					currSelectedUsers.append(student)
+					currFreeUsers.remove(student)
+
+				response_data = {
+					'status': 'success',
+					'message': 'Tag selected successfully',
+					'is_selected' : True
+				}	
+			else:
+				# Deselect students
+				studentsToDeselect = []
+
+				for student in currSelectedUsers:
+
+					if student in currFreeUsers:
+						continue
+
+					studentTags = User.objects.get(username=student).userprofile.tags.all()
+					
+					deselect = True
+
+					for studentTag in studentTags:
+						if studentTag.is_selected:	
+							deselect = False
+							break
+												
+					if deselect:
+						studentsToDeselect.append(student)
+
+
+				for student in studentsToDeselect:
+					currFreeUsers.append(student)
+					currSelectedUsers.remove(student)
+					
+
+				response_data = {
+					'status': 'success',
+					'message': 'Tag deselected successfully',
+					'is_selected' : False
+				}
+
+
+			serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
+			serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
+			
+			return JsonResponse(response_data)
+
+
+		
+	def assignTag(request):
+		if request.method == 'POST':
+			tag_name = request.POST.get('tag')
+			student_name = request.POST.get('student')
+
+			response_data = {}
+
+			userprofile = User.objects.get(username=student_name).userprofile
+			tag = Tag.objects.get(name=tag_name)
+
+
+			if tag in userprofile.tags.all():
+				response_data = {
+					'status': 'error',
+					'message': 'Tag already assigned'
+				}
+
+			else:
+				userprofile.tags.add(tag)
+				userprofile.save()
+
+				response_data = {
+					'status': 'success',
+					'message': 'Tag assigned successfully'
+				}
+
+			return JsonResponse(response_data)
+		
+
+	def removeAssignedTag(request):
+		if request.method == 'POST':
+			tag_name = request.POST.get('tag')
+			student_name = request.POST.get('student')
+
+
+			userprofile = User.objects.get(username=student_name).userprofile
+			tag = Tag.objects.get(name=tag_name)
+
+
+			userprofile.tags.remove(tag)
+			userprofile.save()
+
+			response_data = {
+					'status': 'success',
+					'message': 'Tag assigned successfully'
+				}
+
+			return JsonResponse(response_data)
+
+
+	def	randomizeGroupTags(request):
+		if request.method == 'POST':
+			student_profiles = UserProfile.objects.filter(role__contains="student")
+			# students = [profile.user for profile in student_profiles]
+
+			half_length = len(student_profiles) / 2
+			count = 0
+			print(student_profiles)
+
+			group1_tag = Tag.objects.get(name="Group A")
+			group2_tag = Tag.objects.get(name="Group B")
+
+			student_profiles = student_profiles.order_by('?')
+
+			for student in student_profiles:
+
+				student.tags.remove(group1_tag)
+				student.tags.remove(group2_tag)
+				
+				if count < half_length:		
+					student.tags.add(group1_tag)
+				else:
+					student.tags.add(group2_tag)
+
+				student.save()
+				count += 1
+
+			response_data = {
+					'status': 'success',
+					'message': 'Groups randomized successfully'
+				}
+
+			return JsonResponse(response_data)
+
+	#endregion
+	
 	def userRegistration(request):
 		if request.method == 'POST':
 			form = CreateUserForm(request.POST)
@@ -832,16 +1131,6 @@ class Views(): #acts as a namespace
 				
 				profile = profileForm.save(commit = False)
 				profile.user = user
-
-
-				# Add random personality -------------------
-				# TODO delete later
-				random_index = random.randint(0, len(personalities)-1)
-				personalityType = personalities[random_index]
-				personality = PersonalityMBTI(personalityType[0], personalityType[1], personalityType[2], personalityType[3])
-				# ------------------------------------------
-
-
 				profile.currState = json.dumps(PlayerState(profile=intProfTemplate.generateCopy()), default=lambda o: o.__dict__)
 				profile.pastModelIncreasesDataFrame = json.dumps(
 					PlayerStatesDataFrame(
@@ -850,10 +1139,16 @@ class Views(): #acts as a namespace
 					), 
 				default=lambda o: o.__dict__, sort_keys=True)
 				profile.preferences = json.dumps(intProfTemplate.generateCopy().reset(), default=lambda o: o.__dict__, sort_keys=True)
-				profile.personality = json.dumps(personality, default=lambda o: o.__dict__, sort_keys=True)
-
+				# profile.personality = json.dumps(personality, default=lambda o: o.__dict__, sort_keys=True)
 
 				profile.save() 
+
+				# # Add random personality -------------------
+				random_index = random.randint(0, len(personalities)-1)
+				personalityType = personalities[random_index]
+				personality = PersonalityMBTI(personalityType[0], personalityType[1], personalityType[2], personalityType[3])
+				# ------------------------------------------
+				playerBridge.setPlayerPersonality(user.username, personalityType)
 
 				if 'student' in profile.role:
 					currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
@@ -1004,17 +1299,26 @@ class Views(): #acts as a namespace
 		if request.method == 'POST':
 			serverStateModelBridge.setCurrFreeUsers(serverStateModelBridge.getCurrSelectedUsers() + serverStateModelBridge.getCurrFreeUsers())
 			serverStateModelBridge.setCurrSelectedUsers([])
+
+			tags = Tag.objects.all()
+			for tag in tags:
+				tag.is_selected = False
+				tag.save()
+
 			return HttpResponse('ok')
 
 	
 	def addSelectedUser(request): #reads (player) from args
 		if request.method == 'POST':
 			usernameToAdd = request.POST.get('username')
-			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
-			currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
+
+			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers()
+			currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
+
 			if not usernameToAdd in currSelectedUsers:
 				currSelectedUsers.append(usernameToAdd)
 				currFreeUsers.remove(usernameToAdd)
+
 			serverStateModelBridge.setCurrSelectedUsers(currSelectedUsers)
 			serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
 			return HttpResponse('ok')
@@ -1023,8 +1327,8 @@ class Views(): #acts as a namespace
 	def removeSelectedUser(request): #reads (player) from args
 		if request.method == 'POST':
 			usernameToRemove = request.POST.get('username')
-			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers();
-			currFreeUsers = serverStateModelBridge.getCurrFreeUsers();
+			currSelectedUsers = serverStateModelBridge.getCurrSelectedUsers()
+			currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
 			if usernameToRemove in currSelectedUsers:
 				currSelectedUsers.remove(usernameToRemove)
 				currFreeUsers.append(usernameToRemove)
@@ -1521,9 +1825,18 @@ class Views(): #acts as a namespace
 			userInfo['tasks'] = playerBridge.getPlayerCurrTasks(username)
 			userInfo['statesDataFrame'] = playerBridge.getPlayerStatesDataFrame(username)
 			userInfo['grade'] = playerBridge.getPlayerGrade(username)
-			userInfo['personality'] = playerBridge.getPlayerPersonality(username).getPersonalityString()
+			userInfo['tags'] = playerBridge.getPlayerTags(username)
+
+			personality = playerBridge.getPlayerPersonality(username)
+
+			if personality: 
+				userInfo['personality'] = personality.getPersonalityString()
+			else:
+				userInfo['personality'] = ''
+
 
 			userInfo = json.dumps(userInfo, default=lambda o: o.__dict__, sort_keys=True)
+
 			return HttpResponse(userInfo)
 		return HttpResponse('error')
 	
@@ -1553,6 +1866,8 @@ class Views(): #acts as a namespace
 
 			newSessionState['currSelectedUsers'] = serverStateModelBridge.getCurrSelectedUsers()
 			newSessionState['currFreeUsers'] = serverStateModelBridge.getCurrFreeUsers()
+
+			newSessionState['tags'] = serverStateModelBridge.getTags()
 
 			currSelectedTasks = []
 			currFreeTasks = []

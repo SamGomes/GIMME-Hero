@@ -1,4 +1,4 @@
-﻿
+
 #fullscreen {
         height: 100vh;
         width: 100vw;
@@ -58,11 +58,13 @@ body {
   }
 
 .panel-heading {
-  font-weight: 450; 
+  font-weight: 500; 
   color: #373f51;
   border-radius: 15px 15px 0px 0px;
   background-color:rgb(236, 247, 255);
   border-color: #def0ff;
+  padding-left: 1.5rem;
+  padding-top: 1rem;
 }
 
 .panel-block {
@@ -93,7 +95,100 @@ body {
   font-size: 130%;
 
 }
+.assign-tag:hover{
+  color: #FFBC42;
+  border-color: #FFBC42;
+}
 
+.assignable-tag{
+  margin:0.1em; 
+  z-index:1000;  
+  background-color: #FFBC42;
+  color: white;
+  border-radius: 290486px;
+  display: inline-flex;
+  padding: 0.1em 0.75em 0.1em 0.75em;
+  font-weight: 450;
+
+}
+
+.active{
+  border-color: #FFBC42;
+  color: #FFBC42;
+
+}
+
+
+.assignable-tag:hover{
+  background-color: #df9308;
+}
+
+.selectable-tag {
+  /* CSS styles for the button */
+  margin:0.1em; 
+  z-index:1000;  
+  background-color: #FFBC42;
+  color: white;
+  border-radius: 290486px;
+  display: inline-flex;
+  padding: 0.1em 0.75em 0.1em 0.75em;
+  font-weight: 450;
+}
+
+.selectable-tag:hover{
+  background-color: #df9308;
+}
+
+.selectable-tag.selected {
+  background-color: #0086fd;
+}
+
+.selectable-tag.selected:hover {
+  background-color: #0061b6;
+}
+
+.selectable-tag .delete-tag-button {
+
+  height: fit-content; 
+  border-color: #ffffff; 
+  color:white; 
+  background-color:#FFBC42; 
+  padding: 0.4em 0.7em 0.4em 0.7em; 
+  margin: 0.1em 0 0.1em 0.5em;
+}
+
+.selectable-tag .delete-tag-button:hover{
+  color:#df9308;
+  background-color: white;
+}
+
+.selectable-tag.selected .delete-tag-button {
+
+  background-color:#0086fd; 
+}
+.selectable-tag.selected .delete-tag-button:hover {
+  color:#0061b6; 
+  background-color: white;
+}
+
+
+.assigned-tag{
+  margin: 0.1em; 
+  background-color: transparent;
+  border-color: #131444;
+  border-style: solid;
+  border-width: 0.1em;
+  border-radius: 290486px;
+  padding: 0 0.75em 0 0.75em;
+  font-weight: 500;
+  color: #131444;
+  align-items: center;
+  display: flex;
+}
+
+.assigned-tag-remove-button:hover{
+  color: #ee4266;
+}
 
 .navbar-dropdown {
   min-width: 50%;
@@ -114,7 +209,6 @@ body {
   font-size: 200%;
   text-shadow: -4px 0 #131444, 0 4px #131444, 4px 0 #131444, 0 -4px #131444;
   color: white;
-
   font-weight: bold;
 }
 
@@ -169,12 +263,45 @@ body {
 
 
 .dash-cell-box{
-  margin: 1em 0;
-  padding:2em; 
+  padding: 2em;
   overflow: auto;
-  border-radius: 0.2em; 
+  border-color: #373f51;
+  border-style: solid;
+  border-radius: 1em;
+  border-width: 0.1em;
   object-fit: fill;
 }
+
+.student-info-box{
+  padding: 1em;
+  overflow: auto;
+  border-color: #373f51;
+  background-color: #def0ff;
+  border-style: solid;
+  border-radius: 1em;
+  border-width: 0.1em;
+  object-fit: fill;
+}
+
+.student-info-header{
+  font-weight: 480;  
+}
+
+.student-info-header-element{
+  padding: 0.4em 0.75em 0.4em 0.75em;
+  font-size: 102%;
+}
+
+.student-info-column-title{
+  font-weight: 700;  
+  font-size: 90%;
+}
+
+.student-info-column-content{
+  font-weight: 450;  
+  font-size: 110%;
+}
+
 
 .panel-block-borderless{ 
   border-style:none; 
