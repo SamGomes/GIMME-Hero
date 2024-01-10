@@ -1143,12 +1143,13 @@ class Views(): #acts as a namespace
 
 				profile.save() 
 
-				# # Add random personality -------------------
-				random_index = random.randint(0, len(personalities)-1)
-				personalityType = personalities[random_index]
-				personality = PersonalityMBTI(personalityType[0], personalityType[1], personalityType[2], personalityType[3])
-				# ------------------------------------------
-				playerBridge.setPlayerPersonality(user.username, personalityType)
+				# UNCOMMENT THIS IF ALL USERS SHOULD HAVE A RANDOM PERSONALITY ASSIGNED UPON REGISTRATION
+				# # # Add random personality -------------------
+				# random_index = random.randint(0, len(personalities)-1)
+				# personalityType = personalities[random_index]
+				# personality = PersonalityMBTI(personalityType[0], personalityType[1], personalityType[2], personalityType[3])
+				# # ------------------------------------------
+				# playerBridge.setPlayerPersonality(user.username, personalityType)
 
 				if 'student' in profile.role:
 					currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
