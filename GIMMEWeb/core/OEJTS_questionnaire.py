@@ -79,7 +79,7 @@ def create_MBTI_questionnaire():
         is_active=True,
         created_at=timezone.now(),
         type=QuestionnaireType.MBTI,
-        dashboard_message='In order to complete your profile, please answer the <b class="contrast-color">First Questionnaire</b> in your <i>Tasks to Do</i> section.</p>'
+        dashboard_message='In order to complete your profile, please answer the <b class="contrast-color">First Questionnaire</b> below.</p>'
     )
 
     # Create LikertQuestion instances
