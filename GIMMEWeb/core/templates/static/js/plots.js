@@ -1409,8 +1409,6 @@ var buildDiversityDistributionPlot = function(canvasId, data){
         .attr("x", - height / 2)
         .text("Number Of Groups");
 
-        
-    console.log(bins)
     // append the bar rectangles to the svg element
     svg.selectAll("rect")
         .data(bins)

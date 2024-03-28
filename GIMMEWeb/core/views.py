@@ -394,7 +394,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 		allUsers = User.objects.all()
 		allUsersIds = []
 		for player in allUsers:
-			if 'student' in player.userprofile.role:
+			if 'Student' in player.userprofile.role:
 				allUsersIds.append(player.username)
 		return allUsersIds
 
@@ -626,8 +626,8 @@ adaptation.init(playerBridge, taskBridge, configsGenAlg = defaultConfigsAlg, nam
 
 # sim stuff
 
-# {'csrfmiddlewaretoken': ['3GuQuFgTG1tPLHK0bvD4kO5H0c4F2keftFkiQRIcpyDbrxlEEWmjazhfmCEx0p80'], 'username': ['s17'], 'role': ['student'], 'email': ['s17@s17.com'], 'password1': ['VW8fiAUkGs7QLwn'], 'password2': ['VW8fiAUkGs7QLwn'], 'fullName': ['s17'], 'age': ['20'], 'gender': ['Male'], 'description': ['.'], 'Create User': ['Register']}
-role = 'student'
+# {'csrfmiddlewaretoken': ['3GuQuFgTG1tPLHK0bvD4kO5H0c4F2keftFkiQRIcpyDbrxlEEWmjazhfmCEx0p80'], 'username': ['s17'], 'role': ['Student'], 'email': ['s17@s17.com'], 'password1': ['VW8fiAUkGs7QLwn'], 'password2': ['VW8fiAUkGs7QLwn'], 'fullName': ['s17'], 'age': ['20'], 'gender': ['Male'], 'description': ['.'], 'Create User': ['Register']}
+role = 'Student'
 password = 'VW8fiAUkGs7QLwn'
 age = '20'
 description = '.'
@@ -732,7 +732,6 @@ class Views(): #acts as a namespace
 		if not Tag.objects.filter(name="P").exists():
 			Tag.objects.create(name="P", is_removable = False, is_assignable = False)
 			
-		print("Finished")
 		return HttpResponse('ok')
 
 	def calcReaction(playerBridge, state, playerId):
@@ -1092,7 +1091,6 @@ class Views(): #acts as a namespace
 
 			half_length = len(student_profiles) / 2
 			count = 0
-			print(student_profiles)
 
 			group1_tag = Tag.objects.get(name="Group A")
 			group2_tag = Tag.objects.get(name="Group B")
@@ -1143,14 +1141,15 @@ class Views(): #acts as a namespace
 
 				profile.save() 
 
-				# # Add random personality -------------------
-				random_index = random.randint(0, len(personalities)-1)
-				personalityType = personalities[random_index]
-				personality = PersonalityMBTI(personalityType[0], personalityType[1], personalityType[2], personalityType[3])
-				# ------------------------------------------
-				playerBridge.setPlayerPersonality(user.username, personalityType)
+				# UNCOMMENT THIS IF ALL USERS SHOULD HAVE A RANDOM PERSONALITY ASSIGNED UPON REGISTRATION
+				# # # Add random personality -------------------
+				# random_index = random.randint(0, len(personalities)-1)
+				# personalityType = personalities[random_index]
+				# personality = PersonalityMBTI(personalityType[0], personalityType[1], personalityType[2], personalityType[3])
+				# # ------------------------------------------
+				# playerBridge.setPlayerPersonality(user.username, personalityType)
 
-				if 'student' in profile.role:
+				if 'Student' in profile.role:
 					currFreeUsers = serverStateModelBridge.getCurrFreeUsers()
 					currFreeUsers.append(user.username)
 					serverStateModelBridge.setCurrFreeUsers(currFreeUsers)
@@ -1260,9 +1259,9 @@ class Views(): #acts as a namespace
 
 	def dash(request):
 		dashSwitch = {
-			'student': 'student/dash.html',
-			'professor': 'professor/dash.html',
-			'designer': 'designer/dash.html'
+			'Student': 'student/dash.html',
+			'Professor': 'professor/dash.html',
+			'Developer': 'designer/dash.html'
 		}
 
 		# check for active questionnaires
@@ -1277,6 +1276,7 @@ class Views(): #acts as a namespace
 		context = {} 
 		context["available_questionnaires"] = available_questionnaires
 
+		print(request.user.userprofile.role)
 		return render(request, dashSwitch.get(str(request.user.userprofile.role)), context)
 
 	
@@ -1652,7 +1652,7 @@ class Views(): #acts as a namespace
 
 	
 	def taskRegistration(request):
-		if(not 'professor' in request.user.userprofile.role):
+		if(not 'Professor' in request.user.userprofile.role):
 			return HttpResponse('500')
 		else:
 			if request.method == 'POST':
@@ -1697,7 +1697,7 @@ class Views(): #acts as a namespace
 				return render(request, 'taskRegistration.html', context)
 	
 	def taskUpdate(request):
-		if(not 'professor' in request.user.userprofile.role):
+		if(not 'Professor' in request.user.userprofile.role):
 			return HttpResponse('500')
 		else:
 			if request.method == 'POST':
@@ -1893,7 +1893,7 @@ class Views(): #acts as a namespace
 
 			newSessionState['readyForNewActivity'] = serverStateModelBridge.isReadyForNewActivity()
 
-			if('professor' in request.user.userprofile.role):
+			if('Professor' in request.user.userprofile.role):
 				newSessionState['currAdaptationState'] = serverStateModelBridge.getCurrAdaptationState()
 
 			newSession = json.dumps(newSessionState, default=lambda o: o.__dict__, sort_keys=True)

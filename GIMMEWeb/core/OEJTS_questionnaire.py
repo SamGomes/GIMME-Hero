@@ -75,11 +75,11 @@ def create_MBTI_questionnaire():
     # Create a LikertQuestionnaire instance
     questionnaire = LikertQuestionnaire.objects.create(
         title='First_Questionnaire',
-        description='The following questionanire consists of 32 pairs of descriptors, connected by a five point scale. For each pair, you must choose where on the scale between them you think you are. For example, if the pair is “angry” versus “calm”, you should circle a 1 if you are always angry and never calm, a 3 if you are half and half, etc.',
+        description='The following questionnaire consists of 32 pairs of descriptors, connected by a five point scale. For each pair, you must choose where on the scale between them you think you are. For example, if the pair is “angry” versus “calm”, you should circle a 1 if you are always angry and never calm, a 3 if you are half and half, etc.',
         is_active=True,
         created_at=timezone.now(),
         type=QuestionnaireType.MBTI,
-        dashboard_message='In order to complete your profile, please answer the <b class="contrast-color">First Questionnaire</b> in your <i>Tasks to Do</i> section.</p>'
+        dashboard_message='In order to complete your profile, please answer the <b class="contrast-color">First Questionnaire</b> below.</p>'
     )
 
     # Create LikertQuestion instances
