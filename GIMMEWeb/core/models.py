@@ -18,9 +18,9 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django import forms
 
 
-ROLE = (('designer', 'designer'),
-       ('professor', 'professor'),
-       ('student', 'student'))
+ROLE = (('Developer', 'Developer'),
+       ('Professor', 'Professor'),
+       ('Student', 'Student'))
 
 
 GENDER = (('Male', 'Male'),
