@@ -1086,7 +1086,7 @@ class Views(): #acts as a namespace
 
 	def	randomizeGroupTags(request):
 		if request.method == 'POST':
-			student_profiles = UserProfile.objects.filter(role__contains="student")
+			student_profiles = UserProfile.objects.filter(role__contains="Student")
 			# students = [profile.user for profile in student_profiles]
 
 			half_length = len(student_profiles) / 2
