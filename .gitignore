@@ -24,3 +24,5 @@ GIMMECore.egg-info/
 venv/
 
 requirements.txt
+
+syncToServer.sh
