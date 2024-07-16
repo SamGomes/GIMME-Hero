@@ -34,7 +34,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
 
-        curr_adaptation_state = json.loads(server_state.currAdaptationState)
+        curr_adaptation_state = json.loads(server_state.curr_adaptation_state)
         return curr_adaptation_state
 
     def is_ready_for_new_activity(self):
@@ -42,7 +42,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
 
-        ready_for_new_activity = json.loads(server_state.readyForNewActivity)
+        ready_for_new_activity = json.loads(server_state.ready_for_new_activity)
         return ready_for_new_activity
 
     def get_curr_selected_users(self):
@@ -50,7 +50,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
 
-        curr_selected_users = json.loads(server_state.currSelectedUsers)
+        curr_selected_users = json.loads(server_state.curr_selected_users)
         return curr_selected_users
 
     def get_curr_free_users(self):
@@ -58,7 +58,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
 
-        curr_free_users = json.loads(server_state.currFreeUsers)
+        curr_free_users = json.loads(server_state.curr_free_users)
         return curr_free_users
 
     def get_curr_selected_tasks(self):
@@ -66,7 +66,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
 
-        curr_selected_tasks = json.loads(server_state.currSelectedTasks)
+        curr_selected_tasks = json.loads(server_state.curr_selected_tasks)
         return curr_selected_tasks
 
     def get_curr_free_tasks(self):
@@ -74,7 +74,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
 
-        curr_free_tasks = json.loads(server_state.currFreeTasks)
+        curr_free_tasks = json.loads(server_state.curr_free_tasks)
         return curr_free_tasks
 
     def get_simulation_week(self):
@@ -143,7 +143,7 @@ class ServerStateModelBridge:
             server_state = ServerState()
         else:
             curr_adaptation_state = json.dumps(curr_adaptation_state, default=lambda o: o.__dict__, sort_keys=True)
-            server_state.currAdaptationState = curr_adaptation_state
+            server_state.curr_adaptation_state = curr_adaptation_state
         server_state.save()
 
     def set_ready_for_new_activity(self, ready_for_new_activity):
@@ -152,7 +152,7 @@ class ServerStateModelBridge:
             server_state = ServerState()
         else:
             ready_for_new_activity = json.dumps(ready_for_new_activity, default=lambda o: o.__dict__, sort_keys=True)
-            server_state.readyForNewActivity = ready_for_new_activity
+            server_state.ready_for_new_activity = ready_for_new_activity
         server_state.save()
 
     def set_curr_selected_users(self, curr_selected_users):
@@ -161,7 +161,7 @@ class ServerStateModelBridge:
             server_state = ServerState()
         else:
             curr_selected_users = json.dumps(curr_selected_users, default=lambda o: o.__dict__, sort_keys=True)
-            server_state.currSelectedUsers = curr_selected_users
+            server_state.curr_selected_users = curr_selected_users
         server_state.save()
 
     def set_curr_free_users(self, curr_free_users):
@@ -170,7 +170,7 @@ class ServerStateModelBridge:
             server_state = ServerState()
         else:
             curr_free_users = json.dumps(curr_free_users, default=lambda o: o.__dict__, sort_keys=True)
-            server_state.currFreeUsers = curr_free_users
+            server_state.curr_free_users = curr_free_users
         server_state.save()
 
     def set_curr_selected_tasks(self, curr_selected_tasks):
@@ -179,7 +179,7 @@ class ServerStateModelBridge:
             server_state = ServerState()
         else:
             curr_selected_tasks = json.dumps(curr_selected_tasks, default=lambda o: o.__dict__, sort_keys=True)
-            server_state.currSelectedTasks = curr_selected_tasks
+            server_state.curr_selected_tasks = curr_selected_tasks
         server_state.save()
 
     def set_curr_free_tasks(self, curr_free_tasks):
@@ -188,7 +188,7 @@ class ServerStateModelBridge:
             server_state = ServerState()
         else:
             curr_free_tasks = json.dumps(curr_free_tasks, default=lambda o: o.__dict__, sort_keys=True)
-            server_state.currFreeTasks = curr_free_tasks
+            server_state.curr_free_tasks = curr_free_tasks
         server_state.save()
 
     def set_sim_is_link_shared(self, sim_is_link_shared):
@@ -346,7 +346,7 @@ class CustomTaskModelBridge(TaskModelBridge):
 
     def get_task_final_date(self, task_id):
         task = Task.objects.get(task_id=task_id)
-        return task.finalDate
+        return task.final_date
 
     def get_task_file_paths(self, task_id):
         task = Task.objects.get(task_id=task_id)
@@ -591,7 +591,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
 
 player_bridge = CustomPlayerModelBridge()
-currConfigParams = {}
+curr_config_params = {}
 
 int_prof_template = InteractionsProfile({'Challenge': 0, 'Focus': 0})
 trim_alg_template = ProximitySortPlayerDataTrimAlg(
@@ -601,7 +601,7 @@ trim_alg_template = ProximitySortPlayerDataTrimAlg(
 
 defaultConfigsAlg = RandomConfigsGenAlg(
     player_model_bridge=player_bridge,
-    interactions_profile_template=int_prof_template.generateCopy(),
+    interactions_profile_template=int_prof_template.generate_copy(),
     preferred_num_players_per_group=4)
 adaptation = Adaptation(name='GIMME',
                         player_model_bridge=player_bridge,
@@ -734,17 +734,17 @@ personalities = [
 # 'taskId': ['week 1'], 'description': ['test'], 'minReqAbility': ['0.3'], 'profileWeight': ['0.5'], 
 # 'difficultyWeight': ['0.5'], 'initDate': ['2022-07-20'], 'finalDate': ['2022-07-27'], 'profileDim0': ['0'], 
 # 'profileDim1': ['0']}> <MultiValueDict: {'files': [<InMemoryUploadedFile: testTask_BBn7DVn.png (image/png)>]}>
-taskIds = ["week1_01", "week1_10", "week1_11", "week2_00", "week2_01", "week2_10", "week2_11", "week3_00", "week3_01",
-           "week3_10", "week3_11", "week4_00", "week4_01", "week4_10", "week4_11", "week5_00", "week5_01", "week5_10",
-           "week5_11"]
+task_ids = ["week1_01", "week1_10", "week1_11", "week2_00", "week2_01", "week2_10", "week2_11", "week3_00", "week3_01",
+            "week3_10", "week3_11", "week4_00", "week4_01", "week4_10", "week4_11", "week5_00", "week5_01", "week5_10",
+            "week5_11"]
 description = '.'
 
 minReqAbility = ["0.2", "0.2", "0.2", "0.3", "0.3", "0.3", "0.3", "0.5", "0.5", "0.5", "0.5", "0.6", "0.6", "0.6",
                  "0.6", "0.7", "0.7", "0.7", "0.7"]
-taskSelectWeigths = '0.5'
+task_w = '0.5'
 
-profileDim0 = ['0', '1', '1', '0', '0', '1', '1', '0', '0', '1', '1', '0', '0', '1', '1', '0', '0', '1', '1']
-profileDim1 = ['1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1']
+profile_dim0 = ['0', '1', '1', '0', '0', '1', '1', '0', '0', '1', '1', '0', '0', '1', '1', '0', '0', '1', '1']
+profile_dim1 = ['1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1', '0', '1']
 
 
 # region Questionnaire Auxiliary Functions
@@ -865,8 +865,8 @@ class Views:  # acts as a namespace
                 elif playerId == sim_flags['simStudentZ']:
                     new_state.characteristics.engagement = 0.95
 
-            Views.savePlayerCharacteristics(playerId, new_state.characteristics.ability,
-                                            new_state.characteristics.engagement)
+            Views.save_player_characteristics(playerId, new_state.characteristics.ability,
+                                              new_state.characteristics.engagement)
 
         server_state_model_bridge.set_sim_simulate_reaction(True)
         return HttpResponse('ok')
@@ -1414,53 +1414,53 @@ class Views:  # acts as a namespace
             server_state_model_bridge.set_curr_free_tasks(curr_free_tasks)
             return HttpResponse('ok')
 
-    def removeSelectedTask(request):  # reads (player) from args
+    def remove_selected_task(request):  # reads (player) from args
         if request.method == 'POST':
-            TaskIdToRemove = request.POST.get('taskId')
-            currSelectedTasks = server_state_model_bridge.get_curr_selected_tasks();
-            currFreeTasks = server_state_model_bridge.get_curr_free_tasks();
-            if TaskIdToRemove in currSelectedTasks:
-                currSelectedTasks.remove(TaskIdToRemove)
-                currFreeTasks.append(TaskIdToRemove)
-            server_state_model_bridge.set_curr_selected_tasks(currSelectedTasks)
-            server_state_model_bridge.set_curr_free_tasks(currFreeTasks)
+            task_id_to_remove = request.POST.get('taskId')
+            curr_selected_tasks = server_state_model_bridge.get_curr_selected_tasks();
+            curr_free_tasks = server_state_model_bridge.get_curr_free_tasks();
+            if task_id_to_remove in curr_selected_tasks:
+                curr_selected_tasks.remove(task_id_to_remove)
+                curr_free_tasks.append(task_id_to_remove)
+            server_state_model_bridge.set_curr_selected_tasks(curr_selected_tasks)
+            server_state_model_bridge.set_curr_free_tasks(curr_free_tasks)
             return HttpResponse('ok')
 
     # student methods
-    def startActivity(request):
+    def start_activity(request):
         # remove from selected and move to occupied list
-        currSelectedUsers = server_state_model_bridge.get_curr_selected_users();
-        currFreeUsers = server_state_model_bridge.get_curr_free_users();
+        curr_selected_users = server_state_model_bridge.get_curr_selected_users()
+        curr_free_users = server_state_model_bridge.get_curr_free_users()
 
-        currSelectedUsers.remove(request.session.get('username'))
-        currFreeUsers.append(request.session.get('username'))
-        server_state_model_bridge.set_curr_selected_users(currSelectedUsers)
-        server_state_model_bridge.set_curr_free_users(currFreeUsers)
+        curr_selected_users.remove(request.session.get('username'))
+        curr_free_users.append(request.session.get('username'))
+        server_state_model_bridge.set_curr_selected_users(curr_selected_users)
+        server_state_model_bridge.set_curr_free_users(curr_free_users)
         return render(request, 'student/activity.html')
 
-    def saveTaskResults(request):
+    def save_task_results(request):
         if request.POST:
             username = request.session.get('username')
-            Views.savePlayerCharacteristics(username, request.POST['ability'], request.POST['engagement'])
+            Views.save_player_characteristics(username, request.POST['ability'], request.POST['engagement'])
             return Views.dash(request)
 
-    def savePlayerCharacteristics(username, ability, engagement):
+    def save_player_characteristics(username, ability, engagement):
         characteristics = player_bridge.get_player_states_data_frame(username).states[-1].characteristics
-        abilityToSave = (float(ability) - characteristics.ability)
+        ability_to_save = (float(ability) - characteristics.ability)
 
-        simFlags = server_state_model_bridge.get_sim_flags()
-        if username == simFlags['simStudentX'] and simFlags['simulationWeek'] == 2:
-            abilityToSave = 0.3
-        elif username == simFlags['simStudentY'] and simFlags['simulationWeek'] == 2:
-            abilityToSave = 0.2
+        sim_flags = server_state_model_bridge.get_sim_flags()
+        if username == sim_flags['simStudentX'] and sim_flags['simulationWeek'] == 2:
+            ability_to_save = 0.3
+        elif username == sim_flags['simStudentY'] and sim_flags['simulationWeek'] == 2:
+            ability_to_save = 0.2
 
-        characteristics = PlayerCharacteristics(ability=abilityToSave, engagement=float(engagement))
+        characteristics = PlayerCharacteristics(ability=ability_to_save, engagement=float(engagement))
         player_bridge.set_player_characteristics(username, characteristics)
         player_bridge.set_player_grade(username=username, grade=round(
             float(player_bridge.get_player_grade(username=username)) + characteristics.ability / 5.0, 2))
 
     # professor methods
-    def startAdaptation(request):
+    def start_adaptation(request):
         server_state_model_bridge.set_ready_for_new_activity(False)
         try:
             # store current states in players' state window, after the adaptation returns
@@ -1468,7 +1468,7 @@ class Views:  # acts as a namespace
                 player_bridge.set_and_save_player_state_to_data_frame(username,
                                                                       player_bridge.get_player_curr_state(username))
 
-            currAdaptationState = adaptation.iterate()
+            curr_adaptation_state = adaptation.iterate()
 
         except (Exception, ArithmeticError, ValueError) as e:
             template = 'An exception of type {0} occurred. Arguments:\n{1!r}'
@@ -1477,258 +1477,216 @@ class Views:  # acts as a namespace
             server_state_model_bridge.set_ready_for_new_activity(True)
             return HttpResponse('error')
 
-        if server_state_model_bridge.get_simulation_week() == 2 and currAdaptationState != []:
-            simStudentX = currAdaptationState["groups"][0][0]
-            simStudentY = currAdaptationState["groups"][0][1]
+        if server_state_model_bridge.get_simulation_week() == 2 and curr_adaptation_state != []:
+            sim_student_x = curr_adaptation_state["groups"][0][0]
+            sim_student_y = curr_adaptation_state["groups"][0][1]
 
-            simStudentW = currAdaptationState["groups"][1][0]
-            simStudentZ = currAdaptationState["groups"][1][1]
+            sim_student_w = curr_adaptation_state["groups"][1][0]
+            sim_student_z = curr_adaptation_state["groups"][1][1]
 
-            server_state_model_bridge.set_sim_student_x(simStudentX)
-            server_state_model_bridge.set_sim_student_y(simStudentY)
-            server_state_model_bridge.set_sim_student_w(simStudentW)
-            server_state_model_bridge.set_sim_student_z(simStudentZ)
+            server_state_model_bridge.set_sim_student_x(sim_student_x)
+            server_state_model_bridge.set_sim_student_y(sim_student_y)
+            server_state_model_bridge.set_sim_student_w(sim_student_w)
+            server_state_model_bridge.set_sim_student_z(sim_student_z)
 
-        server_state_model_bridge.set_curr_adaptation_state(currAdaptationState)
+        server_state_model_bridge.set_curr_adaptation_state(curr_adaptation_state)
         server_state_model_bridge.set_ready_for_new_activity(True)
 
-        return Views.fetchServerState(request)
+        return Views.fetch_server_state(request)
 
-    def configAdaptation(request):
+    def config_adaptation(request):
 
-        global currConfigParams
+        global curr_config_params
 
-        newConfigParams = request.POST
-        if (currConfigParams == newConfigParams):
+        new_config_params = request.POST
+        if curr_config_params == new_config_params:
             return HttpResponse('ok')
 
-        # switch reg algs
-        selectedRegAlg = {}
-        persEstRegAlg = {}
+        # switch algorithms
+        sel_quality_eval_alg = {}
+        sel_pers_est_alg = {}
 
-        def selectedRegAlgSwitcherKNN(request):
-            return KNNRegression(
-                player_bridge,
-                int(newConfigParams['numNNs']),
-                qualityWeights=PlayerCharacteristics(ability=float(newConfigParams['qualityWeightsAb']),
-                                                     engagement=float(newConfigParams['qualityWeightsEng']))
+        def quality_eval_alg_switcher_knn(request):
+            return KNNRegQualityEvalAlg(
+                player_model_bridge=player_bridge,
+                k=int(new_config_params['k']),
+                quality_weights=PlayerCharacteristics(ability=float(new_config_params['quality_w_ab']),
+                                                      engagement=float(new_config_params['quality_w_eng']))
             )
 
-        def selectedRegAlgSwitcherSynergy(request):
-            return TabularAgentSynergies(
-                playerModelBridge=player_bridge,
-                taskModelBridge=task_bridge
+        def quality_eval_alg_switcher_synergy(request):
+            return SynergiesTabQualityEvalAlg(
+                player_model_bridge=player_bridge,
+                synergy_table_path=new_config_params['synergy_table_path']
             )
 
-        def selectedRegAlgSwitcherDiversity(request):
-            return DiversityValueAlg(
-                player_bridge,
-                float(newConfigParams['diversityWeight'])
+        def quality_eval_alg_switcher_diversity(request):
+            return DiversityQualityEvalAlg(
+                player_model_bridge=player_bridge,
+                diversity_weight=float(new_config_params['diversity_weight'])
             )
 
-        selectedRegAlgId = newConfigParams['selectedRegAlgId']
-        # selectedRegAlg = None
+        sel_quality_eval_alg_id = new_config_params['selectedRegAlgId']
 
-        if (selectedRegAlgId == 'K-Nearest-Neighbors (KNN)'):
-            selectedRegAlg = selectedRegAlgSwitcherKNN(request)
-            persEstRegAlg = selectedRegAlg
-        elif (selectedRegAlgId == 'KNN w/ Synergy Between Students'):
-            selectedRegAlg = selectedRegAlgSwitcherSynergy(request)
-            persEstRegAlg = KNNRegression(
+        if sel_quality_eval_alg_id == 'K-Nearest-Neighbors (KNN)':
+            sel_quality_eval_alg = quality_eval_alg_switcher_knn(request)
+            sel_pers_est_alg = sel_quality_eval_alg
+        elif sel_quality_eval_alg_id == 'KNN w/ Synergy Between Students':
+            sel_quality_eval_alg = quality_eval_alg_switcher_synergy(request)
+            sel_pers_est_alg = KNNRegQualityEvalAlg(
                 player_bridge,
-                int(newConfigParams['synergiesNumNNs']),
-                qualityWeights=PlayerCharacteristics(
-                    ability=float(newConfigParams['synergiesQualityWeightsAb']),
-                    engagement=float(newConfigParams['synergiesQualityWeightsEng'])
+                int(new_config_params['synergies_k']),
+                quality_weights=PlayerCharacteristics(
+                    ability=float(new_config_params['synergies_quality_w_ab']),
+                    engagement=float(new_config_params['synergies_quality_w_eng'])
                 )
             )
-        elif (selectedRegAlgId == 'KNN w/ Personality Diversity'):
-            selectedRegAlg = selectedRegAlgSwitcherDiversity(request)
-            persEstRegAlg = KNNRegression(
+        elif sel_quality_eval_alg_id == 'KNN w/ Personality Diversity':
+            sel_quality_eval_alg = quality_eval_alg_switcher_diversity(request)
+            sel_pers_est_alg = KNNRegQualityEvalAlg(
                 player_bridge,
-                int(newConfigParams['synergiesNumNNs']),
-                qualityWeights=PlayerCharacteristics(
-                    ability=float(newConfigParams['synergiesQualityWeightsAb']),
-                    engagement=float(newConfigParams['synergiesQualityWeightsEng'])
+                int(new_config_params['synergies_k']),
+                quality_weights=PlayerCharacteristics(
+                    ability=float(new_config_params['synergies_quality_w_ab']),
+                    engagement=float(new_config_params['synergies_quality_w_eng'])
                 )
             )
 
-        selectedGenAlg = {}
+        sel_configs_gen_alg = {}
 
-        def selectedGenAlgSwitcherRandom(request):
-            return RandomConfigsGen(
-                playerModelBridge=player_bridge,
-                interactionsProfileTemplate=int_prof_template.generateCopy(),
-                minNumberOfPlayersPerGroup=int(newConfigParams['minNumberOfPlayersPerGroup']),
-                maxNumberOfPlayersPerGroup=int(newConfigParams['maxNumberOfPlayersPerGroup']),
-                # preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
-                jointPlayerConstraints=newConfigParams['jointPlayerConstraints'],
-                separatedPlayerConstraints=newConfigParams['separatedPlayerConstraints'])
+        def sel_configs_alg_switcher_random(request):
+            return RandomConfigsGenAlg(
+                player_model_bridge=player_bridge,
+                interactions_profile_template=int_prof_template.generate_copy(),
+                min_num_players_per_group=int(new_config_params['min_num_players_per_group']),
+                max_num_players_per_group=int(new_config_params['max_num_players_per_group']),
+                # preferred_num_players_per_group=int(new_config_params['preferred_num_players_per_group']),
+                joint_player_constraints=new_config_params['joint_player_constraints'],
+                separated_player_constraints=new_config_params['separated_player_constraints'])
 
-        def selectedGenAlgSwitcherPRS(request):
-            return PureRandomSearchConfigsGen(
-                playerModelBridge=player_bridge,
-                interactionsProfileTemplate=int_prof_template.generateCopy(),
-                regAlg=selectedRegAlg,
-                persEstAlg=ExplorationPreferencesEstAlg(
-                    playerModelBridge=player_bridge,
-                    interactionsProfileTemplate=int_prof_template.generateCopy(),
-                    regAlg=persEstRegAlg,
-                    numTestedPlayerProfiles=100),
-                numberOfConfigChoices=int(newConfigParams['numberOfConfigChoices']),
-                minNumberOfPlayersPerGroup=int(newConfigParams['minNumberOfPlayersPerGroup']),
-                maxNumberOfPlayersPerGroup=int(newConfigParams['maxNumberOfPlayersPerGroup']),
-                # preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
-                jointPlayerConstraints=newConfigParams['jointPlayerConstraints'],
-                separatedPlayerConstraints=newConfigParams['separatedPlayerConstraints']
-            )
+        def sel_configs_alg_switcher_prs(request):
+            return PureRandomSearchConfigsGenAlg(
+                player_model_bridge=player_bridge,
+                interactions_profile_template=int_prof_template.generate_copy(),
+                quality_eval_alg=sel_quality_eval_alg,
+                pref_est_alg=sel_pers_est_alg,
+                num_config_choices=int(new_config_params['num_config_choices']),
+                min_num_players_per_group=int(new_config_params['min_num_players_per_group']),
+                max_num_players_per_group=int(new_config_params['max_num_players_per_group']),
+                # preferred_num_players_per_group=int(new_config_params['preferred_num_players_per_group']),
+                joint_player_constraints=new_config_params['joint_player_constraints'],
+                separated_player_constraints=new_config_params['separated_player_constraints'])
 
-        def selectedGenAlgSwitcherAnnealedPRS(request):
-            return AnnealedPRSConfigsGen(
-                playerModelBridge=player_bridge,
-                interactionsProfileTemplate=int_prof_template.generateCopy(),
-                regAlg=selectedRegAlg,
-                persEstAlg=ExplorationPreferencesEstAlg(
-                    playerModelBridge=player_bridge,
-                    interactionsProfileTemplate=int_prof_template.generateCopy(),
-                    regAlg=persEstRegAlg,
-                    numTestedPlayerProfiles=100),
-                numberOfConfigChoices=int(newConfigParams['numberOfConfigChoices']),
-                minNumberOfPlayersPerGroup=int(newConfigParams['minNumberOfPlayersPerGroup']),
-                maxNumberOfPlayersPerGroup=int(newConfigParams['maxNumberOfPlayersPerGroup']),
-                # preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
-                temperatureDecay=float(newConfigParams['temperatureDecay']),
-                jointPlayerConstraints=newConfigParams['jointPlayerConstraints'],
-                separatedPlayerConstraints=newConfigParams['separatedPlayerConstraints']
-            )
+        def sel_configs_alg_switcher_evl(request):
+            return EvolutionaryConfigsGenAlg(
+                player_model_bridge=player_bridge,
+                interactions_profile_template=int_prof_template.generate_copy(),
+                quality_eval_alg=sel_quality_eval_alg,
 
-        def selectedGenAlgSwitcherEvolutionary(request):
-            return EvolutionaryConfigsGenDEAP(
-                playerModelBridge=player_bridge,
-                interactionsProfileTemplate=int_prof_template.generateCopy(),
-                regAlg=selectedRegAlg,
-                persEstAlg=ExplorationPreferencesEstAlg(
-                    playerModelBridge=player_bridge,
-                    interactionsProfileTemplate=int_prof_template.generateCopy(),
-                    regAlg=persEstRegAlg,
-                    numTestedPlayerProfiles=100),
+                min_num_players_per_group=int(new_config_params['min_num_players_per_group']),
+                max_num_players_per_group=int(new_config_params['max_num_players_per_group']),
+                # preferred_num_players_per_group=int(new_config_params['preferred_num_players_per_group']),
 
-                minNumberOfPlayersPerGroup=int(newConfigParams['minNumberOfPlayersPerGroup']),
-                maxNumberOfPlayersPerGroup=int(newConfigParams['maxNumberOfPlayersPerGroup']),
-                # preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']), 
+                initial_population_size=int(new_config_params['initial_population_size']),
+                num_evolutions_per_iteration=int(new_config_params['num_evolutions_per_iteration']),
 
-                initialPopulationSize=int(newConfigParams['initialPopulationSize']),
-                numberOfEvolutionsPerIteration=int(newConfigParams['numberOfEvolutionsPerIteration']),
+                prob_cross=float(new_config_params['prob_cross']),
+                prob_mut=float(new_config_params['prob_mut']),
 
-                probOfCross=float(newConfigParams['probOfCross']),
-                probOfMutation=float(newConfigParams['probOfMutation']),
+                prob_mut_config=float(new_config_params['prob_mut_config']),
+                prob_mut_profiles=float(new_config_params['prob_mut_profiles']),
 
-                probOfMutationConfig=float(newConfigParams['probOfMutationConfig']),
-                probOfMutationGIPs=float(newConfigParams['probOfMutationGIPs']),
+                num_children_per_iteration=int(new_config_params['num_children_per_iteration']),
+                num_survivors=int(new_config_params['num_survivors']),
 
-                numChildrenPerIteration=int(newConfigParams['numChildrenPerIteration']),
-                numSurvivors=int(newConfigParams['numSurvivors']),
+                cx_op="order",
+                joint_player_constraints=new_config_params['joint_player_constraints'],
+                separated_player_constraints=new_config_params['separated_player_constraints'])
 
-                cxOp="order",
-                jointPlayerConstraints=newConfigParams['jointPlayerConstraints'],
-                separatedPlayerConstraints=newConfigParams['separatedPlayerConstraints'])
+        def sel_configs_alg_switcher_odpip(request):
+            return ODPIPConfigsGenAlg(
+                player_model_bridge=player_bridge,
+                interactions_profile_template=int_prof_template.generate_copy(),
+                quality_eval_alg=sel_quality_eval_alg,
+                pref_est_alg=sel_pers_est_alg,
 
-        def selectedGenAlgSwitcherODPIP(request):
-            return ODPIP(
-                playerModelBridge=player_bridge,
-                interactionsProfileTemplate=int_prof_template.generateCopy(),
-                regAlg=selectedRegAlg,
-                persEstAlg=ExplorationPreferencesEstAlg(
-                    playerModelBridge=player_bridge,
-                    interactionsProfileTemplate=int_prof_template.generateCopy(),
-                    regAlg=persEstRegAlg,
-                    numTestedPlayerProfiles=100),
+                min_num_players_per_group=int(new_config_params['min_num_players_per_group']),
+                max_num_players_per_group=int(new_config_params['max_num_players_per_group']),
+                # preferred_num_players_per_group=int(new_config_params['preferred_num_players_per_group']),
 
-                #preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
-                minNumberOfPlayersPerGroup=int(newConfigParams['minNumberOfPlayersPerGroup']),
-                maxNumberOfPlayersPerGroup=int(newConfigParams['maxNumberOfPlayersPerGroup']),
+                joint_player_constraints=new_config_params['joint_player_constraints'],
+                separated_player_constraints=new_config_params['separated_player_constraints'])
 
-                taskModelBridge=task_bridge,
-                jointPlayerConstraints=newConfigParams['jointPlayerConstraints'],
-                separatedPlayerConstraints=newConfigParams['separatedPlayerConstraints']
-            )
+        def sel_configs_alg_switcher_clink(request):
+            return CLinkConfigsGenAlg(
+                player_model_bridge=player_bridge,
+                interactions_profile_template=int_prof_template.generate_copy(),
+                quality_eval_alg=sel_quality_eval_alg,
+                pref_est_alg=sel_pers_est_alg,
 
-        def selectedGenAlgSwitcherCLink(request):
-            return CLink(
-                playerModelBridge=player_bridge,
-                interactionsProfileTemplate=int_prof_template.generateCopy(),
-                regAlg=selectedRegAlg,
-                persEstAlg=ExplorationPreferencesEstAlg(
-                    playerModelBridge=player_bridge,
-                    interactionsProfileTemplate=int_prof_template.generateCopy(),
-                    regAlg=persEstRegAlg,
-                    numTestedPlayerProfiles=100),
-
-                #preferredNumberOfPlayersPerGroup = int(newConfigParams['preferredNumberOfPlayersPerGroup']),
-                minNumberOfPlayersPerGroup=int(newConfigParams['minNumberOfPlayersPerGroup']),
-                maxNumberOfPlayersPerGroup=int(newConfigParams['maxNumberOfPlayersPerGroup']),
-                taskModelBridge=task_bridge
-            )
+                min_num_players_per_group=int(new_config_params['min_num_players_per_group']),
+                max_num_players_per_group=int(new_config_params['max_num_players_per_group']))
 
         # switch config. gen. algs
-        selectedGenAlgId = newConfigParams['selectedGenAlgId']
-        selectedGenAlg = defaultConfigsAlg
-        if (selectedGenAlgId == 'Random (no search)'):
-            selectedGenAlg = selectedGenAlgSwitcherRandom(request)
-        elif (selectedGenAlgId == 'Pure Random Search'):
-            selectedGenAlg = selectedGenAlgSwitcherPRS(request)
-        elif (selectedGenAlgId == 'Annealed Pure Random Search'):
-            selectedGenAlg = selectedGenAlgSwitcherAnnealedPRS(request)
-        elif (selectedGenAlgId == 'Evolutionary Search'):
-            selectedGenAlg = selectedGenAlgSwitcherEvolutionary(request)
-        elif (selectedGenAlgId == 'ODPIP Search'):
-            selectedGenAlg = selectedGenAlgSwitcherODPIP(request)
-        elif (selectedGenAlgId == 'Coalition Link Search'):
-            selectedGenAlg = selectedGenAlgSwitcherCLink(request)
+        selected_gen_alg_id = new_config_params['selected_gen_alg_id']
+        sel_configs_gen_alg = defaultConfigsAlg
+        if selected_gen_alg_id == 'Random (no search)':
+            sel_configs_gen_alg = sel_configs_alg_switcher_random(request)
+        elif selected_gen_alg_id == 'Pure Random Search':
+            sel_configs_gen_alg = sel_configs_alg_switcher_prs(request)
+        elif selected_gen_alg_id == 'Evolutionary Search':
+            sel_configs_gen_alg = sel_configs_alg_switcher_evl(request)
+        elif selected_gen_alg_id == 'ODPIP Search':
+            sel_configs_gen_alg = sel_configs_alg_switcher_odpip(request)
+        elif selected_gen_alg_id == 'Coalition Link Search':
+            sel_configs_gen_alg = sel_configs_alg_switcher_clink(request)
 
-        adaptation.init(player_bridge, task_bridge, configsGenAlg=selectedGenAlg, name='GIMME')
+        global adaptation
+        adaptation = Adaptation(player_model_bridge=player_bridge,
+                                task_model_bridge=task_bridge,
+                                configs_gen_alg=sel_configs_gen_alg,
+                                name='GIMME')
 
-        if (newConfigParams['isBootstrapped'] == 'true'):
-            adaptation.bootstrap(int(newConfigParams['numBootstrapIterations']))
+        if new_config_params['is_bootstrapped'] == 'true':
+            adaptation.bootstrap(num_bootstrap_iterations=int(new_config_params['num_bootstrap_iterations']))
 
-        currConfigParams = newConfigParams
+        curr_config_params = new_config_params
         return HttpResponse('ok')
 
-    def taskRegistration(request):
-        if (not 'Professor' in request.user.userprofile.role):
+    def task_registration(request):
+        if 'Professor' not in request.user.userprofile.role:
             return HttpResponse('500')
         else:
             if request.method == 'POST':
-                requestInfo = request.POST
-                form = CreateTaskForm(requestInfo, request.FILES)
+                request_info = request.POST
+                form = CreateTaskForm(request_info, request.FILES)
                 if form.is_valid():
 
                     task = form.save(commit=False)
 
                     task.profile = json.dumps(InteractionsProfile(
                         {
-                            'Challenge': float(requestInfo['profileDim0']),
-                            'Focus': float(requestInfo['profileDim1'])
+                            'Challenge': float(request_info['profile_dim0']),
+                            'Focus': float(request_info['profile_dim1'])
                         }
                     ), default=lambda o: o.__dict__, sort_keys=True)
 
-                    task.initDate = requestInfo['initDate']
-                    task.finalDate = requestInfo['finalDate']
+                    task.init_date = request_info['init_date']
+                    task.final_date = request_info['final_date']
 
-                    task.profileWeight = requestInfo['taskSelectWeigths']
-                    task.difficultyWeight = str(1.0 - float(requestInfo['taskSelectWeigths']))
+                    task.profile_weight = request_info['task_w']
+                    task.difficulty_weight = str(1.0 - float(request_info['task_w']))
 
-                    task.minReqAbility = requestInfo['difficulty']
+                    task.min_req_ability = request_info['difficulty']
 
                     task.save()
 
                     # add task to free tasks
-                    currFreeTasks = server_state_model_bridge.get_curr_free_tasks()
-                    currFreeTasks.append(str(task.taskId))
-                    server_state_model_bridge.set_curr_free_tasks(currFreeTasks)
+                    curr_free_tasks = server_state_model_bridge.get_curr_free_tasks()
+                    curr_free_tasks.append(str(task.task_id))
+                    server_state_model_bridge.set_curr_free_tasks(curr_free_tasks)
 
                     server_state_model_bridge.set_sim_is_task_created(True)
-
                     return redirect('/dash')
                 else:
                     context = {'form': form}
@@ -1739,30 +1697,30 @@ class Views:  # acts as a namespace
                 context = {'form': form}
                 return render(request, 'taskRegistration.html', context)
 
-    def taskUpdate(request):
-        if (not 'Professor' in request.user.userprofile.role):
+    def task_update(request):
+        if 'Professor' not in request.user.userprofile.role:
             return HttpResponse('500')
         else:
             if request.method == 'POST':
-                taskIdToUpdate = request.GET.get('taskIdToUpdate')
-                requestInfo = request.POST
+                task_id_to_update = request.GET.get('task_id_to_update')
+                request_info = request.POST
                 try:
-                    instance = Task.objects.get(taskId=taskIdToUpdate)
+                    instance = Task.objects.get(taskId=task_id_to_update)
 
                     post = request.POST
                     _mutable = post._mutable
                     post._mutable = True
-                    post['taskId'] = taskIdToUpdate
-                    post['minReqAbility'] = requestInfo['difficulty']
-                    post['profileWeight'] = requestInfo['taskSelectWeigths']
-                    post['difficultyWeight'] = str(1.0 - float(requestInfo['taskSelectWeigths']))
-                    post['initDate'] = requestInfo['initDate']
-                    post['finalDate'] = requestInfo['finalDate']
+                    post['task_id'] = task_id_to_update
+                    post['min_req_ability'] = request_info['difficulty']
+                    post['profile_w'] = request_info['task_w']
+                    post['difficulty_w'] = str(1.0 - float(request_info['task_w']))
+                    post['init_date'] = request_info['init_date']
+                    post['final_date'] = request_info['final_date']
 
                     post['profile'] = json.dumps(InteractionsProfile(
                         {
-                            'Challenge': float(requestInfo['profileDim0']),
-                            'Focus': float(requestInfo['profileDim1'])
+                            'Challenge': float(request_info['profile_dim0']),
+                            'Focus': float(request_info['profile_dim1'])
                         }
                     ), default=lambda o: o.__dict__, sort_keys=True)
 
@@ -1782,9 +1740,9 @@ class Views:  # acts as a namespace
 
 
             elif request.method == 'GET':
-                taskIdToUpdate = request.GET.get('taskIdToUpdate')
+                task_id_to_update = request.GET.get('task_id_to_update')
                 try:
-                    instance = Task.objects.get(taskId=taskIdToUpdate)
+                    instance = Task.objects.get(taskId=task_id_to_update)
                     form = UpdateTaskForm(instance=instance)
                     context = {'form': form}
                     return render(request, 'taskUpdate.html', context)
@@ -1793,11 +1751,11 @@ class Views:  # acts as a namespace
                     messages.info(request, 'Task not updated! Id not found.')
                     return redirect('/dash')
 
-    def taskDeletion(request):
+    def task_deletion(request):
         if request.method == 'GET':
-            taskId = request.GET.get('taskIdToDelete')
+            task_id = request.GET.get('task_id_to_delete')
             try:
-                Views.deleteTask(taskId)
+                Views.delete_task(task_id)
 
             except Task.DoesNotExist:
                 messages.info(request, 'Task not deleted! Id not found.')
@@ -1805,216 +1763,196 @@ class Views:  # acts as a namespace
 
             return redirect('/dash')
 
-    def deleteTask(taskId):
-        task = Task.objects.get(taskId=taskId)
+    def delete_task(task_id):
+        task = Task.objects.get(taskId=task_id)
         task.delete()
 
-        currFreeTasks = server_state_model_bridge.get_curr_free_tasks()
-        if (taskId in currFreeTasks):
-            currFreeTasks.remove(taskId)
-            server_state_model_bridge.set_curr_free_tasks(currFreeTasks)
+        curr_free_tasks = server_state_model_bridge.get_curr_free_tasks()
+        if task_id in curr_free_tasks:
+            curr_free_tasks.remove(task_id)
+            server_state_model_bridge.set_curr_free_tasks(curr_free_tasks)
 
-        currSelectedTasks = server_state_model_bridge.get_curr_selected_tasks()
-        if (taskId in currSelectedTasks):
-            currSelectedTasks.remove(taskId)
-            server_state_model_bridge.set_curr_selected_tasks(currSelectedTasks)
+        curr_selected_tasks = server_state_model_bridge.get_curr_selected_tasks()
+        if task_id in curr_selected_tasks:
+            curr_selected_tasks.remove(task_id)
+            server_state_model_bridge.set_curr_selected_tasks(curr_selected_tasks)
 
-    def isTaskRegistered(taskId):
+    def is_task_registered(task_id):
         returned = {}
-        if (taskId != None):
+        if task_id is not None:
             try:
-                returned['task'] = Task.objects.get(taskId=taskId)
-                returned['storedTasks'] = Task.objects.filter(taskId__contains=taskId)
+                returned['task'] = Task.objects.get(taskId=task_id)
+                returned['storedTasks'] = Task.objects.filter(taskId__contains=task_id)
             except ObjectDoesNotExist as e:
                 print('task does not exist!')
-                returned = {'task': False, 'storedTasks': Task.objects.filter(taskId__contains=taskId)}
+                returned = {'task': False, 'storedTasks': Task.objects.filter(taskId__contains=task_id)}
         return returned
 
     # auxiliary methods
-    def fetchStudentStates(request):
+    def fetch_student_states(request):
         if request.method == 'POST':
-            selectedUserIds = player_bridge.get_all_stored_student_usernames()
+            selected_user_ids = player_bridge.get_all_stored_student_usernames()
 
-            userInfoRequest = HttpRequest()
-            userInfoRequest.method = 'POST'
-            userStates = {}
-            for username in selectedUserIds:
-                userInfoRequest.POST = {'username': username}
-                userInfo = Views.fetchStudentInfo(userInfoRequest).content.decode('utf-8')
-                userStates[username] = userInfo
+            user_info_request = HttpRequest()
+            user_info_request.method = 'POST'
+            user_states = {}
+            for username in selected_user_ids:
+                user_info_request.POST = {'username': username}
+                user_info = Views.fetch_student_info(user_info_request).content.decode('utf-8')
+                user_states[username] = user_info
 
-            userStates = json.dumps(userStates, default=lambda o: o.__dict__, sort_keys=True)
-            return HttpResponse(userStates)
+            user_states = json.dumps(user_states, default=lambda o: o.__dict__, sort_keys=True)
+            return HttpResponse(user_states)
         return HttpResponse('error')
 
-    def fetchStudentInfo(request):
+    def fetch_student_info(request):
         if request.method == 'POST':
             username = request.POST['username']
 
-            userInfo = {}
+            user_info = {}
             # userState['myStateGrid'] = playerBridge.getPlayerStateGrid(username)
-            userInfo['fullName'] = player_bridge.get_player_full_name(username)
-            userInfo['email'] = player_bridge.get_player_email(username)
-            userInfo['characteristics'] = player_bridge.get_player_curr_characteristics(username)
-            userInfo['group'] = player_bridge.get_player_curr_group(username)
-            userInfo['groupProfile'] = player_bridge.get_player_curr_profile(username).dimensions
-            userInfo['tasks'] = player_bridge.get_player_curr_tasks(username)
-            userInfo['statesDataFrame'] = player_bridge.get_player_states_data_frame(username)
-            userInfo['grade'] = player_bridge.get_player_grade(username)
-            userInfo['tags'] = player_bridge.get_player_tags(username)
+            user_info['fullName'] = player_bridge.get_player_full_name(username)
+            user_info['email'] = player_bridge.get_player_email(username)
+            user_info['characteristics'] = player_bridge.get_player_curr_characteristics(username)
+            user_info['group'] = player_bridge.get_player_curr_group(username)
+            user_info['groupProfile'] = player_bridge.get_player_curr_profile(username).dimensions
+            user_info['tasks'] = player_bridge.get_player_curr_tasks(username)
+            user_info['statesDataFrame'] = player_bridge.get_player_states_data_frame(username)
+            user_info['grade'] = player_bridge.get_player_grade(username)
+            user_info['tags'] = player_bridge.get_player_tags(username)
 
             personality = player_bridge.get_player_personality(username)
 
             if personality:
-                userInfo['personality'] = personality.getPersonalityString()
+                user_info['personality'] = personality.get_personality_string()
             else:
-                userInfo['personality'] = ''
+                user_info['personality'] = ''
 
-            userInfo = json.dumps(userInfo, default=lambda o: o.__dict__, sort_keys=True)
+            user_info = json.dumps(user_info, default=lambda o: o.__dict__, sort_keys=True)
 
-            return HttpResponse(userInfo)
+            return HttpResponse(user_info)
         return HttpResponse('error')
 
-    def fetchServerState(request):
+    def fetch_server_state(request):
         if request.method == 'GET':
-            newSessionState = {}
-            newSessionState['timestamp'] = time.time()
+            sim_state = server_state_model_bridge.get_sim_flags()
 
-            simState = server_state_model_bridge.get_sim_flags()
+            task_object = HttpRequest()
+            task_object.method = 'POST'
 
-            newSessionState['simWeek'] = simState['simulationWeek']
-            newSessionState['studentToEvaluate'] = simState['simStudentToEvaluate']
-            newSessionState['unavailableStudent'] = simState['simUnavailableStudent']
+            curr_selected_tasks_ids = server_state_model_bridge.get_curr_selected_tasks()
+            task_object.POST = {'tasks': str(curr_selected_tasks_ids)[1:][:-1].replace(' ', '').replace('\'', '')}
+            curr_selected_tasks = Views.fetch_tasks_from_id(task_object).content.decode('utf-8')
 
-            newSessionState['studentX'] = simState['simStudentX']
-            newSessionState['studentY'] = simState['simStudentY']
-            newSessionState['studentW'] = simState['simStudentW']
-            newSessionState['studentZ'] = simState['simStudentZ']
+            task_object = HttpRequest()
+            task_object.method = 'POST'
 
-            newSessionState['linkShared'] = simState['simIsLinkShared']
-            newSessionState['isTaskCreated'] = simState['simIsTaskCreated']
-            newSessionState['simSimulateReaction'] = simState['simSimulateReaction']
-            newSessionState['simWeekOneUsersEvaluated'] = simState['simWeekOneUsersEvaluated']
+            curr_free_tasks_ids = server_state_model_bridge.get_curr_free_tasks()
+            task_object.POST = {'tasks': str(curr_free_tasks_ids)[1:][:-1].replace(' ', '').replace('\'', '')}
+            curr_free_tasks = Views.fetch_tasks_from_id(task_object).content.decode('utf-8')
 
-            newSessionState['currSelectedUsers'] = server_state_model_bridge.get_curr_selected_users()
-            newSessionState['currFreeUsers'] = server_state_model_bridge.get_curr_free_users()
+            new_session_state = {'timestamp': time.time(), 'simWeek': sim_state['simulationWeek'],
+                                 'studentToEvaluate': sim_state['simStudentToEvaluate'],
+                                 'unavailableStudent': sim_state['simUnavailableStudent'],
+                                 'studentX': sim_state['simStudentX'], 'studentY': sim_state['simStudentY'],
+                                 'studentW': sim_state['simStudentW'], 'studentZ': sim_state['simStudentZ'],
+                                 'linkShared': sim_state['simIsLinkShared'],
+                                 'isTaskCreated': sim_state['simIsTaskCreated'],
+                                 'simSimulateReaction': sim_state['simSimulateReaction'],
+                                 'simWeekOneUsersEvaluated': sim_state['simWeekOneUsersEvaluated'],
+                                 'currSelectedUsers': server_state_model_bridge.get_curr_selected_users(),
+                                 'currFreeUsers': server_state_model_bridge.get_curr_free_users(),
+                                 'tags': server_state_model_bridge.get_tags(),
+                                 'curr_selected_tasks': curr_selected_tasks,
+                                 'curr_free_tasks': curr_free_tasks,
+                                 'readyForNewActivity': server_state_model_bridge.is_ready_for_new_activity()}
 
-            newSessionState['tags'] = server_state_model_bridge.get_tags()
+            if 'Professor' in request.user.userprofile.role:
+                new_session_state['currAdaptationState'] = server_state_model_bridge.get_curr_adaptation_state()
 
-            currSelectedTasks = []
-            currFreeTasks = []
+            new_session = json.dumps(new_session_state, default=lambda o: o.__dict__, sort_keys=True)
 
-            taskObject = HttpRequest()
-            taskObject.method = 'POST'
-
-            currSelectedTasksIds = server_state_model_bridge.get_curr_selected_tasks()
-            taskObject.POST = {'tasks': str(currSelectedTasksIds)[1:][:-1].replace(' ', '').replace('\'', '')}
-            currSelectedTasks = Views.fetchTasksFromId(taskObject).content.decode('utf-8')
-
-            taskObject = HttpRequest()
-            taskObject.method = 'POST'
-
-            currFreeTasksIds = server_state_model_bridge.get_curr_free_tasks()
-            taskObject.POST = {'tasks': str(currFreeTasksIds)[1:][:-1].replace(' ', '').replace('\'', '')}
-            currFreeTasks = Views.fetchTasksFromId(taskObject).content.decode('utf-8')
-
-            newSessionState['currSelectedTasks'] = currSelectedTasks
-            newSessionState['currFreeTasks'] = currFreeTasks
-
-            newSessionState['readyForNewActivity'] = server_state_model_bridge.is_ready_for_new_activity()
-
-            if ('Professor' in request.user.userprofile.role):
-                newSessionState['currAdaptationState'] = server_state_model_bridge.get_curr_adaptation_state()
-
-            newSession = json.dumps(newSessionState, default=lambda o: o.__dict__, sort_keys=True)
-
-            return HttpResponse(newSession)
+            return HttpResponse(new_session)
         return HttpResponse('error')
 
-    def fetchTasksFromId(request):
+    def fetch_tasks_from_id(request):
         if request.method == 'POST':
             tasks = request.POST['tasks']
             if tasks == '':
                 tasks = []
             else:
                 tasks = tasks.split(',')
-            returnedTasks = []
+            returned_tasks = []
             for taskId in tasks:
                 if not taskId in task_bridge.get_all_stored_task_ids():
                     return HttpResponse('error')
 
                 task = task_bridge.get_task(taskId)
-                returnedTask = {}
-                returnedTask['taskId'] = taskId
-                returnedTask['description'] = task.description
-                returnedTask['files'] = str(task.files)
-                returnedTasks.append(returnedTask)
+                returned_task = {'taskId': taskId,
+                                 'description': task.description,
+                                 'files': str(task.files)}
+                returned_tasks.append(returned_task)
 
-            returnedTasks = json.dumps(returnedTasks, default=lambda o: o.__dict__, sort_keys=True)
-            return HttpResponse(returnedTasks)
+            returned_tasks = json.dumps(returned_tasks, default=lambda o: o.__dict__, sort_keys=True)
+            return HttpResponse(returned_tasks)
         return HttpResponse('error')
 
-    def fetchGroupFromId(request):
+    def fetch_group_from_id(request):
         if request.method == 'POST':
-            groupId = int(request.POST['groupId'])
-
-            allGroups = server_state_model_bridge.get_curr_adaptation_state()['groups'];
-
-            if groupId < 0 or groupId > len(allGroups):
+            group_id = int(request.POST['group_id'])
+            all_groups = server_state_model_bridge.get_curr_adaptation_state()['groups']
+            if group_id < 0 or group_id > len(all_groups):
                 return HttpResponse({})
 
-            group = allGroups[groupId];
-            returnedGroup = {}
-            returnedGroup['group'] = group
-
-            returnedGroup = json.dumps(returnedGroup, default=lambda o: o.__dict__, sort_keys=True)
-            return HttpResponse(returnedGroup)
+            group = all_groups[group_id]
+            returned_group = {'group': group}
+            returned_group = json.dumps(returned_group, default=lambda o: o.__dict__, sort_keys=True)
+            return HttpResponse(returned_group)
         return HttpResponse('error')
 
-    def fetchUserState(request):
+    def fetch_user_state(request):
         if request.method == 'POST':
             username = request.POST['username']
 
-            returnedState = {}
-            returnedState['currState'] = player_bridge.get_player_curr_state(username)
-            returnedState['grid'] = player_bridge.getPlayerStateGrid(username)
-            return HttpResponse(json.dumps(returnedState,
+            returned_state = {'currState': player_bridge.get_player_curr_state(username),
+                              'data_frame': player_bridge.get_player_states_data_frame(username)}
+            return HttpResponse(json.dumps(returned_state,
                                            default=lambda o: o.__dict__, sort_keys=True))
         return HttpResponse('error')
 
-    def uploadTaskResults(request):
+    def upload_task_results(request):
         if request.method == 'POST':
             username = request.POST['username']
-            characteristicsDelta = json.loads(request.POST['characteristicsDelta'])
+            characteristics_delta = json.loads(request.POST['characteristics_delta'])
 
             characteristics = player_bridge.get_player_curr_characteristics(username)
-            characteristics.ability += characteristicsDelta['abilityInc']
-            characteristics.engagement += characteristicsDelta['engagementInc']
+            characteristics.ability += characteristics_delta['ability_inc']
+            characteristics.engagement += characteristics_delta['engagement_inc']
 
             player_bridge.set_player_characteristics(username, characteristics)
 
             grade = float(player_bridge.get_player_grade(username))
-            grade += characteristicsDelta['gradeInc']
+            grade += characteristics_delta['grade_inc']
             player_bridge.set_player_grade(username, grade)
 
             return HttpResponse('ok')
         return HttpResponse('error')
 
-    def manuallyChangeStudentGroup(request):
+    def manually_change_student_group(request):
         if request.method == 'POST':
-            adaptState = server_state_model_bridge.get_curr_adaptation_state()
+            adapt_state = server_state_model_bridge.get_curr_adaptation_state()
 
-            giIndex = int(request.POST['student[groupId]'])
-            gfIndex = int(request.POST['group[groupId]'])
+            gi_index = int(request.POST['student[group_id]'])
+            gf_index = int(request.POST['group[group_id]'])
 
-            u = str(request.POST['student[userId]'])
+            u = str(request.POST['student[user_id]'])
 
             # change groups
-            gi = adaptState['groups'][giIndex]
-            gf = adaptState['groups'][gfIndex]
+            gi = adapt_state['groups'][gi_index]
+            gf = adapt_state['groups'][gf_index]
 
-            #print("limits: "+str(adaptation.configsGenAlg.minNumberOfPlayersPerGroup)+"; "+str(adaptation.configsGenAlg.maxNumberOfPlayersPerGroup))
-            #print(str(len(gi))+"; "+str(len(gf)))
+            # print("limits: "+str(adaptation.configsGenAlg.minNumberOfPlayersPerGroup)+"; "+str(adaptation.configsGenAlg.maxNumberOfPlayersPerGroup))
+            # print(str(len(gi))+"; "+str(len(gf)))
             if (len(gi) == (adaptation.configsGenAlg.minNumberOfPlayersPerGroup - 1) or
                     len(gf) == (adaptation.configsGenAlg.maxNumberOfPlayersPerGroup + 1)):
                 return HttpResponse('error')
@@ -2022,222 +1960,215 @@ class Views:  # acts as a namespace
             gi.remove(u)
             gf.append(u)
 
-            for gIndex in [giIndex, gfIndex]:
-                g = adaptState['groups'][gIndex]
+            for g_index in [gi_index, gf_index]:
+                g = adapt_state['groups'][g_index]
 
                 # recalculate averages
-                currAvgCharacteristics = PlayerCharacteristics()
-                currAvgCharacteristics.reset()
-                for currPlayerI in g:
-                    currPlayerChars = player_bridge.get_player_curr_characteristics(currPlayerI)
-                    groupSize = len(g)
-                    currAvgCharacteristics.ability += currPlayerChars.ability / groupSize
-                    currAvgCharacteristics.engagement += currPlayerChars.engagement / groupSize
+                curr_avg_characteristics = PlayerCharacteristics()
+                curr_avg_characteristics.reset()
+                for curr_player_i in g:
+                    curr_player_chars = player_bridge.get_player_curr_characteristics(curr_player_i)
+                    group_size = len(g)
+                    curr_avg_characteristics.ability += curr_player_chars.ability / group_size
+                    curr_avg_characteristics.engagement += curr_player_chars.engagement / group_size
 
-                    adaptState['avgCharacteristics'][gIndex] = currAvgCharacteristics
+                    adapt_state['avg_characteristics'][g_index] = curr_avg_characteristics
 
-                    server_state_model_bridge.set_curr_adaptation_state(adaptState)
+                    server_state_model_bridge.set_curr_adaptation_state(adapt_state)
 
                     # change student information
-                    player_bridge.set_player_profile(currPlayerI, adaptState['profiles'][gIndex])
-                    player_bridge.set_player_group(currPlayerI, g)
-                    player_bridge.set_player_tasks(currPlayerI, adaptState['tasks'][gIndex])
+                    player_bridge.set_player_profile(curr_player_i, adapt_state['profiles'][g_index])
+                    player_bridge.set_player_group(curr_player_i, g)
+                    player_bridge.set_player_tasks(curr_player_i, adapt_state['tasks'][g_index])
 
             return render(request, 'manuallyManageStudent.html')
 
-    def manuallyManageStudent(request):
+    def manually_manage_student(request):
         if request.method == 'GET':
             return render(request, 'manuallyManageStudent.html')
 
-    def fetchSynergiesTable(request):
+    def fetch_synergies_table(request):
         if request.method == 'POST':
-            tblFile = open(os.path.join(settings.BASE_DIR, 'synergyTable.txt'), "r")
-
-            returnedTable = {}
-            returnedTable["textualTbl"] = tblFile.read()
-
-            tblFile.close()
-
-            return HttpResponse(json.dumps(returnedTable,
+            tbl_file = open(os.path.join(settings.BASE_DIR, 'synergyTable.txt'), "r")
+            returned_table = {"textual_tbl": tbl_file.read()}
+            tbl_file.close()
+            return HttpResponse(json.dumps(returned_table,
                                            default=lambda o: o.__dict__, sort_keys=True))
         return HttpResponse('error')
 
-    def saveSynergiesTable(request):
+    def save_synergies_table(request):
         if request.method == 'POST':
-            tblFile = open(os.path.join(settings.BASE_DIR, 'synergyTable.txt'), "w")
-
-            returnedTable = {}
-            tblFile.write(request.POST["textualTbl"])
-
-            tblFile.close()
-
+            tbl_file = open(os.path.join(settings.BASE_DIR, 'synergyTable.txt'), "w")
+            tbl_file.write(request.POST["textual_tbl"])
+            tbl_file.close()
             return HttpResponse('ok')
         return HttpResponse('error')
 
-    def resetSimWeek(request):
+    def reset_sim_week(request):
         if request.method == 'POST':
             server_state_model_bridge.set_simulation_week(0)
-            playersIds = player_bridge.get_all_stored_student_usernames()
-            for playerId in playersIds:
+            players_ids = player_bridge.get_all_stored_student_usernames()
+            for playerId in players_ids:
                 Views.delete_user(playerId)
 
-            taskIds = task_bridge.get_all_stored_task_ids()
-            for taskId in taskIds:
-                Views.deleteTask(taskId)
+            task_ids = task_bridge.get_all_stored_task_ids()
+            for task_id in task_ids:
+                Views.delete_task(task_id)
 
-            #serverStateModelBridge.setSimIsLinkShared(False)
-            #serverStateModelBridge.setSimIsTaskCreated(False)
-            #serverStateModelBridge.setSimWeekOneUsersEvaluated(False)
-            #serverStateModelBridge.setSimSimulateReaction(False)
+            # server_state_model_bridge.setSimIsLinkShared(False)
+            # server_state_model_bridge.setSimIsTaskCreated(False)
+            # server_state_model_bridge.setSimWeekOneUsersEvaluated(False)
+            # server_state_model_bridge.setSimSimulateReaction(False)
             Views.init_server(request)
             return HttpResponse('ok')
-
         return HttpResponse('error')
 
-    def advanceSimWeek(request):
-        simulationWeek = server_state_model_bridge.get_simulation_week()
-        simSimulateReaction = server_state_model_bridge.get_sim_simulate_reaction()
-        simWeekOneUsersEvaluated = server_state_model_bridge.get_sim_week_one_users_evaluated()
+    def advance_sim_week(request):
+        simulation_week = server_state_model_bridge.get_simulation_week()
+        sim_simulate_reaction = server_state_model_bridge.get_sim_simulate_reaction()
+        sim_week_one_users_evaluated = server_state_model_bridge.get_sim_week_one_users_evaluated()
         if request.method == 'POST':
-            if (simulationWeek > 5):
-                simulationWeek = 6
+            if simulation_week > 5:
+                simulation_week = 6
             else:
-                simulationWeek += 1
+                simulation_week += 1
 
-            if (simulationWeek == 1):
+            if simulation_week == 1:
                 players = player_bridge.get_all_stored_student_usernames()
                 tasks = task_bridge.get_all_stored_task_ids()
-                if (len(players) >= 12 and len(tasks) >= 16):
+                if len(players) >= 12 and len(tasks) >= 16:
                     server_state_model_bridge.set_sim_student_to_evaluate(players[0])
                 else:
-                    simulationWeek -= 1
+                    simulation_week -= 1
 
-            if (simulationWeek == 2):
-                if (simWeekOneUsersEvaluated):
+            if simulation_week == 2:
+                if sim_week_one_users_evaluated:
                     server_state_model_bridge.set_sim_unavailable_student(
                         player_bridge.get_all_stored_student_usernames()[10])
                 else:
-                    simulationWeek -= 1
+                    simulation_week -= 1
 
-            if (simulationWeek == 3):
-                if (not simSimulateReaction):
-                    simulationWeek -= 1
+            if simulation_week == 3:
+                if not sim_simulate_reaction:
+                    simulation_week -= 1
                 else:
-                    simSimulateReaction = False
+                    sim_simulate_reaction = False
 
-            if (simulationWeek == 5):
-                if (simSimulateReaction):
-                    simSimulateReaction = False
+            if simulation_week == 5:
+                if sim_simulate_reaction:
+                    sim_simulate_reaction = False
                 else:
-                    simulationWeek -= 1
+                    simulation_week -= 1
 
-            server_state_model_bridge.set_simulation_week(simulationWeek)
-            server_state_model_bridge.set_sim_simulate_reaction(simSimulateReaction)
+            server_state_model_bridge.set_simulation_week(simulation_week)
+            server_state_model_bridge.set_sim_simulate_reaction(sim_simulate_reaction)
             return HttpResponse('ok')
 
         return HttpResponse('error')
 
-    def shareLinkSim(request):
+    def share_link_sim(request):
         if request.method == 'POST':
             server_state_model_bridge.set_sim_is_link_shared(True)
-            for _ in range(int(request.POST['numUsersToGenerate'])):
-                time.sleep(random.uniform(float(request.POST['minDelay']), float(request.POST['maxDelay'])))
+            for _ in range(int(request.POST['num_users_to_generate'])):
+                time.sleep(random.uniform(float(request.POST['min_delay']), float(request.POST['max_delay'])))
 
                 name = "".join(random.choice(names) + " " + random.choice(names))
 
-                randNumber = random.random()
-                if (randNumber <= 0.333333):
+                rand_number = random.random()
+                one_third = 1.0 / 3.0
+                if rand_number <= one_third:
                     gender = 'Male'
 
-                elif (randNumber >= 0.6666666):
+                elif rand_number >= 2 * one_third:
                     gender = 'Female'
-
                 else:
                     gender = 'Other'
 
-                httpRequest = HttpRequest()
-                httpRequest.method = 'POST'
+                http_request = HttpRequest()
+                http_request.method = 'POST'
 
-                httpRequest.POST['fullName'] = name
+                http_request.POST['fullname'] = name
                 name = name.replace(" ", "_")
-                httpRequest.POST['username'] = name
-                httpRequest.POST['role'] = role
+                http_request.POST['username'] = name
+                http_request.POST['role'] = role
                 name = name.replace("_", ".").lower()
-                httpRequest.POST['email'] = name + '@tecnico.ulisboa.pt'
-                httpRequest.POST['password1'] = password
-                httpRequest.POST['password2'] = password
-                httpRequest.POST['age'] = age
-                httpRequest.POST['gender'] = gender
-                httpRequest.POST['description'] = description
-                httpRequest.POST['Create User'] = createUser
+                http_request.POST['email'] = name + '@tecnico.ulisboa.pt'
+                http_request.POST['password1'] = password
+                http_request.POST['password2'] = password
+                http_request.POST['age'] = age
+                http_request.POST['gender'] = gender
+                http_request.POST['description'] = description
+                http_request.POST['Create User'] = createUser
 
-                httpRequest.user = request.user
+                http_request.user = request.user
 
-                Views.user_registration(httpRequest)
+                Views.user_registration(http_request)
 
             return HttpResponse('ok')
 
         return HttpResponse('error')
 
-    def taskRegistrationSim(request):
+    def task_registration_sim(request):
         if request.method == 'POST':
             today = date.today()
-            initWeek2 = today + timedelta(days=7)
-            initWeek3 = initWeek2 + timedelta(days=7)
-            initWeek4 = initWeek3 + timedelta(days=7)
+            init_week2 = today + timedelta(days=7)
+            init_week3 = init_week2 + timedelta(days=7)
+            init_week4 = init_week3 + timedelta(days=7)
 
-            strInitWeek1 = str(today)
-            strInitWeek2 = str(initWeek2)
-            strInitWeek3 = str(initWeek3)
-            strInitWeek4 = str(initWeek4)
+            str_init_week1 = str(today)
+            str_init_week2 = str(init_week2)
+            str_init_week3 = str(init_week3)
+            str_init_week4 = str(init_week4)
 
-            initDate = [today, today, today, initWeek2, initWeek2, initWeek2, initWeek2, initWeek3, initWeek3,
-                        initWeek3, initWeek3, initWeek4, initWeek4, initWeek4, initWeek4]
+            init_date = [today, today, today, init_week2, init_week2, init_week2, init_week2, init_week3, init_week3,
+                         init_week3, init_week3, init_week4, init_week4, init_week4, init_week4]
 
-            strInitDate = [strInitWeek1, strInitWeek1, strInitWeek1, strInitWeek2, strInitWeek2, strInitWeek2,
-                           strInitWeek2, strInitWeek3, strInitWeek3, strInitWeek3, strInitWeek3, strInitWeek4,
-                           strInitWeek4, strInitWeek4, strInitWeek4]
-            strFinalDate = []
-            for j in initDate:
-                strFinalDate.append(str(j + timedelta(days=7)))
+            str_init_date = [str_init_week1, str_init_week1, str_init_week1, str_init_week2, str_init_week2,
+                             str_init_week2,
+                             str_init_week2, str_init_week3, str_init_week3, str_init_week3, str_init_week3,
+                             str_init_week4,
+                             str_init_week4, str_init_week4, str_init_week4]
+            str_final_date = []
+            for j in init_date:
+                str_final_date.append(str(j + timedelta(days=7)))
 
-            for i in range(len(taskIds)):
-                time.sleep(random.uniform(float(request.POST['minDelay']), float(request.POST['maxDelay'])))
+            for i in range(len(task_ids)):
+                time.sleep(random.uniform(float(request.POST['min_delay']), float(request.POST['max_delay'])))
 
-                httpRequest = HttpRequest()
-                httpRequest.method = 'POST'
+                http_request = HttpRequest()
+                http_request.method = 'POST'
 
-                httpRequest.POST['taskId'] = taskIds[i]
-                httpRequest.POST['description'] = description
-                httpRequest.POST['difficulty'] = minReqAbility[i]
-                httpRequest.POST['taskSelectWeigths'] = taskSelectWeigths
-                httpRequest.POST['initDate'] = strInitDate[i]
-                httpRequest.POST['finalDate'] = strFinalDate[i]
-                httpRequest.POST['profileDim0'] = profileDim0[i]
-                httpRequest.POST['profileDim1'] = profileDim1[i]
+                http_request.POST['taskId'] = task_ids[i]
+                http_request.POST['description'] = description
+                http_request.POST['difficulty'] = minReqAbility[i]
+                http_request.POST['task_w'] = task_w
+                http_request.POST['init_date'] = str_init_date[i]
+                http_request.POST['final_date'] = str_final_date[i]
+                http_request.POST['profile_dim0'] = profile_dim0[i]
+                http_request.POST['profile_dim1'] = profile_dim1[i]
 
-                httpRequest.user = request.user
+                http_request.user = request.user
 
-                Views.taskRegistration(httpRequest)
+                Views.task_registration(http_request)
 
             return HttpResponse('ok')
 
         return HttpResponse('error')
 
-    def evaluateSim(request):
+    def evaluate_sim(request):
         if request.method == 'POST':
 
-            currSelectedUsers = server_state_model_bridge.get_curr_selected_users()
-            currSelectedUsers.pop(0)
-            for playerId in currSelectedUsers:
-                prevState = player_bridge.get_player_states_data_frame(playerId).states[-1]
-                newState = Views.calc_reaction(
+            curr_selected_users = server_state_model_bridge.get_curr_selected_users()
+            curr_selected_users.pop(0)
+            for playerId in curr_selected_users:
+                prev_state = player_bridge.get_player_states_data_frame(playerId).states[-1]
+                new_state = Views.calc_reaction(
                     player_bridge=player_bridge,
-                    state=prevState,
+                    state=prev_state,
                     player_id=playerId)
 
-                Views.savePlayerCharacteristics(playerId, newState.characteristics.ability,
-                                                newState.characteristics.engagement)
+                Views.save_player_characteristics(playerId, new_state.characteristics.ability,
+                                                  new_state.characteristics.engagement)
 
             server_state_model_bridge.set_sim_week_one_users_evaluated(True)
             return HttpResponse('ok')

@@ -43,11 +43,11 @@
 					<div class='columns is-mobile is-centered control'>
 						<div class='column is-mobile is-centered is-one-forth'>From</div>
 						<div class='column is-mobile is-centered is-one-forth'>
-							{{form.initDate}}
+							{{form.init_date }}
 						</div>
 						<div class='column is-mobile is-centered is-one-forth'>to</div>
 						<div class='column is-mobile is-centered is-one-forth'>
-							{{form.finalDate}}
+							{{form.final_date }}
 						</div>
 					</div>
 				</div>
@@ -56,7 +56,7 @@
 				<div class='field requiredFormField'>
 					<label class='label has-tooltip-arrow' data-tooltip='This represents what the system will value when selecting the task for a given group.'>The value of the task is obtained by its:*</label>
 					<div class='columns is-mobile is-centered control'>
-						Interaction profile&ensp;<input name='taskSelectWeigths' class='slider' type='range' value='{{form.profileWeight.value}}' min='0.0' max='1.0' step='0.1'> &ensp;Difficulty
+						Interaction profile&ensp;<input name='taskSelectWeigths' class='slider' type='range' value='{{form.profile_w.value}}' min='0.0' max='1.0' step='0.1'> &ensp;Difficulty
 					</div>
 				</div>
 				
@@ -64,7 +64,7 @@
 				<div class='field requiredFormField'>
 					<label class='label has-tooltip-arrow' data-tooltip='This indicates if the task approaches easier or advanced material.'>Difficulty*</label>
 					<div class='columns is-mobile is-centered control'>
-						Easy&ensp;<input name='difficulty' class='slider' type='range' value='{{form.minReqAbility.value}}' min='0.0' max='1.0' step='0.1'>&ensp;Hard
+						Easy&ensp;<input name='difficulty' class='slider' type='range' value='{{form.min_req_ability.value}}' min='0.0' max='1.0' step='0.1'>&ensp;Hard
 					</div>
 				</div>
 

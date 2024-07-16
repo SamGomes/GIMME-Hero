@@ -105,7 +105,7 @@
 		$(document).ready(function(){
 			
 			console.log($('#loginError_home'))
-			if($('#loginError_home').textContent != ""){
+			if("" != $('#loginError_home').textContent){
 				$('#loginError_home').hide()
 				$('#loginError_home').show(500)
 				setTimeout(function(){ $('#loginError_home').hide(500); }, 5000);
