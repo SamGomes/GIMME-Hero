@@ -1340,20 +1340,20 @@ crossorigin='anonymous'></script>
 			
 			if(newServerState!=undefined){
 				
-				if(newServerState.studentToEvaluate.length > 0)
-					simulationWeekMessages[1] = simulationWeekMessages[1].replace("Student_E", "<b>" + newServerState.studentToEvaluate + "</b>");
+				if(newServerState.simStudentToEvaluate.length > 0)
+					simulationWeekMessages[1] = simulationWeekMessages[1].replace("Student_E", "<b>" + newServerState.simStudentToEvaluate + "</b>");
 				
-				if(newServerState.unavailableStudent.length > 0)
-					simulationWeekMessages[2] = simulationWeekMessages[2].replace("Student_A", "<b>" + newServerState.unavailableStudent + "</b>");
+				if(newServerState.simUnavailableStudent.length > 0)
+					simulationWeekMessages[2] = simulationWeekMessages[2].replace("Student_A", "<b>" + newServerState.simUnavailableStudent + "</b>");
 				
-				if(newServerState.studentX.length > 0)
-					simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_X", "<b>" + newServerState.studentX + "</b>");
-				if(newServerState.studentY.length > 0)
-					simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_Y", "<b>" + newServerState.studentY + "</b>");
-				if(newServerState.studentW.length > 0)
-					simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_W", "<b>" + newServerState.studentW + "</b>");
-				if(newServerState.studentZ.length > 0)
-					simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_Z", "<b>" + newServerState.studentZ + "</b>");
+				if(newServerState.simStudentX.length > 0)
+					simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_X", "<b>" + newServerState.simStudentX + "</b>");
+				if(newServerState.simStudentY.length > 0)
+					simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_Y", "<b>" + newServerState.simStudentY + "</b>");
+				if(newServerState.simStudentW.length > 0)
+					simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_W", "<b>" + newServerState.simStudentW + "</b>");
+				if(newServerState.simStudentZ.length > 0)
+					simulationWeekMessages[3] = simulationWeekMessages[3].replaceAll("Student_Z", "<b>" + newServerState.simStudentZ + "</b>");
 			}
 		
 			

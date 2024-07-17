@@ -43,12 +43,6 @@ class ModelAuxMethods:
         return wrapper
 
 
-# class Subject(models.Model):
-#     subjectId = models.CharField(max_length=1020,primary_key=True)
-#     description = models.TextField(max_length=1020)
-#     studentIds = models.CharField(max_length=1020)
-
-
 class Questionnaire(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(max_length=3072)
