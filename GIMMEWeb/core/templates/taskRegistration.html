@@ -24,17 +24,17 @@
 
 			<div class='field requiredFormField'>
 				<label class='label has-tooltip-arrow' data-tooltip='A unique identifier for the task.'>Task Id*</label>
-				{{form.taskId}}
+				{{ form.task_id }}
 			</div>
 			
 			<div class='field'>
 				<label class='label has-tooltip-arrow' data-tooltip='The description for what the task is about.'>Description</label>
-				{{form.description}}
+				{{ form.description }}
 			</div>
 
 			<div class='field'>
 				<label class='label has-tooltip-arrow' data-tooltip='Files appended to the task, to be distributed to students.'>Files</label>
-				{{form.files}}
+				{{ form.files }}
 			</div>
 			
 			<div class='field requiredFormField'>
@@ -42,11 +42,11 @@
 				<div class='columns is-mobile is-centered control'>
 					<div class='column is-mobile is-centered is-one-forth'>From</div>
 					<div class='column is-mobile is-centered is-one-forth'>
-						{{form.init_date }}
+						{{ form.init_date }}
 					</div>
 					<div class='column is-mobile is-centered is-one-forth'>to</div>
 					<div class='column is-mobile is-centered is-one-forth'>
-						{{form.finalDate}}
+						{{ form.final_date }}
 					</div>
 				</div>
 			</div>

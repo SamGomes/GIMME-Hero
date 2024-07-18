@@ -42,7 +42,7 @@ class CreateTaskForm(ModelForm):
 
     class Meta:
         model = Task
-        exclude = ['creator', 'creationTime', 'profile', 'init_date', 'final_date', 'min_req_ability', 'difficulty_w',
+        exclude = ['creator', 'creation_time', 'profile', 'init_date', 'final_date', 'min_req_ability', 'difficulty_w',
                    'profile_w']
 
 

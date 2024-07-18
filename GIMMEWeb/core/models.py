@@ -40,6 +40,7 @@ class ModelAuxMethods:
                 filename = '{}.{}'.format(uuid4().hex, ext)
             # return the whole path to the file
             return os.path.join(path, filename)
+
         return wrapper
 
 
@@ -101,6 +102,8 @@ class UserProfile(models.Model):
     past_data_frame = models.TextField(max_length=3072)
     preferences = models.CharField(max_length=1020)
     personality = models.CharField(max_length=1020)
+
+    characteristics = models.CharField(max_length=1020)
 
     tags = models.ManyToManyField(Tag)
 

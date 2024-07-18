@@ -127,7 +127,7 @@ class ServerStateModelBridge:
             "simWeekOneUsersEvaluated": server_state.sim_week_one_users_evaluated,
             "simSimulateReaction": server_state.sim_simulate_reaction,
             "simWeekFourDoneOnce": server_state.sim_week_four_done_once,
-            "simulationWeek": server_state.simulation_week,
+            "simWeek": server_state.simulation_week,
             "simStudentToEvaluate": server_state.sim_student_to_evaluate,
             "simUnavailableStudent": server_state.sim_unavailable_student,
             "simStudentX": server_state.sim_student_x,
@@ -196,7 +196,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
         else:
-            server_state.simIsLinkShared = sim_is_link_shared
+            server_state.sim_is_link_shared = sim_is_link_shared
         server_state.save()
 
     def set_sim_is_task_created(self, sim_is_task_created):
@@ -204,7 +204,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
         else:
-            server_state.simIsTaskCreated = sim_is_task_created
+            server_state.sim_is_task_created = sim_is_task_created
         server_state.save()
 
     def set_sim_week_one_users_evaluated(self, sim_week_one_users_evaluated):
@@ -212,7 +212,7 @@ class ServerStateModelBridge:
         if server_state == None:
             server_state = ServerState()
         else:
-            server_state.simWeekOneUsersEvaluated = sim_week_one_users_evaluated
+            server_state.sim_week_one_users_evaluated = sim_week_one_users_evaluated
         server_state.save()
 
     def set_sim_simulate_reaction(self, sim_simulate_reaction):
@@ -220,7 +220,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
         else:
-            server_state.simSimulateReaction = sim_simulate_reaction
+            server_state.sim_simulate_reaction = sim_simulate_reaction
         server_state.save()
 
     def set_sim_week_four_done_once(self, sim_week_four_done_once):
@@ -228,7 +228,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
         else:
-            server_state.simWeekFourDoneOnce = sim_week_four_done_once
+            server_state.sim_week_four_done_once = sim_week_four_done_once
         server_state.save()
 
     def set_simulation_week(self, simulation_week):
@@ -236,7 +236,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
         else:
-            server_state.simulationWeek = simulation_week
+            server_state.simulation_week = simulation_week
         server_state.save()
 
     def set_sim_student_to_evaluate(self, sim_student_to_evaluate):
@@ -244,7 +244,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
         else:
-            server_state.simStudentToEvaluate = sim_student_to_evaluate
+            server_state.sim_student_to_evaluate = sim_student_to_evaluate
         server_state.save()
 
     def set_sim_unavailable_student(self, sim_unavailable_student):
@@ -252,7 +252,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
         else:
-            server_state.simUnavailableStudent = sim_unavailable_student
+            server_state.sim_unavailable_student = sim_unavailable_student
         server_state.save()
 
     def set_sim_student_x(self, sim_student_x):
@@ -260,7 +260,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
         else:
-            server_state.simStudentX = sim_student_x
+            server_state.sim_student_x = sim_student_x
         server_state.save()
 
     def set_sim_student_y(self, sim_student_y):
@@ -268,7 +268,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
         else:
-            server_state.simStudentY = sim_student_y
+            server_state.sim_student_y = sim_student_y
         server_state.save()
 
     def set_sim_student_z(self, sim_student_z):
@@ -276,7 +276,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
         else:
-            server_state.simStudentZ = sim_student_z
+            server_state.sim_student_z = sim_student_z
         server_state.save()
 
     def set_sim_student_w(self, sim_student_w):
@@ -284,7 +284,7 @@ class ServerStateModelBridge:
         if server_state is None:
             server_state = ServerState()
         else:
-            server_state.simStudentW = sim_student_w
+            server_state.sim_student_w = sim_student_w
         server_state.save()
 
     def get_tags(self):
@@ -398,7 +398,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
     def get_player_curr_profile(self, username):
         player_info = User.objects.get(username=username).userprofile
         # print(json.dumps(player, default= lambda o: o.__dict__, sort_keys=True))
-        profile = json.loads(player_info.currState)['profile']
+        profile = json.loads(player_info.curr_state)['profile']
         profile = InteractionsProfile(dimensions=profile['dimensions'])
         return profile
 
@@ -436,10 +436,10 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
     def get_player_states_data_frame(self, username):
         player_info = User.objects.get(username=username).userprofile
-        past_model_increases_data_frame = json.loads(player_info.past_model_increases_data_frame)
+        past_data_frame = json.loads(player_info.past_data_frame)
 
         states = []
-        for state in past_model_increases_data_frame['states']:
+        for state in past_data_frame['states']:
             characteristics = state['characteristics']
             characteristics = PlayerCharacteristics(
                 ability=float(characteristics['ability']),
@@ -456,20 +456,20 @@ class CustomPlayerModelBridge(PlayerModelBridge):
             player_state.creationTime = -1
             states.append(player_state)
 
-        trim_alg = json.loads(json.dumps(past_model_increases_data_frame['trimAlg']))
+        trim_alg = json.loads(json.dumps(past_data_frame['trim_alg']))
         sdf = PlayerStatesDataFrame(
             states=states,
             interactions_profile_template=int_prof_template.generate_copy().reset(),
             trim_alg=ProximitySortPlayerDataTrimAlg(
-                max_num_model_elements=int(trim_alg['maxNumModelElements']),
-                epsilon=float(trim_alg['epsilon'])
+                max_num_model_elements=int(trim_alg['_max_num_model_elements']),
+                epsilon=float(trim_alg['_ProximitySortPlayerDataTrimAlg__epsilon'])
             )
         )
         return sdf
 
     def get_player_curr_characteristics(self, username):
         player_info = User.objects.get(username=username).userprofile
-        characteristics = json.loads(player_info.currState)['characteristics']
+        characteristics = json.loads(player_info.curr_state)['characteristics']
         return PlayerCharacteristics(ability=float(characteristics['ability']),
                                      engagement=float(characteristics['engagement']))
 
@@ -485,7 +485,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
     def get_player_curr_state(self, username):
         player_info = User.objects.get(username=username).userprofile
-        curr_state = json.loads(player_info.currState)
+        curr_state = json.loads(player_info.curr_state)
         return PlayerState(profile=self.get_player_curr_profile(username),
                            characteristics=self.get_player_curr_characteristics(username),
                            dist=curr_state['dist'],
@@ -495,7 +495,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
 
     def get_player_full_name(self, username):
         player_info = User.objects.get(username=username).userprofile
-        return player_info.fullName
+        return player_info.fullname
 
     def reset_player_curr_state(self, username):
         player_info = User.objects.get(username=username).userprofile
@@ -738,7 +738,7 @@ task_ids = ["week1_01", "week1_10", "week1_11", "week2_00", "week2_01", "week2_1
             "week5_11"]
 description = '.'
 
-minReqAbility = ["0.2", "0.2", "0.2", "0.3", "0.3", "0.3", "0.3", "0.5", "0.5", "0.5", "0.5", "0.6", "0.6", "0.6",
+min_req_ability = ["0.2", "0.2", "0.2", "0.3", "0.3", "0.3", "0.3", "0.5", "0.5", "0.5", "0.5", "0.6", "0.6", "0.6",
                  "0.6", "0.7", "0.7", "0.7", "0.7"]
 task_w = '0.5'
 
@@ -815,6 +815,24 @@ class Views:  # acts as a namespace
         if not Tag.objects.filter(name="P").exists():
             Tag.objects.create(name="P", is_removable=False, is_assignable=False)
 
+        # create default professor for tests
+        http_request = HttpRequest()
+        http_request.method = 'POST'
+        http_request.POST['fullname'] = 'default'
+        http_request.POST['username'] = 'default'
+        http_request.POST['role'] = 'Professor'
+        http_request.POST['email'] = 'default@tecnico.ulisboa.pt'
+        http_request.POST['password1'] = 'VW8fiAUkGs7QLwn'
+        http_request.POST['password2'] = 'VW8fiAUkGs7QLwn'
+        http_request.POST['age'] = '20'
+        http_request.POST['gender'] = 'Male'
+        http_request.POST['description'] = '.'
+        http_request.POST['Create User'] = 'Register'
+
+        http_request.user = request.user
+
+        Views.user_registration(http_request)
+
         return HttpResponse('ok')
 
     def calc_reaction(player_bridge, state, player_id):
@@ -849,7 +867,7 @@ class Views:  # acts as a namespace
                 state=prev_state,
                 player_id=playerId)
 
-            if sim_flags['simulationWeek'] == 2:
+            if sim_flags['simWeek'] == 2:
                 if playerId == sim_flags['simStudentX']:
                     new_state.characteristics.ability = 0.3
                     new_state.characteristics.engagement = 0.3
@@ -1189,9 +1207,9 @@ class Views:  # acts as a namespace
 
                 profile = profile_form.save(commit=False)
                 profile.user = user
-                profile.currState = json.dumps(PlayerState(profile=int_prof_template.generate_copy()),
+                profile.curr_state = json.dumps(PlayerState(profile=int_prof_template.generate_copy()),
                                                default=lambda o: o.__dict__)
-                profile.past_model_increases_data_frame = json.dumps(
+                profile.past_data_frame = json.dumps(
                     PlayerStatesDataFrame(
                         interactions_profile_template=int_prof_template.generate_copy().reset(),
                         trim_alg=trim_alg_template
@@ -1200,6 +1218,9 @@ class Views:  # acts as a namespace
                 profile.preferences = json.dumps(int_prof_template.generate_copy().reset(),
                                                  default=lambda o: o.__dict__,
                                                  sort_keys=True)
+                profile.characteristics = json.dumps(PlayerCharacteristics(ability=0, engagement=0),
+                                                     default=lambda o: o.__dict__,
+                                                     sort_keys=True)
                 # profile.personality = json.dumps(personality, default=lambda o: o.__dict__, sort_keys=True)
                 profile.save()
 
@@ -1448,9 +1469,9 @@ class Views:  # acts as a namespace
         ability_to_save = (float(ability) - characteristics.ability)
 
         sim_flags = server_state_model_bridge.get_sim_flags()
-        if username == sim_flags['simStudentX'] and sim_flags['simulationWeek'] == 2:
+        if username == sim_flags['simStudentX'] and sim_flags['simWeek'] == 2:
             ability_to_save = 0.3
-        elif username == sim_flags['simStudentY'] and sim_flags['simulationWeek'] == 2:
+        elif username == sim_flags['simStudentY'] and sim_flags['simWeek'] == 2:
             ability_to_save = 0.2
 
         characteristics = PlayerCharacteristics(ability=ability_to_save, engagement=float(engagement))
@@ -1502,9 +1523,6 @@ class Views:  # acts as a namespace
             return HttpResponse('ok')
 
         # switch algorithms
-        sel_quality_eval_alg = {}
-        sel_pers_est_alg = {}
-
         def quality_eval_alg_switcher_knn(request):
             return KNNRegQualityEvalAlg(
                 player_model_bridge=player_bridge,
@@ -1512,7 +1530,7 @@ class Views:  # acts as a namespace
                 quality_weights=PlayerCharacteristics(ability=float(new_config_params['qualityWeightAb']),
                                                       engagement=float(new_config_params['qualityWeightEng']))
             )
-
+        
         def quality_eval_alg_switcher_synergy(request):
             return SynergiesTabQualityEvalAlg(
                 player_model_bridge=player_bridge,
@@ -1525,54 +1543,61 @@ class Views:  # acts as a namespace
                 diversity_weight=float(new_config_params['diversityWeight'])
             )
 
-        sel_quality_eval_alg_id = new_config_params['selectedRegAlgId']
+        sel_quality_eval_alg = {}
+        sel_quality_eval_alg_id = new_config_params['selectedQualityEvalAlgId']
 
+        print(sel_quality_eval_alg_id)
         if sel_quality_eval_alg_id == 'K-Nearest-Neighbors (KNN)':
             sel_quality_eval_alg = quality_eval_alg_switcher_knn(request)
-            sel_pers_est_alg = sel_quality_eval_alg
+            # sel_pref_est_alg = sel_quality_eval_alg
         elif sel_quality_eval_alg_id == 'KNN w/ Synergy Between Students':
             sel_quality_eval_alg = quality_eval_alg_switcher_synergy(request)
-            sel_pers_est_alg = KNNRegQualityEvalAlg(
-                player_bridge,
-                int(new_config_params['synergiesK']),
-                quality_weights=PlayerCharacteristics(
-                    ability=float(new_config_params['synergies_quality_w_ab']),
-                    engagement=float(new_config_params['synergies_quality_w_eng'])
-                )
-            )
+            # sel_pref_est_alg = KNNRegQualityEvalAlg(
+            #     player_bridge,
+            #     int(new_config_params['synergiesK']),
+            #     quality_weights=PlayerCharacteristics(
+            #         ability=float(new_config_params['synergiesQualityWeightsAb']),
+            #         engagement=float(new_config_params['synergiesQualityWeightsEng'])
+            #     )
+            # )
         elif sel_quality_eval_alg_id == 'KNN w/ Personality Diversity':
             sel_quality_eval_alg = quality_eval_alg_switcher_diversity(request)
-            sel_pers_est_alg = KNNRegQualityEvalAlg(
-                player_bridge,
-                int(new_config_params['synergiesK']),
-                quality_weights=PlayerCharacteristics(
-                    ability=float(new_config_params['synergies_quality_w_ab']),
-                    engagement=float(new_config_params['synergies_quality_w_eng'])
-                )
-            )
+            # sel_pref_est_alg = KNNRegQualityEvalAlg(
+            #     player_bridge,
+            #     int(new_config_params['synergiesK']),
+            #     quality_weights=PlayerCharacteristics(
+            #         ability=float(new_config_params['synergiesQualityWeightsAb']),
+            #         engagement=float(new_config_params['synergiesQualityWeightsEng'])
+            #     )
+            # )
 
-        sel_configs_gen_alg = {}
+        sel_pref_est_alg = ExplorationPreferencesEstAlg(
+            player_model_bridge=player_bridge,
+            interactions_profile_template=int_prof_template,
+            quality_eval_alg=sel_quality_eval_alg,
+            num_tested_player_profiles=100)
+
 
         def sel_configs_alg_switcher_random(request):
             return RandomConfigsGenAlg(
                 player_model_bridge=player_bridge,
                 interactions_profile_template=int_prof_template.generate_copy(),
-                min_num_players_per_group=int(new_config_params['minNumberOfPlayersPerGroup']),
-                max_num_players_per_group=int(new_config_params['maxNumberOfPlayersPerGroup']),
-                # preferred_num_players_per_group=int(new_config_params['preferredNumberOfPlayersPerGroup']),
-                joint_player_constraints=new_config_params['joint_player_constraints'],
-                separated_player_constraints=new_config_params['separated_player_constraints'])
+                min_num_players_per_group=int(new_config_params['minNumPlayersPerGroup']),
+                max_num_players_per_group=int(new_config_params['maxNumPlayersPerGroup']),
+                # preferred_num_players_per_group=int(new_config_params['preferredNumPlayersPerGroup']),
+                joint_player_constraints=new_config_params['jointPlayerConstraints'],
+                separated_player_constraints=new_config_params['separatedPlayerConstraints'])
 
         def sel_configs_alg_switcher_prs(request):
             return PureRandomSearchConfigsGenAlg(
                 player_model_bridge=player_bridge,
                 interactions_profile_template=int_prof_template.generate_copy(),
                 quality_eval_alg=sel_quality_eval_alg,
-                pref_est_alg=sel_pers_est_alg,
+                pref_est_alg=sel_pref_est_alg,
                 num_config_choices=int(new_config_params['numberOfConfigChoices']),
-                min_num_players_per_group=int(new_config_params['minNumberOfPlayersPerGroup']),
-                max_num_players_per_group=int(new_config_params['maxNumberOfPlayersPerGroup']),
-                # preferred_num_players_per_group=int(new_config_params['preferredNumberOfPlayersPerGroup']),
+                min_num_players_per_group=int(new_config_params['minNumPlayersPerGroup']),
+                max_num_players_per_group=int(new_config_params['maxNumPlayersPerGroup']),
+                # preferred_num_players_per_group=int(new_config_params['preferredNumPlayersPerGroup']),
                 joint_player_constraints=new_config_params['jointPlayerConstraints'],
                 separated_player_constraints=new_config_params['separatedPlayerConstraints'])
 
@@ -1582,18 +1607,18 @@ class Views:  # acts as a namespace
                 interactions_profile_template=int_prof_template.generate_copy(),
                 quality_eval_alg=sel_quality_eval_alg,
 
-                min_num_players_per_group=int(new_config_params['minNumberOfPlayersPerGroup']),
-                max_num_players_per_group=int(new_config_params['maxNumberOfPlayersPerGroup']),
+                min_num_players_per_group=int(new_config_params['minNumPlayersPerGroup']),
+                max_num_players_per_group=int(new_config_params['maxNumPlayersPerGroup']),
                 # preferred_num_players_per_group=int(new_config_params['preferredNumberOfPlayersPerGroup']),
 
                 initial_population_size=int(new_config_params['initialPopulationSize']),
-                num_evolutions_per_iteration=int(new_config_params['numberOfEvolutionsPerIteration']),
+                num_evolutions_per_iteration=int(new_config_params['numEvolutionsPerIteration']),
 
-                prob_cross=float(new_config_params['probOfCross']),
-                prob_mut=float(new_config_params['probOfMutation']),
+                prob_cross=float(new_config_params['probCross']),
+                prob_mut=float(new_config_params['probMutation']),
 
-                prob_mut_config=float(new_config_params['probOfMutationConfig']),
-                prob_mut_profiles=float(new_config_params['probOfMutationGIPs']),
+                prob_mut_config=float(new_config_params['probMutationConfig']),
+                prob_mut_profiles=float(new_config_params['probMutationProfiles']),
 
                 num_children_per_iteration=int(new_config_params['numChildrenPerIteration']),
                 num_survivors=int(new_config_params['numSurvivors']),
@@ -1607,11 +1632,11 @@ class Views:  # acts as a namespace
                 player_model_bridge=player_bridge,
                 interactions_profile_template=int_prof_template.generate_copy(),
                 quality_eval_alg=sel_quality_eval_alg,
-                pref_est_alg=sel_pers_est_alg,
+                pref_est_alg=sel_pref_est_alg,
 
-                min_num_players_per_group=int(new_config_params['minNumberOfPlayersPerGroup']),
-                max_num_players_per_group=int(new_config_params['maxNumberOfPlayersPerGroup']),
-                # preferred_num_players_per_group=int(new_config_params['preferred_num_players_per_group']),
+                min_num_players_per_group=int(new_config_params['minNumPlayersPerGroup']),
+                max_num_players_per_group=int(new_config_params['maxNumPlayersPerGroup']),
+                # preferred_num_players_per_group=int(new_config_params['preferredNumPlayersPerGroup']),
 
                 joint_player_constraints=new_config_params['jointPlayerConstraints'],
                 separated_player_constraints=new_config_params['separatedPlayerConstraints'])
@@ -1621,10 +1646,10 @@ class Views:  # acts as a namespace
                 player_model_bridge=player_bridge,
                 interactions_profile_template=int_prof_template.generate_copy(),
                 quality_eval_alg=sel_quality_eval_alg,
-                pref_est_alg=sel_pers_est_alg,
+                pref_est_alg=sel_pref_est_alg,
 
-                min_num_players_per_group=int(new_config_params['minNumberOfPlayersPerGroup']),
-                max_num_players_per_group=int(new_config_params['maxNumberOfPlayersPerGroup']))
+                min_num_players_per_group=int(new_config_params['minNumPlayersPerGroup']),
+                max_num_players_per_group=int(new_config_params['maxNumPlayersPerGroup']))
 
         # switch config. gen. algs
         selected_gen_alg_id = new_config_params['selectedGenAlgId']
@@ -1646,8 +1671,8 @@ class Views:  # acts as a namespace
                                 configs_gen_alg=sel_configs_gen_alg,
                                 name='GIMME')
 
-        if new_config_params['is_bootstrapped'] == 'true':
-            adaptation.bootstrap(num_bootstrap_iterations=int(new_config_params['num_bootstrap_iterations']))
+        if new_config_params['isBootstrapped'] == 'true':
+            adaptation.bootstrap(num_bootstrap_iterations=int(new_config_params['numBootstrapIterations']))
 
         curr_config_params = new_config_params
         return HttpResponse('ok')
@@ -1660,7 +1685,6 @@ class Views:  # acts as a namespace
                 request_info = request.POST
                 form = CreateTaskForm(request_info, request.FILES)
                 if form.is_valid():
-
                     task = form.save(commit=False)
 
                     task.profile = json.dumps(InteractionsProfile(
@@ -1809,7 +1833,6 @@ class Views:  # acts as a namespace
             username = request.POST['username']
 
             user_info = {}
-            # userState['myStateGrid'] = playerBridge.getPlayerStateGrid(username)
             user_info['fullname'] = player_bridge.get_player_full_name(username)
             user_info['email'] = player_bridge.get_player_email(username)
             user_info['characteristics'] = player_bridge.get_player_curr_characteristics(username)
@@ -1851,7 +1874,7 @@ class Views:  # acts as a namespace
             curr_free_tasks = Views.fetch_tasks_from_id(task_object).content.decode('utf-8')
 
             new_session_state = {'timestamp': time.time(),
-                                 'simulationWeek': sim_state['simulationWeek'],
+                                 'simWeek': sim_state['simWeek'],
                                  'simStudentToEvaluate': sim_state['simStudentToEvaluate'],
                                  'simUnavailableStudent': sim_state['simUnavailableStudent'],
                                  'simStudentX': sim_state['simStudentX'],
@@ -2071,7 +2094,7 @@ class Views:  # acts as a namespace
     def share_link_sim(request):
         if request.method == 'POST':
             server_state_model_bridge.set_sim_is_link_shared(True)
-            for _ in range(int(request.POST['num_users_to_generate'])):
+            for _ in range(int(request.POST['numUsersToGenerate'])):
                 time.sleep(random.uniform(float(request.POST['minDelay']), float(request.POST['maxDelay'])))
 
                 name = "".join(random.choice(names) + " " + random.choice(names))
@@ -2142,7 +2165,7 @@ class Views:  # acts as a namespace
 
                 http_request.POST['taskId'] = task_ids[i]
                 http_request.POST['description'] = description
-                http_request.POST['difficulty'] = minReqAbility[i]
+                http_request.POST['difficulty'] = min_req_ability[i]
                 http_request.POST['taskW'] = task_w
                 http_request.POST['initDate'] = str_init_date[i]
                 http_request.POST['finalDate'] = str_final_date[i]

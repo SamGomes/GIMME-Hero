@@ -9,11 +9,11 @@
 			<div class="column"></div>
 			<div class="panel panel-block column">
 
-				{% if form.errors or profile_form.errors %}
+				{% if form.errors or profileForm.errors %}
 					<div id="error_userRegistration" class="section hero is-danger is-centered has-text-centered">
 						<label class="label subtitle is-4 is-white">Registry Fail! Errors: </label>
 						<p class="is-4 is-white">{{form.errors}} </p>
-						<p class="is-4 is-white">{{profile_form.errors}} </p>
+						<p class="is-4 is-white">{{profileForm.errors}} </p>
 					</div>
 				{% endif %}
 
@@ -23,13 +23,11 @@
 
 					<div class="subtitle">Account Registration</div>
 					<p>* fields are mandatory</p>
-		
-
 
 					<div class="field requiredFormField">
-						<div class="label">{{profile_form.avatar.label}}</div>
+						<div class="label">{{profileForm.avatar.label}}</div>
 						<p class="control has-icons-left">
-							{{profile_form.avatar}}
+							{{profileForm.avatar}}
 						</p>
 					</div>
 
@@ -43,9 +41,9 @@
 
 
 					<div class="field requiredFormField">
-						<div class="label">{{profile_form.role.label}}*</div>
+						<div class="label">{{profileForm.role.label}}*</div>
 						<p class="control has-icons-left">
-							{{profile_form.role}}
+							{{profileForm.role}}
 						</p>
 					</div>
 
@@ -72,30 +70,30 @@
 					</div>
 
 					<div class="field requiredFormField">
-						<div class="label">{{profile_form.fullname.label}}*</div>
+						<div class="label">{{profileForm.fullname.label}}*</div>
 						<p class="control has-icons-left">
-							{{profile_form.fullname}}
+							{{profileForm.fullname}}
 						</p>
 					</div>
 
 					<div class="field requiredFormField">
-						<div class="label">{{profile_form.age.label}}*</div>
+						<div class="label">{{profileForm.age.label}}*</div>
 						<p type="number" class="control has-icons-left">
-							{{profile_form.age}}
+							{{profileForm.age}}
 						</p>
 					</div>
 
 					<div class="field requiredFormField">
-						<div class="label">{{profile_form.gender.label}}*</div>
+						<div class="label">{{profileForm.gender.label}}*</div>
 						<p class="control has-icons-left">
-							{{profile_form.gender}}
+							{{profileForm.gender}}
 						</p>
 					</div>
 
 					<div class="field requiredFormField">
-						<div class="label">{{profile_form.description.label}}</div>
+						<div class="label">{{profileForm.description.label}}</div>
 						<p class="control has-icons-left">
-							{{profile_form.description}}
+							{{profileForm.description}}
 						</p>
 					</div>
 

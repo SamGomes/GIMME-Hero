@@ -530,12 +530,12 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             .each(function(i,e){
                 d3.select(e).text(node => {
                     if(canNodeBeExpanded(d, node)){
-                        var fullName = node.userState.fullName.split(' ');
+                        var fullname = node.userState.fullname.split(' ');
                         var nameInitials = '';
-                        if(fullName.length == 1){
-                            nameInitials = fullName[0][0];
+                        if(fullname.length == 1){
+                            nameInitials = fullname[0][0];
                         }else{
-                            nameInitials = fullName[0][0] + fullName[fullName.length - 1][0];
+                            nameInitials = fullname[0][0] + fullname[fullname.length - 1][0];
                         }
                         return nameInitials;
                     }
@@ -840,7 +840,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
 
         node = {}
         node['Student ID'] = originalNode.userId;
-        node['Student Name'] = originalNode.userState.fullName;
+        node['Student Name'] = originalNode.userState.fullname;
         node['Email'] = originalNode.userState.email;
 
         if(!isForStudent){

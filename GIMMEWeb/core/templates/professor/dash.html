@@ -328,7 +328,7 @@
 
 
 
-				<!-- <div class='panel-block' style='display: block;'>
+				<div class='panel-block' style='display: block;'>
 					<div class='columns is-mobile is-multiline is-mobile has-tooltip-arrow' data-tooltip='This feature is optional, and still does not function as it should.'>
 						<div class='column is-full'>
 							<p>Bootstrap</p>
@@ -349,7 +349,7 @@
 						</div>
 						
 					</div>
-				</div> -->
+				</div>
 
 			</div>
 		 </section>
@@ -576,7 +576,7 @@
 							<div class='dropdown has-tooltip-arrow' data-tooltip="These algorithms are used to evaluate the quality of the groups that can be formed">
 								<div class='dropdown-trigger'>
 									<button class='button' aria-haspopup='true' aria-controls='dropdownMenu2'>
-										<span id='selectedRegAlgId_professor_dash' >Quality Estimation Alg.</span>
+										<span id='selectedQualityEvalAlgId_professor_dash' >Quality Estimation Alg.</span>
 										<span class='icon is-small'>
 											<i class='fas fa-angle-down' aria-hidden='true'></i>
 										</span>
@@ -1004,7 +1004,7 @@
 				<div class='form-group'>
 					<label class='column is-4 control-label' for='textinput'>Num NNs</label>  
 					<div class='control'>
-						<input  id='numNNsId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>
+						<input  id='kId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>
 					</div>
 				
 					<label class='column is-4 control-label' for='textinput'>Ability</label>  
@@ -1035,7 +1035,7 @@
 						<div class="column">
 							<label class='column is-4 control-label' for='textinput'>Num NNs</label>  
 							<div class='control'>
-								<input  id='synergiesNumNNsId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>
+								<input  id='synergiesKId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>
 							</div>
 						
 							<label class='column is-4 control-label' for='textinput'>Ability</label>  
@@ -1085,7 +1085,7 @@
 				<div class='form-group'>
 					<label class='column is-4 control-label' for='textinput'>Num NNs</label>  
 					<div class='control'>
-						<input  id='numNNsId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>
+						<input  id='kId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>
 					</div>
 				
 					<label class='column is-4 control-label' for='textinput'>Ability</label>  
@@ -1201,19 +1201,19 @@ crossorigin='anonymous'></script>
 		var currTimestamp = -1;
 		var currAdaptationConfig = {
 							'selectedGenAlgId': '',
-							'selectedRegAlgId': '',
+							'selectedQualityEvalAlgId': '',
 							
-							'numNNs': '',
+							'k': '',
 
-							'synergiesNumNNs': '',
+							'synergiesK': '',
 							'synergiesQualityWeightsAb': '',
 							'synergiesQualityWeightsEng': '',
 
 							'diversityWeight' : '',
 
-							// 'minNumberOfPlayersPerGroup': '',
-							// 'maxNumberOfPlayersPerGroup': '',
-							'preferredNumberOfPlayersPerGroup': '',
+							// 'minNumPlayersPerGroup': '',
+							// 'maxNumPlayersPerGroup': '',
+							'preferredNumPlayersPerGroup': '',
 							'qualityWeightsAb': '',
 							'qualityWeightsEng': '',
 							'playerWindow': '',
@@ -1223,11 +1223,11 @@ crossorigin='anonymous'></script>
 							'temperatureDecay': '',
 
 							'initialPopulationSize': '',
-							'probOfCross': '',
-							'probOfMutation': '',
-							'probOfMutationConfig': '',
-							'probOfMutationGIPs': '',
-							'numberOfEvolutionsPerIteration': '',
+							'probCross': '',
+							'probMutation': '',
+							'probMutationConfig': '',
+							'probMutationProfiles': '',
+							'numEvolutionsPerIteration': '',
 							'numChildrenPerIteration': '',
 							'numSurvivors': '',
 
@@ -1396,7 +1396,7 @@ crossorigin='anonymous'></script>
 						{
 							type: 'POST',
 							url: '/shareLinkSim/',
-							data: {"numUsersToGenerate": 12, "minDelay": 0.2, "maxDelay": 0.5}
+							data: {"numUsersToGenerate": 20, "minDelay": 0.1, "maxDelay": 0.1}
 						}
 						);
 					});
@@ -2216,12 +2216,12 @@ crossorigin='anonymous'></script>
 			
 			newAdaptationConfig = {
 				'selectedGenAlgId': $('#selectedGenAlgId_professor_dash').text(), 
-				'selectedRegAlgId': $('#selectedRegAlgId_professor_dash').text(),
+				'selectedQualityEvalAlgId': $('#selectedQualityEvalAlgId_professor_dash').text(),
 
 
-				'numNNs': $('#numNNsId_professor_dash').val(),
+				'k': $('#kId_professor_dash').val(),
 				
-				'synergiesNumNNs': $('#synergiesNumNNsId_professor_dash').val(),
+				'synergiesK': $('#synergiesKId_professor_dash').val(),
 				'synergiesQualityWeightsAb': $('#synergiesQualityWeightsAbId_professor_dash').val(),
 				'synergiesQualityWeightsEng': $('#synergiesQualityWeightsEngId_professor_dash').val(),
 
@@ -2229,9 +2229,9 @@ crossorigin='anonymous'></script>
 				
 				// 'minNumberOfPlayersPerGroup': $('#minNumberOfPlayersPerGroupId_professor_dash').val(),
 				// 'maxNumberOfPlayersPerGroup': $('#maxNumberOfPlayersPerGroupId_professor_dash').val(),
-				'preferredNumberOfPlayersPerGroup': $('#preferredNumberOfPlayersPerGroupId_professor_dash').val(),
-				'minNumberOfPlayersPerGroup': $('#groupSizeSlider_professor_dash').slider("values", 0),
-				'maxNumberOfPlayersPerGroup': $('#groupSizeSlider_professor_dash').slider("values", 1),
+				'preferredNumPlayersPerGroup': $('#preferredNumPlayersPerGroupId_professor_dash').val(),
+				'minNumPlayersPerGroup': $('#groupSizeSlider_professor_dash').slider("values", 0),
+				'maxNumPlayersPerGroup': $('#groupSizeSlider_professor_dash').slider("values", 1),
 				'qualityWeightsAb': $('#qualityWeightsAbId_professor_dash').val(),
 				'qualityWeightsEng': $('#qualityWeightsEngId_professor_dash').val(),
 				'playerWindow': $('#playerWindowId_professor_dash').val(),
@@ -2241,11 +2241,11 @@ crossorigin='anonymous'></script>
 				'temperatureDecay': $('#temperatureDecay_professor_dash').val(),
 
 				'initialPopulationSize': $('#initialPopulationSize_professor_dash').val(),
-				'probOfCross': $('#probOfCross_professor_dash').val(),
-				'probOfMutation': $('#probOfMutation_professor_dash').val(),
-				'probOfMutationConfig': $('#probOfMutationConfig_professor_dash').val(),
-				'probOfMutationGIPs': $('#probOfMutationGIPs_professor_dash').val(),
-				'numberOfEvolutionsPerIteration': $('#numberOfEvolutionsPerIteration_professor_dash').val(),
+				'probCross': $('#probOfCross_professor_dash').val(),
+				'probMutation': $('#probOfMutation_professor_dash').val(),
+				'probMutationConfig': $('#probOfMutationConfig_professor_dash').val(),
+				'probMutationProfiles': $('#probOfMutationGIPs_professor_dash').val(),
+				'numEvolutionsPerIteration': $('#numberOfEvolutionsPerIteration_professor_dash').val(),
 				'numChildrenPerIteration': $('#numChildrenPerIteration_professor_dash').val(),
 				'numSurvivors': $('#numSurvivors_professor_dash').val(),
 				
@@ -2257,6 +2257,7 @@ crossorigin='anonymous'></script>
 				'isBootstrapped': $('#precomputeBootstrapId_professor_dash').prop("checked"),
 				'numBootstrapIterations': $('#numBootstrapIterationsId_professor_dash').val()
 			};
+            console.log(newAdaptationConfig);
 			currAdaptationConfig = newAdaptationConfig;
 			$.ajax(
 				{
