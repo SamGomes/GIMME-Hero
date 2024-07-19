@@ -17,16 +17,32 @@
 			</div>
 		</section>
 	</div>
-	
-	
-	<div id='dashboard'>
+    
+	<div id='dashboard_professor_dash'>
+        <section class='section' style="position: relative; z-index: 1000">
+            <div class='panel animated zoomIn'>
+                <div class='panel-heading'>
+                    <div class='columns is-mobile is-vcentered'>
+                        <div class='column'>
+                            Dash Controls
+                        </div>
+                    </div>
+                </div>
+                <div class='panel-block'>
+                    <div class='button' id='updateDash_professor_dash' style='height:100%'
+                         data-tooltip="Fetches server data and updates all information on the dash.">
+                        Update Dash &nbsp;<i class="fa-solid fa-arrows-rotate"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
 		<section class='section' style="position: relative; z-index: 1000">
 			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
 					<div class='columns is-mobile is-vcentered'>
 						<div class='column'>
 							Tutorial
-							
 							<div class='is-pulled-right'>
 								<div class='button minimizerButton'></div>
 							</div>
@@ -36,7 +52,7 @@
 				<div class='panel-block'>
 					
 					<!-- <div class='columns is-mobile is-centered' style="width: 100%;">
-						<div class='column subtitle is-fullwidth has-tooltip-arrow' style='color:gray;' data-tooltip='placeholder'>Course Timeline</div>
+						<div class='column subtitle is-fullwidth has-tooltip-arrow' style='' data-tooltip='placeholder'>Course Timeline</div>
 					</div> -->
 					<div class=' is-mobile is-centered' style="width: 100%;">
 						<div class='column' id='simulationState_professor_dash'></div>
@@ -75,12 +91,11 @@
 					</div> 
 				</div>
 				<div class='panel-block'>
-					<div class='button' id='resetSimulationButton_professor_dash'>Reset Tutorial</div>		
-				</div>		
-		</section>
-		
-
-
+					<div class='button' id='resetSimulationButton_professor_dash'>Reset Tutorial</div>
+                </div>
+            </div>
+        </section>
+        
 		<section class='section danger'>
 			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
@@ -96,7 +111,7 @@
 				<!-- <div class='panel-block'>
 					<div class='column is-mobile'>
 						<div class='dash-cell-box'  style='border-style:none;'>
-							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Tags</div>
+							<div class='subtitle is-5 has-tooltip-arrow' style=''>Tags</div>
 
 							<button  class ="button" id="addTagButton">Add Tag</button>
 
@@ -121,7 +136,7 @@
 					<div class='column is-half is-offset1 is-mobile'>
 						<div class='dash-cell-box'>
 							
-							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray; margin-bottom: 0; margin-bottom: 1.5rem;'>Registered Students</div>
+							<div class='subtitle is-5 has-tooltip-arrow' style=' margin-bottom: 0; margin-bottom: 1.5rem;'>Registered Students</div>
 
 
 							<div class='student-info-box'>
@@ -163,7 +178,7 @@
 					<div class='column is-half is-offset1 is-mobile'>
 						<div class='dash-cell-box' style="margin-bottom: 1.7rem;">
 							<div style="display: flex;">
-								<div class='subtitle is-5 has-tooltip-right' style='color:gray; flex: 1' data-tooltip="Tags help quickly select and deselect groups of students. There is a set of pre-defined tags. &#13;&#10;You can also create your own tags and assign them to chosen students.">Tags</div>
+								<div class='subtitle is-5 has-tooltip-right' style=' flex: 1' data-tooltip="Tags help quickly select and deselect groups of students. There is a set of pre-defined tags. &#13;&#10;You can also create your own tags and assign them to chosen students.">Tags</div>
 								<div style="flex:12"></div>
 							</div>
 							<div style="display: inline-flex; gap: 0.2em;">
@@ -190,7 +205,7 @@
 
 						<div class='dash-cell-box'>
 
-							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the students, selected from all available students, to be considered for the next group management iteration.'>Selected Students</div>
+							<div class='subtitle is-5 has-tooltip-arrow' style='' data-tooltip='These are the students, selected from all available students, to be considered for the next group management iteration.'>Selected Students</div>
 
 							<div class='table-container'>
 								<div class='table' style='margin:2em;' id='selectedUsersTable_professor_dash'></div>
@@ -225,7 +240,7 @@
 				<div class='panel-block'>
 					<div class='column is-half is-offset1 is-mobile'>
 						<div class='dash-cell-box'>
-							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Registered Tasks</div>
+							<div class='subtitle is-5 has-tooltip-arrow' style=''>Registered Tasks</div>
 							<div class='table-container'>
 								<div class='table' style='margin:2em;' id='freeTasksTable_professor_dash'></div>
 							</div>
@@ -233,7 +248,7 @@
 					</div>
 					<div class='column is-half is-offset1 is-mobile'>
 						<div class='dash-cell-box'>
-							<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;' data-tooltip='These are the tasks, selected from all available tasks, to be considered for the next group management iteration.'>Selected Tasks</div>
+							<div class='subtitle is-5 has-tooltip-arrow' style='' data-tooltip='These are the tasks, selected from all available tasks, to be considered for the next group management iteration.'>Selected Tasks</div>
 							<div class='table-container'>
 								<div class='table' style='margin:2em;' id='selectedTasksTable_professor_dash'></div>
 							</div>
@@ -251,9 +266,7 @@
 				</div>
 			</div>
 		</section>
-
-
-
+        
 		<section class='section'>
 			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
@@ -353,8 +366,7 @@
 
 			</div>
 		 </section>
-
-
+        
 		<section class='section' style='position: relative; z-index:10000'> 
 			<div class="panel animated zoomIn">
 				<div class="panel-heading">
@@ -706,8 +718,7 @@
 				</div> -->
 			</div>
 		</section>
-
-
+        
 		<section class='section'>
 			<div class='panel animated zoomIn'>
 				<div class='panel-heading'>
@@ -720,7 +731,7 @@
 						</div>
 					</div>
 				</div>
-					
+                
 				<div class='panel-block panel-block-borderless'>
 					<div class='columns is-mobile is-fullwidth'>
 						<div class='column is-full'>
@@ -844,10 +855,6 @@
 			</div>
 		</section>
 		
-		
-			
-			
-		
 		<!-- modals -->
 		<div class="modal" id="modalPRS_professor_dash">
 			<div class="modal-background"></div>
@@ -863,8 +870,7 @@
 			</div>
 			<button class="modal-close is-large" aria-label="close"></button>
 		</div>
-		
-		
+        
 		<div class="modal" id="modalAnnealedPRS_professor_dash">
 			<div class="modal-background"></div>
 			<div class="modal-content">
@@ -886,8 +892,7 @@
 			</div>
 			<button class="modal-close is-large" aria-label="close"></button>
 		</div>
-		
-		
+        
 		<div class="modal" id="modalEvolutionary_professor_dash">
 			<div class="modal-background"></div>
 			<div class="modal-content">
@@ -940,8 +945,7 @@
 			</div>
 			<button class="modal-close is-large" aria-label="close"></button>
 		</div>
-		
-		
+        
 		<div class='modal' id='modalODPIP_professor_dash'>
 			<div class='modal-background'></div>
 			<div class='modal-content'>
@@ -954,14 +958,14 @@
 				
 				<div class='panel-block dash-cell-box has-tooltip-arrow' data-tooltip="To create a constraint, first select two or more students, and then the type of constraint (if they must be joint or separated). Afterwards, click on the '+' button to add the new constraint.">
 					<div class='column is-two-thirds'>
-						<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Students</div>
+						<div class='subtitle is-5 has-tooltip-arrow' style=''>Students</div>
 						<div class='table-container'>
 							<div class='table' style='margin:2em;' id='cstUsersODPIPTable_professor_dash'></div>
 						</div>
 					</div>
 				
 					<div class='column'>
-						<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Type</div>
+						<div class='subtitle is-5 has-tooltip-arrow' style=''>Type</div>
 						<div class='table-container'>
 							<div class='table' style='margin:2em;' id='cstTypeODPIPTable_professor_dash'></div>
 						</div>
@@ -970,7 +974,7 @@
 				
 				<div class='panel-block dash-cell-box'>
 					<div class='column'>
-						<div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Constraints</div>
+						<div class='subtitle is-5 has-tooltip-arrow' style=''>Constraints</div>
 						<div class='table-container'>
 							<div class='table' style='margin:2em;' id='cstODPIPTable_professor_dash'>
 							</div>
@@ -993,8 +997,7 @@
 			
 			<button class="modal-close is-large" aria-label="close"></button>
 		</div>
-		
-		
+        
 		<div class="modal" id="modalKNN_professor_dash">
 			<div class="modal-background"></div>
 			
@@ -1118,14 +1121,8 @@
 			
 			<button class="modal-close is-large" aria-label="close"></button>
 		</div>
-		
-		
-		
+        
 		{% csrf_token %}
-
-		
-		
-		
 	</div>
 	{% include 'common/footer.html' %}
 </body>
@@ -2123,7 +2120,10 @@ crossorigin='anonymous'></script>
 		};
 
 		fetchServerData();
-		setInterval(fetchServerData, 500);
+		$('#updateDash_professor_dash').click(function(){
+            fetchServerData()
+        });
+        {#setInterval(fetchServerData, 500);#}
 
 
 		var buildPlots = function(currServerState){
