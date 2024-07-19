@@ -30,12 +30,14 @@
       <span></span>
     </div>
     
-    </div>
-    
     {%if debug%}
       <div class='button' id='initServerButton_header'> Init Server</div>
       <div class='button' id='simulateReactionButton_header'> Simulate Players Reaction</div> 
     {%endif%}
+    <div class='button' id='updateDash_header' 
+         data-tooltip="Fetches server data and updates all information on the dash.">
+        Update Dash &nbsp;<i class="fa-solid fa-arrows-rotate"></i>
+    </div>
     
     <div id='nav-menu' class='navbar-menu'>
     
@@ -81,7 +83,7 @@
       
       <div class='navbar-item is-hidden-touch'>
         <!-- sets placeholder if no image is found for some reason -->
-        <img class='circular-img circular-img-format' onError='this.onerror=null;this.src='../static/media/images/userAvatars/avatarPH.png';' src='{{ user.userprofile.avatar.url }}'>
+        <img class='circular-img circular-img-format'  src='{{ user.userprofile.avatar.url }}'>
       </div>
     
       <div class='navbar-item has-dropdown is-hoverable is-hidden-desktop'>
@@ -181,4 +183,6 @@
               url: '/simulateReaction/'
             });
   });
+
+  $('#updateDash_header').hide();
 </script>

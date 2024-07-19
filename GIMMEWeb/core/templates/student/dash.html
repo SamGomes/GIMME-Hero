@@ -256,7 +256,7 @@
 	    	var oldTasks = {};
 	    	var oldGrade = {};
 
-	    	var updateData = function(){
+	    	var fetchServerData = function(){
 				
 	    		$.ajax(
 	    		{
@@ -355,8 +355,10 @@
 
 			}
 
-			updateData();
-			setInterval(updateData, 1000);
+			fetchServerData();
+            $('#updateDash_header').show(500).click(function(){
+                fetchServerData()
+            });
 
 
 			var resFr = new FileReader();

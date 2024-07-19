@@ -165,7 +165,9 @@ $(document).ready(function(){
         var currentScroll = parseFloat($(document).scrollTop());
     
         // do linear interpolation for animations using translations
-        $(".panel").css("transform", "translateY(" + parseFloat(-currentScroll * 0.1) + "px)");
+        var ratio = currentScroll/document.body.scrollHeight;
+        $(".panel").css("transform", "translateY(" + parseFloat(-currentScroll* 0.4) + "px)");
+        {#$(".panel").css("transform", "scale(" + parseFloat(($(this).position()[0] - currentScroll)/document.body.scrollHeight)+")");#}
     },41);
 
     {#background animation#}

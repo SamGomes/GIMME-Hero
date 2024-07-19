@@ -1,11 +1,11 @@
 
 
 :root {
-  --bkg-color: #d100ff;
-  --bkg-color-elements: #ff4400;
-  --bkg-color-elements-2: #ff8181;
-  --highlight-color: #5eff00;
-  --text-color: #003cff;
+  --bkg-color: #0186fd;
+  --bkg-color-elements: rgba(0, 62, 121, 0.8);
+  --bkg-color-elements-2: rgba(149, 203, 255, 0.8);
+  --highlight-color: #ffffff;
+  --text-color: #000c25;
 }
 
 
@@ -60,44 +60,43 @@ body {
   background-attachment: fixed; 
   border-radius: 25px;
   margin: 40px;
-  background-color: var(--bkg-color);
-}
-.section{
-  border-radius: 20px;
+  background-color: var(--bkg-color-elements-2);
+  color:var(--text-color);
 }
 
-.panel-heading:first-child {
-  border-top: 1px solid #def0ff;
-  }
+.section{
+  width: 100%;
+  padding: 40px 40px 40px 60px;
+}
 
 .panel-heading {
   font-weight: 500; 
   border: none;
-  color: white;
+  color: var(--highlight-color);
   -webkit-mask-image: linear-gradient(180deg, var(--bkg-color-elements-2), var(--bkg-color-elements));
-  border-radius: 15px 15px 0px 0px;
   background-color: var(--bkg-color-elements);
-  padding-left: 1.5rem;
-  padding-top: 1rem;
+  /*padding-left: 1.5rem;*/
+  /*padding-top: 1rem;*/
 }
 
 .panel-block {
   background-color: var(--bkg-color-elements-2);
+  color: var(--text-color);
   border: none;
 }
 
 .panel-footer {
   font-weight: 450; 
   color: #373f51;
-  border-radius: 0px 0px 15px 15px ;
   background-color: var(--bkg-color-elements);
 }
 
 .button{
   border-radius: 50px;
-  border: 3px;
+  border-width: 3px;
   color: var(--text-color);
   background-color: var(--bkg-color-elements-2);
+  border-color: var(--text-color);
   font-weight: bold;
 }
 
@@ -450,4 +449,7 @@ body {
 }
 .table{
   background-color: transparent;
+}
+.list-item:not(a){
+  color: var(--text-color);
 }
