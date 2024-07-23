@@ -10,7 +10,7 @@
 			<div class='hero-body'>
 				<div class='has-text-centered; slider-content animated zoomIn'>
 					<div>
-						<p class='title is-1 main-text'>Welcome to GIMME-Web, {{request.session.fullName}}</p>
+						<p class='title is-1 main-text'>Welcome to GIMME-Web, {{request.session.username}}</p>
 						<p class='subtitle is-4 main-text'>A Sophisticated Group Interactions Management Tool</p>
 					</div>
 				</div>
@@ -1155,7 +1155,7 @@ crossorigin='anonymous'></script>
 <script>
 
 	$(document).ready(function(){
-		
+
 		csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 		function csrfSafeMethod(method) {
     		// these HTTP methods do not require CSRF protection
@@ -1275,7 +1275,9 @@ crossorigin='anonymous'></script>
 
 		dropdownItemsText = [["<a class=\'dropdown-item\'> Share link between students</a>","<a class=\'dropdown-item\'> Simulate task registration </a>"], ["<a class=\'dropdown-item\'> Simulate evaluation of students </a>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> No actions available </div>"]];
 		dropdownItemsUrls = [['/shareLinkSim/', '/taskRegistrationSim/'], ['/evaluateSim/'], ['/simulateReaction/'],['/simulateReaction/'],['/simulateReaction/'],['/simulateReaction/']]
-		var changeSimulationWeek = function(newServerState)
+		
+        {#simulation stuff#}
+        var changeSimulationWeek = function(newServerState)
 		{
 // 			if(currServerState.simWeek == newServerState.simWeek)
 // 				return;
@@ -1455,6 +1457,7 @@ crossorigin='anonymous'></script>
 		}
 	
 	
+        
 		var canComputeAdaptation = function(newServerState){
 			var newTimestamp = newServerState['timestamp'];
 			delete newServerState.timestamp;
@@ -1469,7 +1472,7 @@ crossorigin='anonymous'></script>
 		
 		
 		
-		//synergy tables stuff
+		{#synergy table stuff#}
 		var addSynergyTableLine = function(line, domTable, colElems, isRemovable){
 			var rowContent = $('<div class=\'row columns is-variable\'></div>');
 			if(isRemovable){
@@ -1560,8 +1563,7 @@ crossorigin='anonymous'></script>
 			return retStr;
 			
 		}
-		
-		
+        
 		var generateSynergiesTableFromFile = function(){
 			$.ajax(
 				{
@@ -1587,10 +1589,12 @@ crossorigin='anonymous'></script>
 					data: {'textualTbl': sngTableDomToStr($('#modalSynergiesTable_professor_dash'))}
 				}
 			);
+            $('#updateDash_header').click();
 		});
 		
 		$('#modalSynergiesConfigButton_professor_dash').click(function(){
 			generateSynergiesTableFromFile();
+            $('#updateDash_header').click();
 		});
 
 
@@ -1796,7 +1800,10 @@ crossorigin='anonymous'></script>
 		};
 
 		
-		var generateDashTableFromArray = function(canAdd, idArray, nameArray, tagClass, moveButtonIconClass, moveElementUrl, moveElementArg, addElementURL, addElementArg, deleteElementUrl, deleteElementArg, editElementArg, editElementUrlTask, editElementUrlStudent){
+		var generateDashTableFromArray = function(canAdd, idArray, nameArray, tagClass, moveButtonIconClass, 
+                                                  moveElementUrl, moveElementArg, addElementURL, addElementArg, 
+                                                  deleteElementUrl, deleteElementArg, 
+                                                  editElementArg, editElementUrlTask, editElementUrlStudent){
 		    var table = $('<div></div>');
 			var addButtonDiv = $('<div></div>');
 
@@ -1805,13 +1812,13 @@ crossorigin='anonymous'></script>
 		        var tag = undefined;
 
 		        if(i >= 0){
-		        	tag = $("<span class='context-menu pointer' style='margin:0.1em; z-index:1000;'></span>")
+		        	tag = $(`<span class='context-menu pointer' style='margin:0.1em; z-index:1000;'></span>`)
 						.text(nameArray[i])
-						.attr('onclick', "previewStudentInfo('" + nameArray[i] + "')");
+						{#.attr('onclick', "previewStudentInfo('" + nameArray[i] + "')");#}
 
 		        	if(deleteElementUrl!=""){
 			            var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this task'></div>");
-			            deleteButton.append('<form method=\'GET\' action=\''+deleteElementUrl+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+deleteElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-trash pointer\'></i></button></form>');
+			            deleteButton.append(`<form method='GET' action='${deleteElementUrl}'>{% csrf_token %}<input type='hidden' name='${deleteElementArg}' value='${idArray[i]}'></input><button type='submit' style='border: none; background-color:transparent; color:white' class='button pointer'><i class='fas fa-trash pointer'></i></button></form>`);
 			            tag.append(deleteButton);
 		            }
 
@@ -1829,7 +1836,7 @@ crossorigin='anonymous'></script>
 
 		        	if(moveElementUrl!=""){
 			            var moveButton = $("<div class='button is-rounded is-small pointer' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Select/Deselect this student/task for the next iteration'></div>");
-			            moveButton.append("<i class='fas "+moveButtonIconClass+" pointer'></i>");
+			            moveButton.append(`<i class='fas ${moveButtonIconClass} pointer'></i>`);
 			            moveButton.click(function() {
 			                var data = {};
 			                data[moveElementArg] = $($(this)[0].parentElement).attr("elemID");
@@ -1838,6 +1845,7 @@ crossorigin='anonymous'></script>
 			                    type: 'POST',
 			                    data: data            
 			                });
+                            $('#updateDash_header').click();
 			            })
 			            tag.append(moveButton);
 					}
@@ -1854,8 +1862,8 @@ crossorigin='anonymous'></script>
 
 		        }else {
 		        	if(addElementURL!="" && canAdd){
-		        		var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Add new task'></div>");
-			            addButton.append('<form method="POST" action=\''+addElementURL+'\'>{% csrf_token %}<input type=\'hidden\' name=\''+addElementArg+'\' value=\''+idArray[i]+'\'></input><button type=\'submit\' style=\'border: none; background-color: transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-plus-circle\'></i></button></form>');
+		        		var addButton = $(`<div class='button is-rounded is-small pointer has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Add new task'></div>`);
+			            addButton.append(`<form method="POST" action='${addElementURL}'>{% csrf_token %}<input type='hidden' name='${addElementArg}' value='${idArray[i]}'></input><button type='submit' style='border: none; background-color: transparent; color:white' class='button pointer'><i class='fas fa-plus-circle'></i></button></form>`);
 		        	
 		        		tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'>").text(nameArray[i]);
 			            tag.append(addButton);
@@ -1896,6 +1904,7 @@ crossorigin='anonymous'></script>
 
 		$('input[name=\'studentPerformanceScaleType\']').change(function(){
 			updateGroupsPlotScaleCallback();
+            $('#updateDash_header').click();
         });
 
 		var fetchServerData = function(){
@@ -2105,7 +2114,12 @@ crossorigin='anonymous'></script>
 
 		fetchServerData();
 		$('#updateDash_header').show(500).click(function(){
-            fetchServerData()
+            var color = $(this).css('background-color');
+            console.log($(this));
+            $(this).children()[0].animate({'rotate':'360deg'},500);
+            $(this).animate({'background-color':'green'},500);
+            $(this).animate({'background-color':color},500);
+            fetchServerData();
         });
         {#setInterval(fetchServerData, 500);#}
 
@@ -2167,6 +2181,7 @@ crossorigin='anonymous'></script>
 			);
 
 			updateGroupsPlotScaleCallback();
+            
 		}
 
 		var startAdaptation = function(){
@@ -2269,10 +2284,12 @@ crossorigin='anonymous'></script>
 		$('#loadAndStartAdaptation_professor_dash').click(function(){
 			$('#loadAndStartAdaptation_professor_dash').addClass("is-loading");
 			loadAndStartAdaptation();
+            $('#updateDash_header').click();
 		})
 		$('#forceStartAdaptation_professor_dash').click(function(){
 			$('#forceStartAdaptation_professor_dash').addClass("is-loading");
 			startAdaptation();
+            $('#updateDash_header').click();
 		})
 		$('#addAllUsers_professor_dash').click(function(){
 			$.ajax(
@@ -2281,6 +2298,7 @@ crossorigin='anonymous'></script>
 				url: '/addAllUsersSelected/'
 			}
 			);
+            $('#updateDash_header').click();
 		})
 		$('#clearAllUsers_professor_dash').click(function(){
 			$.ajax(
@@ -2290,6 +2308,7 @@ crossorigin='anonymous'></script>
 				url: '/removeAllUsersSelected/'
 			}
 			);
+            $('#updateDash_header').click();
 		})
 		$('#addAllTasks_professor_dash').click(function(){
 			$.ajax(
@@ -2299,6 +2318,7 @@ crossorigin='anonymous'></script>
 				url: '/addAllTasksSelected/'
 			}
 			);
+            $('#updateDash_header').click();
 		})
 		$('#clearAllTasks_professor_dash').click(function(){
 			$.ajax(
@@ -2307,9 +2327,11 @@ crossorigin='anonymous'></script>
 				url: '/removeAllTasksSelected/'
 			}
 			);
+            $('#updateDash_header').click();
 		})
 		$('#addSpecificPlayer_professor_dash').click(function(){
 			startAdaptation();
+            $('#updateDash_header').click();
 		}).hide()
 
 		$('#rebuildPlot_professor_dash').click(function(){
@@ -2323,6 +2345,7 @@ crossorigin='anonymous'></script>
 					$('input[name="studentPerformanceScaleType"]:checked').val()
 				);
 			}
+            $('#updateDash_header').click();
 		})
 
 		$('#advanceSimulationButton_professor_dash').click(function(){
@@ -2332,6 +2355,7 @@ crossorigin='anonymous'></script>
 				url: '/advanceSimWeek/'
 			}
 			);
+            $('#updateDash_header').click();
 		});
 
 		$('#resetSimulationButton_professor_dash').click(function(){
@@ -2341,11 +2365,13 @@ crossorigin='anonymous'></script>
 				url: '/resetSimWeek/'
 			}
 			);
+            $('#updateDash_header').click();
 		});
 		
 		$("#closeSimulationButton_professor_dash").parent().parent().parent().parent().parent().parent().find(".panel-block").show();
     	$("#closeSimulationButton_professor_dash").click(function(){
-        	var content = $(this).parent().parent().parent().parent().parent().parent().find(".panel-block").hide(350);
+        	$(this).parent().parent().parent().parent().parent().parent().find(".panel-block").hide(350);
+            $('#updateDash_header').click();
 		});
 	});
 	

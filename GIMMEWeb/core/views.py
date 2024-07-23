@@ -380,27 +380,45 @@ class CustomPlayerModelBridge(PlayerModelBridge):
         return server_state_model_bridge.get_curr_selected_users()
 
     def get_all_stored_student_usernames(self):
-        all_users = User.objects.all()
+        all_users = UserProfile.objects.all()
         all_user_ids = []
-        for player in all_users:
-            if 'Student' in player.userprofile.role:
-                all_user_ids.append(player.username)
+        for userprofile in all_users:
+            if 'Student' in userprofile.role:
+                all_user_ids.append(userprofile.user.username)
         return all_user_ids
 
     def get_player_name(self, username):
-        player = User.objects.get(username=username)
-        return player.username
+        try:
+            player = User.objects.get(username=username)
+            return player.username
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def get_player_email(self, username):
-        player = User.objects.get(username=username)
-        return player.email
+        try:
+            player = User.objects.get(username=username)
+            return player.email
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def get_player_curr_profile(self, username):
-        player_info = User.objects.get(username=username).userprofile
-        # print(json.dumps(player, default= lambda o: o.__dict__, sort_keys=True))
-        profile = json.loads(player_info.curr_state)['profile']
-        profile = InteractionsProfile(dimensions=profile['dimensions'])
-        return profile
+        try:
+            player_info = User.objects.get(username=username).userprofile
+            # print(json.dumps(player, default= lambda o: o.__dict__, sort_keys=True))
+            profile = json.loads(player_info.curr_state)['profile']
+            profile = InteractionsProfile(dimensions=profile['dimensions'])
+            return profile
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def get_player_personality(self, username) -> PlayerPersonality:
         try:
@@ -425,168 +443,289 @@ class CustomPlayerModelBridge(PlayerModelBridge):
         return None
 
     def get_player_curr_group(self, username):
-        player_info = User.objects.get(username=username).userprofile
-        group = json.loads(player_info.curr_state)['group']
-        return group
+        try:
+            player_info = User.objects.get(username=username).userprofile
+            group = json.loads(player_info.curr_state)['group']
+            return group
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def get_player_curr_tasks(self, username):
-        player_info = User.objects.get(username=username).userprofile
-        tasks = json.loads(player_info.curr_state)['tasks']
-        return tasks
+        try:
+            player_info = User.objects.get(username=username).userprofile
+            tasks = json.loads(player_info.curr_state)['tasks']
+            return tasks
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def get_player_states_data_frame(self, username):
-        player_info = User.objects.get(username=username).userprofile
-        past_data_frame = json.loads(player_info.past_data_frame)
+        try:
+            player_info = User.objects.get(username=username).userprofile
+            past_data_frame = json.loads(player_info.past_data_frame)
 
-        states = []
-        for state in past_data_frame['states']:
-            characteristics = state['characteristics']
-            characteristics = PlayerCharacteristics(
-                ability=float(characteristics['ability']),
-                engagement=float(characteristics['engagement']))
+            states = []
+            for state in past_data_frame['states']:
+                characteristics = state['characteristics']
+                characteristics = PlayerCharacteristics(
+                    ability=float(characteristics['ability']),
+                    engagement=float(characteristics['engagement']))
 
-            profile = state['profile']
-            profile = InteractionsProfile(dimensions=profile['dimensions'])
+                profile = state['profile']
+                profile = InteractionsProfile(dimensions=profile['dimensions'])
 
-            player_state = PlayerState(profile=profile,
-                                       characteristics=characteristics,
-                                       dist=state['dist'],
-                                       quality=state['quality'])
+                player_state = PlayerState(profile=profile,
+                                           characteristics=characteristics,
+                                           dist=state['dist'],
+                                           quality=state['quality'])
 
-            player_state.creationTime = -1
-            states.append(player_state)
+                player_state.creationTime = -1
+                states.append(player_state)
 
-        trim_alg = json.loads(json.dumps(past_data_frame['trim_alg']))
-        sdf = PlayerStatesDataFrame(
-            states=states,
-            interactions_profile_template=int_prof_template.generate_copy().reset(),
-            trim_alg=ProximitySortPlayerDataTrimAlg(
-                max_num_model_elements=int(trim_alg['_max_num_model_elements']),
-                epsilon=float(trim_alg['_ProximitySortPlayerDataTrimAlg__epsilon'])
+            trim_alg = json.loads(json.dumps(past_data_frame['trim_alg']))
+            sdf = PlayerStatesDataFrame(
+                states=states,
+                interactions_profile_template=int_prof_template.generate_copy().reset(),
+                trim_alg=ProximitySortPlayerDataTrimAlg(
+                    max_num_model_elements=int(trim_alg['_max_num_model_elements']),
+                    epsilon=float(trim_alg['_ProximitySortPlayerDataTrimAlg__epsilon'])
+                )
             )
-        )
-        return sdf
+            return sdf
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def get_player_curr_characteristics(self, username):
-        player_info = User.objects.get(username=username).userprofile
-        characteristics = json.loads(player_info.curr_state)['characteristics']
-        return PlayerCharacteristics(ability=float(characteristics['ability']),
-                                     engagement=float(characteristics['engagement']))
+        try:
+            player_info = User.objects.get(username=username).userprofile
+            characteristics = json.loads(player_info.curr_state)['characteristics']
+            return PlayerCharacteristics(ability=float(characteristics['ability']),
+                                         engagement=float(characteristics['engagement']))
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def get_player_grade(self, username):
-        player_info = User.objects.get(username=username).userprofile
-        return player_info.grade
+        try:
+            player_info = User.objects.get(username=username).userprofile
+            return player_info.grade
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def get_player_preferences_est(self, username):
-        player_info = User.objects.get(username=username).userprofile
-        preferences = json.loads(player_info.preferences)
-        preferences = InteractionsProfile(dimensions=preferences['dimensions'])
-        return preferences
+        try:
+            player_info = User.objects.get(username=username).userprofile
+            preferences = json.loads(player_info.preferences)
+            preferences = InteractionsProfile(dimensions=preferences['dimensions'])
+            return preferences
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def get_player_curr_state(self, username):
-        player_info = User.objects.get(username=username).userprofile
-        curr_state = json.loads(player_info.curr_state)
-        return PlayerState(profile=self.get_player_curr_profile(username),
-                           characteristics=self.get_player_curr_characteristics(username),
-                           dist=curr_state['dist'],
-                           quality=curr_state['quality'],
-                           group=curr_state['group'],
-                           tasks=curr_state['tasks'])
+        try:
+            player_info = User.objects.get(username=username).userprofile
+            curr_state = json.loads(player_info.curr_state)
+            return PlayerState(profile=self.get_player_curr_profile(username),
+                               characteristics=self.get_player_curr_characteristics(username),
+                               dist=curr_state['dist'],
+                               quality=curr_state['quality'],
+                               group=curr_state['group'],
+                               tasks=curr_state['tasks'])
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def get_player_full_name(self, username):
-        player_info = User.objects.get(username=username).userprofile
-        return player_info.fullname
+        try:
+            player_info = User.objects.get(username=username).userprofile
+            return player_info.fullname
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def reset_player_curr_state(self, username):
-        player_info = User.objects.get(username=username).userprofile
-        new_state = PlayerState()
-        player_info.currState = json.dumps(new_state, default=lambda o: o.__dict__)
-        player_info.save()
+        try:
+            player_info = User.objects.get(username=username).userprofile
+            new_state = PlayerState()
+            player_info.currState = json.dumps(new_state, default=lambda o: o.__dict__)
+            player_info.save()
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def reset_player_past_model_increases(self, username):
-        player_states_data_frame = self.get_player_states_data_frame(username)
+        try:
+            player_states_data_frame = self.get_player_states_data_frame(username)
 
-        self.set_player_characteristics(username, PlayerCharacteristics())
-        self.set_player_profile(username, int_prof_template.generate_copy())
+            self.set_player_characteristics(username, PlayerCharacteristics())
+            self.set_player_profile(username, int_prof_template.generate_copy())
 
-        player_states_data_frame.reset()
+            player_states_data_frame.reset()
 
-        player_info = User.objects.get(username=username).userprofile
-        player_info.past_model_increases_data_frame = json.dumps(player_states_data_frame, default=lambda o: o.__dict__)
-        player_info.save()
+            player_info = User.objects.get(username=username).userprofile
+            player_info.past_model_increases_data_frame = json.dumps(player_states_data_frame,
+                                                                     default=lambda o: o.__dict__)
+            player_info.save()
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def set_player_preferences_est(self, username, preferences):
-        player_info = User.objects.get(username=username).userprofile
-        player_info.preferences = json.dumps(preferences, default=lambda o: o.__dict__)
-        player_info.save()
+        try:
+            player_info = User.objects.get(username=username).userprofile
+            player_info.preferences = json.dumps(preferences, default=lambda o: o.__dict__)
+            player_info.save()
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def set_player_characteristics(self, username, characteristics):
-        player_info = User.objects.get(username=username).userprofile
-        new_state = self.get_player_curr_state(username)
-        new_state.characteristics = characteristics
-        player_info.currState = json.dumps(new_state, default=lambda o: o.__dict__)
-        player_info.save()
+        try:
+            player_info = User.objects.get(username=username).userprofile
+            new_state = self.get_player_curr_state(username)
+            new_state.characteristics = characteristics
+            player_info.currState = json.dumps(new_state, default=lambda o: o.__dict__)
+            player_info.save()
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def set_player_personality(self, username, personality):
-        player_info = User.objects.get(username=username).userprofile
-        personality_dict = {"letter1": personality[0],
-                            "letter2": personality[1],
-                            "letter3": personality[2],
-                            "letter4": personality[3], }
-
-        player_info.personality = json.dumps(personality_dict, default=lambda o: o.__dict__)
-
         try:
-            player_info.tags.add(Tag.objects.get(name=personality[0]))
-            player_info.tags.add(Tag.objects.get(name=personality[1]))
-            player_info.tags.add(Tag.objects.get(name=personality[2]))
-            player_info.tags.add(Tag.objects.get(name=personality[3]))
-        except Tag.DoesNotExist:
-            print("Couldn't add default personality tags")
-        player_info.save()
+            player_info = User.objects.get(username=username).userprofile
+            personality_dict = {"letter1": personality[0],
+                                "letter2": personality[1],
+                                "letter3": personality[2],
+                                "letter4": personality[3], }
+
+            player_info.personality = json.dumps(personality_dict, default=lambda o: o.__dict__)
+
+            try:
+                player_info.tags.add(Tag.objects.get(name=personality[0]))
+                player_info.tags.add(Tag.objects.get(name=personality[1]))
+                player_info.tags.add(Tag.objects.get(name=personality[2]))
+                player_info.tags.add(Tag.objects.get(name=personality[3]))
+            except Tag.DoesNotExist:
+                print("Couldn't add default personality tags")
+            player_info.save()
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def set_player_grade(self, username, grade):
-        player_info = User.objects.get(username=username).userprofile
-        player_info.grade = grade
-        player_info.save()
+        try:
+            player_info = User.objects.get(username=username).userprofile
+            player_info.grade = grade
+            player_info.save()
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def set_player_profile(self, username, profile):
-        player_info = User.objects.get(username=username).userprofile
-        new_state = self.get_player_curr_state(username)
-        new_state.profile = profile
-        player_info.currState = json.dumps(new_state, default=lambda o: o.__dict__)
-        player_info.save()
+        try:
+            player_info = User.objects.get(username=username).userprofile
+            new_state = self.get_player_curr_state(username)
+            new_state.profile = profile
+            player_info.currState = json.dumps(new_state, default=lambda o: o.__dict__)
+            player_info.save()
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def set_player_group(self, username, group):
-        player_info = User.objects.get(username=username).userprofile
-        new_state = self.get_player_curr_state(username)
-        new_state.group = group
-        player_info.currState = json.dumps(new_state, default=lambda o: o.__dict__)
-        player_info.save()
+        try:
+            player_info = User.objects.get(username=username).userprofile
+            new_state = self.get_player_curr_state(username)
+            new_state.group = group
+            player_info.currState = json.dumps(new_state, default=lambda o: o.__dict__)
+            player_info.save()
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def set_player_tasks(self, username, tasks):
-        player_info = User.objects.get(username=username).userprofile
-        new_state = self.get_player_curr_state(username)
-        new_state.tasks = tasks
-        player_info.currState = json.dumps(new_state, default=lambda o: o.__dict__)
-        player_info.save()
+        try:
+            player_info = User.objects.get(username=username).userprofile
+            new_state = self.get_player_curr_state(username)
+            new_state.tasks = tasks
+            player_info.currState = json.dumps(new_state, default=lambda o: o.__dict__)
+            player_info.save()
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def add_player_tag(self, username, tag_name):
-        userprofile = User.objects.get(username=username).userprofile
-        tag = Tag.objects.get(name=tag_name)
-        userprofile.tags.add(tag)
-        userprofile.save()
+        try:
+            userprofile = User.objects.get(username=username).userprofile
+            tag = Tag.objects.get(name=tag_name)
+            userprofile.tags.add(tag)
+            userprofile.save()
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def remove_player_tag(self, username, tag_name):
-        userprofile = User.objects.get(username=username).userprofile
-        tag = Tag.objects.get(name=tag_name)
-        userprofile.tags.remove(tag)
-        userprofile.save()
+        try:
+            userprofile = User.objects.get(username=username).userprofile
+            tag = Tag.objects.get(name=tag_name)
+            userprofile.tags.remove(tag)
+            userprofile.save()
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
     def get_player_tags(self, username):
-        userprofile = User.objects.get(username=username).userprofile
-        tags = list(userprofile.tags.all())
-        return tags
+        try:
+            userprofile = User.objects.get(username=username).userprofile
+            tags = list(userprofile.tags.all())
+            return tags
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
 
 
 player_bridge = CustomPlayerModelBridge()
@@ -739,7 +878,7 @@ task_ids = ["week1_01", "week1_10", "week1_11", "week2_00", "week2_01", "week2_1
 description = '.'
 
 min_req_ability = ["0.2", "0.2", "0.2", "0.3", "0.3", "0.3", "0.3", "0.5", "0.5", "0.5", "0.5", "0.6", "0.6", "0.6",
-                 "0.6", "0.7", "0.7", "0.7", "0.7"]
+                   "0.6", "0.7", "0.7", "0.7", "0.7"]
 task_w = '0.5'
 
 profile_dim0 = ['0', '1', '1', '0', '0', '1', '1', '0', '0', '1', '1', '0', '0', '1', '1', '0', '0', '1', '1']
@@ -1208,7 +1347,7 @@ class Views:  # acts as a namespace
                 profile = profile_form.save(commit=False)
                 profile.user = user
                 profile.curr_state = json.dumps(PlayerState(profile=int_prof_template.generate_copy()),
-                                               default=lambda o: o.__dict__)
+                                                default=lambda o: o.__dict__)
                 profile.past_data_frame = json.dumps(
                     PlayerStatesDataFrame(
                         interactions_profile_template=int_prof_template.generate_copy().reset(),
@@ -1350,8 +1489,6 @@ class Views:  # acts as a namespace
                 available_questionnaires.append(questionnaire)
 
         context = {"availableQuestionnaires": available_questionnaires}
-
-        print(request.user.userprofile.role)
         return render(request, dash_switch.get(str(request.user.userprofile.role)), context)
 
     def get_random_string(length):
@@ -1530,7 +1667,7 @@ class Views:  # acts as a namespace
                 quality_weights=PlayerCharacteristics(ability=float(new_config_params['qualityWeightAb']),
                                                       engagement=float(new_config_params['qualityWeightEng']))
             )
-        
+
         def quality_eval_alg_switcher_synergy(request):
             return SynergiesTabQualityEvalAlg(
                 player_model_bridge=player_bridge,
@@ -1576,7 +1713,6 @@ class Views:  # acts as a namespace
             interactions_profile_template=int_prof_template,
             quality_eval_alg=sel_quality_eval_alg,
             num_tested_player_profiles=100)
-
 
         def sel_configs_alg_switcher_random(request):
             return RandomConfigsGenAlg(
@@ -1694,11 +1830,13 @@ class Views:  # acts as a namespace
                         }
                     ), default=lambda o: o.__dict__, sort_keys=True)
 
+                    print(request_info)
+                    task.task_id = request_info['taskId']
                     task.init_date = request_info['initDate']
                     task.final_date = request_info['finalDate']
 
-                    task.profile_weight = request_info['taskWeight']
-                    task.difficulty_weight = str(1.0 - float(request_info['taskWeight']))
+                    task.profile_w = request_info['taskW']
+                    task.difficulty_w = str(1.0 - float(request_info['taskW']))
 
                     task.min_req_ability = request_info['difficulty']
 
@@ -1738,7 +1876,7 @@ class Views:  # acts as a namespace
                     post['profileW'] = request_info['taskW']
                     post['difficultyW'] = str(1.0 - float(request_info['taskW']))
                     post['initDate'] = request_info['initDate']
-                    post['final_date'] = request_info['finalDate']
+                    post['finalDate'] = request_info['finalDate']
 
                     post['profile'] = json.dumps(InteractionsProfile(
                         {

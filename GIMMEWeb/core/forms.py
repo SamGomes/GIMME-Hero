@@ -30,8 +30,9 @@ class CreateUserProfileForm(ModelForm):
 
 
 class CreateTaskForm(ModelForm):
-    init_date = forms.DateField(widget=DateInput)
-    final_date = forms.DateField(widget=DateInput)
+    taskId = forms.CharField(max_length=100)
+    initDate = forms.DateField(widget=DateInput)
+    finalDate = forms.DateField(widget=DateInput)
 
     # minReqAbility = forms.FloatField(required=False, max_value=1.0, min_value=0.0, 
     # widget=forms.NumberInput(attrs={'id': 'form_homework', 'step': "0.01"})) 
@@ -42,7 +43,7 @@ class CreateTaskForm(ModelForm):
 
     class Meta:
         model = Task
-        exclude = ['creator', 'creation_time', 'profile', 'init_date', 'final_date', 'min_req_ability', 'difficulty_w',
+        exclude = ['task_id', 'creator', 'creation_time', 'profile', 'init_date', 'final_date', 'min_req_ability', 'difficulty_w',
                    'profile_w']
 
 

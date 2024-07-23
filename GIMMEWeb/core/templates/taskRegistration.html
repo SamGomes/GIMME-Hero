@@ -15,7 +15,6 @@
 			<div id='error_taskRegistration' class='section hero is-danger is-centered has-text-centered'>
 				<label class='label subtitle is-4 is-white'>Registry Fail! Errors: </label>
 				<p class='is-4 is-white'>{{form.errors}} </p>
-				<p class='is-4 is-white'>{{profileForm.errors}} </p>
 			</div>
 			{% endif %}
 
@@ -24,7 +23,7 @@
 
 			<div class='field requiredFormField'>
 				<label class='label has-tooltip-arrow' data-tooltip='A unique identifier for the task.'>Task Id*</label>
-				{{ form.task_id }}
+				{{ form.taskId }}
 			</div>
 			
 			<div class='field'>
@@ -42,11 +41,11 @@
 				<div class='columns is-mobile is-centered control'>
 					<div class='column is-mobile is-centered is-one-forth'>From</div>
 					<div class='column is-mobile is-centered is-one-forth'>
-						{{ form.init_date }}
+						{{ form.initDate }}
 					</div>
 					<div class='column is-mobile is-centered is-one-forth'>to</div>
 					<div class='column is-mobile is-centered is-one-forth'>
-						{{ form.final_date }}
+						{{ form.finalDate }}
 					</div>
 				</div>
 			</div>
@@ -55,7 +54,7 @@
 			<div class='field requiredFormField'>
 				<label class='label has-tooltip-arrow' data-tooltip='This represents what the system will value when selecting the task for a given group.'>The value of the task is obtained by its:*</label>
 				<div class='columns is-mobile is-centered control'>
-					Interaction profile&ensp;<input name='taskSelectWeigths' class='slider' type='range' value='0.5' min='0.0' max='1.0' step='0.1'> &ensp;Difficulty
+					Interaction profile&ensp;<input name='taskW' class='slider' type='range' value='0.5' min='0.0' max='1.0' step='0.1'> &ensp;Difficulty
 				</div>
 			</div>
 			

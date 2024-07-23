@@ -1,11 +1,12 @@
 
 
 :root {
-  --bkg-color: #0186fd;
-  --bkg-color-elements: rgba(0, 62, 121, 0.8);
-  --bkg-color-elements-2: rgba(149, 203, 255, 0.8);
-  --highlight-color: #ffffff;
-  --text-color: #000c25;
+  --bkg-color: rgb(106, 122, 121);
+  --bkg-color-2: rgb(208, 185, 173);
+  --bkg-color-elements: rgb(220, 238, 253);
+  --bkg-color-elements-2: rgba(255, 255, 255, 0.95);
+  --highlight-color: rgb(4, 18, 65);
+  --text-color: rgb(4, 18, 65);
 }
 
 
@@ -34,7 +35,7 @@ body {
   /* Margin bottom by footer height */
   /*background-image: url("../media/images/background.png");*/
   background: var(--bkg-color);
-  background: linear-gradient(152deg, rgba(2,0,36,1) 0%, var(--bkg-color) 100%);
+  background: linear-gradient(152deg, var(--bkg-color) 0%, var(--bkg-color-2) 100%);
   background-size: cover;
   background-attachment: fixed; 
   height: 100%;
@@ -60,7 +61,7 @@ body {
   background-attachment: fixed; 
   border-radius: 25px;
   margin: 40px;
-  background-color: var(--bkg-color-elements-2);
+  background-color: var(--bkg-color-elements);
   color:var(--text-color);
 }
 
@@ -73,7 +74,7 @@ body {
   font-weight: 500; 
   border: none;
   color: var(--highlight-color);
-  -webkit-mask-image: linear-gradient(180deg, var(--bkg-color-elements-2), var(--bkg-color-elements));
+  -webkit-mask-image: linear-gradient(180deg, var(--bkg-color-elements), var(--text-color));
   background-color: var(--bkg-color-elements);
   /*padding-left: 1.5rem;*/
   /*padding-top: 1rem;*/
@@ -207,13 +208,13 @@ body {
 .main-title{
   font-size: 400%;
   text-shadow: -4px 0 #131444, 0 4px #131444, 4px 0 #131444, 0 -4px #131444;
-  color: var(--highlight-color);
+  color: var(--bkg-color-elements-2);
   font-weight: bold;
 }
 .main-subtitle{
   font-size: 200%;
   text-shadow: -4px 0 #131444, 0 4px #131444, 4px 0 #131444, 0 -4px #131444;
-  color: var(--highlight-color);
+  color: var(--bkg-color-elements-2);
   font-weight: bold;
 }
 
