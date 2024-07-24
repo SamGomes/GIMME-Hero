@@ -30,39 +30,39 @@
       <span></span>
     </div>
     
-    {%if debug%}
-      <div class='button' id='initServerButton_header'> Init Server</div>
-      <div class='button' id='simulateReactionButton_header'> Simulate Players Reaction</div> 
-    {%endif%}
-    <div class='button' id='updateDash_header' 
-         data-tooltip="Fetches server data and updates all information on the dash.">
-        Update Dash &nbsp;<i class="fa-solid fa-arrows-rotate"></i>
-    </div>
+{#    {%if debug%}#}
+{#      <div class='button' id='initServerButton_header'> Init Server</div>#}
+{#    {%endif%}#}
+    
     
     <div id='nav-menu' class='navbar-menu'>
     
     <div class='navbar-start'>
-    <div class='navbar-item has-dropdown is-hoverable'>
-      <a class='navbar-link'>
-        Documentation
-      </a>
-    
-      <div class='navbar-dropdown'>
-        <a class='navbar-item' href='https://github.com/SamGomes/GIMME' target='_blank'>
-          <i class='fas fa-code'></i> &nbsp; GIMME API repo
+        <a class='navbar-item is-hoverable' id='updateDash_header'
+             data-tooltip="Fetches server data and updates all information on the dash.">
+            Update Dash &nbsp;<i class="fa-solid fa-arrows-rotate"></i>
         </a>
-        <a class='navbar-item' href='https://github.com/SamGomes/GIMME/wiki' target='_blank'>
-          <i class='fas fa-book'></i> &nbsp; GIMME API wiki
-        </a>
-        <hr class='navbar-divider'>
-        <a class='navbar-item' href='https://github.com/SamGomes/GIMME-Web' target='_blank'>
-          <i class='fas fa-code'></i> &nbsp; GIMME-Web repo
-        </a>
-        <hr class='navbar-divider'>
-        <a class='navbar-item' id='reportIssueBtn_header'>
-          <i class='fas fa-bug'></i> &nbsp; Report an issue
-        </a>
-      </div>
+        <div class='navbar-item has-dropdown is-hoverable'>
+            <a class='navbar-link'>
+            Documentation
+            </a>
+            <div class='navbar-dropdown'>
+                <a class='navbar-item' href='https://github.com/SamGomes/GIMME' target='_blank'>
+                  <i class='fas fa-code'></i> &nbsp; GIMME API repo
+                </a>
+                <a class='navbar-item' href='https://github.com/SamGomes/GIMME/wiki' target='_blank'>
+                  <i class='fas fa-book'></i> &nbsp; GIMME API wiki
+                </a>
+                <hr class='navbar-divider'>
+                <a class='navbar-item' href='https://github.com/SamGomes/GIMME-Web' target='_blank'>
+                  <i class='fas fa-code'></i> &nbsp; GIMME-Web repo
+                </a>
+                <hr class='navbar-divider'>
+                <a class='navbar-item' id='reportIssueBtn_header'>
+                  <i class='fas fa-bug'></i> &nbsp; Report an issue
+                </a>
+            </div>
+        </div>
     </div>
     
     </div>
@@ -173,14 +173,6 @@
       $.ajax({
               type: 'POST',
               url: '/initServer/'
-            });
-  });
-  
-  $('#simulateReactionButton_header').click(function(){
-      console.log('here');
-      $.ajax({
-              type: 'POST',
-              url: '/simulateReaction/'
             });
   });
 

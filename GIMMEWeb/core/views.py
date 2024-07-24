@@ -2144,11 +2144,11 @@ class Views:  # acts as a namespace
                     player_bridge.set_player_group(curr_player_i, g)
                     player_bridge.set_player_tasks(curr_player_i, adapt_state['tasks'][g_index])
 
-            return render(request, 'manuallyManageStudent.html')
+            return render(request, 'professor/manuallyManageStudent.html')
 
     def manually_manage_student(request):
         if request.method == 'GET':
-            return render(request, 'manuallyManageStudent.html')
+            return render(request, 'professor/manuallyManageStudent.html')
 
     def fetch_synergies_table(request):
         if request.method == 'POST':

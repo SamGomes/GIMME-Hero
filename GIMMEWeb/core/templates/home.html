@@ -61,30 +61,6 @@
 								<div class='control'>
 									<input class='button is-info' type='submit' name='Log In' value='Log In'>
 								</div>
-
-								<!--<p class='buttons'>
-									<div class='field'></div>
-									<a class='button is-info is-light is-fullwidth'>
-										<span class='icon'>
-											<img style="margin:10%" src="https://dot.ist-id.tecnico.ulisboa.pt/api/bennu-portal/configuration/logo"></img>
-										</span>
-										<span>Enter with Técnico</span>
-									</a>
-									<div class='field'></div>
-									<a class='button is-fullwidth'>
-										<span class='icon'>
-											<i class='fab fa-github'></i>
-										</span>
-										<span>Enter with GitHub</span>
-									</a>
-									<div class='field'></div>
-									<a class='button is-danger is-fullwidth'>
-										<span class='icon'>
-											<i class='fab fa-google'></i>
-										</span>
-										<span>Enter with Google</span>
-									</a>
-								</p>-->
 							</div>
 								
 						</form>
@@ -102,10 +78,8 @@
 	<script defer src='https://use.fontawesome.com/releases/v5.0.7/js/all.js'></script>
 	{% include 'common/general.html' %}
 	<script>
-		
 		$(document).ready(function(){
 			
-			console.log($('#loginError_home'))
 			if("" != $('#loginError_home').textContent){
 				$('#loginError_home').hide()
 				$('#loginError_home').show(500)

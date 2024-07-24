@@ -63,6 +63,7 @@ body {
   margin: 40px;
   background-color: var(--bkg-color-elements);
   color:var(--text-color);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .section{
@@ -72,7 +73,6 @@ body {
 
 .panel-heading {
   font-weight: 500; 
-  border: none;
   color: var(--highlight-color);
   -webkit-mask-image: linear-gradient(180deg, var(--bkg-color-elements), var(--text-color));
   background-color: var(--bkg-color-elements);
@@ -83,7 +83,7 @@ body {
 .panel-block {
   background-color: var(--bkg-color-elements-2);
   color: var(--text-color);
-  border: none;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .panel-footer {

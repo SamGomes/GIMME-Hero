@@ -247,7 +247,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
 
     var canvas = svg;
     var canvasContainer = canvas.node().parentNode;
-    width = canvasContainer.getBoundingClientRect().width;
+    width = canvasContainer.getBoundingClientRect().width*0.8;
  
     if(isForStudent){
         aspect = 2.5 / 1.0;
