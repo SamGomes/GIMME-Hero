@@ -7,23 +7,31 @@
 
 	<section class="section columns">
 		<div class="column is-3"></div>
-		<div class='panel panel-block column'  id="manuallyManageStudent_currentActivityInfo" data-tooltip="Ability: accumulated knowledge acquired by the student. Corresponds to the student's grade.&#10;Engagement: metric quantifying time spent engaged in activity, measured with questionnaires.">
+		<div class='panel panel-block column' data-tooltip="Ability: accumulated knowledge acquired by the student. 
+		Corresponds to the student's grade.&#10;
+		Engagement: metric quantifying time spent engaged in activity, measured with questionnaires.">
 			<label>
 				<p class='has-text-weight-bold'>Evaluate "{{request.GET.usernameToUpdate}}":</p>
 				
 				<br>
-				<div class='columns is-mobile is-centered control' style="margin-right: 1.0;">
-{#					<div class='column is-mobile is-centered is-half' id="currentAbility"></div>#}
-                    Ability: <div class='control' type="slider" id="abSlider_professor_manManSt"></div>
+				<div class='columns is-mobile is-centered control'>
+                    <div class='column is-half'>Ability</div>
+                    <div class='column is-half'>Engagement</div>
 				</div>
 
-				<div class='columns is-mobile is-centered control' style="margin-right: 1.0;">
-{#					<div class='column is-mobile is-centered is-half' id="currentEngagement"></div>#}
-                    Engagement: <input class="column is-mobile is-centered is-half" type="slider" id="groupSizeSlider_professor_manuallyManageEng">
+				<div class='columns is-mobile is-centered control'>
+                    <div class='column is-half'>
+                         <input id="abSlider_professor_manManSt" class='slider'
+                             type='range' min='0.0' max='1.0' step='0.1'>
+                    </div>
+                    <div class='column is-half'>
+                        <input id="engSlider_professor_manManSt" class='slider'
+                                        type='range' min='0.0' max='1.0' step='0.1'>
+                    </div>
 				</div>
 				<!-- <input class="control has-icons-left button" type="text" id="student_results_file" name="filename"> -->
 				<button class="button is-info" id="applyResults_professor_manManSt">Apply Changes</button>
-                <button class="button" id="discardResults_professor_manManSt">Discard Changes</button>
+                <a class="button" id="discardResults_professor_manManSt" href = {% url 'home' %}>Discard Changes</a>
 			</label>
 
 		</div>
@@ -73,23 +81,12 @@
 	    			complete: 
 	    			function (res) {
 						var studentCharacteristics = unformattedStringToObj(res.responseText)["characteristics"];
-						document.getElementById("currentAbility").innerHTML="Current Ability: <b>" + String(studentCharacteristics["ability"].toFixed(2)) + "</b> -> Change To:";
-						document.getElementById("currentEngagement").innerHTML="Current Engagement: <b>" + String(studentCharacteristics["engagement"].toFixed(2)) + "</b> -> Change To:";
+                        $("#abSlider_professor_manManSt").val(studentCharacteristics["ability"].toFixed(2));
+                        $("#engSlider_professor_manManSt").val(studentCharacteristics["engagement"].toFixed(2));
 					}
 				
 				});
 			}
-
-            $(function () {
-                $("#abSlider_professor_manManSt").slider({
-                    range: false,
-                    min: 0,
-                    max: 1,
-                    values: 0.5,
-                    step: 0.05
-                });
-                $("#abSlider_professor_manManSt").slider("values", 1, studentCharacteristics["ability"].toFixed(2));
-            });
 
 			changePlaceholderAbilityAndEngagement();
 			
@@ -103,7 +100,11 @@
 	    			complete: 
 	    			function (res) {
 						var studentCharacteristics = unformattedStringToObj(res.responseText)["characteristics"];
-						var characteristicsDelta = '{"abilityInc": '+($('#manuallyManageStudent_results_ability').val() - studentCharacteristics["ability"]) +', "engagementInc": '+ ($('#manuallyManageStudent_results_engagement').val() - studentCharacteristics["engagement"]) +', "gradeInc": 0}';
+						var characteristicsDelta = '{"abilityInc": ' +
+                            ($('#abSlider_professor_manManSt').val() - studentCharacteristics["ability"]) +
+                            ', "engagementInc": ' + 
+                            ($('#engSlider_professor_manManSt').val() - studentCharacteristics["engagement"]) +
+                            ', "gradeInc": 0}';
 						$.ajax(
 							{
 								url: '/uploadTaskResults/',
@@ -120,17 +121,6 @@
 				});
 				
 			});
-
-            $('#discardResults_professor_manManSt').click(function() {
-                $.ajax(
-                    {
-                        url: '/dash/',
-                        type: 'GET',
-                        headers: {
-                            'X-CSRFToken': getCookie('csrftoken')
-                        }
-                    });
-            });
 		});
 
 	</script>
