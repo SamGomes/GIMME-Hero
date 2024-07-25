@@ -287,8 +287,8 @@ class ServerStateModelBridge:
             server_state.sim_student_w = sim_student_w
         server_state.save()
 
-    def get_tags(self):
-        tags = list(Tag.objects.all())
+    def get_tags(self, target):
+        tags = list(Tag.objects.filter(target=target))
         return tags
 
 
@@ -1738,7 +1738,8 @@ class Views:  # acts as a namespace
                                      'simWeekOneUsersEvaluated': sim_state['simWeekOneUsersEvaluated'],
                                      'currSelectedUsers': server_state_model_bridge.get_curr_selected_users(),
                                      'currFreeUsers': server_state_model_bridge.get_curr_free_users(),
-                                     'tags': server_state_model_bridge.get_tags(),
+                                     'studentTags': server_state_model_bridge.get_tags(target='student'),
+                                     'taskTags': server_state_model_bridge.get_tags(target='task'),
                                      'currSelectedTasks': curr_selected_tasks,
                                      'currFreeTasks': curr_free_tasks,
                                      'readyForNewActivity': server_state_model_bridge.is_ready_for_new_activity()}
@@ -2076,13 +2077,14 @@ class Views:  # acts as a namespace
     # region Tags
     def create_new_tag(request):
         if request.method == 'POST':
-            if Tag.objects.filter(name=request.POST.get('name')).exists():
+            request_data = request.POST
+            if Tag.objects.filter(name=request_data.get('name'), target=request_data.get('target')).exists():
                 response_data = {
                     'status': 'error',
                     'message': 'Tag already exists'
                 }
                 return JsonResponse(response_data)
-            form = CreateTagForm(request.POST)
+            form = CreateTagForm(request_data)
             response_data = {
                 'status': 'error',
                 'message': 'Create tag form invalid'
@@ -2098,7 +2100,8 @@ class Views:  # acts as a namespace
     def delete_tag(request):
         if request.method == 'POST':
             tag_name = request.POST.get('name')
-            Tag.objects.filter(name=tag_name).delete()
+            tag_target = request.POST.get('target')
+            Tag.objects.filter(name=tag_name, target=tag_target).delete()
             response_data = {
                 'status': 'success',
                 'message': 'Tag deleted successfully'
@@ -2108,8 +2111,9 @@ class Views:  # acts as a namespace
     def select_tag(request):
         if request.method == 'POST':
             tag_name = request.POST.get('name')
+            tag_target = request.POST.get('target')
             try:
-                tag = Tag.objects.get(name=tag_name)
+                tag = Tag.objects.get(name=tag_name, target=tag_target)
                 tag_status = tag.is_selected
                 tag.is_selected = not tag_status
                 tag.save()

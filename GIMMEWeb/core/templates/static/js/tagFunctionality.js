@@ -52,7 +52,7 @@ function ShowAddTagButton(addTagContainer, tagInput){
     addTagContainer.style.display = 'none';
 }
 
-function generateTagsTable(tagsArray) {
+function generateTagsTable(tagsArray, target) {
     var table = $('<div></div>');
     
     tagsArray.forEach(element => {
@@ -68,7 +68,7 @@ function generateTagsTable(tagsArray) {
             $.ajax({
                 url: url,
                 type: 'POST',
-                data: { name: tagId }
+                data: { name: tagId , target: target}
             });
 
         });
@@ -86,7 +86,7 @@ function generateTagsTable(tagsArray) {
                 $.ajax({
                     url: url,
                     type: 'POST',
-                    data: { name: tagId }
+                    data: { name: tagId, target: target }
                 });
             });
 

@@ -167,7 +167,7 @@
                             </div>
                         </div>
                         <div class='columns is-mobile' style="display: flex; flex-wrap: wrap; padding: 0.75rem;">
-                            <div id='tagTable_professor_dash' style="margin: 0.75rem;"></div>
+                            <div id='tagTableStudents_professor_dash' style="margin: 0.75rem;"></div>
                         </div>
                     </div>
                     <div class='dash-cell-box'>
@@ -268,7 +268,7 @@
 
                         </div>
                         <div class='columns is-mobile' style="display: flex; flex-wrap: wrap; padding: 0.75rem;">
-                            <div id='tagTable_professor_dash' style="margin: 0.75rem;"></div>
+                            <div id='tagsTableTasks_professor_dash' style="margin: 0.75rem;"></div>
                         </div>
                     </div>
                     <div class='dash-cell-box'>
@@ -1940,12 +1940,15 @@
                                         $('#selectedUsersTable_professor_dash').empty();
                                         $('#selectedUsersTable_professor_dash').append(suTable);
 
+                                        
+                                        var tagsTableStudents = generateTagsTable(newServerState.studentTags,"student");
+                                        var tagsTableTasks = generateTagsTable(newServerState.taskTags,"task");
 
-                                        var tagsTable = generateTagsTable(newServerState.tags);
+                                        $('#tagTableStudents_professor_dash').empty();
+                                        $('#tagTableStudents_professor_dash').append(tagsTableStudents);
 
-                                        $('#tagTable_professor_dash').empty();
-                                        $('#tagTable_professor_dash').append(tagsTable);
-
+                                        $('#tagsTableTasks_professor_dash').empty();
+                                        $('#tagsTableTasks_professor_dash').append(tagsTableTasks);
 
                                         var odpipUsrTable = generateODPIPUsrTableFromArray(
                                             currSelectedUsers, 'modal-button', 'is-info'
