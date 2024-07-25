@@ -895,6 +895,7 @@ def is_questionnaire_completed(questionnaire, user):
 
 class Views:  # acts as a namespace
 
+    # region Global Functions
     def init_server(request):
         server_state_model_bridge.set_curr_adaptation_state([])
         server_state_model_bridge.set_ready_for_new_activity(True)
@@ -924,35 +925,41 @@ class Views:  # acts as a namespace
         if not Questionnaire.objects.filter(title="First_Questionnaire").exists():
             OEJTS_questionnaire.create_MBTI_questionnaire()
 
-        if not Tag.objects.filter(name="Group A").exists():
-            Tag.objects.create(name="Group A", is_removable=False)
+        if not Tag.objects.filter(name="All", target="student").exists():
+            Tag.objects.create(name="All", target="student", is_removable=False, is_assignable=False)
 
-        if not Tag.objects.filter(name="Group B").exists():
-            Tag.objects.create(name="Group B", is_removable=False)
+        if not Tag.objects.filter(name="All", target="task").exists():
+            Tag.objects.create(name="All", target="task", is_removable=False, is_assignable=False)
 
-        if not Tag.objects.filter(name="E").exists():
-            Tag.objects.create(name="E", is_removable=False, is_assignable=False)
-
-        if not Tag.objects.filter(name="I").exists():
-            Tag.objects.create(name="I", is_removable=False, is_assignable=False)
-
-        if not Tag.objects.filter(name="S").exists():
-            Tag.objects.create(name="S", is_removable=False, is_assignable=False)
-
-        if not Tag.objects.filter(name="N").exists():
-            Tag.objects.create(name="N", is_removable=False, is_assignable=False)
-
-        if not Tag.objects.filter(name="T").exists():
-            Tag.objects.create(name="T", is_removable=False, is_assignable=False)
-
-        if not Tag.objects.filter(name="F").exists():
-            Tag.objects.create(name="F", is_removable=False, is_assignable=False)
-
-        if not Tag.objects.filter(name="J").exists():
-            Tag.objects.create(name="J", is_removable=False, is_assignable=False)
-
-        if not Tag.objects.filter(name="P").exists():
-            Tag.objects.create(name="P", is_removable=False, is_assignable=False)
+        # if not Tag.objects.filter(name="Group A").exists():
+        #     Tag.objects.create(name="Group A", is_removable=False)
+        # 
+        # if not Tag.objects.filter(name="Group B").exists():
+        #     Tag.objects.create(name="Group B", is_removable=False)
+        # 
+        # if not Tag.objects.filter(name="E").exists():
+        #     Tag.objects.create(name="E", is_removable=False, is_assignable=False)
+        # 
+        # if not Tag.objects.filter(name="I").exists():
+        #     Tag.objects.create(name="I", is_removable=False, is_assignable=False)
+        # 
+        # if not Tag.objects.filter(name="S").exists():
+        #     Tag.objects.create(name="S", is_removable=False, is_assignable=False)
+        # 
+        # if not Tag.objects.filter(name="N").exists():
+        #     Tag.objects.create(name="N", is_removable=False, is_assignable=False)
+        # 
+        # if not Tag.objects.filter(name="T").exists():
+        #     Tag.objects.create(name="T", is_removable=False, is_assignable=False)
+        # 
+        # if not Tag.objects.filter(name="F").exists():
+        #     Tag.objects.create(name="F", is_removable=False, is_assignable=False)
+        # 
+        # if not Tag.objects.filter(name="J").exists():
+        #     Tag.objects.create(name="J", is_removable=False, is_assignable=False)
+        # 
+        # if not Tag.objects.filter(name="P").exists():
+        #     Tag.objects.create(name="P", is_removable=False, is_assignable=False)
 
         # create default professor for tests
         http_request = HttpRequest()
@@ -973,24 +980,6 @@ class Views:  # acts as a namespace
         Views.user_registration(http_request)
 
         return HttpResponse('ok')
-
-    def calc_reaction(player_bridge, state, player_id):
-        preferences = player_bridge.get_player_preferences_est(player_id)
-        num_dims = len(preferences.dimensions)
-        new_state = PlayerState(
-            type=1,
-            characteristics=PlayerCharacteristics(
-                ability=state.characteristics.ability,
-                engagement=state.characteristics.engagement
-            ),
-            profile=state.profile)
-        new_state.characteristics.engagement = 1 - (
-                preferences.distanceBetween(state.profile) / math.sqrt(num_dims))  #between 0 and 1
-        if new_state.characteristics.engagement > 1:
-            breakpoint()
-        ability_increase_sim = new_state.characteristics.engagement
-        new_state.characteristics.ability = new_state.characteristics.ability + ability_increase_sim
-        return new_state
 
     def simulate_reaction(request):
         all_users = player_bridge.get_all_player_ids()
@@ -1027,7 +1016,6 @@ class Views:  # acts as a namespace
         server_state_model_bridge.set_sim_simulate_reaction(True)
         return HttpResponse('ok')
 
-    # global methods
     def home(request):
         Views.login_check(request)
         if request.user.is_authenticated:
@@ -1052,289 +1040,6 @@ class Views:  # acts as a namespace
     def logout_check(request):
         logout(request)
         return redirect('/home')
-
-    # region Questionnaire View Functions
-    def questionnaire_MBTI(request, questionnaire_title):
-        questionnaire = Questionnaire.objects.get(title=questionnaire_title)
-        user = request.user
-
-        # # Check if the user has already submitted their answers for this questionnaire
-        if is_questionnaire_completed(questionnaire, user):
-            return render(request, 'student/thanks.html')
-
-        if request.method == 'POST':
-            form = LikertForm(request.POST)
-            if form.is_valid():
-                submission = Submission.objects.create(questionnaire=questionnaire, student=request.user)
-                submission.save()
-                # Save the student's answers
-                for question, value in form.cleaned_data.items():
-                    if question.startswith('question_'):
-                        question_id = int(question[9:])
-                        answer = LikertResponse(student=user, question_id=question_id, value=value)
-                        answer.save()
-
-                # Calculate the result based on the user's answers
-                result = OEJTS_questionnaire.calculate_personality_MBTI(form.cleaned_data)
-
-                player_bridge.set_player_personality(user, result)
-
-                return render(request, 'student/thanks.html')
-        else:
-            form = LikertForm()
-
-        return render(request, 'student/questionnaire.html', {'form': form, 'questionnaire': questionnaire})
-
-    def questionnaire(request, questionnaire_title):
-        # switch(questionnaire.type)
-        #	case QuestionnaireType.MBTI:
-        #		questionnaire_MBTI(request)
-        questionnaire = Questionnaire.objects.get(title=questionnaire_title)
-        questionnaire_type = questionnaire.type
-
-        if questionnaire_type == QuestionnaireType.MBTI:
-            return Views.questionnaire_MBTI(request, questionnaire_title)
-
-    # if request.method == 'POST':
-    # 	form = LikertForm(request.POST)
-    # 	if form.is_valid():
-    # 		submission = Submission.objects.create(questionnaire=questionnaire, student=request.user)
-    # 		for question_id, response in form.cleaned_data.items():
-    # 			if question_id.startswith('question_'):
-    # 				question_id = question_id[len('question_'):]
-    # 				#response = LikertResponse(question_id=question_id, submission=submission, response=response)
-    # 				#response.save()
-
-    # 		return render(request, 'student/thanks.html')
-    # else:
-    # 	form = LikertForm()
-
-    # context = { 'questionnaire': questionnaire,
-    # 			'form' : form }
-
-    # return render(request, 'student/questionnaire.html', context)
-
-    def add_personality(request):
-        if request.method != 'POST':
-            return HttpResponse('error')
-
-        personality_type = request.POST['personalityType']
-        personality_model = request.POST['personalityModel']
-
-        data = {}
-
-        if personality_model == 'MBTI':
-            personality = PersonalityMBTI(personality_type[0], personality_type[1], personality_type[2],
-                                          personality_type[3])
-            # data = {'personality': personality}
-            data = {'personality': json.dumps(personality, default=lambda o: o.__dict__, sort_keys=True)}
-
-        personality_form = UpdateUserPersonalityForm(data, instance=request.user.userprofile)
-
-        if personality_form.is_valid():
-            personality_form.save()
-
-        return HttpResponse('ok')
-
-    # endregion
-
-    # region Student Tag
-    def create_new_tag(request):
-        if request.method == 'POST':
-            if Tag.objects.filter(name=request.POST.get('name')).exists():
-                response_data = {
-                    'status': 'error',
-                    'message': 'Tag already exists'
-                }
-
-                return JsonResponse(response_data)
-
-            form = CreateTagForm(request.POST)
-
-            response_data = {
-                'status': 'error',
-                'message': 'Create tag form invalid'
-            }
-
-            if form.is_valid():
-                form.save()
-
-                response_data = {
-                    'status': 'success',
-                    'message': 'Tag saved successfully'
-                }
-
-            return JsonResponse(response_data)
-
-    def delete_tag(request):
-        if request.method == 'POST':
-            tag_name = request.POST.get('name')
-
-            Tag.objects.filter(name=tag_name).delete()
-
-            response_data = {
-                'status': 'success',
-                'message': 'Tag deleted successfully'
-            }
-
-            return JsonResponse(response_data)
-
-    def select_tag(request):
-        if request.method == 'POST':
-            tag_name = request.POST.get('name')
-
-            try:
-                tag = Tag.objects.get(name=tag_name)
-                tag_status = tag.is_selected
-                tag.is_selected = not tag_status
-                tag.save()
-
-            except Tag.DoesNotExist:
-                response_data = {
-                    'status': 'error',
-                    'message': 'Tag does not exist'
-                }
-                return JsonResponse(response_data)
-
-            curr_free_users = server_state_model_bridge.get_curr_free_users()
-            curr_selected_users = server_state_model_bridge.get_curr_selected_users()
-
-            if not tag_status:
-                # Select students
-                students_to_select = []
-
-                for student in curr_free_users:
-                    if student in curr_selected_users:
-                        continue
-                    student_tags = User.objects.get(username=student).userprofile.tags.all()
-
-                    for studentTag in student_tags:
-                        if studentTag.name == tag_name:
-                            students_to_select.append(student)
-                            break
-
-                for student in students_to_select:
-                    curr_selected_users.append(student)
-                    curr_free_users.remove(student)
-
-                response_data = {
-                    'status': 'success',
-                    'message': 'Tag selected successfully',
-                    'isSelected': True
-                }
-            else:
-                # Deselect students
-                students_to_deselect = []
-
-                for student in curr_selected_users:
-
-                    if student in curr_free_users:
-                        continue
-
-                    student_tags = User.objects.get(username=student).userprofile.tags.all()
-
-                    deselect = True
-
-                    for studentTag in student_tags:
-                        if studentTag.is_selected:
-                            deselect = False
-                            break
-
-                    if deselect:
-                        students_to_deselect.append(student)
-
-                for student in students_to_deselect:
-                    curr_free_users.append(student)
-                    curr_selected_users.remove(student)
-
-                response_data = {
-                    'status': 'success',
-                    'message': 'Tag deselected successfully',
-                    'isSelected': False
-                }
-
-            server_state_model_bridge.set_curr_selected_users(curr_selected_users)
-            server_state_model_bridge.set_curr_free_users(curr_free_users)
-
-            return JsonResponse(response_data)
-
-    def assign_tag(request):
-        if request.method == 'POST':
-            tag_name = request.POST.get('tag')
-            student_name = request.POST.get('student')
-
-            userprofile = User.objects.get(username=student_name).userprofile
-            tag = Tag.objects.get(name=tag_name)
-
-            if tag in userprofile.tags.all():
-                response_data = {
-                    'status': 'error',
-                    'message': 'Tag already assigned'
-                }
-
-            else:
-                userprofile.tags.add(tag)
-                userprofile.save()
-
-                response_data = {
-                    'status': 'success',
-                    'message': 'Tag assigned successfully'
-                }
-
-            return JsonResponse(response_data)
-
-    def remove_assigned_tag(request):
-        if request.method == 'POST':
-            tag_name = request.POST.get('tag')
-            student_name = request.POST.get('student')
-
-            userprofile = User.objects.get(username=student_name).userprofile
-            tag = Tag.objects.get(name=tag_name)
-
-            userprofile.tags.remove(tag)
-            userprofile.save()
-
-            response_data = {
-                'status': 'success',
-                'message': 'Tag assigned successfully'
-            }
-
-            return JsonResponse(response_data)
-
-    def randomize_group_tags(request):
-        if request.method == 'POST':
-            student_profiles = UserProfile.objects.filter(role__contains="Student")
-            # students = [profile.user for profile in student_profiles]
-
-            half_length = len(student_profiles) / 2
-            count = 0
-
-            group1_tag = Tag.objects.get(name="Group A")
-            group2_tag = Tag.objects.get(name="Group B")
-
-            student_profiles = student_profiles.order_by('?')
-
-            for student in student_profiles:
-
-                student.tags.remove(group1_tag)
-                student.tags.remove(group2_tag)
-
-                if count < half_length:
-                    student.tags.add(group1_tag)
-                else:
-                    student.tags.add(group2_tag)
-
-                student.save()
-                count += 1
-
-            response_data = {
-                'status': 'success',
-                'message': 'Groups randomized successfully'
-            }
-
-            return JsonResponse(response_data)
-
-    # endregion
 
     def user_registration(request):
         if request.method == 'POST':
@@ -1361,14 +1066,14 @@ class Views:  # acts as a namespace
                                                      default=lambda o: o.__dict__,
                                                      sort_keys=True)
                 # profile.personality = json.dumps(personality, default=lambda o: o.__dict__, sort_keys=True)
+                # breakpoint()
                 profile.save()
 
-                # UNCOMMENT THIS IF ALL USERS SHOULD HAVE A RANDOM PERSONALITY ASSIGNED UPON REGISTRATION # # Add 
-                # random personality ------------------- random_index = random.randint(0, len(personalities)-1) 
-                # personalityType = personalities[random_index] personality = PersonalityMBTI(personalityType[0], 
-                # personalityType[1], personalityType[2], personalityType[3]) # 
-                # ------------------------------------------ playerBridge.setPlayerPersonality(user.username, 
-                # personalityType)
+                http_request = HttpRequest()
+                http_request.method = 'POST'
+                http_request.POST['student'] = user.username
+                http_request.POST['tag'] = 'Everyone'
+                Views.assign_tag(http_request)
 
                 if 'Student' in profile.role:
                     currFreeUsers = server_state_model_bridge.get_curr_free_users()
@@ -1489,7 +1194,10 @@ class Views:  # acts as a namespace
                 available_questionnaires.append(questionnaire)
 
         context = {"availableQuestionnaires": available_questionnaires}
-        return render(request, dash_switch.get(str(request.user.userprofile.role)), context)
+        try:
+            return render(request, dash_switch.get(str(request.user.userprofile.role)), context)
+        except UserProfile.DoesNotExist:
+            return redirect('/admin')
 
     def get_random_string(length):
         letters = string.ascii_lowercase
@@ -1498,92 +1206,9 @@ class Views:  # acts as a namespace
         result_str = random.choice(numbers) + ''.join(random.choice(chars) for i in range(length))
         return result_str
 
-    def add_all_users_selected(request):  # reads (player) from args
-        if request.method == 'POST':
-            server_state_model_bridge.set_curr_selected_users(
-                server_state_model_bridge.get_curr_selected_users() + server_state_model_bridge.get_curr_free_users())
-            server_state_model_bridge.set_curr_free_users([])
-            return HttpResponse('ok')
+    # endregion
 
-    def remove_all_users_selected(request):  # reads (player) from args
-        if request.method == 'POST':
-            server_state_model_bridge.set_curr_free_users(
-                server_state_model_bridge.get_curr_selected_users() + server_state_model_bridge.get_curr_free_users())
-            server_state_model_bridge.set_curr_selected_users([])
-
-            tags = Tag.objects.all()
-            for tag in tags:
-                tag.is_selected = False
-                tag.save()
-
-            return HttpResponse('ok')
-
-    def add_selected_user(request):  # reads (player) from args
-        if request.method == 'POST':
-            username_to_add = request.POST.get('username')
-
-            curr_selected_users = server_state_model_bridge.get_curr_selected_users()
-            curr_free_users = server_state_model_bridge.get_curr_free_users()
-
-            if not username_to_add in curr_selected_users:
-                curr_selected_users.append(username_to_add)
-                curr_free_users.remove(username_to_add)
-
-            server_state_model_bridge.set_curr_selected_users(curr_selected_users)
-            server_state_model_bridge.set_curr_free_users(curr_free_users)
-            return HttpResponse('ok')
-
-    def remove_selected_user(request):  # reads (player) from args
-        if request.method == 'POST':
-            username_to_remove = request.POST.get('username')
-            curr_selected_users = server_state_model_bridge.get_curr_selected_users()
-            curr_free_users = server_state_model_bridge.get_curr_free_users()
-            if username_to_remove in curr_selected_users:
-                curr_selected_users.remove(username_to_remove)
-                curr_free_users.append(username_to_remove)
-            server_state_model_bridge.set_curr_selected_users(curr_selected_users)
-            server_state_model_bridge.set_curr_free_users(curr_free_users)
-            return HttpResponse('ok')
-
-    def add_all_tasks_selected(request):  # reads (player) from args
-        if request.method == 'POST':
-            server_state_model_bridge.set_curr_selected_tasks(
-                server_state_model_bridge.get_curr_selected_tasks() + server_state_model_bridge.get_curr_free_tasks())
-            server_state_model_bridge.set_curr_free_tasks([])
-            return HttpResponse('ok')
-
-    def remove_all_tasks_selected(request):  # reads (player) from args
-        if request.method == 'POST':
-            server_state_model_bridge.set_curr_free_tasks(
-                server_state_model_bridge.get_curr_selected_tasks() + server_state_model_bridge.get_curr_free_tasks())
-            server_state_model_bridge.set_curr_selected_tasks([])
-            return HttpResponse('ok')
-
-    def add_selected_task(request):  # reads (player) from args
-        if request.method == 'POST':
-            task_to_add = request.POST.get('taskId')
-            curr_selected_tasks = server_state_model_bridge.get_curr_selected_tasks()
-            curr_free_tasks = server_state_model_bridge.get_curr_free_tasks()
-            if task_to_add not in curr_selected_tasks:
-                curr_selected_tasks.append(task_to_add)
-                curr_free_tasks.remove(task_to_add)
-            server_state_model_bridge.set_curr_selected_tasks(curr_selected_tasks)
-            server_state_model_bridge.set_curr_free_tasks(curr_free_tasks)
-            return HttpResponse('ok')
-
-    def remove_selected_task(request):  # reads (player) from args
-        if request.method == 'POST':
-            task_id_to_remove = request.POST.get('taskId')
-            curr_selected_tasks = server_state_model_bridge.get_curr_selected_tasks();
-            curr_free_tasks = server_state_model_bridge.get_curr_free_tasks();
-            if task_id_to_remove in curr_selected_tasks:
-                curr_selected_tasks.remove(task_id_to_remove)
-                curr_free_tasks.append(task_id_to_remove)
-            server_state_model_bridge.set_curr_selected_tasks(curr_selected_tasks)
-            server_state_model_bridge.set_curr_free_tasks(curr_free_tasks)
-            return HttpResponse('ok')
-
-    # student methods
+    # region Student Functions
     def start_activity(request):
         # remove from selected and move to occupied list
         curr_selected_users = server_state_model_bridge.get_curr_selected_users()
@@ -1616,7 +1241,9 @@ class Views:  # acts as a namespace
         player_bridge.set_player_grade(username=username, grade=round(
             float(player_bridge.get_player_grade(username=username)) + characteristics.ability / 5.0, 2))
 
-    # professor methods
+    # endregion
+
+    # region Professor Functions
     def start_adaptation(request):
         server_state_model_bridge.set_ready_for_new_activity(False)
         try:
@@ -1949,7 +1576,92 @@ class Views:  # acts as a namespace
                 returned = {'task': False, 'storedTasks': Task.objects.filter(taskId__contains=task_id)}
         return returned
 
-    # auxiliary methods
+    def add_all_users_selected(request):  # reads (player) from args
+        if request.method == 'POST':
+            server_state_model_bridge.set_curr_selected_users(
+                server_state_model_bridge.get_curr_selected_users() + server_state_model_bridge.get_curr_free_users())
+            server_state_model_bridge.set_curr_free_users([])
+            return HttpResponse('ok')
+
+    def remove_all_users_selected(request):  # reads (player) from args
+        if request.method == 'POST':
+            server_state_model_bridge.set_curr_free_users(
+                server_state_model_bridge.get_curr_selected_users() + server_state_model_bridge.get_curr_free_users())
+            server_state_model_bridge.set_curr_selected_users([])
+
+            tags = Tag.objects.all()
+            for tag in tags:
+                tag.is_selected = False
+                tag.save()
+
+            return HttpResponse('ok')
+
+    def add_selected_user(request):  # reads (player) from args
+        if request.method == 'POST':
+            username_to_add = request.POST.get('username')
+
+            curr_selected_users = server_state_model_bridge.get_curr_selected_users()
+            curr_free_users = server_state_model_bridge.get_curr_free_users()
+
+            if not username_to_add in curr_selected_users:
+                curr_selected_users.append(username_to_add)
+                curr_free_users.remove(username_to_add)
+
+            server_state_model_bridge.set_curr_selected_users(curr_selected_users)
+            server_state_model_bridge.set_curr_free_users(curr_free_users)
+            return HttpResponse('ok')
+
+    def remove_selected_user(request):  # reads (player) from args
+        if request.method == 'POST':
+            username_to_remove = request.POST.get('username')
+            curr_selected_users = server_state_model_bridge.get_curr_selected_users()
+            curr_free_users = server_state_model_bridge.get_curr_free_users()
+            if username_to_remove in curr_selected_users:
+                curr_selected_users.remove(username_to_remove)
+                curr_free_users.append(username_to_remove)
+            server_state_model_bridge.set_curr_selected_users(curr_selected_users)
+            server_state_model_bridge.set_curr_free_users(curr_free_users)
+            return HttpResponse('ok')
+
+    def add_all_tasks_selected(request):  # reads (player) from args
+        if request.method == 'POST':
+            server_state_model_bridge.set_curr_selected_tasks(
+                server_state_model_bridge.get_curr_selected_tasks() + server_state_model_bridge.get_curr_free_tasks())
+            server_state_model_bridge.set_curr_free_tasks([])
+            return HttpResponse('ok')
+
+    def remove_all_tasks_selected(request):  # reads (player) from args
+        if request.method == 'POST':
+            server_state_model_bridge.set_curr_free_tasks(
+                server_state_model_bridge.get_curr_selected_tasks() + server_state_model_bridge.get_curr_free_tasks())
+            server_state_model_bridge.set_curr_selected_tasks([])
+            return HttpResponse('ok')
+
+    def add_selected_task(request):  # reads (player) from args
+        if request.method == 'POST':
+            task_to_add = request.POST.get('taskId')
+            curr_selected_tasks = server_state_model_bridge.get_curr_selected_tasks()
+            curr_free_tasks = server_state_model_bridge.get_curr_free_tasks()
+            if task_to_add not in curr_selected_tasks:
+                curr_selected_tasks.append(task_to_add)
+                curr_free_tasks.remove(task_to_add)
+            server_state_model_bridge.set_curr_selected_tasks(curr_selected_tasks)
+            server_state_model_bridge.set_curr_free_tasks(curr_free_tasks)
+            return HttpResponse('ok')
+
+    def remove_selected_task(request):  # reads (player) from args
+        if request.method == 'POST':
+            task_id_to_remove = request.POST.get('taskId')
+            curr_selected_tasks = server_state_model_bridge.get_curr_selected_tasks();
+            curr_free_tasks = server_state_model_bridge.get_curr_free_tasks();
+            if task_id_to_remove in curr_selected_tasks:
+                curr_selected_tasks.remove(task_id_to_remove)
+                curr_free_tasks.append(task_id_to_remove)
+            server_state_model_bridge.set_curr_selected_tasks(curr_selected_tasks)
+            server_state_model_bridge.set_curr_free_tasks(curr_free_tasks)
+            return HttpResponse('ok')
+
+    # region Auxiliary Functions
     def fetch_student_states(request):
         if request.method == 'POST':
             selected_user_ids = player_bridge.get_all_stored_student_usernames()
@@ -1994,48 +1706,51 @@ class Views:  # acts as a namespace
         return HttpResponse('error')
 
     def fetch_server_state(request):
-        if request.method == 'GET':
-            sim_state = server_state_model_bridge.get_sim_flags()
+        try:
+            if request.method == 'GET':
+                sim_state = server_state_model_bridge.get_sim_flags()
 
-            task_object = HttpRequest()
-            task_object.method = 'POST'
+                task_object = HttpRequest()
+                task_object.method = 'POST'
 
-            curr_selected_tasks_ids = server_state_model_bridge.get_curr_selected_tasks()
-            task_object.POST = {'tasks': str(curr_selected_tasks_ids)[1:][:-1].replace(' ', '').replace('\'', '')}
-            curr_selected_tasks = Views.fetch_tasks_from_id(task_object).content.decode('utf-8')
+                curr_selected_tasks_ids = server_state_model_bridge.get_curr_selected_tasks()
+                task_object.POST = {'tasks': str(curr_selected_tasks_ids)[1:][:-1].replace(' ', '').replace('\'', '')}
+                curr_selected_tasks = Views.fetch_tasks_from_id(task_object).content.decode('utf-8')
 
-            task_object = HttpRequest()
-            task_object.method = 'POST'
+                task_object = HttpRequest()
+                task_object.method = 'POST'
 
-            curr_free_tasks_ids = server_state_model_bridge.get_curr_free_tasks()
-            task_object.POST = {'tasks': str(curr_free_tasks_ids)[1:][:-1].replace(' ', '').replace('\'', '')}
-            curr_free_tasks = Views.fetch_tasks_from_id(task_object).content.decode('utf-8')
+                curr_free_tasks_ids = server_state_model_bridge.get_curr_free_tasks()
+                task_object.POST = {'tasks': str(curr_free_tasks_ids)[1:][:-1].replace(' ', '').replace('\'', '')}
+                curr_free_tasks = Views.fetch_tasks_from_id(task_object).content.decode('utf-8')
 
-            new_session_state = {'timestamp': time.time(),
-                                 'simWeek': sim_state['simWeek'],
-                                 'simStudentToEvaluate': sim_state['simStudentToEvaluate'],
-                                 'simUnavailableStudent': sim_state['simUnavailableStudent'],
-                                 'simStudentX': sim_state['simStudentX'],
-                                 'simStudentY': sim_state['simStudentY'],
-                                 'simStudentW': sim_state['simStudentW'],
-                                 'simStudentZ': sim_state['simStudentZ'],
-                                 'simIsLinkShared': sim_state['simIsLinkShared'],
-                                 'simIsTaskCreated': sim_state['simIsTaskCreated'],
-                                 'simSimulateReaction': sim_state['simSimulateReaction'],
-                                 'simWeekOneUsersEvaluated': sim_state['simWeekOneUsersEvaluated'],
-                                 'currSelectedUsers': server_state_model_bridge.get_curr_selected_users(),
-                                 'currFreeUsers': server_state_model_bridge.get_curr_free_users(),
-                                 'tags': server_state_model_bridge.get_tags(),
-                                 'currSelectedTasks': curr_selected_tasks,
-                                 'currFreeTasks': curr_free_tasks,
-                                 'readyForNewActivity': server_state_model_bridge.is_ready_for_new_activity()}
+                new_session_state = {'timestamp': time.time(),
+                                     'simWeek': sim_state['simWeek'],
+                                     'simStudentToEvaluate': sim_state['simStudentToEvaluate'],
+                                     'simUnavailableStudent': sim_state['simUnavailableStudent'],
+                                     'simStudentX': sim_state['simStudentX'],
+                                     'simStudentY': sim_state['simStudentY'],
+                                     'simStudentW': sim_state['simStudentW'],
+                                     'simStudentZ': sim_state['simStudentZ'],
+                                     'simIsLinkShared': sim_state['simIsLinkShared'],
+                                     'simIsTaskCreated': sim_state['simIsTaskCreated'],
+                                     'simSimulateReaction': sim_state['simSimulateReaction'],
+                                     'simWeekOneUsersEvaluated': sim_state['simWeekOneUsersEvaluated'],
+                                     'currSelectedUsers': server_state_model_bridge.get_curr_selected_users(),
+                                     'currFreeUsers': server_state_model_bridge.get_curr_free_users(),
+                                     'tags': server_state_model_bridge.get_tags(),
+                                     'currSelectedTasks': curr_selected_tasks,
+                                     'currFreeTasks': curr_free_tasks,
+                                     'readyForNewActivity': server_state_model_bridge.is_ready_for_new_activity()}
 
-            if 'Professor' in request.user.userprofile.role:
-                new_session_state['currAdaptationState'] = server_state_model_bridge.get_curr_adaptation_state()
+                if 'Professor' in request.user.userprofile.role:
+                    new_session_state['currAdaptationState'] = server_state_model_bridge.get_curr_adaptation_state()
 
-            new_session = json.dumps(new_session_state, default=lambda o: o.__dict__, sort_keys=True)
+                new_session = json.dumps(new_session_state, default=lambda o: o.__dict__, sort_keys=True)
 
-            return HttpResponse(new_session)
+                return HttpResponse(new_session)
+        except UserProfile.DoesNotExist:
+            return HttpResponse('error')
         return HttpResponse('error')
 
     def fetch_tasks_from_id(request):
@@ -2337,3 +2052,272 @@ class Views:  # acts as a namespace
             return HttpResponse('ok')
 
         return HttpResponse('error')
+
+    def calc_reaction(player_bridge, state, player_id):
+        preferences = player_bridge.get_player_preferences_est(player_id)
+        num_dims = len(preferences.dimensions)
+        new_state = PlayerState(
+            type=1,
+            characteristics=PlayerCharacteristics(
+                ability=state.characteristics.ability,
+                engagement=state.characteristics.engagement
+            ),
+            profile=state.profile)
+        new_state.characteristics.engagement = 1 - (
+                preferences.distanceBetween(state.profile) / math.sqrt(num_dims))  #between 0 and 1
+        if new_state.characteristics.engagement > 1:
+            breakpoint()
+        ability_increase_sim = new_state.characteristics.engagement
+        new_state.characteristics.ability = new_state.characteristics.ability + ability_increase_sim
+        return new_state
+
+    # endregion
+
+    # region Tags
+    def create_new_tag(request):
+        if request.method == 'POST':
+            if Tag.objects.filter(name=request.POST.get('name')).exists():
+                response_data = {
+                    'status': 'error',
+                    'message': 'Tag already exists'
+                }
+                return JsonResponse(response_data)
+            form = CreateTagForm(request.POST)
+            response_data = {
+                'status': 'error',
+                'message': 'Create tag form invalid'
+            }
+            if form.is_valid():
+                form.save()
+                response_data = {
+                    'status': 'success',
+                    'message': 'Tag saved successfully'
+                }
+            return JsonResponse(response_data)
+
+    def delete_tag(request):
+        if request.method == 'POST':
+            tag_name = request.POST.get('name')
+            Tag.objects.filter(name=tag_name).delete()
+            response_data = {
+                'status': 'success',
+                'message': 'Tag deleted successfully'
+            }
+            return JsonResponse(response_data)
+
+    def select_tag(request):
+        if request.method == 'POST':
+            tag_name = request.POST.get('name')
+            try:
+                tag = Tag.objects.get(name=tag_name)
+                tag_status = tag.is_selected
+                tag.is_selected = not tag_status
+                tag.save()
+            except Tag.DoesNotExist:
+                response_data = {
+                    'status': 'error',
+                    'message': 'Tag does not exist'
+                }
+                return JsonResponse(response_data)
+
+            curr_free_users = server_state_model_bridge.get_curr_free_users()
+            curr_selected_users = server_state_model_bridge.get_curr_selected_users()
+
+            if not tag_status:
+                # Select students
+                students_to_select = []
+                for student in curr_free_users:
+                    if student in curr_selected_users:
+                        continue
+                    student_tags = User.objects.get(username=student).userprofile.tags.all()
+
+                    for studentTag in student_tags:
+                        if studentTag.name == tag_name:
+                            students_to_select.append(student)
+                            break
+                for student in students_to_select:
+                    curr_selected_users.append(student)
+                    curr_free_users.remove(student)
+                response_data = {
+                    'status': 'success',
+                    'message': 'Tag selected successfully',
+                    'isSelected': True
+                }
+            else:
+                # Deselect students
+                students_to_deselect = []
+                for student in curr_selected_users:
+
+                    if student in curr_free_users:
+                        continue
+
+                    student_tags = User.objects.get(username=student).userprofile.tags.all()
+
+                    deselect = True
+
+                    for studentTag in student_tags:
+                        if studentTag.is_selected:
+                            deselect = False
+                            break
+
+                    if deselect:
+                        students_to_deselect.append(student)
+                for student in students_to_deselect:
+                    curr_free_users.append(student)
+                    curr_selected_users.remove(student)
+                response_data = {
+                    'status': 'success',
+                    'message': 'Tag deselected successfully',
+                    'isSelected': False
+                }
+
+            server_state_model_bridge.set_curr_selected_users(curr_selected_users)
+            server_state_model_bridge.set_curr_free_users(curr_free_users)
+
+            return JsonResponse(response_data)
+
+    def assign_tag(request):
+        if request.method == 'POST':
+            tag_name = request.POST.get('tag')
+            student_name = request.POST.get('student')
+            target = request.POST.get('target')
+
+            userprofile = User.objects.get(username=student_name).userprofile
+            tag = Tag.objects.get(name=tag_name, target=target)
+
+            if tag in userprofile.tags.all():
+                response_data = {
+                    'status': 'error',
+                    'message': 'Tag already assigned'
+                }
+            else:
+                userprofile.tags.add(tag)
+                userprofile.save()
+
+                response_data = {
+                    'status': 'success',
+                    'message': 'Tag assigned successfully'
+                }
+
+            return JsonResponse(response_data)
+
+    def remove_assigned_tag(request):
+        if request.method == 'POST':
+            tag_name = request.POST.get('tag')
+            student_name = request.POST.get('student')
+
+            userprofile = User.objects.get(username=student_name).userprofile
+            tag = Tag.objects.get(name=tag_name)
+
+            userprofile.tags.remove(tag)
+            userprofile.save()
+
+            response_data = {
+                'status': 'success',
+                'message': 'Tag assigned successfully'
+            }
+
+            return JsonResponse(response_data)
+
+    def randomize_group_tags(request):
+        if request.method == 'POST':
+            student_profiles = UserProfile.objects.filter(role__contains="Student")
+            # students = [profile.user for profile in student_profiles]
+
+            half_length = len(student_profiles) / 2
+            count = 0
+
+            group1_tag = Tag.objects.get(name="Group A")
+            group2_tag = Tag.objects.get(name="Group B")
+
+            student_profiles = student_profiles.order_by('?')
+
+            for student in student_profiles:
+
+                student.tags.remove(group1_tag)
+                student.tags.remove(group2_tag)
+
+                if count < half_length:
+                    student.tags.add(group1_tag)
+                else:
+                    student.tags.add(group2_tag)
+
+                student.save()
+                count += 1
+
+            response_data = {
+                'status': 'success',
+                'message': 'Groups randomized successfully'
+            }
+
+            return JsonResponse(response_data)
+
+    # endregion
+
+    # endregion
+
+    # region Questionnaire Functions
+    def questionnaire_MBTI(request, questionnaire_title):
+        questionnaire = Questionnaire.objects.get(title=questionnaire_title)
+        user = request.user
+
+        # # Check if the user has already submitted their answers for this questionnaire
+        if is_questionnaire_completed(questionnaire, user):
+            return render(request, 'student/thanks.html')
+
+        if request.method == 'POST':
+            form = LikertForm(request.POST)
+            if form.is_valid():
+                submission = Submission.objects.create(questionnaire=questionnaire, student=request.user)
+                submission.save()
+                # Save the student's answers
+                for question, value in form.cleaned_data.items():
+                    if question.startswith('question_'):
+                        question_id = int(question[9:])
+                        answer = LikertResponse(student=user, question_id=question_id, value=value)
+                        answer.save()
+
+                # Calculate the result based on the user's answers
+                result = OEJTS_questionnaire.calculate_personality_MBTI(form.cleaned_data)
+
+                player_bridge.set_player_personality(user, result)
+
+                return render(request, 'student/thanks.html')
+        else:
+            form = LikertForm()
+
+        return render(request, 'student/questionnaire.html', {'form': form, 'questionnaire': questionnaire})
+
+    def questionnaire(request, questionnaire_title):
+        # switch(questionnaire.type)
+        #	case QuestionnaireType.MBTI:
+        #		questionnaire_MBTI(request)
+        questionnaire = Questionnaire.objects.get(title=questionnaire_title)
+        questionnaire_type = questionnaire.type
+
+        if questionnaire_type == QuestionnaireType.MBTI:
+            return Views.questionnaire_MBTI(request, questionnaire_title)
+
+    def add_personality(request):
+        if request.method != 'POST':
+            return HttpResponse('error')
+
+        personality_type = request.POST['personalityType']
+        personality_model = request.POST['personalityModel']
+
+        data = {}
+
+        if personality_model == 'MBTI':
+            personality = PersonalityMBTI(personality_type[0], personality_type[1], personality_type[2],
+                                          personality_type[3])
+            # data = {'personality': personality}
+            data = {'personality': json.dumps(personality, default=lambda o: o.__dict__, sort_keys=True)}
+
+        personality_form = UpdateUserPersonalityForm(data, instance=request.user.userprofile)
+
+        if personality_form.is_valid():
+            personality_form.save()
+
+        return HttpResponse('ok')
+
+    # endregion

@@ -77,10 +77,13 @@ class LikertResponse(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=32)
+    target = models.CharField(max_length=32)
     is_selected = models.BooleanField(default=False)
     is_removable = models.BooleanField(default=True)
     is_assignable = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.name
 
 class UserProfile(models.Model):
     # included from 
@@ -134,8 +137,10 @@ class Task(models.Model):
 
     files = models.FileField(upload_to=ModelAuxMethods.path_and_rename('taskFiles/'), default='taskFiles/placeholder')
 
+    tags = models.ManyToManyField(Tag)
+    
     def __str__(self):
-        return self.taskId
+        return self.task_id
 
 
 class ServerState(models.Model):
@@ -165,3 +170,5 @@ class ServerState(models.Model):
     sim_student_y = models.CharField(max_length=1020)
     sim_student_w = models.CharField(max_length=1020)
     sim_student_z = models.CharField(max_length=1020)
+    def __str__(self):
+        return self.id

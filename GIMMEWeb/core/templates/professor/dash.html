@@ -19,7 +19,7 @@
 </div>
 
 <div id='dashboard_professor_dash'>
-    <section class='section' style="position: relative">
+    <section class='section' id="tutorialSection_professor_dash" style="position: relative">
         <div class='panel animated zoomIn'>
             <div class='panel-heading'>
                 <div class='columns is-mobile is-vcentered'>
@@ -155,25 +155,16 @@
                             <div style="flex:12"></div>
                         </div>
                         <div style="display: inline-flex; gap: 0.2em;">
-                            <button class="button  has-tooltip-right" id="randomizeGroupsButton"
-                                    data-tooltip="Automatically split all students into two random groups, Group A and Group B.">
-                                Randomize Groups
-                            </button>
-                            <button class="button has-tooltip-right" id="addTagButton"
+                            <button class="button has-tooltip-right" id="addStudentTagButton_professor_dash"
                                     data-tooltip="Create your own custom tag that you can assign to individual students.">
                                 Create Tag
                             </button>
-                            <!-- <button  class ="is-rounded is-small pointer" id="addTagButton" style="border-radius: 50px; border-style: solid; background-color:transparent; margin:0.2em">
-                                <div class="fas fa-plus-circle"></div>
-                            </button> -->
-
-                            <div id="addTagContainer" style="display: none;">
-                                <input class="button" type="text" id="tagInput" placeholder="Enter tag name"
+                            <div id="addStudentTagContainer_professor_dash" style="display: none;">
+                                <input class="button" type="text" id="tagInputStudent_professor_dash" placeholder="Enter tag name"
                                        maxlength="16">
-                                <button class="button" id="saveTagButton">Create</button>
-                                <button class="button" id="cancelTagButton">Cancel</button>
+                                <button class="button" id="saveStudentTagButton_professor_dash">Create</button>
+                                <button class="button" id="cancelStudentTagButton_professor_dash">Cancel</button>
                             </div>
-
                         </div>
                         <div class='columns is-mobile' style="display: flex; flex-wrap: wrap; padding: 0.75rem;">
                             <div id='tagTable_professor_dash' style="margin: 0.75rem;"></div>
@@ -264,23 +255,15 @@
                             <div style="flex:12"></div>
                         </div>
                         <div style="display: inline-flex; gap: 0.2em;">
-                            <button class="button  has-tooltip-right" id="randomizeGroupsButton"
-                                    data-tooltip="Automatically split all students into two random groups, Group A and Group B.">
-                                Randomize Groups
-                            </button>
-                            <button class="button has-tooltip-right" id="addTagButton"
+                            <button class="button has-tooltip-right" id="addTaskTagButton_professor_dash"
                                     data-tooltip="Create your own custom tag that you can assign to individual students.">
                                 Create Tag
                             </button>
-                            <!-- <button  class ="is-rounded is-small pointer" id="addTagButton" style="border-radius: 50px; border-style: solid; background-color:transparent; margin:0.2em">
-                                <div class="fas fa-plus-circle"></div>
-                            </button> -->
-
-                            <div id="addTagContainer" style="display: none;">
-                                <input class="button" type="text" id="tagInput" placeholder="Enter tag name"
+                            <div id="addTaskTagContainer_professor_dash" style="display: none;">
+                                <input class="button" type="text" id="tagInputTask_professor_dash" placeholder="Enter tag name"
                                        maxlength="16">
-                                <button class="button" id="saveTagButton">Create</button>
-                                <button class="button" id="cancelTagButton">Cancel</button>
+                                <button class="button" id="saveTaskTagButton_professor_dash">Create</button>
+                                <button class="button" id="cancelTaskTagButton_professor_dash">Cancel</button>
                             </div>
 
                         </div>
@@ -318,28 +301,7 @@
             </div>
             <div class='panel-block' style='display: block;'>
                 <div class='columns is-mobile is-multiline is-mobile is-centered'>
-
-                    <!-- <div class='column is-5 columns is-mobile is-multiline is-mobile'>
-                        <div class='column is-half'>
-                            <label id='mgsInput_professor_dash' class='control-label' for='quantity' min='2'>Min Group Size</label>  
-                            <div class='control'>
-                                <input id='minNumberOfPlayersPerGroupId_professor_dash' class='input' type='number' min='2' max='100' placeholder='2'>
-                            </div>
-                        </div>
-                        <div class='column is-half'>
-                            <label class='control-label' for='quantity'>Max Group Size</label>  
-                            <div class='control'>
-                                <input id='maxNumberOfPlayersPerGroupId_professor_dash' class='input' type='number' min='3' max='100' placeholder='4'>
-                            </div>
-                        </div>
-                    </div>
-                    <div class='column is-2 has-text-centered'>
-                        <p>OR</p>
-                    </div>-->
-
                     <div class='column is-3'>
-                        <!-- <p>Groups</p> -->
-
                         <div class='has-tooltip-arrow' data-tooltip='Sets the preferred amount of students per group.'>
                             <label class='control-label m-2' id='groupSizeText_professor_dash'></label>
                             <div class='control' id='groupSizeSlider_professor_dash'></div>
@@ -388,7 +350,7 @@
                         <span>Group Formation Alg.</span>
                     </div>
                     <div class='column is-half'>
-                        <span>Quality Estimation Alg.</span>
+                        <span>Quality Evaluation Alg.</span>
                     </div>
                 </div>
                 <div class='columns is-mobile is-multiline is-mobile has-tooltip-arrow'>
@@ -467,28 +429,6 @@
                                             </button>
                                         </div>
                                     </a>
-                                    <!--<a class='dropdown-item' data-tooltip='See GIMME-API for details'>
-                                        Annealed Pure Random Search
-                                        <div class='form-group columns'>
-                                            <div class='column is-1'>
-                                            </div>
-                                            <div class='column'>
-                                                <div>Comp. Efficiency (Scalability)</div>
-                                                <div>Solution Quality</div>
-                                            </div>
-                                            <div class='column'>
-                                                <div>
-                                                    N/A
-                                                </div>
-                                                <div>
-                                                    N/A
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <button class='button modal-button is-small is-rounded' data-target="modalAnnealedPRS_professor_dash">Configure...</button>
-                                        </div>
-                                    </a>-->
                                     <a class='dropdown-item' data-tooltip='See GIMME-API for details'>
                                         Evolutionary Search
                                         <div class='form-group columns' style='opacity: 0.8; font-weight:bold;'>
@@ -522,7 +462,7 @@
                                         </div>
                                     </a>
                                     <a class='dropdown-item is-active' data-tooltip='See GIMME-API for details'>
-                                        ODPIP Search
+                                        ODP-IP Search
                                         <div class='form-group columns' style='opacity: 0.8; font-weight:bold;'>
                                             <div class='column is-1'>
                                             </div>
@@ -544,38 +484,6 @@
                                                     <i class='fa-solid fa-star'></i>
                                                     <i class='fa-solid fa-star'></i>
                                                     <i class='fa-solid fa-star'></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <button class='button modal-button is-small is-rounded'
-                                                    data-target="modalODPIP_professor_dash">Configure...
-                                            </button>
-                                        </div>
-                                    </a>
-                                    <a class='dropdown-item' data-tooltip='See GIMME-API for details'>
-                                        Coalition Link Search
-                                        <div class='form-group columns' style='opacity: 0.8; font-weight:bold;'>
-                                            <div class='column is-1'>
-                                            </div>
-                                            <div class='column'>
-                                                <div>Comp. Efficiency (Scalability)</div>
-                                                <div>Solution Quality</div>
-                                            </div>
-                                            <div class='column'>
-                                                <div>
-                                                    <i class='fa-solid fa-star'></i>
-                                                    <i class='fa-solid fa-star'></i>
-                                                    <i class='fa-solid fa-star'></i>
-                                                    <i class='fa-regular fa-star'></i>
-                                                    <i class='fa-regular fa-star'></i>
-                                                </div>
-                                                <div>
-                                                    <i class='fa-solid fa-star'></i>
-                                                    <i class='fa-solid fa-star'></i>
-                                                    <i class='fa-solid fa-star'></i>
-                                                    <i class='fa-solid fa-star'></i>
-                                                    <i class='fa-regular fa-star'></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -624,14 +532,8 @@
                                             </button>
                                         </div>
                                     </a>
-                                    <!--<a class='dropdown-item'>
-                                        Neural Networks
-                                    </a>
-                                    <a class='dropdown-item'>
-                                        Reinf. Learn.
-                                    </a>-->
                                     <a class='dropdown-item is-active'>
-                                        KNN w/ Synergy Between Students
+                                        Synergy Between Students
                                         <div class='column'></div>
     
                                         <div class='form-group columns' style='opacity: 0.8; font-weight:bold;'>
@@ -659,7 +561,7 @@
                                         </div>
                                     </a>
                                     <a class='dropdown-item is-active'>
-                                        KNN w/ Personality Diversity
+                                        Personality Diversity
                                         <div class='column'></div>
     
                                         <div class='form-group columns' style='opacity: 0.8; font-weight:bold;'>
@@ -999,83 +901,32 @@
         <button class="modal-close is-large" aria-label="close"></button>
     </div>
 
-    <div class='modal' id='modalODPIP_professor_dash'>
-        <div class='modal-background'></div>
-        <div class='modal-content'>
-            <div class='is-size-2'>Edit pairing restrictions</div>
-            <div class='column'></div>
-
-            <div id='constraintsError_professor_dash' class='section hero is-danger is-centered has-text-centered'
-                 style='width:100%'>
-                <label class='label subtitle is-4 is-white'>Constraint Creation Error! Please verify if at least two
-                    students are selected.</label>
-            </div>
-
-            <div class='panel-block dash-cell-box has-tooltip-arrow'
-                 data-tooltip="To create a constraint, first select two or more students, and then the type of constraint (if they must be joint or separated). Afterwards, click on the '+' button to add the new constraint.">
-                <div class='column is-two-thirds'>
-                    <div class='subtitle is-5 has-tooltip-arrow' style=''>Students</div>
-                    <div class='table-container'>
-                        <div class='table' style='margin:2em;' id='cstUsersODPIPTable_professor_dash'></div>
-                    </div>
-                </div>
-
-                <div class='column'>
-                    <div class='subtitle is-5 has-tooltip-arrow' style=''>Type</div>
-                    <div class='table-container'>
-                        <div class='table' style='margin:2em;' id='cstTypeODPIPTable_professor_dash'></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class='panel-block dash-cell-box'>
-                <div class='column'>
-                    <div class='subtitle is-5 has-tooltip-arrow' style=''>Constraints</div>
-                    <div class='table-container'>
-                        <div class='table' style='margin:2em;' id='cstODPIPTable_professor_dash'>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!--<div class='form-group'>
-                <label class='column is-4 control-label' for='textinput'>Joint Player Constraints</label>  
-                <div class='control' data-tooltip='Optional, Format: [id1, id2]; [id3, id4]'>
-                    <input id='jointPlayerConstraintsId_professor_dash' class='input' type='text'>
-                </div>
-
-                <label class='column is-4 control-label' for='textinput'>Separated Player Constraints</label>  
-                <div class='control' data-tooltip='Optional, Format: [id1, id2]; [id3, id4]'>
-                    <input id='separatedPlayerConstraintsId_professor_dash' class='input' type='text'>
-                </div>
-            </div>-->
-        </div>
-
-        <button class="modal-close is-large" aria-label="close"></button>
-    </div>
-
     <div class="modal" id="modalKNN_professor_dash">
         <div class="modal-background"></div>
 
         <div class="modal-content">
             <p class="is-size-5">Configuration Options</p>
-            <p class="is-size-3" style="font-weight: 600">KNN</p>
+            <p class="is-size-3" style="font-weight: 600">K-Nearest-Neighbors (KNN)</p>
             <div class='form-group'>
-                <label class='column is-4 control-label' for='textinput'>Num NNs</label>
+                <label class='column is-4 control-label' for='textinput'>k</label>
                 <div class='control'>
                     <input id='kId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>
                 </div>
 
-                <label class='column is-4 control-label' for='textinput'>Ability</label>
-                <div class='control'>
-                    <input id='qualityWeightsAbId_professor_dash' class='input' type='number' step='0.01' min='0'
-                           max='1' placeholder='0.50'>
-                </div>
-
-                <label class='column is-4 control-label' for='textinput'>Engagement</label>
-                <div class='control'>
-                    <input id='qualityWeightsEngId_professor_dash' class='input' type='number' step='0.01' min='0'
-                           max='1' placeholder='0.50'>
+                <label class='column is-4 control-label' for='textinput'>
+                    The quality of an interaction is determined by its influence on:</label>
+                <div class='slidecontainer'>
+                    <div class="slider">
+                        <div class="value left"
+                             data-tooltip='Aligned groups are more cohesive and perform better at linear tasks.'>Ability
+                        </div>
+                        <input name='diversity' id='qualityAbWeight_professor_dash' type='range' value='0.5' min='0.0'
+                               max='1.0' step='0.1'>
+                        <div class="value right"
+                             data-tooltip='Diverse groups show more innovation and perfrom better at creative tasks.'>
+                            Engagement
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1087,35 +938,35 @@
         <div class="modal-background"></div>
         <div class="modal-content">
             <p class="is-size-5">Configuration Options</p>
-            <p class="is-size-3" style="font-weight: 600">KNN w/ Synergy Between Students</p>
+            <p class="is-size-3" style="font-weight: 600">Synergy Between Students</p>
 
-            <div class='block dash-cell-box has-background-white'>
-                <label class='subtitle columns is-4 control-label' for='textinput'>KNN Options (for Preferences
-                    Est.)</label>
-                <div class='columns'>
-                    <div class='column is-1'></div>
-                    <div class="column">
-                        <label class='column is-4 control-label' for='textinput'>Num NNs</label>
-                        <div class='control'>
-                            <input id='synergiesKId_professor_dash' class='input' type='number' min='1' max='100'
-                                   placeholder='5'>
-                        </div>
-
-                        <label class='column is-4 control-label' for='textinput'>Ability</label>
-                        <div class='control'>
-                            <input id='synergiesQualityWeightsAbId_professor_dash' class='input' type='number'
-                                   step='0.01' min='0' max='1' placeholder='0.50'>
-                        </div>
-
-                        <label class='column is-4 control-label' for='textinput'>Engagement</label>
-                        <div class='control'>
-                            <input id='synergiesQualityWeightsEngId_professor_dash' class='input' type='number'
-                                   step='0.01' min='0' max='1' placeholder='0.50'>
-                        </div>
-                    </div>
-                    <div class='column is-1'></div>
-                </div>
-            </div>
+{#            <div class='block dash-cell-box has-background-white'>#}
+{#                <label class='subtitle columns is-4 control-label' for='textinput'>KNN Options (for Preferences#}
+{#                    Est.)</label>#}
+{#                <div class='columns'>#}
+{#                    <div class='column is-1'></div>#}
+{#                    <div class="column">#}
+{#                        <label class='column is-4 control-label' for='textinput'>k</label>#}
+{#                        <div class='control'>#}
+{#                            <input id='synergiesKId_professor_dash' class='input' type='number' min='1' max='100'#}
+{#                                   placeholder='5'>#}
+{#                        </div>#}
+{##}
+{#                        <label class='column is-4 control-label' for='textinput'>Ability Importance</label>#}
+{#                        <div class='control'>#}
+{#                            <input id='synergiesQualityWeightsAbId_professor_dash' class='input' type='number'#}
+{#                                   step='0.01' min='0' max='1' placeholder='0.50'>#}
+{#                        </div>#}
+{##}
+{#                        <label class='column is-4 control-label' for='textinput'>Engagement Importance</label>#}
+{#                        <div class='control'>#}
+{#                            <input id='synergiesQualityWeightsEngId_professor_dash' class='input' type='number'#}
+{#                                   step='0.01' min='0' max='1' placeholder='0.50'>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class='column is-1'></div>#}
+{#                </div>#}
+{#            </div>#}
 
             <div class='block dash-cell-box has-background-white'>
                 <label class='subtitle columns is-4 control-label' for='textinput'>Synergies Table (for Coalition
@@ -1148,49 +999,44 @@
 
         <div class="modal-content">
             <p class="is-size-5">Configuration Options</p>
-            <p class="is-size-3" style="font-weight: 600">KNN w/ Personality Diversity</p>
+            <p class="is-size-3" style="font-weight: 600">Personality Diversity</p>
 
             <div class="column"></div>
             <div class='form-group'>
-                <label class='column is-4 control-label' for='textinput'>Num NNs</label>
-                <div class='control'>
-                    <input id='kId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>
-                </div>
-
-                <label class='column is-4 control-label' for='textinput'>Ability</label>
-                <div class='control'>
-                    <input id='qualityWeightsAbId_professor_dash' class='input' type='number' step='0.01' min='0'
-                           max='1' placeholder='0.50'>
-                </div>
-
-                <label class='column is-4 control-label' for='textinput'>Engagement</label>
-                <div class='control'>
-                    <input id='qualityWeightsEngId_professor_dash' class='input' type='number' step='0.01' min='0'
-                           max='1' placeholder='0.50'>
-                </div>
+{#                <label class='column is-4 control-label' for='textinput'>Num NNs</label>#}
+{#                <div class='control'>#}
+{#                    <input id='kId_professor_dash' class='input' type='number' min='1' max='100' placeholder='5'>#}
+{#                </div>#}
+{##}
+{#                <label class='column is-4 control-label' for='textinput'>Ability</label>#}
+{#                <div class='control'>#}
+{#                    <input id='qualityWeightsAbId_professor_dash' class='input' type='number' step='0.01' min='0'#}
+{#                           max='1' placeholder='0.50'>#}
+{#                </div>#}
+{##}
+{#                <label class='column is-4 control-label' for='textinput'>Engagement</label>#}
+{#                <div class='control'>#}
+{#                    <input id='qualityWeightsEngId_professor_dash' class='input' type='number' step='0.01' min='0'#}
+{#                           max='1' placeholder='0.50'>#}
+{#                </div>#}
 
                 <label class='column is-4 control-label has-tooltip-arrow'
                        data-tooltip='Aligned groups are more cohesive and perform better at linear tasks. Diverse groups show more innovation and perfrom better at creative tasks.'>Group
                     Personality Diversity</label>
                 <div class='slidecontainer'>
-                    <div class="sliderValue">
-                        <span id="sliderValueText">0.5</span>
-                    </div>
                     <div class="slider">
                         <div class="value left"
                              data-tooltip='Aligned groups are more cohesive and perform better at linear tasks.'>Aligned
                         </div>
                         <!-- Aligned&ensp; -->
                         <input name='diversity' id='diversityWeight_professor_dash' type='range' value='0.5' min='0.0'
-                               max='1.0' step='0.1' oninput="updateSliderValueText(this.value);">
+                               max='1.0' step='0.1'>
                         <!-- &ensp;Diverse -->
                         <div class="value right"
                              data-tooltip='Diverse groups show more innovation and perfrom better at creative tasks.'>
                             Diverse
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
@@ -1203,11 +1049,6 @@
 {% include 'common/footer.html' %}
 </body>
 
-<script>
-    function updateSliderValueText(val) {
-        document.getElementById('sliderValueText').textContent = val;
-    }
-</script>
 <script
         src='https://code.jquery.com/jquery-3.2.1.min.js'
         integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='
@@ -1271,7 +1112,7 @@
             }
         });
 
-
+        {#$("#tutorialSection_professor_dash").hide();#}
         $("#adaptationError_professor_dash").hide();
         $("#adaptationWarning_professor_dash").hide();
         $("#adaptationInfo_professor_dash").hide();
@@ -1319,15 +1160,7 @@
             'numBootstrapIterations': ''
         };
 
-
-        // special button effects
-        $('#qualityWeightsAb_professor_dash').change(function () {
-            $('#qualityWeightsEng_professor_dash').val(1.0 - $(this).val())
-        });
-        $('#qualityWeightsEng_professor_dash').change(function () {
-            $('#qualityWeightsAb_professor_dash').val(1.0 - $(this).val())
-        });
-
+        
         $(function () {
             $("#groupSizeSlider_professor_dash").slider({
                 range: true,
@@ -1349,33 +1182,39 @@
 			<p>  <b>1. Share the platform link</b> with the students, so they can sign up in the platform (simulate this by clicking <b>'Tutorial Controls' > 'Share link'</b>); </p> 
 			<p>  <b>2.</b> Next, <b>register the first task</b> for the course (call it 'week1_00' and make sure it promotes a 'Self-Facilitation' interaction. Also, give the same priority to the task's interaction profile and difficulty when assigning it to a group and, since it is a task for week 1, make it on the easier side); </p>
 			<p>  <b>3.</b> After registering the first task, the other tasks will be automatically registered <b>by clicking 'Tutorial Controls' > 'Simulate task registration'</b>.`,
-
             `Perform the following actions: 
 			<p> <b>1. Select all students</b> so that they are considered when forming groups; </p>
 			<p> <b>2. Select the week 1 tasks (check their ids)</b>; </p>
 			<p> <b>3. Compute a group organization</b> and verify the formed groups; </p>
 			<p> <b>4. Manually evaluate</b> Student_E, with <b>ability and engagement equal to 0.3</b> and <b>simulate the evaluation</b> for the rest. You will be able to see now how every student fared in their respective group task. (Normally the students are evaluated automatically by system, but it is also possible to evaluate them manually)`,
-
             `Perform the following actions: 
 			<p> <b>1.</b> Student_A will not be available this week, <b>remove the student</b> from the selection; </p>
 			<p> <b>2.</b> Select week 2's tasks, compute a new group organization and simulate students' reaction. </p>`,
-
             `Perform the following actions: 
 			<p> <b>1.</b> Student_Y was misevaluated from last week, <b>correct this student's ability value</b>, so it is equal to Student_X; </p>
 			<p> <b>2.</b> Student_X cannot be in the same group as Student_Y. <b>Create the restriction</b> so that Student_X and Student_Y are <b>separated</b>; </p>
 			<p> <b>3.</b> Student_W was very engaged in the group project when working with Student_Z, <b>create the restriction</b> so that Student_W and Student_Z <b>are joined in the same group</b>; </p>
 			<p> <b>4.</b> Register the tasks for week 3, compute a new group organization and simulate reaction.</p>`,
-
             `This is a free week, where you can further explore the platform, for example, you can:
 		<p> <b>1.</b> Select week 4's tasks; </p>
 		<p> <b>2.</b> Feel free to change group sizes, change restrictions, change the grouping algorithm, change quality estimation algorithm; </p>
 		<p> <b>3.</b> You can also compute new group organizations and evaluate them as many times as you wish; </p>
 		<p> <b>4.</b> When you are ready, advance to the next week. </p>`,
-
             "Congratulations! You have completed the tutorial! You can now choose to reset the simulation and start over, or close this tab."]
 
-        dropdownItemsText = [["<a class=\'dropdown-item\'> Share link between students</a>", "<a class=\'dropdown-item\'> Simulate task registration </a>"], ["<a class=\'dropdown-item\'> Simulate evaluation of students </a>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], ["<div class=\'dropdown-item\'> No actions available </div>"]];
-        dropdownItemsUrls = [['/shareLinkSim/', '/taskRegistrationSim/'], ['/evaluateSim/'], ['/simulateReaction/'], ['/simulateReaction/'], ['/simulateReaction/'], ['/simulateReaction/']]
+        dropdownItemsText = [["<a class=\'dropdown-item\'> Share link between students</a>", 
+            "<a class=\'dropdown-item\'> Simulate task registration </a>"], 
+            ["<a class=\'dropdown-item\'> Simulate evaluation of students </a>"], 
+            ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"],
+            ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], 
+            ["<div class=\'dropdown-item\'> Simulate evaluation of all students </div>"], 
+            ["<div class=\'dropdown-item\'> No actions available </div>"]];
+        dropdownItemsUrls = [['/shareLinkSim/', '/taskRegistrationSim/'], 
+            ['/evaluateSim/'], 
+            ['/simulateReaction/'], 
+            ['/simulateReaction/'], 
+            ['/simulateReaction/'], 
+            ['/simulateReaction/']]
 
         var changeSimulationWeek = function (newServerState) {
 // 			if(currServerState.simWeek == newServerState.simWeek)
@@ -1541,20 +1380,7 @@
             simulationDropdown.append(simulationDropdownContent);
             return simulationDropdown;
         }
-
-
-        var canComputeAdaptation = function (newServerState) {
-            var newTimestamp = newServerState['timestamp'];
-            delete newServerState.timestamp;
-
-            var res = (currServerState == undefined ||
-                (!(JSON.stringify(currServerState) === JSON.stringify(newServerState)) &&
-                    newTimestamp > currTimestamp));
-
-            currTimestamp = res ? newTimestamp : currTimestamp;
-            return res;
-        }
-
+        
 
         {#synergy table stuff#}
         var addSynergyTableLine = function (line, domTable, colElems, isRemovable) {
@@ -1683,6 +1509,19 @@
         });
 
 
+        {#adaptation control#}
+        var canComputeAdaptation = function (newServerState) {
+            var newTimestamp = newServerState['timestamp'];
+            delete newServerState.timestamp;
+
+            var res = (currServerState == undefined ||
+                (!(JSON.stringify(currServerState) === JSON.stringify(newServerState)) &&
+                    newTimestamp > currTimestamp));
+
+            currTimestamp = res ? newTimestamp : currTimestamp;
+            return res;
+        }
+
         var usersSelectedDOMElems = [];
         var currCstTypeDOMElem = undefined;
         var currCsts = {'joint': [], 'separated': []};
@@ -1692,13 +1531,12 @@
                 .replace('[[', '[')
                 .replace(']]', ']')
                 .replaceAll('],[', '];[');
-        };
+        }
 
         var processedCsts = function (currCstr) {
             return {'joint': processCstArray(currCstr['joint']), 'separated': processCstArray(currCstr['separated'])};
-        };
-
-
+        }
+        
         var generateODPIPUsrTableFromArray = function (idArray, tagClass, highlightedTagClass) {
             var table = $('<div></div>');
             for (var i = 0; i < idArray.length; i++) {
@@ -1729,7 +1567,8 @@
                 tag.show(135);
             }
             return table;
-        };
+        }
+        
         var generateODPIPTypeTableFromArray = function (tagClass, highlightedTagClass, otherTagClass) {
             var table = $('<div></div>');
             var elemArray = [
@@ -1766,7 +1605,7 @@
                 }
             }
             return table;
-        };
+        }
 
         var appendCstTag = function (tagClass, usersSelectedForConstraint, currConstraintType, jointTable, sepTable) {
 
@@ -2293,8 +2132,7 @@
                 }
             );
         }
-
-
+        
         var loadAndStartAdaptation = function () {
 
             var processedCtrs = processedCsts(currCsts)
@@ -2360,8 +2198,8 @@
 
         // this tab starts hidden
         var additionalTab = $('#additionalAdaptMinimizerButton_professor_dash');
-        $('#additionalAlgorithmsSection_1_professor_dash').hide(0);
-        $('#additionalAlgorithmsSection_2_professor_dash').hide(0);
+        $('#additionalAlgorithmsSection_1_professor_dash').hide();
+        $('#additionalAlgorithmsSection_2_professor_dash').hide();
         additionalTab.empty().append("<i class=\"fa fa-window-maximize\"></i>");
 
 

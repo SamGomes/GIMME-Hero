@@ -62,7 +62,7 @@ class LikertForm(forms.Form):
 class CreateTagForm(ModelForm):
     class Meta:
         model = Tag
-        fields = ['name']
+        fields = ['name', 'target']
 
 
 class UpdateUserForm(UserChangeForm):
