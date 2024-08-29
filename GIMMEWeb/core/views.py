@@ -1072,7 +1072,8 @@ class Views:  # acts as a namespace
                 http_request = HttpRequest()
                 http_request.method = 'POST'
                 http_request.POST['student'] = user.username
-                http_request.POST['tag'] = 'Everyone'
+                http_request.POST['tag'] = 'All'
+                http_request.POST['target'] = 'student'
                 Views.assign_tag(http_request)
 
                 if 'Student' in profile.role:

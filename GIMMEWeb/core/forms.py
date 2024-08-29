@@ -43,8 +43,7 @@ class CreateTaskForm(ModelForm):
 
     class Meta:
         model = Task
-        exclude = ['task_id', 'creator', 'creation_time', 'profile', 'init_date', 'final_date', 'min_req_ability', 'difficulty_w',
-                   'profile_w']
+        fields = ['description', 'files']
 
 
 class LikertForm(forms.Form):
@@ -96,4 +95,4 @@ class UpdateTaskForm(ModelForm):
 
     class Meta:
         model = Task
-        exclude = ['creator', 'creation_time']
+        fields = ['description', 'files']

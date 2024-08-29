@@ -30,14 +30,16 @@
       <span></span>
     </div>
     
-    {%if debug%}
-      <div class='button' id='initServerButton_header'> Init Server</div>
-    {%endif%}
-    
     
     <div id='nav-menu' class='navbar-menu'>
     
     <div class='navbar-start'>
+        {%if debug%}
+            <a class='navbar-item is-hoverable' id='initServerButton_header'
+               data-tooltip="Initializes Server Parameters, e.g., tutorial state and default accounts (for debug purposes).">
+                Init Server
+            </a>
+        {%endif%}
         <a class='navbar-item is-hoverable' id='updateDash_header'
              data-tooltip="Fetches server data and updates all information on the dash.">
             Update Dash &nbsp;<i class="fa-solid fa-arrows-rotate"></i>

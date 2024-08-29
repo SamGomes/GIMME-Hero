@@ -13,7 +13,7 @@ const addStudentTagButton = document.getElementById('addStudentTagButton_profess
 // Add event listener for adding a tag
 var addTag = function (target, addTagContainer, saveTagButton, deleteTagButton, tagInput) {
     if (addTagContainer.style.display == 'block') {
-        ShowAddTagButton();
+        showAddTagButton();
         return;
     }
 
@@ -30,12 +30,12 @@ var addTag = function (target, addTagContainer, saveTagButton, deleteTagButton, 
             });
 
             // Reset the input field and hide the add tag container
-            ShowAddTagButton(addTagContainer, tagInput);
+            showAddTagButton(addTagContainer, tagInput);
         }
     });
 
     deleteTagButton.addEventListener('click', function () {
-        ShowAddTagButton(addTagContainer, tagInput);
+        showAddTagButton(addTagContainer, tagInput);
     });
 };
 
@@ -47,7 +47,7 @@ addTaskTagButton.addEventListener('click',function (){
 });
 
 
-function ShowAddTagButton(addTagContainer, tagInput){
+function showAddTagButton(addTagContainer, tagInput){
     tagInput.value = '';
     addTagContainer.style.display = 'none';
 }

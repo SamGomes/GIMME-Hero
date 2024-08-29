@@ -59,7 +59,7 @@
 												<span>
 													Tutorial Controls
 												</span>
-                                            <span class='icon is-small'>
+                                                <span class='icon is-small'>
 													<i class='fas fa-angle-down' aria-hidden='true'></i>
 												</span>
                                         </button>
@@ -102,38 +102,33 @@
                         <div class='subtitle is-5 has-tooltip-arrow' style=' margin-bottom: 0; margin-bottom: 1.5rem;'>
                             Registered Students
                         </div>
-                        <div class='student-info-box'>
-                            <div id="student-info-placeholder" style=" color: #737d99;">Click on student to view
+                        <div class='info-box'>
+                            <div id="student-info-placeholder_professor_dash" style="color: #737d99;">Click on student to view
                                 details
                             </div>
-                            <div id="student-info-preview" style="display: none;">
-                                <div class="columns is-mobile student-info-header" style="margin-bottom: 0;">
-                                    <div class='student-info-header-element' style='flex-grow: 1'
-                                         id='student-info-name'>Student Name
+                            <div id="student-info-preview_professor_dash" style="display: none;">
+                                <div class="columns is-mobile info-header" style="margin-bottom: 0;">
+                                    <div class='info-header-element' style='flex-grow: 1'>
+                                        <div class='info-column-title'>Student Name: </div>
+                                        <div id='student-info-name_professor_dash'></div>
                                     </div>
-                                    <div class='student-info-header-element' style='flex-grow: 4'
-                                         id='student-info-email'>email
+                                    <div class='info-header-element' style='flex-grow: 1'>
+                                        <div class='info-column-title'>Student Email: </div>
+                                        <div id='student-info-email_professor_dash'></div>
                                     </div>
                                 </div>
 
                                 <div class='columns is-mobile'>
-                                    <div class='column student-info-column-title' style='flex-grow: 1;'>Personality
-                                        <p class='student-info-column-content' id='student-info-personality'></p>
-                                    </div>
-                                    <div class='column student-info-column-title' style='flex-grow: 3;'>Tags
-
-                                        <div id="student-info-assigned-tags-table"></div>
-
+                                    <div class='column info-column-title' style='flex-grow: 3;'>Tags
+                                        <div id="student-info-assigned-tags-table_professor_dash"></div>
                                         <div style="display: flex; flex-wrap: wrap;">
                                             <button class="is-rounded is-small has-tooltip-arrow pointer assign-tag"
-                                                    id="assign-tag-to-student-button"
+                                                    id="assign-tag-to-student-button_professor_dash"
                                                     style="border-radius: 50px; border-style: solid; background-color:transparent; margin:0.2em"
-                                                    data-tooltip='Assign tag' onclick="toggleAvailableTags()">
+                                                    data-tooltip='Assign tag'>
                                                 <div class="fas fa-plus-circle"></div>
                                             </button>
-
-                                            <div id="student-info-available-tags-table" style="display: none;"></div>
-
+                                            <div id="student-info-available-tags-table_professor_dash" style="display: none;"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -212,28 +207,31 @@
                         <div class='subtitle is-5 has-tooltip-arrow' style=' margin-bottom: 0; margin-bottom: 1.5rem;'>
                             Registered Tasks
                         </div>
-                        <div class='student-info-box'>
-                            <div id="student-info-placeholder" style=" color: #737d99;">
+                        <div class='info-box'>
+                            <div id="task-info-placeholder_professor_dash" style=" color: #737d99;">
                                 Click on task to view details
                             </div>
-                            <div id="student-info-preview" style="display: none;">
-                                <div class="columns is-mobile student-info-header" style="margin-bottom: 0;">
-                                    <div class='student-info-header-element' style='flex-grow: 1'
-                                         id='student-info-name'>Task Name
+                            <div id="task-info-preview_professor_dash" style="display: none;">
+                                <div class="columns is-mobile info-header" style="margin-bottom: 0;">
+                                    <div class='info-header-element' style='flex-grow: 1'>
+                                        <div class="info-column-title">Task Description:</div> <div id='task-info-desc_professor_dash'></div>
+                                    </div>
+                                    <div class='info-header-element' style='flex-grow: 1'>
+                                        <div class="info-column-title">Task Files:</div> <div id='task-info-files_professor_dash'></div>
                                     </div>
                                 </div>
 
                                 <div class='columns is-mobile'>
-                                    <div class='column student-info-column-title' style='flex-grow: 3;'>Tags
-                                        <div id="student-info-assigned-tags-table"></div>
+                                    <div class='column info-column-title' style='flex-grow: 3;'>Tags
+                                        <div id="task-info-assigned-tags-table_professor_dash"></div>
                                         <div style="display: flex; flex-wrap: wrap;">
                                             <button class="is-rounded is-small has-tooltip-arrow pointer assign-tag"
-                                                    id="assign-tag-to-student-button"
+                                                    id="assign-tag-to-task-button_professor_dash"
                                                     style="border-radius: 50px; border-style: solid; background-color:transparent; margin:0.2em"
                                                     data-tooltip='Assign tag' onclick="toggleAvailableTags()">
                                                 <div class="fas fa-plus-circle"></div>
                                             </button>
-                                            <div id="student-info-available-tags-table" style="display: none;"></div>
+                                            <div id="task-info-available-tags-table_professor_dash" style="display: none;"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -354,9 +352,9 @@
                     </div>
                 </div>
                 <div class='columns is-mobile is-multiline is-mobile has-tooltip-arrow'>
-                    <div class='column is-half has-tooltip-arrow'
-                         data-tooltip="These algorithms are used to compute the group organizations">
-                        <div class='dropdown'>
+                    <div class='column is-half'>
+                        <div class='dropdown has-tooltip-arrow'
+                             data-tooltip="These algorithms compute the group organizations">
                             <div class='dropdown-trigger'>
                                 <button class='button' aria-haspopup='true' aria-controls='dropdownMenu1'>
                                         <span id='selectedGenAlgId_professor_dash'>
@@ -593,8 +591,8 @@
                     </div>
                 </div>
                 <div class='columns is-mobile is-multiline is-mobile has-tooltip-arrow'
-                     data-tooltip='This feature allows the pre-computation of students` data models, by simulating 
-                                several adaptation iterations using the current parameters.'>
+                     data-tooltip="The 'Bootstrap' feature allows the pre-computation of students` data models, by simulating 
+                                several adaptation iterations using the current parameters.">
                     <div class='column is-full'>
                         <p>Bootstrap</p>
                     </div>
@@ -666,7 +664,7 @@
                 <!-- is-fullwidth only occupies a portion of the panel block -->
                 <div style="width:100%" class='columns is-mobile has-text-centered'>
                     <div class='column is-6 is-offset-1 has-tooltip-top  has-tooltip-arrow'
-                         data-tooltip='Loads the parameterization above iff the configuration changed, and computes a new adaptation state.'>
+                         data-tooltip='Loads the parameterization above iff the configuration changed and computes a new adaptation state.'>
                         <button class='button is-fullwidth is-fullheight is-info'
                                 id='loadAndStartAdaptation_professor_dash'>Generate Student Groups
                         </button>
@@ -1084,10 +1082,6 @@
     }
 </script>
 <script src='{% static 'js/plots.js' %}'></script>
-
-{#<script>#}
-{#</script>#}
-
 <script>
 
     $(document).ready(function () {
@@ -1724,7 +1718,7 @@
         };
 
 
-        var generateDashTableFromArray = function (canAdd, idArray, nameArray, tagClass, moveButtonIconClass,
+        var generateDashTableFromArray = function (type, canAdd, idArray, nameArray, tagClass, moveButtonIconClass,
                                                    moveElementUrl, moveElementArg, addElementURL, addElementArg,
                                                    deleteElementUrl, deleteElementArg,
                                                    editElementArg, editElementUrlTask, editElementUrlStudent) {
@@ -1736,9 +1730,10 @@
                 var tag = undefined;
 
                 if (i >= 0) {
+                    let tagName = "" + nameArray[i];
                     tag = $(`<span class='context-menu pointer' style='margin:0.1em; z-index:1000;'></span>`)
-                        .text(nameArray[i])
-                    {#.attr('onclick', "previewStudentInfo('" + nameArray[i] + "')");#}
+                        .text(tagName)
+                        .click(function(){previewInfo(currServerState,type,tagName); });
 
                     if (deleteElementUrl != "") {
                         var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this task'></div>");
@@ -1830,11 +1825,10 @@
                 }, 500)
             }
         };
-
+        
 
         $('input[name=\'studentPerformanceScaleType\']').change(function () {
             updateGroupsPlotScaleCallback();
-
         });
 
         var fetchServerData = function () {
@@ -1920,6 +1914,7 @@
                                         var currSelectedUsers = newServerState.currSelectedUsers;
                                         var currFreeUsers = newServerState.currFreeUsers;
                                         var fuTable = generateDashTableFromArray(
+                                            'student',
                                             true, currFreeUsers, currFreeUsers, 'is-info', 'fa-arrow-circle-right',
                                             '{% url 'addSelectedUser' %}', 'username',
                                             '', 'username',
@@ -1927,6 +1922,7 @@
                                             'usernameToUpdate', "", '{% url 'manuallyManageStudent' %}'
                                         );
                                         var suTable = generateDashTableFromArray(
+                                            'student',
                                             false, currSelectedUsers, currSelectedUsers, 'is-info', 'fa-arrow-circle-left',
                                             '{% url 'removeSelectedUser' %}', 'username',
                                             '', 'username',
@@ -1987,6 +1983,7 @@
                                         }
 
                                         ftTable = generateDashTableFromArray(
+                                            'task',
                                             true, currFreeTaskIds, currFreeTaskIds, 'is-danger', 'fa-arrow-circle-right',
                                             '{% url 'addSelectedTask' %}', 'taskId',
                                             '{% url 'taskRegistration' %}', 'taskId',
@@ -1995,6 +1992,7 @@
                                         );
 
                                         stTable = generateDashTableFromArray(
+                                            'task',
                                             false, currSelectedTaskIds, currSelectedTaskIds, 'is-danger', 'fa-arrow-circle-left',
                                             '{% url 'removeSelectedTask' %}', 'taskId',
                                             '{% url 'taskRegistration' %}', 'taskId',
@@ -2298,11 +2296,16 @@
             $(this).parent().parent().parent().parent().parent().parent().find(".panel-block").hide(350);
 
         });
+        
+        
+        $("#assign-tag-to-student-button_professor_dash").click(function (){
+           toggleAvailableTags(); 
+        });
     });
 
 
 </script>
 <script src="{% static 'js/tagFunctionality.js' %}"></script>
-<script src="{% static 'js/studentInfoPreview.js' %}"></script>
+<script src="{% static 'js/infoPreview.js' %}"></script>
 
 </html>
