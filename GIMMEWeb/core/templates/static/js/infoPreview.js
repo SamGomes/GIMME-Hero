@@ -6,71 +6,73 @@ let previewElement = $('#student-info-preview_professor_dash'),
     assignedTagsTable = $('#student-info-assigned-tags-table_professor_dash'), 
     assignTagButton = $('#assign-tag-to-student-button_professor_dash');
 
-
-let serverState = undefined;
-let currentElem = undefined;
+let currentTargetId = undefined;
 
 
 function previewInfo(currServerState, infoType, id){
 
+    currentTargetId = id;
     if(infoType === "student"){
-        console.log(currServerState);
-        console.log(infoType+','+id);
-
-        $.ajax(
-            {
-                url: '/fetchStudentInfo/',
-                type: 'POST',
-                dataType: 'json',
-                data: {'username': id},
-                complete:
-                    function (res) {
-                        console.log(res);
-                        $('#student-info-name_professor_dash').text(res.responseJSON.fullname);
-                        $('#student-info-email_professor_dash').text(res.responseJSON.email);
-                    }
-            });
-        
-        
         previewElement = $('#student-info-preview_professor_dash');
         placeholderElement = $('#student-info-placeholder_professor_dash');
         availableTagsTable = $('#student-info-available-tags-table_professor_dash');
         assignedTagsTable = $('#student-info-assigned-tags-table_professor_dash');
         assignTagButton = $('#assign-tag-to-student-button_professor_dash');
-    }else if(infoType === "task"){
-
-        $.ajax({
-            url: '/fetchTasksFromId/',
-            type: 'POST',
-            dataType: 'json',
-            data: {'tasks': id},
-            success:
-                function (res) {
-                    console.log(res);
-                    $('#task-info-desc_professor_dash').text(res[0].description);
-                    $('#task-info-files_professor_dash').text(res[0].files);
-                }
-        });
-        
+    }
+    else if(infoType === "task"){
         previewElement = $('#task-info-preview_professor_dash');
         placeholderElement = $('#task-info-placeholder_professor_dash');
         availableTagsTable = $('#task-info-available-tags-table_professor_dash');
         assignedTagsTable = $('#task-info-assigned-tags-table_professor_dash');
         assignTagButton = $('#assign-tag-to-task-button_professor_dash');
-    }else{
+    }
+    else{
         return;
     }
     
     previewElement.hide(500, function() {
-        updateAssignedTagsTable();
-        updateAvailableTagsTable();
-        hideStudentInfoPlaceholder();
+        if(infoType === "student"){
+            $.ajax(
+                {
+                    url: '/fetchStudentInfo/',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {'username': id},
+                    complete:
+                        function (res) {
+                            $('#student-info-name_professor_dash').text(res.responseJSON.fullname);
+                            $('#student-info-email_professor_dash').text(res.responseJSON.email);
+                            var assignedTags = res.responseJSON.tags;
+                            updateAssignedTagsTable(assignedTags);
+                        }
+                });
+            
+        }else if(infoType === "task"){
+    
+            $.ajax({
+                url: '/fetchTasksFromId/',
+                type: 'POST',
+                dataType: 'json',
+                data: {'tasks': id},
+                success:
+                    function (res) {
+                        $('#task-info-desc_professor_dash').text(res[0].description);
+                        $('#task-info-files_professor_dash').text(res[0].files);
+                        var assignedTags = res[0].tags;
+                        updateAssignedTagsTable(assignedTags);
+                    }
+            });
+        }else{
+            return;
+        }
+        updateAvailableTagsTable(currServerState);
+        hideInfoPlaceholder();
     });
     previewElement.show(500);
 }
 
 
-function updateAvailableTagsTable(){
+function updateAvailableTagsTable(serverState){
     assignTagButton.toggleClass('active', true);
 
     availableTagsTable.empty();
@@ -83,9 +85,9 @@ function updateAvailableTagsTable(){
         if (!tag.is_assignable)
             return;
         
-        const element = $("<span class='assignable-tag pointer'></span>").text(tag.name);
+        const element = $("<span class='card-tag pointer'></span>").text(tag.name);
         element.on('click', function(){
-            const data = {name: tag.name, target: tag.target, student: currentElem};
+            const data = {name: tag.name, target: tag.target, targetId: currentTargetId};
 
             $.ajax({
                 url: '/assignTag/',
@@ -100,22 +102,19 @@ function updateAvailableTagsTable(){
 }
 
 
-function updateAssignedTagsTable(){
+function updateAssignedTagsTable(assignedTags){
     assignedTagsTable.empty();
-
-    var serverTags = serverState.studentTags;
-    var tags = $("<div style='display: flex; flex-wrap: wrap; margin-top: 0.3em;'></div>");
-
-    serverTags.forEach(tag => {
-        const element = $("<span class='assigned-tag'></span>").text(tag.name);
+    var tags = $("<div></div>");
+    assignedTags.forEach(tag => {
+        const element = $("<span class='card-tag'></span>").text(tag.name);
 
         if (tag.is_assignable) {
-            const removeDiv = $("<div class='has-tooltip-arrow  assigned-tag-remove-button' style='font-size: .75rem; color: #131444; height: fit-content; padding: 0.2em; margin: 0.2em;' data-tooltip='Remove tag'></div>");
-            const removeButton = $("<div class='fa fa-remove pointer' style='padding-left: 0.5em;'></div>");
+            const removeDiv = $("<div class='has-tooltip-arrow  assigned-tag-remove-button' data-tooltip='Remove tag'></div>");
+            const removeButton = $("<div class='fa fa-remove pointer'></div>");
 
             removeDiv.append(removeButton);       
             removeDiv.on('click', function(){
-                const data = {tag: tag.name, target: tag.target, student: currentElem};
+                const data = {tag: tag.name, target: tag.target, targetId: currentTargetId};
                 
                 $.ajax({
                     url: '/removeAssignedTag/',
@@ -131,10 +130,9 @@ function updateAssignedTagsTable(){
 
         tags.append(element);
     });
-    
     assignedTagsTable.append(tags);
 }
-function hideStudentInfoPlaceholder(){
+function hideInfoPlaceholder(){
     placeholderElement.hide(500);
     previewElement.show(500);
 }
@@ -143,23 +141,4 @@ function hideStudentInfoPlaceholder(){
 function showStudentInfoPlaceholder(){
     placeholderElement.show(500);
     previewElement.hide(500);
-}
-
-
-function updateStudentInfoPreview(newServerState){
-    serverState = newServerState;
-
-    if (currentElem)
-    {
-        if (!serverState.studentsStates[currentElem]){
-            showStudentInfoPlaceholder();
-            return;
-        }
-        else {
-            info = JSON.parse(serverState.studentsStates[currentElem]);
-        }
-    }
-
-    updateAssignedTagsTable();
-    updateAvailableTagsTable();
 }

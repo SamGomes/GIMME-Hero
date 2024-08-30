@@ -102,9 +102,8 @@
                         <div class='subtitle is-5 has-tooltip-arrow' style=' margin-bottom: 0; margin-bottom: 1.5rem;'>
                             Registered Students
                         </div>
-                        <div class='info-box'>
-                            <div id="student-info-placeholder_professor_dash" style="color: #737d99;">Click on student to view
-                                details
+                        <div class='info-box' style='background-color: #209cee'>
+                            <div id="student-info-placeholder_professor_dash">Click on a student to view their details.
                             </div>
                             <div id="student-info-preview_professor_dash" style="display: none;">
                                 <div class="columns is-mobile info-header" style="margin-bottom: 0;">
@@ -119,16 +118,13 @@
                                 </div>
 
                                 <div class='columns is-mobile'>
-                                    <div class='column info-column-title' style='flex-grow: 3;'>Tags
+                                    <div class='column info-column-title'>Tags
                                         <div id="student-info-assigned-tags-table_professor_dash"></div>
-                                        <div style="display: flex; flex-wrap: wrap;">
-                                            <button class="is-rounded is-small has-tooltip-arrow pointer assign-tag"
-                                                    id="assign-tag-to-student-button_professor_dash"
-                                                    style="border-radius: 50px; border-style: solid; background-color:transparent; margin:0.2em"
-                                                    data-tooltip='Assign tag'>
-                                                <div class="fas fa-plus-circle"></div>
-                                            </button>
-                                            <div id="student-info-available-tags-table_professor_dash" style="display: none;"></div>
+                                        <div class="has-tooltip-arrow card-tag pointer"
+                                                id="assign-tag-to-student-button_professor_dash"
+                                                data-tooltip='Assign tag'>
+                                            <div class="fas fa-plus-circle"></div>
+                                            <div id="student-info-available-tags-table_professor_dash"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -207,9 +203,9 @@
                         <div class='subtitle is-5 has-tooltip-arrow' style=' margin-bottom: 0; margin-bottom: 1.5rem;'>
                             Registered Tasks
                         </div>
-                        <div class='info-box'>
-                            <div id="task-info-placeholder_professor_dash" style=" color: #737d99;">
-                                Click on task to view details
+                        <div class='info-box' style='background-color: #ff3860'>
+                            <div id="task-info-placeholder_professor_dash">
+                                Click on a task to view its details.
                             </div>
                             <div id="task-info-preview_professor_dash" style="display: none;">
                                 <div class="columns is-mobile info-header" style="margin-bottom: 0;">
@@ -2027,8 +2023,6 @@
 
                                         $('#groupsPlot_professor_dash').empty();
 
-                                        updateStudentInfoPreview(currServerState);
-
                                         if (currServerState.currAdaptationState != undefined && currServerState.currAdaptationState != [])
                                             buildPlots(currServerState);
 
@@ -2297,10 +2291,6 @@
 
         });
         
-        
-        $("#assign-tag-to-student-button_professor_dash").click(function (){
-           toggleAvailableTags(); 
-        });
     });
 
 

@@ -352,6 +352,34 @@ class CustomTaskModelBridge(TaskModelBridge):
         task = Task.objects.get(task_id=task_id)
         return task.filePaths
 
+    def get_task_tags(self, task_id):
+        task = Task.objects.get(task_id=task_id)
+        return task.tags
+
+    def add_task_tag(self, task_id, tag_name):
+        try:
+            task = Task.objects.get(task_id=task_id)
+            tag = Tag.objects.get(name=tag_name, target='task')
+            task.tags.add(tag)
+            task.save()
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
+
+    def remove_task_tag(self, task_id, tag_name):
+        try:
+            task = Task.objects.get(task_id=task_id)
+            tag = Tag.objects.get(name=tag_name, target='task')
+            task.tags.remove(tag)
+            task.save()
+        except UserProfile.DoesNotExist:
+            pass
+        except json.JSONDecodeError:
+            pass
+        return None
+
 
 task_bridge = CustomTaskModelBridge()
 
@@ -695,7 +723,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
     def add_player_tag(self, username, tag_name):
         try:
             userprofile = User.objects.get(username=username).userprofile
-            tag = Tag.objects.get(name=tag_name)
+            tag = Tag.objects.get(name=tag_name, target='student')
             userprofile.tags.add(tag)
             userprofile.save()
         except UserProfile.DoesNotExist:
@@ -707,7 +735,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
     def remove_player_tag(self, username, tag_name):
         try:
             userprofile = User.objects.get(username=username).userprofile
-            tag = Tag.objects.get(name=tag_name)
+            tag = Tag.objects.get(name=tag_name, target='student')
             userprofile.tags.remove(tag)
             userprofile.save()
         except UserProfile.DoesNotExist:
@@ -2183,39 +2211,34 @@ class Views:  # acts as a namespace
 
     def assign_tag(request):
         if request.method == 'POST':
-            tag_name = request.POST.get('tag')
-            student_name = request.POST.get('student')
+            tag_name = request.POST.get('name')
+            target_id = request.POST.get('targetId')
             target = request.POST.get('target')
 
-            userprofile = User.objects.get(username=student_name).userprofile
-            tag = Tag.objects.get(name=tag_name, target=target)
+            print(request.POST)
 
-            if tag in userprofile.tags.all():
-                response_data = {
-                    'status': 'error',
-                    'message': 'Tag already assigned'
-                }
-            else:
-                userprofile.tags.add(tag)
-                userprofile.save()
+            if target == 'student':
+                player_bridge.add_player_tag(username=target_id, tag_name=tag_name)
+            elif target == 'task':
+                task_bridge.add_task_tag(task_id=target_id, tag_name=tag_name)
 
-                response_data = {
-                    'status': 'success',
-                    'message': 'Tag assigned successfully'
-                }
+            response_data = {
+                'status': 'success',
+                'message': 'Tag assigned successfully'
+            }
 
             return JsonResponse(response_data)
 
     def remove_assigned_tag(request):
         if request.method == 'POST':
             tag_name = request.POST.get('tag')
-            student_name = request.POST.get('student')
+            target_id = request.POST.get('targetId')
+            target = request.POST.get('target')
 
-            userprofile = User.objects.get(username=student_name).userprofile
-            tag = Tag.objects.get(name=tag_name)
-
-            userprofile.tags.remove(tag)
-            userprofile.save()
+            if target == 'student':
+                player_bridge.remove_player_tag(username=target_id, tag_name=tag_name)
+            elif target == 'task':
+                task_bridge.remove_task_tag(task_id=target_id, tag_name=tag_name)
 
             response_data = {
                 'status': 'success',
