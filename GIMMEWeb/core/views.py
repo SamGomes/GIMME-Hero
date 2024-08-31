@@ -353,8 +353,8 @@ class CustomTaskModelBridge(TaskModelBridge):
         return task.filePaths
 
     def get_task_tags(self, task_id):
-        task = Task.objects.get(task_id=task_id)
-        return task.tags
+        tags = list(Task.objects.get(task_id=task_id).tags.all())
+        return tags
 
     def add_task_tag(self, task_id, tag_name):
         try:
@@ -1093,14 +1093,13 @@ class Views:  # acts as a namespace
                 profile.characteristics = json.dumps(PlayerCharacteristics(ability=0, engagement=0),
                                                      default=lambda o: o.__dict__,
                                                      sort_keys=True)
-                # profile.personality = json.dumps(personality, default=lambda o: o.__dict__, sort_keys=True)
-                # breakpoint()
                 profile.save()
 
+                # add All tag to student
                 http_request = HttpRequest()
                 http_request.method = 'POST'
-                http_request.POST['student'] = user.username
-                http_request.POST['tag'] = 'All'
+                http_request.POST['targetId'] = user.username
+                http_request.POST['name'] = 'All'
                 http_request.POST['target'] = 'student'
                 Views.assign_tag(http_request)
 
@@ -1498,6 +1497,14 @@ class Views:  # acts as a namespace
 
                     task.save()
 
+                    # add All tag to task
+                    http_request = HttpRequest()
+                    http_request.method = 'POST'
+                    http_request.POST['targetId'] = task.task_id
+                    http_request.POST['name'] = 'All'
+                    http_request.POST['target'] = 'task'
+                    Views.assign_tag(http_request)
+
                     # add task to free tasks
                     curr_free_tasks = server_state_model_bridge.get_curr_free_tasks()
                     curr_free_tasks.append(str(task.task_id))
@@ -1522,7 +1529,7 @@ class Views:  # acts as a namespace
                 task_id_to_update = request.GET.get('taskIdToUpdate')
                 request_info = request.POST
                 try:
-                    instance = Task.objects.get(taskId=task_id_to_update)
+                    instance = Task.objects.get(task_id=task_id_to_update)
 
                     post = request.POST
                     _mutable = post._mutable
@@ -1559,7 +1566,7 @@ class Views:  # acts as a namespace
             elif request.method == 'GET':
                 task_id_to_update = request.GET.get('taskIdToUpdate')
                 try:
-                    instance = Task.objects.get(taskId=task_id_to_update)
+                    instance = Task.objects.get(task_id=task_id_to_update)
                     form = UpdateTaskForm(instance=instance)
                     context = {'form': form}
                     return render(request, 'taskUpdate.html', context)
@@ -1570,7 +1577,8 @@ class Views:  # acts as a namespace
 
     def task_deletion(request):
         if request.method == 'GET':
-            task_id = request.GET.get('taskIdToUpdate')
+            task_id = request.GET.get('taskIdToDelete')
+            print(task_id)
             try:
                 Views.delete_task(task_id)
 
@@ -1581,7 +1589,7 @@ class Views:  # acts as a namespace
             return redirect('/dash')
 
     def delete_task(task_id):
-        task = Task.objects.get(taskId=task_id)
+        task = Task.objects.get(task_id=task_id)
         task.delete()
 
         curr_free_tasks = server_state_model_bridge.get_curr_free_tasks()
@@ -1791,14 +1799,15 @@ class Views:  # acts as a namespace
             else:
                 tasks = tasks.split(',')
             returned_tasks = []
-            for taskId in tasks:
-                if not taskId in task_bridge.get_all_stored_task_ids():
+            for task_id in tasks:
+                if not task_id in task_bridge.get_all_stored_task_ids():
                     return HttpResponse('error')
 
-                task = task_bridge.get_task(taskId)
-                returned_task = {'taskId': taskId,
+                task = task_bridge.get_task(task_id)
+                returned_task = {'taskId': task_id,
                                  'description': task.description,
-                                 'files': str(task.files)}
+                                 'files': str(task.files),
+                                 'tags': task_bridge.get_task_tags(task_id=task_id)}
                 returned_tasks.append(returned_task)
 
             returned_tasks = json.dumps(returned_tasks, default=lambda o: o.__dict__, sort_keys=True)

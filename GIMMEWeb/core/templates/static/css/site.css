@@ -163,7 +163,7 @@ body {
 
 
 .card-tag{
-  /*height:1.7em;*/
+  height:2em;
   width:auto;
   margin: 0.1em; 
   background-color: transparent;
@@ -174,10 +174,6 @@ body {
   padding: 0 0.75em 0 0.75em;
   font-weight: 500;
   color: white;
-}
-
-.assigned-tag-remove-button:hover{
-  color: #ee4266;
 }
 
 .navbar-dropdown {

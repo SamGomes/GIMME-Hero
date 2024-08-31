@@ -117,15 +117,12 @@
                                     </div>
                                 </div>
 
-                                <div class='columns is-mobile'>
+                                <div class='columns'>
                                     <div class='column info-column-title'>Tags
-                                        <div id="student-info-assigned-tags-table_professor_dash"></div>
-                                        <div class="has-tooltip-arrow card-tag pointer"
-                                                id="assign-tag-to-student-button_professor_dash"
-                                                data-tooltip='Assign tag'>
-                                            <div class="fas fa-plus-circle"></div>
-                                            <div id="student-info-available-tags-table_professor_dash"></div>
-                                        </div>
+                                        <i id="student-info-assigned-tags-table_professor_dash"></i>
+                                        <i id="assign-tag-to-student-button_professor_dash" >
+                                            <i id="student-info-available-tags-table_professor_dash"></i>
+                                        </i>
                                     </div>
                                 </div>
                             </div>
@@ -217,20 +214,16 @@
                                     </div>
                                 </div>
 
-                                <div class='columns is-mobile'>
-                                    <div class='column info-column-title' style='flex-grow: 3;'>Tags
-                                        <div id="task-info-assigned-tags-table_professor_dash"></div>
-                                        <div style="display: flex; flex-wrap: wrap;">
-                                            <button class="is-rounded is-small has-tooltip-arrow pointer assign-tag"
-                                                    id="assign-tag-to-task-button_professor_dash"
-                                                    style="border-radius: 50px; border-style: solid; background-color:transparent; margin:0.2em"
-                                                    data-tooltip='Assign tag' onclick="toggleAvailableTags()">
-                                                <div class="fas fa-plus-circle"></div>
-                                            </button>
-                                            <div id="task-info-available-tags-table_professor_dash" style="display: none;"></div>
-                                        </div>
+
+                                <div class='columns'>
+                                    <div class='column info-column-title'>Tags
+                                        <i id="task-info-assigned-tags-table_professor_dash"></i>
+                                        <i id="assign-tag-to-task-button_professor_dash" >
+                                            <i id="task-info-available-tags-table_professor_dash"></i>
+                                        </i>
                                     </div>
                                 </div>
+                                
                             </div>
                         </div>
                         <div class='table-container'>
@@ -1729,7 +1722,7 @@
                     let tagName = "" + nameArray[i];
                     tag = $(`<span class='context-menu pointer' style='margin:0.1em; z-index:1000;'></span>`)
                         .text(tagName)
-                        .click(function(){previewInfo(currServerState,type,tagName); });
+                        .click(function(){previewInfo(500,currServerState,type,tagName); });
 
                     if (deleteElementUrl != "") {
                         var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this task'></div>");
