@@ -1,7 +1,5 @@
 let previewElement = $('#student-info-preview_professor_dash'),
     placeholderElement = $('#student-info-placeholder_professor_dash'),
-    infoName = $('#student-info-name_professor_dash'),
-    infoEmail = $('#student-info-email_professor_dash'),
     availableTagsTable = $('#student-info-available-tags-table_professor_dash'),
     assignedTagsTable = $('#student-info-assigned-tags-table_professor_dash'), 
     assignTagButton = $('#assign-tag-to-student-button_professor_dash');
@@ -9,8 +7,8 @@ let previewElement = $('#student-info-preview_professor_dash'),
 let currentTargetId = undefined;
 
 
-function previewInfo(animDelay, currServerState, infoType, id){
-
+function previewInfo(domElement, animDelay, currServerState, infoType, id){
+    
     currentTargetId = id;
     
     if(infoType === "student"){
@@ -19,6 +17,9 @@ function previewInfo(animDelay, currServerState, infoType, id){
         availableTagsTable = $('#student-info-available-tags-table_professor_dash');
         assignedTagsTable = $('#student-info-assigned-tags-table_professor_dash');
         assignTagButton = $('#assign-tag-to-student-button_professor_dash');
+
+        freeTable = $('#freeUsersTable_professor_dash');
+        selectedTable = $('#selectedUsersTable_professor_dash');
     }
     else if(infoType === "task"){
         previewElement = $('#task-info-preview_professor_dash');
@@ -26,10 +27,28 @@ function previewInfo(animDelay, currServerState, infoType, id){
         availableTagsTable = $('#task-info-available-tags-table_professor_dash');
         assignedTagsTable = $('#task-info-assigned-tags-table_professor_dash');
         assignTagButton = $('#assign-tag-to-task-button_professor_dash');
-    }
-    else{
+
+        freeTable = $('#freeTasksTable_professor_dash');
+        selectedTable = $('#selectedTasksTable_professor_dash');
+    }else{
         return;
     }
+
+    nonSelectedDomElements = Array.from(freeTable.children()[0].children).concat(
+        Array.from(selectedTable.children()[0].children));
+    
+    if(!domElement){
+        nonSelectedDomElements.forEach(node => {
+            $(node).css('opacity',1.0);
+        });
+        showInfoPlaceholder();
+        return;
+    }
+    
+    nonSelectedDomElements.forEach(node => {
+        $(node).css('opacity',0.8);
+    });
+    $(domElement).css('opacity',1.0);
     
     previewElement.hide(animDelay, function() {
         if(infoType === "student"){
@@ -43,8 +62,8 @@ function previewInfo(animDelay, currServerState, infoType, id){
                         $('#student-info-name_professor_dash').text(res.responseJSON.fullname);
                         $('#student-info-email_professor_dash').text(res.responseJSON.email);
                         var assignedTags = res.responseJSON.tags;
-                        updateAssignedTagsTable(currServerState,assignedTags);
-                        updateAvailableTagsTable(infoType,currServerState,assignedTags);
+                        updateAssignedTagsTable(domElement,currServerState,assignedTags);
+                        updateAvailableTagsTable(domElement,infoType,currServerState,assignedTags);
                     }
             });
             
@@ -57,12 +76,12 @@ function previewInfo(animDelay, currServerState, infoType, id){
                 complete:
                     function (res) {
                         res = res.responseJSON;
+                        $('#task-info-name_professor_dash').text(id);
                         $('#task-info-desc_professor_dash').text(res[0].description);
                         $('#task-info-files_professor_dash').text(res[0].files);
-                        console.log(res);
                         var assignedTags = res[0].tags;
-                        updateAssignedTagsTable(currServerState,assignedTags);
-                        updateAvailableTagsTable(infoType,currServerState,assignedTags);
+                        updateAssignedTagsTable(domElement,currServerState,assignedTags);
+                        updateAvailableTagsTable(domElement,infoType,currServerState,assignedTags);
                     }
             });
         }else{
@@ -74,14 +93,12 @@ function previewInfo(animDelay, currServerState, infoType, id){
 }
 
 
-function updateAvailableTagsTable(infoType,serverState,assignedTags){
+function updateAvailableTagsTable(domElement,infoType,serverState,assignedTags){
     assignTagButton.toggleClass('active', true);
 
     availableTagsTable.empty();
     availableTagsTable.show();
-
-
-    console.log(infoType);
+    
     var serverTags = [];
     if(infoType === "student"){
         serverTags = serverState.studentTags;
@@ -111,7 +128,7 @@ function updateAvailableTagsTable(infoType,serverState,assignedTags){
                 type: 'POST',
                 data: data,
                 complete: function (){
-                    previewInfo(0, serverState, tag.target, currentTargetId);
+                    previewInfo(domElement,0, serverState, tag.target, currentTargetId);
                 }
             });
         });
@@ -122,7 +139,7 @@ function updateAvailableTagsTable(infoType,serverState,assignedTags){
 }
 
 
-function updateAssignedTagsTable(serverState,assignedTags){
+function updateAssignedTagsTable(domElement,serverState,assignedTags){
     assignedTagsTable.empty();
     var tags = $("<i></i>");
     var bckColor = $(previewElement[0].parentElement).css('background-color');
@@ -143,7 +160,7 @@ function updateAssignedTagsTable(serverState,assignedTags){
                     type: 'POST',
                     data: data,
                     complete: function (){
-                        previewInfo(0, serverState, tag.target, currentTargetId);
+                        previewInfo(domElement,0, serverState, tag.target, currentTargetId);
                     }
                 });
             });
@@ -161,7 +178,7 @@ function hideInfoPlaceholder(){
 }
 
 
-function showStudentInfoPlaceholder(){
+function showInfoPlaceholder(){
     placeholderElement.show(500);
     previewElement.hide(500);
 }

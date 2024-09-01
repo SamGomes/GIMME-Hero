@@ -118,7 +118,8 @@
                                 </div>
 
                                 <div class='columns'>
-                                    <div class='column info-column-title'>Tags
+                                    <div class='column info-column-title'>
+                                        <div>Tags:</div>
                                         <i id="student-info-assigned-tags-table_professor_dash"></i>
                                         <i id="assign-tag-to-student-button_professor_dash" >
                                             <i id="student-info-available-tags-table_professor_dash"></i>
@@ -207,16 +208,23 @@
                             <div id="task-info-preview_professor_dash" style="display: none;">
                                 <div class="columns is-mobile info-header" style="margin-bottom: 0;">
                                     <div class='info-header-element' style='flex-grow: 1'>
-                                        <div class="info-column-title">Task Description:</div> <div id='task-info-desc_professor_dash'></div>
+                                        <div class="info-column-title">Task Id:</div>
+                                        <div id='task-info-name_professor_dash'></div>
                                     </div>
                                     <div class='info-header-element' style='flex-grow: 1'>
-                                        <div class="info-column-title">Task Files:</div> <div id='task-info-files_professor_dash'></div>
+                                        <div class="info-column-title">Task Description:</div> 
+                                        <div id='task-info-desc_professor_dash'></div>
+                                    </div>
+                                    <div class='info-header-element' style='flex-grow: 1'>
+                                        <div class="info-column-title">Task Files:</div> 
+                                        <div id='task-info-files_professor_dash'></div>
                                     </div>
                                 </div>
 
 
                                 <div class='columns'>
-                                    <div class='column info-column-title'>Tags
+                                    <div class='column info-column-title'>
+                                        <div>Tags:</div>
                                         <i id="task-info-assigned-tags-table_professor_dash"></i>
                                         <i id="assign-tag-to-task-button_professor_dash" >
                                             <i id="task-info-available-tags-table_professor_dash"></i>
@@ -1593,7 +1601,8 @@
         var appendCstTag = function (tagClass, usersSelectedForConstraint, currConstraintType, jointTable, sepTable) {
 
             var backgroundColor = ["#23d160", "#ff3860"];
-            var csTag = $("<span class='context-menu' style='margin:0.1em; z-index:1000; background-color: " + backgroundColor[(currConstraintType == 'joint') ? 0 : 1] + "'></span>");
+            var csTag = $("<span class='context-menu' style='margin:0.1em; z-index:1000; background-color: " + 
+                backgroundColor[(currConstraintType == 'joint') ? 0 : 1] + "'></span>");
             csTag.attr('cstType', currConstraintType);
 
             var tagArray = [
@@ -1706,7 +1715,7 @@
             return table;
         };
 
-
+        
         var generateDashTableFromArray = function (type, canAdd, idArray, nameArray, tagClass, moveButtonIconClass,
                                                    moveElementUrl, moveElementArg, addElementURL, addElementArg,
                                                    deleteElementUrl, deleteElementArg,
@@ -1722,7 +1731,10 @@
                     let tagName = "" + nameArray[i];
                     tag = $(`<span class='context-menu pointer' style='margin:0.1em; z-index:1000;'></span>`)
                         .text(tagName)
-                        .click(function(){previewInfo(500,currServerState,type,tagName); });
+                        .click(function(){
+                            previewInfo(this,500,currServerState,type,tagName);
+                            {#previewInfo(undefined,500,undefined,"student",undefined);#}
+                        });
 
                     if (deleteElementUrl != "") {
                         var deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow' style='border-color: #ffffff; color:white; background-color:transparent; margin:0.5em;' data-tooltip='Delete this task'></div>");
