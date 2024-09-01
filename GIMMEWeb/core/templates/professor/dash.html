@@ -97,11 +97,8 @@
                 </div>
             </div>
             <div class='panel-block'>
-                <div class='column is-half is-offset1 is-mobile'>
-                    <div class='dash-cell-box'>
-                        <div class='subtitle is-5 has-tooltip-arrow' style=' margin-bottom: 0; margin-bottom: 1.5rem;'>
-                            Registered Students
-                        </div>
+                <div class='columns is-full is-centered'> 
+                    <div class='column is-offset1 is-mobile'>
                         <div class='info-box' style='background-color: #209cee'>
                             <div id="student-info-placeholder_professor_dash">Click on a student to view their details.
                             </div>
@@ -128,41 +125,45 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class='panel-block'>
+                <div class='column is-half is-offset1 is-mobile'>
+                    <div class='dash-cell-box'>
+                        <div class='subtitle is-5 has-tooltip-arrow' style=' margin-bottom: 0; margin-bottom: 1.5rem;'>
+                            Registered Students
+                        </div>
                         <div class='table-container'>
                             <div class='table' style='margin:2em;' id='freeUsersTable_professor_dash'></div>
                         </div>
                     </div>
                 </div>
-                <div class='column is-half is-offset1 is-mobile'>
-                    <div class='dash-cell-box' style="margin-bottom: 1.7rem;">
-                        <div style="display: flex;">
-                            <div class='subtitle is-5 has-tooltip-right' style=' flex: 1'
-                                 data-tooltip="Tags help quickly select and deselect groups of students. 
-                                     There is a set of pre-defined tags. &#13;&#10;You can also create your 
-                                     own tags and assign them to chosen students.">Tags
-                            </div>
-                            <div style="flex:12"></div>
-                        </div>
-                        <div style="display: inline-flex; gap: 0.2em;">
-                            <button class="button has-tooltip-right" id="addStudentTagButton_professor_dash"
-                                    data-tooltip="Create your own custom tag that you can assign to individual students.">
-                                Create Tag
-                            </button>
-                            <div id="addStudentTagContainer_professor_dash" style="display: none;">
-                                <input class="button" type="text" id="tagInputStudent_professor_dash" placeholder="Enter tag name"
-                                       maxlength="16">
-                                <button class="button" id="saveStudentTagButton_professor_dash">Create</button>
-                                <button class="button" id="cancelStudentTagButton_professor_dash">Cancel</button>
-                            </div>
-                        </div>
-                        <div class='columns is-mobile' style="display: flex; flex-wrap: wrap; padding: 0.75rem;">
-                            <div id='tagTableStudents_professor_dash' style="margin: 0.75rem;"></div>
-                        </div>
-                    </div>
+                <div class='column is-half is-offset1 is-mobile'>                    
                     <div class='dash-cell-box'>
                         <div class='subtitle is-5 has-tooltip-arrow' style='' data-tooltip='These are the students,
 							 selected from all available students,
 							  to be considered for the next group management iteration.'>Selected Students
+                        </div>
+                        <div style="display: inline-flex; gap: 0.2em;">
+                            <span id='tagTableStudents_professor_dash'></span>
+                            <span class="selectable-tag pointer" id="addStudentTagButton_professor_dash">
+                                <i class="fa fa-fw fa-plus" style='height: 0.9rem;'></i>
+                            </span>
+                            <div id="addStudentTagContainer_professor_dash" style="display: none;">
+                                <div class="input-wrapper">
+                                    <input class="button" type="text" id="tagInputStudent_professor_dash" placeholder="Enter tag name"
+                                           maxlength="16">
+                                    <span>
+                                        <button class="button" id="saveStudentTagButton_professor_dash">
+                                            <i class="fa fa-fw fa-check" style='height: 0.9rem;'></i>
+                                        </button>
+                                        <button class="button" id="cancelStudentTagButton_professor_dash">
+                                            <i class="fa fa-fw fa-remove" style='height: 0.9rem;'></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                         <div class='table-container'>
                             <div class='table' style='margin:2em;' id='selectedUsersTable_professor_dash'></div>

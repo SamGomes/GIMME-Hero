@@ -148,7 +148,7 @@ function updateAssignedTagsTable(domElement,serverState,assignedTags){
             .text(tag.name);
 
         if (tag.is_assignable) {
-            const removeDiv = $("<i class='has-tooltip-arrow' style='color:"+bckColor+"' data-tooltip='Remove tag'></i>");
+            const removeDiv = $("<i class='has-tooltip-arrow' style='color:"+bckColor+"' data-tooltip='Deassociate tag'></i>");
             const removeButton = $("<i class='fa fa-remove pointer fa-fw'></i>");
 
             removeDiv.append(removeButton);       

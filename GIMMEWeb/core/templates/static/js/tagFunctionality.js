@@ -56,7 +56,8 @@ function generateTagsTable(tagsArray, target) {
     var table = $('<div></div>');
     
     tagsArray.forEach(element => {
-        tag = $("<span class='selectable-tag pointer has-tooltip-arrow' data-tooltip='Select/Deselect tag' style='border: none; height: 2em; align-items: center;'></span>").text(element.name);
+        tag = $("<i class='selectable-tag pointer' " +
+            "style='height: 2em; align-items: center;'></i>").text(element.name);
         
         tag.toggleClass("selected", element.is_selected);
 
@@ -74,8 +75,8 @@ function generateTagsTable(tagsArray, target) {
         });
 
         if(element.is_removable) {
-            const deleteButton = $("<div class='button is-rounded is-small has-tooltip-arrow pointer delete-tag-button' data-tooltip='Delete this tag'></div>");
-            const deleteTagButton = $("<div class='fas fa-trash' style='height: 0.9rem;'></div>");
+            const deleteButton = $("<div class='is-rounded is-small has-tooltip-arrow pointer' data-tooltip='Delete this tag'></div>");
+            const deleteTagButton = $("<div class='fas fa-fw fa-remove' style='height: 0.9rem;'></div>");
 
             deleteButton.append(deleteTagButton);
         
