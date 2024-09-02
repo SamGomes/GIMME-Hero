@@ -2146,6 +2146,14 @@ class Views:  # acts as a namespace
             }
             return JsonResponse(response_data)
 
+    def _get_element_tags_for_selection(name, target):
+        tagArray = []
+        if target == 'student':
+            tagArray = User.objects.get(username=name).userprofile.tags.all()
+        elif target == 'task':
+            tagArray = Task.objects.get(task_id=name).tags.all()
+        return tagArray
+
     def select_tag(request):
         if request.method == 'POST':
             tag_name = request.POST.get('name')
@@ -2162,60 +2170,70 @@ class Views:  # acts as a namespace
                 }
                 return JsonResponse(response_data)
 
-            curr_free_users = server_state_model_bridge.get_curr_free_users()
-            curr_selected_users = server_state_model_bridge.get_curr_selected_users()
+            curr_free_elems = []
+            curr_selected_elems = []
+            if tag_target == 'student':
+                curr_free_elems = server_state_model_bridge.get_curr_free_users()
+                curr_selected_elems = server_state_model_bridge.get_curr_selected_users()
+            elif tag_target == 'task':
+                curr_free_elems = server_state_model_bridge.get_curr_free_tasks()
+                curr_selected_elems = server_state_model_bridge.get_curr_selected_tasks()
 
             if not tag_status:
-                # Select students
-                students_to_select = []
-                for student in curr_free_users:
-                    if student in curr_selected_users:
-                        continue
-                    student_tags = User.objects.get(username=student).userprofile.tags.all()
+                # Select elements
+                elements_to_select = []
 
-                    for studentTag in student_tags:
-                        if studentTag.name == tag_name:
-                            students_to_select.append(student)
+                for elem in curr_free_elems:
+                    if elem in curr_selected_elems:
+                        continue
+                    tags = Views._get_element_tags_for_selection(elem, tag_target)
+
+                    for tag in tags:
+                        if tag.name == tag_name:
+                            elements_to_select.append(elem)
                             break
-                for student in students_to_select:
-                    curr_selected_users.append(student)
-                    curr_free_users.remove(student)
+                for elem in elements_to_select:
+                    curr_selected_elems.append(elem)
+                    curr_free_elems.remove(elem)
+
                 response_data = {
                     'status': 'success',
                     'message': 'Tag selected successfully',
                     'isSelected': True
                 }
             else:
-                # Deselect students
-                students_to_deselect = []
-                for student in curr_selected_users:
+                # Deselect elements
+                elements_to_deselect = []
+                for elem in curr_selected_elems:
 
-                    if student in curr_free_users:
+                    if elem in curr_free_elems:
                         continue
-
-                    student_tags = User.objects.get(username=student).userprofile.tags.all()
-
+                    tags = Views._get_element_tags_for_selection(elem, tag_target)
                     deselect = True
 
-                    for studentTag in student_tags:
-                        if studentTag.is_selected:
+                    for tag in tags:
+                        if tag.is_selected:
                             deselect = False
                             break
 
                     if deselect:
-                        students_to_deselect.append(student)
-                for student in students_to_deselect:
-                    curr_free_users.append(student)
-                    curr_selected_users.remove(student)
+                        elements_to_deselect.append(elem)
+                for elem in elements_to_deselect:
+                    curr_free_elems.append(elem)
+                    curr_selected_elems.remove(elem)
                 response_data = {
                     'status': 'success',
                     'message': 'Tag deselected successfully',
                     'isSelected': False
                 }
 
-            server_state_model_bridge.set_curr_selected_users(curr_selected_users)
-            server_state_model_bridge.set_curr_free_users(curr_free_users)
-
+            if tag_target == 'student':
+                server_state_model_bridge.set_curr_selected_users(curr_selected_elems)
+                server_state_model_bridge.set_curr_free_users(curr_free_elems)
+            elif tag_target == 'task':
+                server_state_model_bridge.set_curr_selected_tasks(curr_selected_elems)
+                server_state_model_bridge.set_curr_free_tasks(curr_free_elems)
+    
             return JsonResponse(response_data)
 
     def assign_tag(request):

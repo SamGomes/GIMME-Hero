@@ -1,27 +1,21 @@
-const addStudentTagButton = document.getElementById('addStudentTagButton_professor_dash'),
-    addStudentTagContainer = document.getElementById('addStudentTagContainer_professor_dash'),
-    saveStudentTagButton = document.getElementById('saveStudentTagButton_professor_dash'),
-    cancelStudentTagButton = document.getElementById('cancelStudentTagButton_professor_dash'),
-    tagInputStudent = document.getElementById('tagInputStudent_professor_dash'),
-    addTaskTagButton = document.getElementById('addTaskTagButton_professor_dash'),
-    addTaskTagContainer = document.getElementById('addTaskTagContainer_professor_dash'),
-    saveTaskTagButton = document.getElementById('saveTaskTagButton_professor_dash'),
-    tagInputTask = document.getElementById('tagInputTask_professor_dash'),
-    cancelTaskTagButton = document.getElementById('cancelTaskTagButton_professor_dash');
+var addStudentTagButton = $('#addStudentTagButton_professor_dash'),
+    addStudentTagContainer = $('#addStudentTagContainer_professor_dash'),
+    saveStudentTagButton = $('#saveStudentTagButton_professor_dash'),
+    cancelStudentTagButton = $('#cancelStudentTagButton_professor_dash'),
+    tagInputStudent = $('#tagInputStudent_professor_dash'),
+    addTaskTagButton = $('#addTaskTagButton_professor_dash'),
+    addTaskTagContainer = $('#addTaskTagContainer_professor_dash'),
+    saveTaskTagButton = $('#saveTaskTagButton_professor_dash'),
+    tagInputTask = $('#tagInputTask_professor_dash'),
+    cancelTaskTagButton = $('#cancelTaskTagButton_professor_dash');
 
 
 // Add event listener for adding a tag
-var addTag = function (target, addTagContainer, saveTagButton, deleteTagButton, tagInput) {
-    if (addTagContainer.style.display == 'block') {
-        showAddTagButton();
-        return;
-    }
-
-    addTagContainer.style.display = 'block';
-    // addTagButton.style.display = 'none';
+var addTag = function (target, addTagButton, addTagContainer, saveTagButton, cancelTagButton, tagInput) {
+    showAddTagButton(addTagButton, addTagContainer, tagInput);
     
-    saveTagButton.addEventListener('click', function () {
-        const tagName = tagInput.value.trim();
+    saveTagButton.click(function () {
+        const tagName = tagInput.val().trim();
         if (tagName !== '') {
             $.ajax({
                 url: '/createNewTag/',
@@ -30,26 +24,32 @@ var addTag = function (target, addTagContainer, saveTagButton, deleteTagButton, 
             });
 
             // Reset the input field and hide the add tag container
-            showAddTagButton(addTagContainer, tagInput);
+            hideAddTagButton(addTagButton, addTagContainer, tagInput);
         }
     });
 
-    deleteTagButton.addEventListener('click', function () {
-        showAddTagButton(addTagContainer, tagInput);
+    cancelTagButton.click(function () {
+        hideAddTagButton(addTagButton, addTagContainer, tagInput);
     });
 };
 
-addStudentTagButton.addEventListener('click',function (){
-    addTag('student', addStudentTagContainer, saveStudentTagButton, cancelStudentTagButton, tagInputStudent);
+addStudentTagButton.click(function (){
+    addTag('student', $(this), addStudentTagContainer, saveStudentTagButton, cancelStudentTagButton, tagInputStudent);
 });
-addTaskTagButton.addEventListener('click',function (){
-    addTag('task', addTaskTagContainer, saveTaskTagButton, cancelTaskTagButton, tagInputTask);
+addTaskTagButton.click(function (){
+    addTag('task', $(this), addTaskTagContainer, saveTaskTagButton, cancelTaskTagButton, tagInputTask);
 });
 
 
-function showAddTagButton(addTagContainer, tagInput){
-    tagInput.value = '';
-    addTagContainer.style.display = 'none';
+function showAddTagButton(addTagButton, addTagContainer, tagInput){
+    tagInput.val('');
+    addTagButton.hide(500);
+    addTagContainer.show(500);
+}
+function hideAddTagButton(addTagButton, addTagContainer, tagInput){
+    tagInput.val('');
+    addTagButton.show(500);
+    addTagContainer.hide(500);
 }
 
 function generateTagsTable(tagsArray, target) {
@@ -62,7 +62,6 @@ function generateTagsTable(tagsArray, target) {
         tag.toggleClass("selected", element.is_selected);
 
         tag.click(function() {
-            const clickedTag = $(this);
             const tagId = element.name;
             const url = '/selectTag/';
             
