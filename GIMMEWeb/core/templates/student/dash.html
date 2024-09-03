@@ -9,7 +9,7 @@
 			<div class='hero-body'>
 				<div class='has-text-centered; slider-content animated zoomIn'>
 					<div>
-						<p class='title is-1 main-text'>Welcome to GIMME-Web, {{request.session.username}}</p>
+						<p class='title is-1 main-text'>Welcome to GIMME-Web, {{ user.username }}</p>
 						<p class='subtitle is-4 main-text'>A Sophisticated Group Interactions Management Tool</p>
 					</div>
 				</div>
@@ -40,7 +40,7 @@
 						{% for questionnaire in available_questionnaires %}
 							<p>{{ questionnaire.dashboard_message |safe}}</p>
 						{% endfor %}
-						<p>The First Questionnaire serves to get to know you better. Your answers will help us assign you to a group. The results from your answers will be shared with you after completing the study.</p>
+						<p>The First Questionnaire serves to get to know you better. Your answers will help us assign you to a group. The results from your answers can be shared afterward.</p>
 					</div>
 				</div>
 
@@ -244,14 +244,12 @@
 	    	});
 
 
+
 	    	var objChanged = function(obj1, obj2){
 				return !(JSON.stringify(obj1) === JSON.stringify(obj2));
 			};
-
-
-	    	var myStateGrid = undefined;
-	    	var myCharacteristics = undefined;
-
+            
+            
 	    	var oldGroup = {};
 	    	var oldTasks = {};
 	    	var oldGrade = {};
@@ -263,12 +261,12 @@
 	    			url: '/fetchStudentInfo/',
             		type: 'POST',
 	    			dataType: 'json',
-	    			data: {'username': '{{user.username}}'},
+	    			data: {'username': '{{ user.username }}'},
 	    			complete: 
 	    			function (res) {
 
 	    				var myInfo = unformattedStringToObj(res.responseText);
-						
+                        
 						if(objChanged(oldGroup, myInfo.group)){
 		    				oldGroup = myInfo.group;
 
@@ -356,10 +354,19 @@
 			}
 
 			fetchServerData();
-            $('#updateDash_header').show(500).click(function(){
-                fetchServerData()
+            $('#updateDash_header').show(500).click(function () {
+                {#var color = $(this).css('background-color');#}
+                {#$(this).css('background-color', 'white');#}
+                $(this).children()[0].animate({'rotate': '360deg'}, 500);
+                {#$(this).animate({'background-color': color}, 500);#}
+                fetchServerData();
             });
 
+            $(document).on("ajaxComplete", function (_, _, settings) {
+                if (settings.url != "/fetchStudentInfo/" && settings.url != "/fetchServerState/" && settings.url != "/fetchStudentStates/") {
+                    $('#updateDash_header').click();
+                }
+            });
 
 			var resFr = new FileReader();
 			newUserCharacteristicsDelta = {}

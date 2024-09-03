@@ -92,9 +92,9 @@ $(document).ready(function(){
         setTimeout(
         function()
         {
-            $("#welcomeBanner").hide();
-            $("#dashboard").show();
-        }, 0);
+            $("#welcomeBanner").hide(500);
+            $("#dashboard").show(500);
+        }, 2000);
     
         $(".minimizerButton").append("<i class=\"fa fa-window-minimize\"></i>").parent().parent().parent().parent().parent().find(".panel-block").show();
         $(".minimizerButton").click(function(){

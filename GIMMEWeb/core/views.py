@@ -330,11 +330,11 @@ class CustomTaskModelBridge(TaskModelBridge):
 
     def get_task_difficulty_weight(self, task_id):
         task = Task.objects.get(task_id=task_id)
-        return float(task.difficulty_weight)
+        return float(task.difficulty_w)
 
     def get_task_profile_weight(self, task_id):
         task = Task.objects.get(task_id=task_id)
-        return float(task.profile_weight)
+        return float(task.profile_w)
 
     def get_task_diversity_weight(self, task_id):
         task = Task.objects.get(task_id=task_id)
@@ -390,15 +390,17 @@ class CustomPlayerModelBridge(PlayerModelBridge):
         return User.objects.get(username=username).userprofile
 
     def set_and_save_player_state_to_data_frame(self, username, new_state):
-        # print(json.dumps(newState,default=lambda o: o.__dict__, sort_keys=True))
         self.set_player_characteristics(username, new_state.characteristics)
         self.set_player_profile(username, new_state.profile)
+        self.set_player_group(username, new_state.group)
+        self.set_player_tasks(username, new_state.tasks)
 
         player_states_data_frame = self.get_player_states_data_frame(username)
         player_states_data_frame.push_to_data_frame(new_state)
 
         player_info = User.objects.get(username=username).userprofile
         player_info.past_model_increases_data_frame = json.dumps(player_states_data_frame, default=lambda o: o.__dict__)
+        
         player_info.save()
 
     def reset_player(self, username):
@@ -438,7 +440,6 @@ class CustomPlayerModelBridge(PlayerModelBridge):
     def get_player_curr_profile(self, username):
         try:
             player_info = User.objects.get(username=username).userprofile
-            # print(json.dumps(player, default= lambda o: o.__dict__, sort_keys=True))
             profile = json.loads(player_info.curr_state)['profile']
             profile = InteractionsProfile(dimensions=profile['dimensions'])
             return profile
@@ -595,7 +596,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
         try:
             player_info = User.objects.get(username=username).userprofile
             new_state = PlayerState()
-            player_info.currState = json.dumps(new_state, default=lambda o: o.__dict__)
+            player_info.curr_state = json.dumps(new_state, default=lambda o: o.__dict__)
             player_info.save()
         except UserProfile.DoesNotExist:
             pass
@@ -638,7 +639,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
             player_info = User.objects.get(username=username).userprofile
             new_state = self.get_player_curr_state(username)
             new_state.characteristics = characteristics
-            player_info.currState = json.dumps(new_state, default=lambda o: o.__dict__)
+            player_info.curr_state = json.dumps(new_state, default=lambda o: o.__dict__)
             player_info.save()
         except UserProfile.DoesNotExist:
             pass
@@ -686,7 +687,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
             player_info = User.objects.get(username=username).userprofile
             new_state = self.get_player_curr_state(username)
             new_state.profile = profile
-            player_info.currState = json.dumps(new_state, default=lambda o: o.__dict__)
+            player_info.curr_state = json.dumps(new_state, default=lambda o: o.__dict__)
             player_info.save()
         except UserProfile.DoesNotExist:
             pass
@@ -699,7 +700,8 @@ class CustomPlayerModelBridge(PlayerModelBridge):
             player_info = User.objects.get(username=username).userprofile
             new_state = self.get_player_curr_state(username)
             new_state.group = group
-            player_info.currState = json.dumps(new_state, default=lambda o: o.__dict__)
+
+            player_info.curr_state = json.dumps(new_state, default=lambda o: o.__dict__)
             player_info.save()
         except UserProfile.DoesNotExist:
             pass
@@ -712,7 +714,8 @@ class CustomPlayerModelBridge(PlayerModelBridge):
             player_info = User.objects.get(username=username).userprofile
             new_state = self.get_player_curr_state(username)
             new_state.tasks = tasks
-            player_info.currState = json.dumps(new_state, default=lambda o: o.__dict__)
+
+            player_info.curr_state = json.dumps(new_state, default=lambda o: o.__dict__)
             player_info.save()
         except UserProfile.DoesNotExist:
             pass
@@ -1207,12 +1210,13 @@ class Views:  # acts as a namespace
         return returned
 
     def dash(request):
+
         dash_switch = {
             'Student': 'student/dash.html',
             'Professor': 'professor/dash.html',
             'Developer': 'designer/dash.html'
         }
-
+            
         # check for active questionnaires
         active_questionnaires = Questionnaire.objects.filter(is_active=True)
         available_questionnaires = []
@@ -1285,7 +1289,6 @@ class Views:  # acts as a namespace
         except (Exception, ArithmeticError, ValueError) as e:
             template = 'An exception of type {0} occurred. Arguments:\n{1!r}'
             message = template.format(type(e).__name__, e.args)
-            print(message)
             server_state_model_bridge.set_ready_for_new_activity(True)
             return HttpResponse('error')
 
@@ -1338,7 +1341,6 @@ class Views:  # acts as a namespace
         sel_quality_eval_alg = {}
         sel_quality_eval_alg_id = new_config_params['selectedQualityEvalAlgId']
 
-        print(sel_quality_eval_alg_id)
         if sel_quality_eval_alg_id == 'K-Nearest-Neighbors (KNN)':
             sel_quality_eval_alg = quality_eval_alg_switcher_knn(request)
             # sel_pref_est_alg = sel_quality_eval_alg
@@ -1432,29 +1434,18 @@ class Views:  # acts as a namespace
                 joint_player_constraints=new_config_params['jointPlayerConstraints'],
                 separated_player_constraints=new_config_params['separatedPlayerConstraints'])
 
-        def sel_configs_alg_switcher_clink(request):
-            return CLinkConfigsGenAlg(
-                player_model_bridge=player_bridge,
-                interactions_profile_template=int_prof_template.generate_copy(),
-                quality_eval_alg=sel_quality_eval_alg,
-                pref_est_alg=sel_pref_est_alg,
-
-                min_num_players_per_group=int(new_config_params['minNumPlayersPerGroup']),
-                max_num_players_per_group=int(new_config_params['maxNumPlayersPerGroup']))
-
         # switch config. gen. algs
         selected_gen_alg_id = new_config_params['selectedGenAlgId']
         sel_configs_gen_alg = defaultConfigsAlg
+
         if selected_gen_alg_id == 'Random (no search)':
             sel_configs_gen_alg = sel_configs_alg_switcher_random(request)
         elif selected_gen_alg_id == 'Pure Random Search':
             sel_configs_gen_alg = sel_configs_alg_switcher_prs(request)
         elif selected_gen_alg_id == 'Evolutionary Search':
             sel_configs_gen_alg = sel_configs_alg_switcher_evl(request)
-        elif selected_gen_alg_id == 'ODPIP Search':
+        elif selected_gen_alg_id == 'ODP-IP Search':
             sel_configs_gen_alg = sel_configs_alg_switcher_odpip(request)
-        elif selected_gen_alg_id == 'Coalition Link Search':
-            sel_configs_gen_alg = sel_configs_alg_switcher_clink(request)
 
         global adaptation
         adaptation = Adaptation(player_model_bridge=player_bridge,
@@ -1485,7 +1476,6 @@ class Views:  # acts as a namespace
                         }
                     ), default=lambda o: o.__dict__, sort_keys=True)
 
-                    print(request_info)
                     task.task_id = request_info['taskId']
                     task.init_date = request_info['initDate']
                     task.final_date = request_info['finalDate']
@@ -1578,7 +1568,6 @@ class Views:  # acts as a namespace
     def task_deletion(request):
         if request.method == 'GET':
             task_id = request.GET.get('taskIdToDelete')
-            print(task_id)
             try:
                 Views.delete_task(task_id)
 
@@ -1718,7 +1707,6 @@ class Views:  # acts as a namespace
     def fetch_student_info(request):
         if request.method == 'POST':
             username = request.POST['username']
-
             user_info = {}
             user_info['fullname'] = player_bridge.get_player_full_name(username)
             user_info['email'] = player_bridge.get_player_email(username)

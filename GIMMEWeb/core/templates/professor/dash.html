@@ -10,7 +10,7 @@
         <div class='hero-body'>
             <div class='has-text-centered; slider-content animated zoomIn'>
                 <div>
-                    <p class='title is-1 main-text'>Welcome to GIMME-Web, {{ request.session.username }}</p>
+                    <p class='title is-1 main-text'>Welcome to GIMME-Web, {{ user.username }}</p>
                     <p class='subtitle is-4 main-text'>A Sophisticated Group Interactions Management Tool</p>
                 </div>
             </div>
@@ -26,7 +26,7 @@
                     <div class='column'>
                         Tutorial
                         <div class='is-pulled-right'>
-                            <div class='button minimizerButton'></div>
+                            <div class='button minimizerButton' id='tutorialMinimizerButton_professor_dash'></div>
                         </div>
                     </div>
                 </div>
@@ -129,6 +129,19 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class='dash-cell-box'>
+                        <div class='subtitle is-5 has-tooltip-arrow'>
+                            Pairing Constraints
+                        </div>
+                        <div id='constraintsError_professor_dash' class='section hero is-danger is-centered has-text-centered' style='width:100%'>
+                            <label class='label subtitle is-4 is-white'>Constraint Creation Error! Please verify if at least two students are selected.</label>
+                        </div>
+                        <div class='table-container'>
+                            <div class='table' style='margin:2em;' id='cstODPIPTable_professor_dash'>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class='column is-5 is-offset1 is-mobile'>
                     <div class='dash-cell-box'>
@@ -172,6 +185,19 @@
                     </div>
                 </div>
             </div>
+
+            <div class='panel-block' style='display: block;'>
+                <div class='columns is-mobile is-multiline is-mobile is-centered'>
+                    <div class='column is-3'></div>
+                    <div class='column is-3'>
+                        <div class='has-tooltip-arrow' data-tooltip='Sets the preferred amount of students per group.'>
+                            <label class='control-label m-2' id='groupSizeText_professor_dash'></label>
+                            <div class='control' id='groupSizeSlider_professor_dash'></div>
+                        </div>
+                    </div>
+                    <div class='column is-3'></div>
+                </div>
+            </div>
 {#            <div class='panel-block' style='display: block;'>#}
 {#                <p>MBTI Letters Frequency</p>#}
 {#                <div class='columns is-mobile is-centered' style="flex-wrap: wrap;">#}
@@ -182,6 +208,7 @@
 {#                </div>#}
 {#            </div>#}
 
+            
         </div>
     </section>
 
@@ -286,44 +313,32 @@
     </section>
 
 
-    <section class='section'>
-        <div class='panel animated zoomIn'>
-            <div class='panel-heading'>
-                <div class='columns is-mobile is-vcentered'>
-                    <div class='column'>
-                        Adaptation Setup
-                        <div class='is-pulled-right'>
-                            <div class='button minimizerButton'></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class='panel-block' style='display: block;'>
-                <div class='columns is-mobile is-multiline is-mobile is-centered'>
-                    <div class='column is-3'>
-                        <div class='has-tooltip-arrow' data-tooltip='Sets the preferred amount of students per group.'>
-                            <label class='control-label m-2' id='groupSizeText_professor_dash'></label>
-                            <div class='control' id='groupSizeSlider_professor_dash'></div>
-                        </div>
-                    </div>
-
-                    <div class='column is-3'>
-                    </div>
-
-                    <div class='column is-3'>
-                        <!-- <p>Students</p> -->
-                        <button class='button modal-button is-rounded' data-target="modalODPIP_professor_dash">
-                            Add/Remove Pairing Restrictions
-                        </button>
-
-
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
-    </section>
+{#    <section class='section'>#}
+{#        <div class='panel animated zoomIn'>#}
+{#            <div class='panel-heading'>#}
+{#                <div class='columns is-mobile is-vcentered'>#}
+{#                    <div class='column'>#}
+{#                        Adaptation Setup#}
+{#                        <div class='is-pulled-right'>#}
+{#                            <div class='button minimizerButton'></div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#            <div class='panel-block' style='display: block;'>#}
+{#                <div class='columns is-mobile is-multiline is-mobile is-centered'>#}
+{#                    <div class='column is-3'></div>#}
+{#                    <div class='column is-3'>#}
+{#                        <div class='has-tooltip-arrow' data-tooltip='Sets the preferred amount of students per group.'>#}
+{#                            <label class='control-label m-2' id='groupSizeText_professor_dash'></label>#}
+{#                            <div class='control' id='groupSizeSlider_professor_dash'></div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class='column is-3'></div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </section>#}
 
     <section class='section' style='position: relative; z-index:1000'>
         <div class="panel animated zoomIn">
@@ -799,6 +814,59 @@
     </section>
 
 {#    modals#}
+    
+{#    <div class='modal' id="modalPairingRestrictions_professor_dash">#}
+{#        <div class='modal-background'></div>#}
+{#        <div class='modal-content'>#}
+{#            <div class='is-size-2'>Add/Remove pairing restrictions</div>#}
+{#            <div class='column'></div>#}
+{##}
+{#            <div id='constraintsError_professor_dash' class='section hero is-danger is-centered has-text-centered' style='width:100%'>#}
+{#                <label class='label subtitle is-4 is-white'>Constraint Creation Error! Please verify if at least two students are selected.</label>#}
+{#            </div>#}
+{##}
+{#            <div class='panel-block dash-cell-box has-tooltip-arrow' data-tooltip="To create a constraint, first select two or more students, and then the type of constraint (if they must be joint or separated). Afterwards, click on the '+' button to add the new constraint.">#}
+{#                <div class='column is-two-thirds'>#}
+{#                    <div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Students</div>#}
+{#                    <div class='table-container'>#}
+{#                        <div class='table' style='margin:2em;' id='cstUsersODPIPTable_professor_dash'></div>#}
+{#                    </div>#}
+{#                </div>#}
+{##}
+{#                <div class='column'>#}
+{#                    <div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Type</div>#}
+{#                    <div class='table-container'>#}
+{#                        <div class='table' style='margin:2em;' id='cstTypeODPIPTable_professor_dash'></div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{##}
+{#            <div class='panel-block dash-cell-box'>#}
+{#                <div class='column'>#}
+{#                    <div class='subtitle is-5 has-tooltip-arrow' style='color:gray;'>Constraints</div>#}
+{#                    <div class='table-container'>#}
+{#                        <div class='table' style='margin:2em;' id='cstODPIPTable_professor_dash'>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{##}
+{#            <!--<div class='form-group'>#}
+{#                <label class='column is-4 control-label' for='textinput'>Joint Player Constraints</label>  #}
+{#                <div class='control' data-tooltip='Optional, Format: [id1, id2]; [id3, id4]'>#}
+{#                    <input id='jointPlayerConstraintsId_professor_dash' class='input' type='text'>#}
+{#                </div>#}
+{##}
+{#                <label class='column is-4 control-label' for='textinput'>Separated Player Constraints</label>  #}
+{#                <div class='control' data-tooltip='Optional, Format: [id1, id2]; [id3, id4]'>#}
+{#                    <input id='separatedPlayerConstraintsId_professor_dash' class='input' type='text'>#}
+{#                </div>#}
+{#            </div>-->#}
+{#        </div>#}
+{##}
+{#        <button class="modal-close is-large" aria-label="close"></button>#}
+{#    </div>#}
+    
     <div class="modal" id="modalPRS_professor_dash">
         <div class="modal-background"></div>
         <div class="modal-content">
@@ -1107,7 +1175,7 @@
             }
         });
 
-        {#$("#tutorialSection_professor_dash").hide();#}
+        {#("#tutorialSection_professor_dash").hide();#}
         $("#adaptationError_professor_dash").hide();
         $("#adaptationWarning_professor_dash").hide();
         $("#adaptationInfo_professor_dash").hide();
@@ -1116,6 +1184,10 @@
         $("#constraintsError_professor_dash").hide();
 
 
+
+        window.setTimeout(function(){$('#tutorialMinimizerButton_professor_dash').trigger('click');}, 500);
+        
+        
         var currServerState = undefined;
         var currTimestamp = -1;
         var currAdaptationConfig = {
@@ -2045,10 +2117,10 @@
 
         fetchServerData();
         $('#updateDash_header').show(500).click(function () {
-            var color = $(this).css('background-color');
+            {#var color = $(this).css('background-color');#}
             $(this).children()[0].animate({'rotate': '360deg'}, 500);
-            $(this).animate({'background-color': 'white'}, 500);
-            $(this).animate({'background-color': color}, 500);
+            {#$(this).animate({'background-color': 'white'}, 500);#}
+            {#$(this).animate({'background-color': color}, 500);#}
             fetchServerData();
         });
         {#setInterval(fetchServerData, 500);#}
@@ -2142,8 +2214,8 @@
             var processedCtrs = processedCsts(currCsts)
 
             newAdaptationConfig = {
-                'selectedGenAlgId': $('#selectedGenAlgId_professor_dash').text(),
-                'selectedQualityEvalAlgId': $('#selectedQualityEvalAlgId_professor_dash').text(),
+                'selectedGenAlgId': $('#selectedGenAlgId_professor_dash').text().replace(/\s/g, ""),
+                'selectedQualityEvalAlgId': $('#selectedQualityEvalAlgId_professor_dash').text().replace(/\s/g, ""),
 
 
                 'k': $('#kId_professor_dash').val(),
