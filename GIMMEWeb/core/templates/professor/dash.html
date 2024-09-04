@@ -22,7 +22,7 @@
     <section class='section' id="tutorialSection_professor_dash" style="position: relative">
         <div class='panel animated zoomIn'>
             <div class='panel-heading'>
-                <div class='columns is-mobile is-vcentered'>
+                <div class='columns is-mobile is-vcentered' style="width: 100%">
                     <div class='column'>
                         Tutorial
                         <div class='is-pulled-right'>
@@ -36,14 +36,14 @@
                 <!-- <div class='columns is-mobile is-centered' style="width: 100%;">
                     <div class='column subtitle is-fullwidth has-tooltip-arrow' style='' data-tooltip='placeholder'>Course Timeline</div>
                 </div> -->
-                <div class=' is-mobile is-centered' style="width: 100%;">
-                    <div class='column' id='simulationState_professor_dash'></div>
+                <div class='column is-6 is-mobile is-centered'>
+                    <div id='simulationState_professor_dash'></div>
                 </div>
                 <!-- <div class='button' id='advanceSimulationButton_professor_dash'> Advance Simulation</div>
                 <div class='button' id='resetSimulationButton_professor_dash'> Reset Simulation</div> -->
 
 
-                <div class='dash-cell-box' id='storylineLog_professor_dash' style='overflow: visible; width: 60%;'>
+                <div class='dash-cell-box column is-6' id='storylineLog_professor_dash'>
                     <div class='is-mobile is-multiline is-mobile'>
                         <div class='table' style='margin:0.5em; margin-bottom:3em;'>
 
@@ -138,8 +138,8 @@
                             <label class='label subtitle is-4 is-white'>Constraint Creation Error! Please verify if at least two students are selected.</label>
                         </div>
                         <div class='table-container'>
-                            <div class='table' style='margin:2em;' id='cstODPIPTable_professor_dash'>
-                            </div>
+                            <div class='table' style='margin:2em;' id='cstODPIPTable_professor_dash'></div>
+                            <div class='table' style='margin:2em;' id='cstTypeODPIPTable_professor_dash'></div>
                         </div>
                     </div>
                 </div>
@@ -712,7 +712,7 @@
             </div>
 
             <div class='panel-block'>
-                <div class="columns is-mobile is-centered" id='groupsPlotAuxPanel_professor_dash'>
+                <div class="columns is-mobile is-centered" id='groupsPlotAuxPanel_professor_dash' style='padding:1em; width:100%'>
                     <div class='column is-3'>
                         <div class='panel-block panel-block-borderless columns is-mobile'>
                             <p>Student Performance Scale (Color of Dots)</p>
@@ -764,8 +764,7 @@
                         </div>
                     </div>
                     <div class='column is-9'>
-                        <div id='groupsPlot_professor_dash'
-                             style="border-radius:15px; border-width: 3px; border-color: black; background-color: white"></div>
+                        <div id='groupsPlot_professor_dash'></div>
                     </div>
                 </div>
 
@@ -775,41 +774,41 @@
                 </div>
             </div>
 
-            <div class='panel-block' style='display: block;'>
-                <p>Personality Diversity Distribution</p>
-                <div class='columns is-mobile is-centered'>
-                    <div class='column is-7' id='personalityDiversityPlot_professor_dash'></div>
-                </div>
-
-                <div class='columns is-mobile is-centered'>
-                    <img class='column is-2 loading-anim' id='diversityPlotLoadingImage_professor_dash'
-                         src="{% static "media/images/loading.gif" %}"></img>
-                </div>
-            </div>
-
-            <div class='panel-block' style='display: block;'>
-                <p>Overall Preferences Distribution</p>
-                <div class='columns is-mobile is-centered'>
-                    <div class='column is-7' id='interactionsProfilePlot_professor_dash'></div>
-                </div>
-
-                <div class='columns is-mobile is-centered'>
-                    <img class='column is-2 loading-anim' id='interactionsProfilePlotLoadingImage_professor_dash'
-                         src="{% static "media/images/loading.gif" %}"></img>
-                </div>
-            </div>
-
-            <div class='panel-block' style='display: block;'>
-                <p>Average Class Learning State</p>
-                <div class='columns is-mobile is-centered'>
-                    <div class='column is-7' id='learningStatePlot_professor_dash'></div>
-                </div>
-
-                <div class='columns is-mobile is-centered'>
-                    <img class='column is-2 loading-anim' id='learningStatePlotLoadingImage_professor_dash'
-                         src="{% static "media/images/loading.gif" %}"></img>
-                </div>
-            </div>
+{#            <div class='panel-block' style='display: block;'>#}
+{#                <p>Personality Diversity Distribution</p>#}
+{#                <div class='columns is-mobile is-centered'>#}
+{#                    <div class='column is-7' id='personalityDiversityPlot_professor_dash'></div>#}
+{#                </div>#}
+{##}
+{#                <div class='columns is-mobile is-centered'>#}
+{#                    <img class='column is-2 loading-anim' id='diversityPlotLoadingImage_professor_dash'#}
+{#                         src="{% static "media/images/loading.gif" %}"></img>#}
+{#                </div>#}
+{#            </div>#}
+{##}
+{#            <div class='panel-block' style='display: block;'>#}
+{#                <p>Overall Preferences Distribution</p>#}
+{#                <div class='columns is-mobile is-centered'>#}
+{#                    <div class='column is-7' id='interactionsProfilePlot_professor_dash'></div>#}
+{#                </div>#}
+{##}
+{#                <div class='columns is-mobile is-centered'>#}
+{#                    <img class='column is-2 loading-anim' id='interactionsProfilePlotLoadingImage_professor_dash'#}
+{#                         src="{% static "media/images/loading.gif" %}"></img>#}
+{#                </div>#}
+{#            </div>#}
+{##}
+{#            <div class='panel-block' style='display: block;'>#}
+{#                <p>Average Class Learning State</p>#}
+{#                <div class='columns is-mobile is-centered'>#}
+{#                    <div class='column is-7' id='learningStatePlot_professor_dash'></div>#}
+{#                </div>#}
+{##}
+{#                <div class='columns is-mobile is-centered'>#}
+{#                    <img class='column is-2 loading-anim' id='learningStatePlotLoadingImage_professor_dash'#}
+{#                         src="{% static "media/images/loading.gif" %}"></img>#}
+{#                </div>#}
+{#            </div>#}
         </div>
     </section>
 
@@ -1308,7 +1307,7 @@
 
 
             leftXPosition = -document.getElementById("storylineLog_professor_dash").parentElement.clientWidth * 0.58
-            positionArray = [[0, -70], [0, 0], [0, 70], [leftXPosition, 70], [leftXPosition, 0], [leftXPosition, -150]]
+            positionArray = [[0, 0], [0, 0], [0,0], [leftXPosition, 0], [leftXPosition, 0], [leftXPosition, 0]]
 
 
             var weekText = "<p>Week " + selectedWeek + "</p>";
@@ -1604,37 +1603,6 @@
             return {'joint': processCstArray(currCstr['joint']), 'separated': processCstArray(currCstr['separated'])};
         }
         
-        var generateODPIPUsrTableFromArray = function (idArray, tagClass, highlightedTagClass) {
-            var table = $('<div></div>');
-            for (var i = 0; i < idArray.length; i++) {
-
-                var tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>").text(idArray[i]);
-                tag.click(function () {
-                    if ($(this).hasClass(tagClass)) {
-                        $(this).removeClass(tagClass);
-                        $(this).addClass(highlightedTagClass);
-                        usersSelectedDOMElems.push($(this))
-                    } else {
-                        $(this).addClass(tagClass);
-                        $(this).removeClass(highlightedTagClass);
-                        usersSelectedDOMElems.splice(
-                            usersSelectedDOMElems.indexOf($(this))
-                            , 1);
-                    }
-                })
-
-                tag.addClass('button')
-                tag.attr('tagClass', tagClass);
-                tag.attr('highlightedTagClass', highlightedTagClass);
-                tag.attr('elemID', idArray[i]);
-                tag.addClass(tagClass);
-                tag.addClass('is-normal');
-                tag.addClass('is-rounded');
-                table.append(tag);
-                tag.show(135);
-            }
-            return table;
-        }
         
         var generateODPIPTypeTableFromArray = function (tagClass, highlightedTagClass, otherTagClass) {
             var table = $('<div></div>');
@@ -1749,7 +1717,7 @@
                 } else {
                     tag = $("<span class='context-menu' style='margin:0.1em; z-index:1000;'></span>").text(allCst[i]);
                     var addButton = $("<div class='button is-rounded is-small pointer has-tooltip-arrow' style='color:white; background-color:transparent; margin:0.5em;' data-tooltip='Create constraint.'></div>");
-                    addButton.append('<button style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fas fa-plus-circle\'></i></button>');
+                    addButton.append('<button style=\'border: none; background-color:transparent; color:white\' class=\'button pointer\'><i class=\'fa fa-plus-circle\'></i></button>');
                     addButton.click(function () {
 
                         if (usersSelectedDOMElems.length < 2) {
@@ -1775,10 +1743,16 @@
                         appendCstTag(tagClass, usersSelectedForConstraint, currConstraintType, jointTable, sepTable);
 
                         usersSelectedDOMElems = [];
-                        currConstraintType = 'joint';
                     });
+
+                    
                     tag.append(addButton);
 
+                    var typeSelector = generateODPIPTypeTableFromArray(
+                        'selectable-tag', 'selectable-tag.selected', '.selectable-tag.selected'
+                    );
+                    tag.append(typeSelector);
+                    
                     tag.attr('elemID', i);
                     tag.addClass('tag');
                     tag.addClass(tagClass);
@@ -2022,19 +1996,7 @@
 
                                         $('#tagsTableTasks_professor_dash').empty();
                                         $('#tagsTableTasks_professor_dash').append(tagsTableTasks);
-
-                                        var odpipUsrTable = generateODPIPUsrTableFromArray(
-                                            currSelectedUsers, 'modal-button', 'is-info'
-                                        );
-                                        $('#cstUsersODPIPTable_professor_dash').empty();
-                                        $('#cstUsersODPIPTable_professor_dash').append(odpipUsrTable);
-
-                                        var odpipTypeTable = generateODPIPTypeTableFromArray(
-                                            'is-dark', 'is-success', 'is-danger'
-                                        );
-                                        $('#cstTypeODPIPTable_professor_dash').empty();
-                                        $('#cstTypeODPIPTable_professor_dash').append(odpipTypeTable);
-
+                                        
 
                                         $('#cstODPIPTable_professor_dash').empty();
                                         usersSelectedDOMElems = [];
@@ -2172,14 +2134,14 @@
             // ]
 
 
-            buildDiversityDistributionPlot('personalityDiversityPlot_professor_dash', currServerState.currAdaptationState);
-            buildScatterInteractionPlot('interactionsProfilePlot_professor_dash', interactionDatapoints);
-            buildStatePlot('learningStatePlot_professor_dash',
-                [
-                    {"name": "Ability", "value": avgChars[0]},
-                    {"name": "Engagement", "value": avgChars[1]}
-                ]
-            );
+            {#buildDiversityDistributionPlot('personalityDiversityPlot_professor_dash', currServerState.currAdaptationState);#}
+            {#buildScatterInteractionPlot('interactionsProfilePlot_professor_dash', interactionDatapoints);#}
+            {#buildStatePlot('learningStatePlot_professor_dash',#}
+            {#    [#}
+            {#        {"name": "Ability", "value": avgChars[0]},#}
+            {#        {"name": "Engagement", "value": avgChars[1]}#}
+            {#    ]#}
+            {#);#}
 
             updateGroupsPlotScaleCallback();
 

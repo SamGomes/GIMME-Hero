@@ -1,39 +1,9 @@
 //source: https://www.geeksforgeeks.org/best-way-to-make-a-d3-js-visualization-layout-responsive/
-var responsivefy = function(svg, targetWidthClamp, leftPaddingRatio) {
-    // Container is the DOM element, svg is appended.
-    // Then we measure the container and find its
-    // aspect ratio.
-    const container = d3.select(svg.node().parentNode),
-        width = parseInt(svg.style('width'), 10),
-        height = parseInt(svg.style('height'), 10),
-        aspect = width / height;
-         
-    // Add viewBox attribute to set the value to initial size
-    // add preserveAspectRatio attribute to specify how to scale
-    // and call resize so that svg resizes on page load
-    svg.attr('viewBox', `0 0 ${width} ${height}`).
-    attr('preserveAspectRatio', 'xMinYMid');
-    svg.call(resize);
-     
-    d3.select(window).on('resize.' + container.attr('id'), resize);
-
-    function resize() {
-        var targetWidth = parseInt(container.style('width'));
-        svg.attr('transform', 'translate('+targetWidth*leftPaddingRatio+','+0+')');
-        if(targetWidth > targetWidthClamp){
-            targetWidth = targetWidthClamp;
-        }
-
-        // console.log(targetWidth);
-        svg.attr('width', targetWidth);
-        svg.attr('height', Math.round(targetWidth / aspect));
-        
-    }
+var responsivefy = function(svg, initWidth, initHeight) {
+    svg.attr('viewBox', `0 0 ${initWidth} ${initHeight}`)
+        .attr('preserveAspectRatio', 'xMinYMid')
+        .classed("svg-content-responsive", true);
 }
-
-
-
-
 
 
 
@@ -141,83 +111,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
     
     $('#adaptationIssues_professor_dash').hide();
     $('#adaptationIssuesText_professor_dash').html('');
-
-    // from http://bl.ocks.org/mbostock/7555321
-    var wrap = function (text, width) {
-        text.each(function () {
-            var text = d3.select(this),
-                words = text.text().split(/\s+/).reverse(),
-                word,
-                line = [],
-                lineNumber = 0,
-                lineHeight = 1.1, // ems
-                x = text.attr('x'),
-                y = text.attr('y'),
-                dy = 0, //parseFloat(text.attr('dy')),
-                tspan = text.text(null)
-                            .append('tspan')
-                            .attr('x', x)
-                            .attr('y', y)
-                            .attr('dy', dy + 'em');
-            while (word = words.pop()) {
-                line.push(word);
-                tspan.text(line.join(' '));
-                if (tspan.node().getComputedTextLength() > width) {
-                    line.pop();
-                    tspan.text(line.join(' '));
-                    line = [word];
-                    tspan = text.append('tspan')
-                                .attr('x', x)
-                                .attr('y', y)
-                                .attr('dy', ++lineNumber * lineHeight + dy + 'em')
-                                .text(word);
-                }
-            }
-        });
-    }
-
-    var getRandomColor = function() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
-
-
     
-
-
-    // from: https://stackoverflow.com/questions/35969656/how-can-i-generate-the-opposite-color-according-to-current-color
-    var invertColor = function(hex, isBW) {
-        if (hex.indexOf('#') === 0) {
-            hex = hex.slice(1);
-        }
-        // convert 3-digit hex to 6-digits.
-        if (hex.length === 3) {
-            hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-        }
-        if (hex.length !== 6) {
-            throw new Error('Invalid HEX color.');
-        }
-        var r = parseInt(hex.slice(0, 2), 16),
-            g = parseInt(hex.slice(2, 4), 16),
-            b = parseInt(hex.slice(4, 6), 16);
-        if (isBW) {
-            // http://stackoverflow.com/a/3943023/112731
-            return (r * 0.299 + g * 0.587 + b * 0.114) > 186
-                ? '#000000'
-                : '#FFFFFF';
-        }
-        // invert color components
-        r = (255 - r).toString(16);
-        g = (255 - g).toString(16);
-        b = (255 - b).toString(16);
-        // pad each with zeros and return
-        return '#' + padZero(r) + padZero(g) + padZero(b);
-    }
-
     //source: https://campushippo.com/lessons/how-to-convert-rgb-colors-to-hexadecimal-with-javascript-78219fdb
     var rgbToHex = function (rgb) { 
         var hex = Number(rgb).toString(16);
@@ -232,46 +126,24 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
         var blue = rgbToHex(b);
         return red+green+blue;
     };
-
-    var padZero = function(str, len) {
-        len = len || 2;
-        var zeros = new Array(len).join('0');
-        return (zeros + str).slice(-len);
-    }
-
-    var sqrDistBetweenVectors = function(vec1, vec2){
-        return (Math.pow(vec1.ability - vec2.ability, 2) + Math.pow(vec1.engagement - vec2.engagement, 2));
-    }
-
+    
     svg = d3.select('#'+canvasId).append('svg');
 
-    var canvas = svg;
-    var canvasContainer = canvas.node().parentNode;
-    width = canvasContainer.getBoundingClientRect().width*0.8;
- 
-    if(isForStudent){
-        aspect = 2.5 / 1.0;
-    }else{
-        aspect = 2.5/ 1.5;
-    }
-   
-    height = width/ aspect;
     
-    canvas.attr('width', width);
-    canvas.attr('height', height);
-    
-
     var userNodes = [];
     var groupIndicatorNodes = [];
     var colors = [];
 
     var currPlotIndex = 0;
 
-    svg.call(responsivefy, 5000, 0);
-
+    initWidth = 1300;
+    initHeight = isForStudent? 500: 1000;
+    
+    responsivefy(svg, initWidth, initHeight);
+    
     for (i=0; i<data.groups.length; i++){
         var group = data.groups[i];
-        var groupCenterOfMass = {'x': 100 + Math.random()*(width*0.8), 'y': 10 + Math.random()*(height*0.8)};
+        var groupCenterOfMass = {'x': 100 + Math.random()*(initWidth*0.8), 'y': 10 + Math.random()*(initHeight*0.8)};
         
         if(isForStudent){
             groupIndicatorNodes.push({'groupId': i, 'tasks': tasks, 'centerOfMass': groupCenterOfMass});
@@ -321,7 +193,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
                         maxRadius = currRadius;
                     }
                 }
-                return Math.sqrt(maxRadius)
+                return Math.sqrt(maxRadius);
             })
             .attr('cx', node => node.centerOfMass.x)
             .attr('cy', node => node.centerOfMass.y)
@@ -333,14 +205,6 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             .attr('fill', 'transparent');
            
 
-
-
-    var clamp = function(num, min, max) {
-      return num <= min ? min : num >= max ? max : num;
-    }
-
-    
-    
     
     var nodeElements =
         svg.append('g')
@@ -375,7 +239,6 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             .attr('stroke-width', '0.3%');
          
     groupsPlotNodeElements = nodeElements;
-            
     var nodeTextElements = 
         svg.append('g')
         .selectAll('text')
@@ -386,7 +249,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
 //         .attr('class', 'fancy-plot-text')
         .attr('font-family', 'Calibri,sans-serif')
         .attr('text-anchor', 'middle')
-        .style("stroke-width", 0.5)
+        .style("stroke-width", 0.25)
         .style("stroke", "black")
         .style("fill", "white")
         .text('');
@@ -418,79 +281,73 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
         return totalLength;
     }
 
-    var htmlFromJSON = function(json, fatherElem, currX, currY, paddingX, paddingY, j){
-        
-        if(typeof json == 'string' || typeof json == 'number' || json == undefined){
-            return;
-        }
-
-
-        var keys = Object.keys(json)
-        var x = currX + 100;
-        var y = currY + 30;
-
-        if(j==0){
-            x += paddingX;
-            y += paddingY;
-        }
-
-        for(var i=0; i < keys.length; i++){
-            var currKey = keys[i];
-            var currJson = json[currKey];
-            
-            if(currKey=='0'){
-                continue;
-            }
-
-            if(typeof currJson != 'string' && typeof currJson != 'number'){
-                currKey+=' ↴';
-            }
-
-            fatherElem
-            .append('text')
-            .attr('x', x)
-            .attr('y', y + 10)
-            .attr('font-size', 18)
-            .attr('font-family', 'Calibri,sans-serif')
-            .attr('color', function(node){ return isForStudent? invertColor(colors[0], true): invertColor(colors[node.groupId], true); })
-            .call(wrap, 150)
-            .text(currKey);
-
-            if(typeof currJson == 'string' || typeof currJson == 'number'){
-
-                fatherElem
-                .append('rect')
-                .attr('x', x + 140)
-                .attr('y', y - 5)
-                .attr('width', 250)
-                .attr('height', 20)
-                .attr('fill', function(node){ return 'white'; })
-                .attr('stroke', 'black');
-
-                fatherElem
-                .append('text')
-                .attr('x', x + 145)
-                .attr('y', y + 10)
-                .attr('font-size', 15)
-                .attr('font-family', 'Calibri,sans-serif')
-                .attr('color', function(node){ return 'black'; })
-                .call(wrap, 150)
-                .text(currJson);
-            }
-
-            htmlFromJSON(currJson, fatherElem, x, y, paddingX, paddingY, ++j);
-
-            y += 35*(1+getJSONLength(currJson));
-        }
-
-    };
-
-
+    // var htmlFromJSON = function(json, fatherElem, currX, currY, paddingX, paddingY, j){
+    //    
+    //     if(typeof json == 'string' || typeof json == 'number' || json == undefined){
+    //         return;
+    //     }
+    //
+    //
+    //     var keys = Object.keys(json)
+    //     var x = currX + 100;
+    //     var y = currY + 30;
+    //
+    //     if(j==0){
+    //         x += paddingX;
+    //         y += paddingY;
+    //     }
+    //
+    //     for(var i=0; i < keys.length; i++){
+    //         var currKey = keys[i];
+    //         var currJson = json[currKey];
+    //        
+    //         if(currKey=='0'){
+    //             continue;
+    //         }
+    //
+    //         if(typeof currJson != 'string' && typeof currJson != 'number'){
+    //             currKey+=' ↴';
+    //         }
+    //
+    //         fatherElem
+    //         .append('text')
+    //         .attr('x', x)
+    //         .attr('y', y + 10)
+    //         .attr('font-size', 18)
+    //         .attr('font-family', 'Calibri,sans-serif')
+    //         .attr('color', function(node){ return isForStudent? invertColor(colors[0], true): invertColor(colors[node.groupId], true); })
+    //         .call(wrap, 150)
+    //         .text(currKey);
+    //
+    //        
+    //         // if(typeof currJson == 'string' || typeof currJson == 'number'){
+    //         //     // fatherElem
+    //         //     // .append('rect')
+    //         //     // .attr('x', x + 140)
+    //         //     // .attr('y', y - 5)
+    //         //     // .attr('width', 250)
+    //         //     // .attr('height', 20);
+    //         //     // .attr('fill', function(node){ return 'white'; })
+    //         //     // .attr('stroke', 'black');
+    //         //
+    //         //     fatherElem
+    //         //     .append('text')
+    //         //     .attr('x', x + 145)
+    //         //     .attr('y', y + 10)
+    //         //     .attr('font-size', 15)
+    //         //     .attr('font-family', 'Calibri,sans-serif')
+    //         //     .attr('color', function(node){ return 'black'; })
+    //         //     .call(wrap, 150)
+    //         //     .text(currJson);
+    //         // }
+    //
+    //         htmlFromJSON(currJson, fatherElem, x, y, paddingX, paddingY, ++j);
+    //
+    //         y += 35*(1+getJSONLength(currJson));
+    //     }
+    // };
 
     
-    
-    var mouseX = 0;
-    var mouseY = 0;
 
     var studentForChange = undefined;
     var groupForChange = undefined;
@@ -506,7 +363,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
     
     
     var canNodeBeExpanded = function(selection, node){
-        return (node.groupId == selection.groupId || (studentForChange != undefined && node.userId == studentForChange.userId))
+        return (node.groupId == selection.groupId || (studentForChange != undefined && node.userId == studentForChange.userId));
     };
     
 //     var mouseOverCallbacks = 0;
@@ -548,7 +405,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
     };
     
     var contractNodeViz = function(d){
-        if(studentForChange!=undefined){
+        if(studentForChange != undefined){
             return;
         }
         
@@ -569,10 +426,6 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
                 d3.select(e).text('');
             });
     };
-
-    
-    
-    
     
     
     if(!isForStudent){
@@ -589,11 +442,9 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
                 d3.select('#' + canvasId).select('line')
                     .attr('x2', thisElem.attr('cx'))
                     .attr('y2', thisElem.attr('cy'));
-                
-               
+
             }
             d3.event.stopPropagation();
-            
         });
         groupIndicators.on('mouseout', function(d){
             d3.select(groupInfoTooltips._groups[0][d.groupId]).style('visibility', 'hidden');
@@ -608,9 +459,6 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
         });
 
     }
-
-
-    
 
     // define arrow points paths
     var defs = svg.append('defs');
@@ -629,9 +477,6 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
         .append('path')
             .attr('d', 'M0,-5 L10,0 L0,5')
             .attr('class', 'arrowHead');
-
-
-
 
 
     // only professors can perform changes in groups
@@ -677,12 +522,6 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
 
     
     
-
-    
-    
-    
-    
-    
     // adapted from: https://stackoverflow.com/questions/12115691/svg-d3-js-rounded-corner-on-one-corner-of-a-rectangle
     // Returns path data for a rectangle with rounded right corners.
     // The top-left corner is ⟨x,y⟩.
@@ -703,7 +542,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
     groupInfoTooltips
         .append('path')
         .attr('d', function(d) {
-          return rightRoundedRect(15, 15, 600, 340, 7);
+          return rightRoundedRect(15, 15, 600, 310, 7);
         })
         .attr('fill', function(node){
                                 var baseColor = colors[node.groupId].split('#')[1];
@@ -728,8 +567,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
         node.tasks = originalNode.tasks == -1 ? '<No computed tasks>' : originalNode.tasks;
 
         node['Group ID'] = node.groupId;
-
-
+        
         if(!isForStudent){
             //change displayed attributes to be more friendly and easy to read
             characteristics = $.extend({}, originalNode.characteristics);
@@ -768,6 +606,12 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
                 diversity_text += " (Balanced)";
             }
 
+            currTooltip.append('text')
+                    .attr('font-size', 18)
+                    .attr('font-family', 'Calibri,sans-serif')
+                    .attr('color', 'black')
+                    .text('Characteristics');
+                
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
@@ -783,9 +627,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
         delete node.tasks;
         delete node.centerOfMass;
         delete node.groupId;
-
-
-        htmlFromJSON(node, currTooltip, 0, 0, 0, 40, 0);
+        
     });
     if(displayWarn){
         generatePlotWarningMessage(
@@ -793,10 +635,6 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             3000
         );
     }
-    
-    
-    
-    
     
     
     var userInfoTooltips =
@@ -839,7 +677,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
         var currTooltip = d3.select(userInfoTooltips._groups[0][originalNode.plotIndex]);
 
         node = {}
-        node['Student ID'] = originalNode.userId;
+        // node['Student ID'] = originalNode.userId;
         node['Student Name'] = originalNode.userState.fullname;
         node['Email'] = originalNode.userState.email;
 
@@ -867,7 +705,6 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             //node['(External) Grade'] = originalNode.userState.grade;
         }
 
-        htmlFromJSON(node, currTooltip, 0, 0, 0, 50, 0);
     });
 
     
@@ -904,7 +741,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
     var resetSim = function(){
         simulation.nodes(userNodes)
         .force('collide', d3.forceCollide()
-            .radius(width*0.015)
+            .radius(initWidth*0.015)
 //             .radius((_, i) => {
 //                 return (d3.select(nodeElements._groups[0][i]).attr('r') == '1%')? width*0.015: width*0.03;
 //             })
@@ -1229,31 +1066,19 @@ var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined, st
 
 
 var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationDisplayCallback){
-
     
     // set the dimensions and margins of the graph
-    var width = 300
-    height = 600;
-    
-    var margin = {
-        top: height * 0.1,
-        right: width * 0.1,
-        bottom: height * 0.1,
-        left: width * 0.1
-    };
-    
-    
-    // // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
-    var radius = Math.min(width, height) / 2 
-    
+
+    var initWidth = 1300;
+    var initHeight = 450;
     var svg = d3.select('#'+canvasId)
         .append('svg');
 
-    svg.attr('width', width + margin.left + margin.right)
-        .attr('height', height + margin.bottom + margin.top)
-        .attr('display', 'block')
-        .attr('margin', 'auto')
-        .call(responsivefy, 300, 0.7);
+    responsivefy(svg,initWidth, initHeight);
+    console.log(svg);
+        
+    // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
+    var radius = Math.min(initWidth, initHeight) / 2
     
     // Create dummy data
     var weekValue = 100 / numWeeks;
@@ -1261,10 +1086,8 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationD
     for(i=0; i<numWeeks; i++)
         data[i] = weekValue;
 
-    var leftXPosition = -document.getElementById("storylineLog_professor_dash").parentElement.clientWidth / 1.8;
     var currSelectedWeek = currWeek;
-
-
+    
     // Compute the position of each group on the pie:
     var pie = d3.pie()
     .value(function(d) {return d.value; })
@@ -1272,11 +1095,11 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationD
 
     var arcGenerator = d3.arc()
     .innerRadius(radius*0.3)
-    .outerRadius(radius);
+    .outerRadius(radius*0.7);
 
 
     var g = svg.append('g');    
-    g.style("transform", "translate(" + (width / 2)*1.2 + "px," + height / 2 + "px)");
+    g.style("transform", "translate(" + (initWidth / 2)*1.2 + "px," + initHeight / 2 + "px)");
     var slices =  g
     .selectAll('mySlices')
     .data(data_ready)
@@ -1299,16 +1122,12 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationD
     };
     updatePieColors();
     
-    
-    
-    
     var line = g.append('path')
     .attr("stroke", "grey")
-    .style("stroke-width", "4px");
+    .style("stroke-width", "5px");
     
     var updateLine = function(){
         var gen = d3.line();
-        var pos = $("#storylineLog_professor_dash").position();
         var angle = (currSelectedWeek==0)? -data_ready[1].startAngle : data_ready[currSelectedWeek-1].startAngle;
         var angleArray = [Math.cos(angle), Math.sin(angle)]
         var pathOfLine = gen([
@@ -1343,9 +1162,6 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationD
         updateLine();
 
     });
-    
-     
-    
     
 }
 

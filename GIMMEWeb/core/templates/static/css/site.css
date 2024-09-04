@@ -46,6 +46,7 @@ body {
   position: fixed;
   border-radius: 100%;
   opacity: 0.2;
+  z-index: -1;
 }
 /*.footer {
   position: absolute;

@@ -40,7 +40,7 @@
 						{% for questionnaire in available_questionnaires %}
 							<p>{{ questionnaire.dashboard_message |safe}}</p>
 						{% endfor %}
-						<p>The First Questionnaire serves to get to know you better. Your answers will help us assign you to a group. The results from your answers can be shared afterward.</p>
+						<p>The questionnaires serve to get to know you better, and your answers will help us assign you to a group. The results from your answers can be shared afterward.</p>
 					</div>
 				</div>
 
@@ -78,7 +78,7 @@
 					</div>
 				</div>
 				<div class='panel-block'>
-					<div class="columns is-mobile is-centered is-mobile">
+					<div class="columns is-mobile is-centered is-mobile" style="width:100%">
 						<div class='column is-3'>
 							<div id='groupsPlotLegendTrigger_student_dash'>
 								<div class='button has-tooltip-top has-tooltip-arrow' data-tooltip='Show caption.'>
@@ -113,7 +113,7 @@
 						</div>
 					</div>
 					<div class='panel-block' style='display: block;'>
-						<div id='student_learningStatePlot' style="display: flex; justify-content: center; align-items: center; padding: 2rem;"></div>
+						<div id='student_learningStatePlot' style="display: flex; justify-content: center; align-items: center; padding: 2rem; width:1300px; height: 200px;'"></div>
 					</div>
 				</div>
 		</section>
