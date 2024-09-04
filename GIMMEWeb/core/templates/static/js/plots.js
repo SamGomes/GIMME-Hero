@@ -246,7 +246,6 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
         .enter()
         .append('text')
         .attr('dy', 7)
-//         .attr('class', 'fancy-plot-text')
         .attr('font-family', 'Calibri,sans-serif')
         .attr('text-anchor', 'middle')
         .style("stroke-width", 0.25)
@@ -281,71 +280,69 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
         return totalLength;
     }
 
-    // var htmlFromJSON = function(json, fatherElem, currX, currY, paddingX, paddingY, j){
-    //    
-    //     if(typeof json == 'string' || typeof json == 'number' || json == undefined){
-    //         return;
-    //     }
-    //
-    //
-    //     var keys = Object.keys(json)
-    //     var x = currX + 100;
-    //     var y = currY + 30;
-    //
-    //     if(j==0){
-    //         x += paddingX;
-    //         y += paddingY;
-    //     }
-    //
-    //     for(var i=0; i < keys.length; i++){
-    //         var currKey = keys[i];
-    //         var currJson = json[currKey];
-    //        
-    //         if(currKey=='0'){
-    //             continue;
-    //         }
-    //
-    //         if(typeof currJson != 'string' && typeof currJson != 'number'){
-    //             currKey+=' ↴';
-    //         }
-    //
-    //         fatherElem
-    //         .append('text')
-    //         .attr('x', x)
-    //         .attr('y', y + 10)
-    //         .attr('font-size', 18)
-    //         .attr('font-family', 'Calibri,sans-serif')
-    //         .attr('color', function(node){ return isForStudent? invertColor(colors[0], true): invertColor(colors[node.groupId], true); })
-    //         .call(wrap, 150)
-    //         .text(currKey);
-    //
-    //        
-    //         // if(typeof currJson == 'string' || typeof currJson == 'number'){
-    //         //     // fatherElem
-    //         //     // .append('rect')
-    //         //     // .attr('x', x + 140)
-    //         //     // .attr('y', y - 5)
-    //         //     // .attr('width', 250)
-    //         //     // .attr('height', 20);
-    //         //     // .attr('fill', function(node){ return 'white'; })
-    //         //     // .attr('stroke', 'black');
-    //         //
-    //         //     fatherElem
-    //         //     .append('text')
-    //         //     .attr('x', x + 145)
-    //         //     .attr('y', y + 10)
-    //         //     .attr('font-size', 15)
-    //         //     .attr('font-family', 'Calibri,sans-serif')
-    //         //     .attr('color', function(node){ return 'black'; })
-    //         //     .call(wrap, 150)
-    //         //     .text(currJson);
-    //         // }
-    //
-    //         htmlFromJSON(currJson, fatherElem, x, y, paddingX, paddingY, ++j);
-    //
-    //         y += 35*(1+getJSONLength(currJson));
-    //     }
-    // };
+    var htmlFromJSON = function(json, fatherElem, currX, currY, paddingX, paddingY, j){
+
+        if(typeof json == 'string' || typeof json == 'number' || json == undefined){
+            return;
+        }
+
+
+        var keys = Object.keys(json)
+        var x = currX + 100;
+        var y = currY + 30;
+
+        if(j==0){
+            x += paddingX;
+            y += paddingY;
+        }
+
+        for(var i=0; i < keys.length; i++){
+            var currKey = keys[i];
+            var currJson = json[currKey];
+
+            if(currKey=='0'){
+                continue;
+            }
+
+            if(typeof currJson != 'string' && typeof currJson != 'number'){
+                currKey+=' ↴';
+            }
+
+            fatherElem
+            .append('text')
+            .attr('x', x)
+            .attr('y', y + 10)
+            .attr('font-size', 18)
+            .attr('font-family', 'Calibri,sans-serif')
+            .attr('color', 'black')
+            .text(currKey);
+
+
+            if(typeof currJson == 'string' || typeof currJson == 'number'){
+                fatherElem
+                .append('rect')
+                .attr('x', x + 140)
+                .attr('y', y - 5)
+                .attr('width', 250)
+                .attr('height', 20)
+                .attr('fill', function(node){ return 'white'; });
+                // .attr('stroke', 'black');
+
+                fatherElem
+                .append('text')
+                .attr('x', x + 145)
+                .attr('y', y + 10)
+                .attr('font-size', 15)
+                .attr('font-family', 'Calibri,sans-serif')
+                .attr('color', function(node){ return 'black'; })
+                .text(currJson);
+            }
+
+            htmlFromJSON(currJson, fatherElem, x, y, paddingX, paddingY, ++j);
+
+            y += 35*(1+getJSONLength(currJson));
+        }
+    };
 
     
 
@@ -542,7 +539,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
     groupInfoTooltips
         .append('path')
         .attr('d', function(d) {
-          return rightRoundedRect(15, 15, 600, 310, 7);
+          return rightRoundedRect(15, 15, 600, 330, 7);
         })
         .attr('fill', function(node){
                                 var baseColor = colors[node.groupId].split('#')[1];
@@ -605,13 +602,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             else {
                 diversity_text += " (Balanced)";
             }
-
-            currTooltip.append('text')
-                    .attr('font-size', 18)
-                    .attr('font-family', 'Calibri,sans-serif')
-                    .attr('color', 'black')
-                    .text('Characteristics');
-                
+            
             node['Characteristics'] = {};
             node['Characteristics']['Ability'] = characteristics.ability;
             node['Characteristics']['Engagement'] = characteristics.engagement;
@@ -627,6 +618,8 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
         delete node.tasks;
         delete node.centerOfMass;
         delete node.groupId;
+
+        htmlFromJSON(node, currTooltip, 0, 0, 0, 40, 0);
         
     });
     if(displayWarn){
@@ -705,6 +698,7 @@ var buildGroupsPlot = function(isForStudent, canvasId, data, userStates, scaleTy
             //node['(External) Grade'] = originalNode.userState.grade;
         }
 
+        htmlFromJSON(node, currTooltip, 0, 0, 0, 50, 0);
     });
 
     
@@ -890,14 +884,12 @@ var buildScatterInteractionPlot  = function(canvasId, data, mouseClickCallback =
     // append the svg object to the body of the page
     svg = canvas
         .append('svg')
-        .attr('width', width)
-        .attr('height', height)
         .style('background', 'url("../media/images/plots/interactionSpaceBckgrd.png") no-repeat')
         .style('background-size', '100%')
         .style('background-position', 'center')
         .attr('display', 'block')
         .attr('margin', 'auto')
-        .call(responsivefy, width, 0);
+        .call(responsivefy, width, height);
     
     if (mouseClickCallback != undefined)
         svg.on("click", function () {
