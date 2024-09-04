@@ -979,11 +979,7 @@ var buildStatePlot = function(canvasId, data, minValue=0, maxValue=undefined, st
 
     var svg = canvas.append('svg');
 
-    svg.attr('width', width + margin.left + margin.right)
-        .attr('display', 'block')
-        .attr('margin', 'auto')
-        .attr('height', height + margin.top + margin.bottom + 30)
-        .call(responsivefy, width, 0);
+    responsivefy(svg, width*2.0, height*2.0);
 
 
     if(maxValue == undefined){
