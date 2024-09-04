@@ -519,7 +519,7 @@
                             </div>
                             <div class='dropdown-menu' id='dropdownMenu2_professor_dash' role='menu'>
                                 <div class='dropdown-content'>
-                                    <a class='dropdown-item'>
+                                    <a class='dropdown-item is-active'>
                                         K-Nearest-Neighbors (KNN)
                                         <div class='column'></div>
     
@@ -546,7 +546,7 @@
                                             </button>
                                         </div>
                                     </a>
-                                    <a class='dropdown-item is-active'>
+                                    <a class='dropdown-item'>
                                         Synergy Between Students
                                         <div class='column'></div>
     
@@ -574,7 +574,7 @@
                                             </button>
                                         </div>
                                     </a>
-                                    <a class='dropdown-item is-active'>
+                                    <a class='dropdown-item'>
                                         Personality Diversity
                                         <div class='column'></div>
     
@@ -2176,8 +2176,8 @@
             var processedCtrs = processedCsts(currCsts)
 
             newAdaptationConfig = {
-                'selectedGenAlgId': $('#selectedGenAlgId_professor_dash').text().replace(/\s/g, ""),
-                'selectedQualityEvalAlgId': $('#selectedQualityEvalAlgId_professor_dash').text().replace(/\s/g, ""),
+                'selectedGenAlgId': $.trim($('#selectedGenAlgId_professor_dash').text()),
+                'selectedQualityEvalAlgId': $.trim($('#selectedQualityEvalAlgId_professor_dash').text()),
 
 
                 'k': $('#kId_professor_dash').val(),
@@ -2193,8 +2193,8 @@
                 'preferredNumPlayersPerGroup': $('#preferredNumPlayersPerGroupId_professor_dash').val(),
                 'minNumPlayersPerGroup': $('#groupSizeSlider_professor_dash').slider("values", 0),
                 'maxNumPlayersPerGroup': $('#groupSizeSlider_professor_dash').slider("values", 1),
-                'qualityWeightsAb': $('#qualityWeightsAbId_professor_dash').val(),
-                'qualityWeightsEng': $('#qualityWeightsEngId_professor_dash').val(),
+                'qualityWeightsAb': $('#qualityAbWeight_professor_dash').val(),
+                'qualityWeightsEng': "" + (1 - $('#qualityAbWeight_professor_dash').val()),
                 'playerWindow': $('#playerWindowId_professor_dash').val(),
 
                 'numberOfConfigChoices': $('#numberOfConfigChoicesId_professor_dash').val(),

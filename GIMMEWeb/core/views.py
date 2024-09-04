@@ -1289,6 +1289,7 @@ class Views:  # acts as a namespace
         except (Exception, ArithmeticError, ValueError) as e:
             template = 'An exception of type {0} occurred. Arguments:\n{1!r}'
             message = template.format(type(e).__name__, e.args)
+            print(message)
             server_state_model_bridge.set_ready_for_new_activity(True)
             return HttpResponse('error')
 
@@ -1322,8 +1323,8 @@ class Views:  # acts as a namespace
             return KNNRegQualityEvalAlg(
                 player_model_bridge=player_bridge,
                 k=int(new_config_params['k']),
-                quality_weights=PlayerCharacteristics(ability=float(new_config_params['qualityWeightAb']),
-                                                      engagement=float(new_config_params['qualityWeightEng']))
+                quality_weights=PlayerCharacteristics(ability=float(new_config_params['qualityWeightsAb']),
+                                                      engagement=float(new_config_params['qualityWeightsEng']))
             )
 
         def quality_eval_alg_switcher_synergy(request):

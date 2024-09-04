@@ -1063,7 +1063,6 @@ var buildPieChart = function(canvasId, numWeeks, currWeek = 0, changeSimulationD
         .append('svg');
 
     responsivefy(svg,initWidth, initHeight);
-    console.log(svg);
         
     // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
     var radius = Math.min(initWidth, initHeight) / 2
