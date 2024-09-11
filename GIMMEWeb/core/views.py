@@ -663,7 +663,7 @@ class CustomPlayerModelBridge(PlayerModelBridge):
                 player_info.tags.add(Tag.objects.get(name=personality[2]))
                 player_info.tags.add(Tag.objects.get(name=personality[3]))
             except Tag.DoesNotExist:
-                print("Couldn't add default personality tags")
+                print("[ERROR] Couldn't add default personality tags")
             player_info.save()
         except UserProfile.DoesNotExist:
             pass
@@ -1057,7 +1057,7 @@ class Views:  # acts as a namespace
     def login_check(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
-        print('[INFO] login check performed on user with id - ' + str(username) + ', password - ' + str(password))
+        print('[INFO] Login check performed on user with id - ' + str(username) + '.')
 
         if username is None:
             return
@@ -1066,7 +1066,7 @@ class Views:  # acts as a namespace
         if user is not None:
             login(request, user)
         else:
-            messages.info(request, 'Login failed! Credentials not recognized.')
+            messages.info(request, '[ERROR] Login failed! Credentials not recognized.')
 
     def logout_check(request):
         logout(request)
@@ -1205,7 +1205,7 @@ class Views:  # acts as a namespace
                 returned['user'] = User.objects.get(username=username).userprofile
                 returned['storedUsers'] = UserProfile.objects.filter(username__contains=username)
             except ObjectDoesNotExist as e:
-                print('user does not exist!')
+                print('[ERROR] User does not exist!')
                 returned = {'user': False, 'storedUsers': User.objects.filter(username__contains=username)}
         return returned
 
@@ -1287,7 +1287,7 @@ class Views:  # acts as a namespace
             curr_adaptation_state = adaptation.iterate()
 
         except (Exception, ArithmeticError, ValueError) as e:
-            template = 'An exception of type {0} occurred. Arguments:\n{1!r}'
+            template = '[ERROR] An exception of type {0} occurred. Arguments:\n{1!r}'
             message = template.format(type(e).__name__, e.args)
             print(message)
             server_state_model_bridge.set_ready_for_new_activity(True)
@@ -1599,7 +1599,7 @@ class Views:  # acts as a namespace
                 returned['task'] = Task.objects.get(taskId=task_id)
                 returned['storedTasks'] = Task.objects.filter(taskId__contains=task_id)
             except ObjectDoesNotExist as e:
-                print('task does not exist!')
+                print('[ERROR] Task does not exist!')
                 returned = {'task': False, 'storedTasks': Task.objects.filter(taskId__contains=task_id)}
         return returned
 
@@ -2230,8 +2230,6 @@ class Views:  # acts as a namespace
             tag_name = request.POST.get('name')
             target_id = request.POST.get('targetId')
             target = request.POST.get('target')
-
-            print(request.POST)
 
             if target == 'student':
                 player_bridge.add_player_tag(username=target_id, tag_name=tag_name)

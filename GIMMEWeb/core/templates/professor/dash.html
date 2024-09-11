@@ -1998,13 +1998,13 @@
                                         $('#tagsTableTasks_professor_dash').append(tagsTableTasks);
                                         
 
-                                        $('#cstODPIPTable_professor_dash').empty();
+                                        $('#cstTable_professor_dash').empty();
                                         usersSelectedDOMElems = [];
                                         currConstraintType = 'joint';
-                                        var odpipCstTable = generateODPIPCstTableFromArray(
+                                        var cstTable = generateODPIPCstTableFromArray(
                                             currCsts, 'is-info'
                                         );
-                                        $('#cstODPIPTable_professor_dash').append(odpipCstTable);
+                                        $('#cstTable_professor_dash').append(cstTable);
 
 
                                         var currFreeTasks = unformattedStringToObj(newServerState.currFreeTasks);
@@ -2048,10 +2048,6 @@
                                         newServerState.studentsStates = JSON.parse(studentsStates);
                                         currServerState = newServerState;
 
-                                        $('#mbtiFrequencyPlot_professor_dash').empty();
-                                        $('#mbtiSelectedFrequencyPlot_professor_dash').empty();
-
-
                                         allStudentStates = currServerState.studentsStates;
                                         selectedUsers = currServerState.currSelectedUsers;
                                         selectedUsersStates = {}
@@ -2059,10 +2055,7 @@
                                         selectedUsers.forEach(studentName => {
                                             selectedUsersStates[studentName] = allStudentStates[studentName];
                                         });
-
-
-                                        buildMBTIFrequenciesStackedBarPlot("mbtiFrequencyPlot_professor_dash", allStudentStates, "All Students");
-                                        buildMBTIFrequenciesStackedBarPlot("mbtiSelectedFrequencyPlot_professor_dash", selectedUsersStates, "Selected Students");
+                                        
 
                                         $('#groupsPlot_professor_dash').empty();
 
@@ -2070,6 +2063,42 @@
                                             buildPlots(currServerState);
 
 
+                                        $('#selectedGenAlgId_professor_dash').text(currServerState['selectedGenAlgId']);
+                                        $('#selectedQualityEvalAlgId_professor_dash').text(currServerState['selectedQualityEvalAlgId']);
+                                        {#$('#kId_professor_dash').val(currServerState['k']);#}
+
+
+                                        $('#synergiesKId_professor_dash').val(currServerState['synergiesK']);
+                                        $('#synergiesQualityWeightsAbId_professor_dash').val(currServerState['synergiesQualityWeightsAb']);
+                                        $('#synergiesQualityWeightsEngId_professor_dash').val(currServerState['synergiesQualityWeightsEng']);
+
+                                        $('#diversityWeight_professor_dash').val(currServerState['diversityWeight']);
+
+                                        $('#preferredNumPlayersPerGroupId_professor_dash').val(currServerState['preferredNumPlayersPerGroup']);
+                                        {#$('#groupSizeSlider_professor_dash').slider("values", 0, currServerState['minNumPlayersPerGroup']);#}
+                                        {#$('#groupSizeSlider_professor_dash').slider("values", 1, currServerState['maxNumPlayersPerGroup']);#}
+
+
+                                        $('#qualityAbWeight_professor_dash').val(currServerState['qualityWeightsAb']);
+                                        $('#playerWindowId_professor_dash').val(currServerState['playerWindow']);
+
+                                        $('#numberOfConfigChoicesId_professor_dash').val(currServerState['numberOfConfigChoices']);
+
+                                        $('#temperatureDecay_professor_dash').val(currServerState['temperatureDecay']);
+
+                                        $('#initialPopulationSize_professor_dash').val(currServerState['initialPopulationSize']);
+                                        $('#probOfCross_professor_dash').val(currServerState['probCross']);
+                                        $('#probOfMutation_professor_dash').val(currServerState['probMutation']);
+                                        $('#probOfMutationConfig_professor_dash').val(currServerState['probMutationConfig']);
+                                        $('#probOfMutationGIPs_professor_dash').val(currServerState['probMutationProfiles']);
+                                        $('#numberOfEvolutionsPerIteration_professor_dash').val(currServerState['numEvolutionsPerIteration']);
+                                        $('#numChildrenPerIteration_professor_dash').val(currServerState['numChildrenPerIteration']);
+                                        $('#numSurvivors_professor_dash').val(currServerState['numSurvivors']);
+
+                                        {#$('#precomputeBootstrapId_professor_dash').prop(currServerState['isBootstrapped']);#}
+                                        $('#numBootstrapIterationsId_professor_dash').val(currServerState['numBootstrapIterations']);
+                                        
+                                        console.log(currServerState['isBootstrapped']);
                                     }
                             });
                         }
@@ -2217,7 +2246,6 @@
                 'isBootstrapped': $('#precomputeBootstrapId_professor_dash').prop("checked"),
                 'numBootstrapIterations': $('#numBootstrapIterationsId_professor_dash').val()
             };
-            console.log(newAdaptationConfig);
             currAdaptationConfig = newAdaptationConfig;
             $.ajax(
                 {
