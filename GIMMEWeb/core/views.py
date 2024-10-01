@@ -998,7 +998,7 @@ class Views:  # acts as a namespace
         http_request.POST['fullname'] = 'default'
         http_request.POST['username'] = 'default'
         http_request.POST['role'] = 'Professor'
-        http_request.POST['email'] = 'default@tecnico.ulisboa.pt'
+        http_request.POST['email'] = 'default@mocked.inst.pt'
         http_request.POST['password1'] = 'VW8fiAUkGs7QLwn'
         http_request.POST['password2'] = 'VW8fiAUkGs7QLwn'
         http_request.POST['age'] = '20'
@@ -1439,6 +1439,9 @@ class Views:  # acts as a namespace
         selected_gen_alg_id = new_config_params['selectedGenAlgId']
         sel_configs_gen_alg = defaultConfigsAlg
 
+        # print(new_config_params['numberOfConfigChoices'])
+        # breakpoint(),
+        
         if selected_gen_alg_id == 'Random (no search)':
             sel_configs_gen_alg = sel_configs_alg_switcher_random(request)
         elif selected_gen_alg_id == 'Pure Random Search':
@@ -1998,7 +2001,7 @@ class Views:  # acts as a namespace
                 http_request.POST['username'] = name
                 http_request.POST['role'] = role
                 name = name.replace("_", ".").lower()
-                http_request.POST['email'] = name + '@tecnico.ulisboa.pt'
+                http_request.POST['email'] = name + '@mocked.inst.pt'
                 http_request.POST['password1'] = password
                 http_request.POST['password2'] = password
                 http_request.POST['age'] = age
